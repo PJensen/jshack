@@ -21,15 +21,15 @@
       "transcript": "/ef/00026a14e8/1/full.jsonl",
       "compact_transcript": "/ef/00026a14e8/1/transcript.jsonl",
       "content_hash": "/ef/00026a14e8/1/content_hash.txt",
-      "prompt": "/ef/00026a14e8/1/prompt.txt"
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 193265,
+    "input_tokens": 96654,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 3713536,
-    "output_tokens": 13979,
-    "api_call_count": 70
+    "cache_read_tokens": 1725184,
+    "output_tokens": 10424,
+    "api_call_count": 37
   },
   "combined_attribution": {
     "calculated_at": "2026-09-02T21:33:58.805663362Z",
