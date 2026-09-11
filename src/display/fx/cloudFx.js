@@ -735,6 +735,22 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
         ctx.arc(aura.x, aura.y, Math.max(0.5, radius - 0.14), start, start + 0.70);
         ctx.stroke();
       }
+
+      // The carrier gets a tighter, brighter emitter mark at the field's
+      // center so the source creature reads as special even in a crowded mob.
+      const corePulse = 0.55 + 0.45 * Math.sin(now * 7.5 + aura.phase);
+      ctx.strokeStyle = `rgba(${Math.min(255, r + 75)},${Math.min(255, g + 75)},${Math.min(255, b + 75)},${(0.62 * alpha * corePulse).toFixed(3)})`;
+      ctx.lineWidth = 0.055 + 0.02 * corePulse;
+      ctx.beginPath();
+      ctx.arc(aura.x, aura.y, 0.42 + 0.07 * corePulse, aura.phase + now * 0.8, aura.phase + now * 0.8 + Math.PI * 1.35);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(aura.x, aura.y, 0.42 + 0.07 * corePulse, aura.phase + now * 0.8 + Math.PI, aura.phase + now * 0.8 + Math.PI * 1.35 + Math.PI);
+      ctx.stroke();
+      ctx.fillStyle = `rgba(${Math.min(255, r + 95)},${Math.min(255, g + 95)},${Math.min(255, b + 95)},${(0.18 * alpha * corePulse).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.arc(aura.x, aura.y, 0.16 + 0.04 * corePulse, 0, TAU);
+      ctx.fill();
     }
     ctx.restore();
   }
