@@ -1,3 +1,7 @@
+// Debug spawning is also reachable from isolated UI/console wiring. Load the
+// authored monster barrel here so that path cannot observe the pre-content
+// registry if bootstrap ordering changes.
+import "../../content/monsters/index.js";
 import { getMonster, resolveMonsterMaxHp } from "../../rules/data/monsters.js";
 import { creatureTypeFromTags } from "../../rules/components/CreatureType.js";
 import { applyMutation } from "../../rules/interaction/mutations.js";

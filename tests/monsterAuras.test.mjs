@@ -4,12 +4,18 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
+import { Player } from "../src/rules/components/Player.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { getMonster } from "../src/rules/data/monsters.js";
 import { getSpell } from "../src/rules/data/spells.js";
+import { pickMonster } from "../src/rules/environment/dungeon/tables.js";
+import { spawnDebugMonsterNearPlayer } from "../src/main/debug/spawnDebugMonster.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
+import { createRng } from "../src/rules/utils/rng.js";
+import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
+import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 
 function actor(world, faction, x, y, hp = 20, maxHp = hp) {
   const id = world.create();
@@ -36,6 +42,46 @@ Deno.test("aura monsters are cataloged with their authored ability", () => {
     assert(monster, `${monsterId} should be in the monster catalog`);
     assert(monster.learnedSpellIds.includes(spellId), `${monsterId} should know ${spellId}`);
     assert(getSpell(spellId), `${spellId} should be in the spell catalog`);
+  }
+});
+
+Deno.test("aura monsters are available to the normal depth spawn pool", () => {
+  const expected = [
+    ["war_drummer", 8],
+    ["plaguebearer", 11],
+    ["dread_warden", 12],
+    ["void_priest", 16],
+    ["blood_herald", 16],
+  ];
+  for (const [monsterId, depth] of expected) {
+    const picked = pickMonster(createRng(depth * 1000), depth, (def) => def.id === monsterId);
+    assertEquals(picked.identity, monsterId, `${monsterId} should be selectable at depth ${depth}`);
+  }
+});
+
+Deno.test("aura monsters are available through the debug spawn path", () => {
+  clearAll();
+  loadChunk(0, 0, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+  try {
+    const world = new World({ seed: 0xD06 });
+    const player = world.create();
+    world.add(player, Player);
+    world.add(player, Position, { x: 10, y: 10 });
+    world.add(player, Vitality, { hp: 20, maxHp: 20 });
+
+    for (const monsterId of [
+      "plaguebearer",
+      "war_drummer",
+      "dread_warden",
+      "void_priest",
+      "blood_herald",
+    ]) {
+      const result = spawnDebugMonsterNearPlayer(world, monsterId);
+      assert(result.ok, `debug spawn should accept ${monsterId}: ${result.error || "unknown error"}`);
+      assertEquals(result.monsterId, monsterId);
+    }
+  } finally {
+    clearAll();
   }
 });
 
