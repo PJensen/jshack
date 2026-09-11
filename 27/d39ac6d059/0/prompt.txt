@@ -1,0 +1,9 @@
+do you want to or update these  guys?
+
+
+
+1. **Plaguebearer:** periodically poisons nearby creatures.
+2. **War Drummer:** grants allied mobs haste or damage.
+3. **Dread Warden:** weakens or frightens nearby enemies.
+4. **Void Priest:** suppresses spellcasting around itself.
+5. **Blood Herald:** enrages nearby wounded allies.
