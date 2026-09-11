@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "1b0bfd5d5a0b",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/fx/cloudFx.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/utils/factionHostility.js",
+    "tests/monsterAbilities.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/1b/0bfd5d5a0b/0/metadata.json",
+      "transcript": "/1b/0bfd5d5a0b/0/full.jsonl",
+      "compact_transcript": "/1b/0bfd5d5a0b/0/transcript.jsonl",
+      "content_hash": "/1b/0bfd5d5a0b/0/content_hash.txt",
+      "prompt": "/1b/0bfd5d5a0b/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 233597,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7530496,
+    "output_tokens": 30496,
+    "api_call_count": 56
+  }
+}

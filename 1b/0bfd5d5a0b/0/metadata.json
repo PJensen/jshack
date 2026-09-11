@@ -1,0 +1,69 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "1b0bfd5d5a0b",
+  "session_id": "01a091e4-e7f9-7331-a436-c1dd600b3381",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-11T19:29:55.091261467Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/fx/cloudFx.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/utils/factionHostility.js",
+    "tests/monsterAbilities.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "024757403002",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 233597,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7530496,
+    "output_tokens": 30496,
+    "api_call_count": 56
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-11T19:29:55.016044712Z",
+    "agent_lines": 164,
+    "agent_removed": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 19,
+    "total_committed": 164,
+    "total_lines_changed": 189,
+    "agent_percentage": 89.94708994708994,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 967,
+      "user_lines_removed": 19,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/composition/effectOrchestrator.js": 3,
+        "src/display/fx/spellAreaFx.js": 61,
+        "src/rules/data/spells.js": 3,
+        "src/rules/scripts/spells.js": 25,
+        "tests/monsterAbilities.test.mjs": 10
+      },
+      "user_removed_per_file": {
+        "src/display/fx/spellAreaFx.js": 11,
+        "src/rules/data/spells.js": 1,
+        "src/rules/scripts/spells.js": 7
+      }
+    }
+  ]
+}
