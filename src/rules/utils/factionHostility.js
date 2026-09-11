@@ -50,3 +50,20 @@ export function areFactionsHostile(attackerFaction, defenderFaction) {
   // Legacy fallback for unknown factions.
   return true;
 }
+
+/**
+ * Return whether two factions are allies rather than merely non-hostile.
+ * Neutral/social factions are intentionally excluded from alliance checks.
+ * @param {unknown} firstFaction
+ * @param {unknown} secondFaction
+ * @returns {boolean}
+ */
+export function areFactionsAllied(firstFaction, secondFaction) {
+  const first = normalizeFactionKey(firstFaction);
+  const second = normalizeFactionKey(secondFaction);
+  if (!first || !second) return false;
+  if (first === "neutral" || second === "neutral") return false;
+  if (first === "shopkeeper" || second === "shopkeeper") return false;
+  if (areFactionsHostile(first, second) || areFactionsHostile(second, first)) return false;
+  return true;
+}

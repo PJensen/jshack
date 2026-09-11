@@ -478,10 +478,12 @@ export const SPELL_DEFS = {
     manaCost: 0,
     minIntelligence: 0,
     radius: 6,
+    rallyTurns: 5,
     script: 'wolf_howl',
     targeting: 'self',
-    description: 'A pack-call that drives nearby allies into a coordinated hunt.',
+    description: 'A pack-call that hastens nearby allies and drives them into a coordinated hunt.',
     effects: [
+      { kind: 'status', status: 'hastened', duration: '5 turns to nearby same-faction allies' },
       { kind: 'utility', note: 'Nearby allies are alerted and pointed toward the player' },
     ],
   },

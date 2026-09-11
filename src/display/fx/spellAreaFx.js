@@ -2132,17 +2132,12 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       else if (missed) startShake(cam, 1, 0.04);
     });
 
-    world.on('spell:wolf_howl', ({ at, radius }) => {
+    world.on('spell:wolf_howl', ({ at, ralliedIds }) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
-      _smiteFx.push(new RadialFx({
-        x: Number(at.x),
-        y: Number(at.y),
-        radius: Math.max(1, Number(radius || 4)),
-        ttl: 0.24,
-      }));
-      for (let i = 0; i < 20; i++) {
+      const count = PERF.quality === 'low' ? 14 : 24;
+      for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / 20;
-        const speed = 0.35 + Math.random() * 0.65;
+        const speed = 0.28 + Math.random() * 0.55;
         fx.pool.spawn(new Particle({
           x: Number(at.x),
           y: Number(at.y),
@@ -2152,13 +2147,13 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
           life: 0.18 + Math.random() * 0.18,
           size0: 0.05 + Math.random() * 0.04,
           size1: 0.01,
-          r: 200,
-          g: 220,
-          b: 255,
-          a0: 0.72,
+          r: 150,
+          g: 245,
+          b: 105,
+          a0: 0.78,
         }));
       }
-      startShake(cam, 2, 0.08);
+      if (Array.isArray(ralliedIds) && ralliedIds.length > 0) startShake(cam, 2, 0.08);
     });
 
     world.on('spell:shield_bash', ({ at, hit, missed }) => {

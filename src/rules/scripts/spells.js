@@ -30,7 +30,7 @@ import { combatSeed, hashString32, mulberry32, rollDice, pct } from "../utils/rn
 import { statusStrength } from "../utils/statusFacade.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects } from "../utils/effects.js";
-import { areFactionsHostile } from "../utils/factionHostility.js";
+import { areFactionsAllied, areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshev, chebyshevScalar } from "../utils/distance.js";
 import { buildSpellDamageSpec, createSpellDamageContext, emitSpellMiss, getSpellHitChancePct, getSpellIntelligenceBonus, rollSpellHit, scaleSpellDamage } from "../utils/spellDamage.js";
 import { hasSpellLineOfSight } from "../utils/spellTargeting.js";
@@ -1934,6 +1934,25 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
   if (!apos) return;
   const actorFaction = String(world.get(actor, Faction)?.key || "").trim();
   const radius = Math.max(1, Number(spell?.radius || 6) | 0);
+  const rallyTurns = Math.max(1, Number(spell?.rallyTurns || 5) | 0);
+  const auraId = spawnHazard(world, {
+    x: apos.x | 0,
+    y: apos.y | 0,
+    kind: "ally_aura",
+    medium: "air",
+    turnsLeft: rallyTurns,
+    radius,
+    cause: "spell:wolf_howl",
+    sourceId: actor,
+    sourceKind: "wolf_howl",
+    identity: "wolf_howl_aura",
+    name: "Pack Aura",
+    meta: {
+      effectKey: "hastened",
+      effectTurns: 2,
+      potency: 1,
+    },
+  });
   let playerPos = null;
   for (const [id, _player, p] of world.query(Player, Position)) {
     if (!(id > 0) || !p) continue;
@@ -1943,21 +1962,36 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
 
   /** @type {number[]} */
   const alertedIds = [];
+  /** @type {number[]} */
+  const ralliedIds = [];
   for (const [id, pos, fac, vit] of world.query(Position, Faction, Vitality)) {
     if (id === actor) continue;
     if (!pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
-    if (String(fac.key || "") !== actorFaction) continue;
+    if (!areFactionsAllied(actorFaction, fac.key)) continue;
     const dist = Math.max(Math.abs((pos.x | 0) - (apos.x | 0)), Math.abs((pos.y | 0) - (apos.y | 0)));
     if (dist > radius) continue;
+
+    applyStatusEffect(world, id, {
+      key: "hastened",
+      turnsLeft: rallyTurns,
+      potency: 1,
+      stacks: 1,
+      sourceId: actor,
+      sourceKind: "spell",
+      sourceKey: "wolf_howl",
+    });
+    ralliedIds.push(id | 0);
+
     const aggro = world.get(id, AggroState);
-    if (!aggro) continue;
-    aggro.alertLevel = AGGRO_LEVELS.hunting;
-    aggro.searchTurnsLeft = SEARCH_TURNS_ALERTED;
-    if (playerPos) {
-      aggro.lastKnownX = playerPos.x | 0;
-      aggro.lastKnownY = playerPos.y | 0;
+    if (aggro) {
+      aggro.alertLevel = AGGRO_LEVELS.hunting;
+      aggro.searchTurnsLeft = SEARCH_TURNS_ALERTED;
+      if (playerPos) {
+        aggro.lastKnownX = playerPos.x | 0;
+        aggro.lastKnownY = playerPos.y | 0;
+      }
+      alertedIds.push(id | 0);
     }
-    alertedIds.push(id | 0);
   }
 
   world.emit("spell:wolf_howl", {
@@ -1965,6 +1999,9 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
     at: { x: apos.x | 0, y: apos.y | 0 },
     radius,
     alertedIds,
+    ralliedIds,
+    rallyTurns,
+    auraId,
   });
 };
 

@@ -87,6 +87,9 @@ export function drawWorldEffects({ bctx, worldView, glyphAtlas, boltFx, spellAre
   if (typeof cloudFx.drawQuake === "function") {
     cloudFx.drawQuake(bctx);
   }
+  if (typeof cloudFx.drawAllyAura === "function") {
+    cloudFx.drawAllyAura(bctx);
+  }
   fx.render({
     mode: (PERF.quality === "low" ? "source-over" : "lighter"),
     alphaScale: 0.9,

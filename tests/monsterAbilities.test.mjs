@@ -18,6 +18,7 @@ import { DeathCallbackContext } from "../src/rules/data/callbacks/death.js";
 import { getMonster } from "../src/rules/data/monsters.js";
 import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
+import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
@@ -374,6 +375,11 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
       retreating: false,
     });
 
+    const farAlly = world.create();
+    world.add(farAlly, Position, { x: 12, y: 5 });
+    world.add(farAlly, Faction, { key: "enemy" });
+    world.add(farAlly, Vitality, { hp: 12, maxHp: 12 });
+
     const player = world.create();
     world.add(player, Player);
     world.add(player, Position, { x: 8, y: 5 });
@@ -386,6 +392,30 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     assertEquals(aggro?.alertLevel, AGGRO_LEVELS.hunting);
     assertEquals(aggro?.lastKnownX, 8);
     assertEquals(aggro?.lastKnownY, 5);
+    const allyEffects = world.get(ally, ActiveEffects)?.effects || [];
+    const rally = allyEffects.find((effect) => String(effect?.key || "") === "hastened");
+    assert(rally && (rally.turnsLeft | 0) >= 5, "wolf_howl should hasten nearby same-faction allies");
+    const farEffects = world.get(farAlly, ActiveEffects)?.effects || [];
+    assert(!farEffects.some((effect) => String(effect?.key || "") === "hastened"), "wolf_howl should not reach beyond its aura radius");
+
+    let auraId = 0;
+    for (const [id, pos, hazard] of world.query(Position, HazardArea)) {
+      if ((hazard?.sourceId | 0) !== wolf) continue;
+      if (String(hazard?.kind || "") !== "ally_aura") continue;
+      auraId = id;
+      assertEquals({ x: pos.x | 0, y: pos.y | 0 }, { x: 5, y: 5 });
+      assertEquals(hazard.radius | 0, 6);
+      break;
+    }
+    assert(auraId > 0, "wolf_howl should leave a temporary ally aura field");
+
+    const lateAlly = world.create();
+    world.add(lateAlly, Position, { x: 6, y: 5 });
+    world.add(lateAlly, Faction, { key: "enemy" });
+    world.add(lateAlly, Vitality, { hp: 12, maxHp: 12 });
+    hazardSystem(world);
+    const lateEffects = world.get(lateAlly, ActiveEffects)?.effects || [];
+    assert(lateEffects.some((effect) => String(effect?.key || "") === "hastened"), "ally aura should affect allies entering the field");
   } finally {
     clearAll();
   }
