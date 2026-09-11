@@ -5,3 +5,4 @@ import './animals.js';
 import './humanoids.js';
 import './undead.js';
 import './special.js';
+import './auras.js';

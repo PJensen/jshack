@@ -9,6 +9,19 @@ import { BubblePopFx } from "./fxEntries.js";
  * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, getFxTime: () => number, getPosition: (id:number) => ({x:number,y:number}|null) }} deps
  */
 export function createCloudFxController({ world, cam, fx, getFxTime, getPosition }) {
+  const isAuraKind = (kind) => {
+    const key = String(kind || '').toLowerCase();
+    return key === 'ally_aura' || key === 'aura';
+  };
+  const auraColor = (identity) => {
+    const key = String(identity || '').toLowerCase();
+    if (key.includes('plague')) return [150, 220, 75];
+    if (key.includes('dread')) return [190, 105, 235];
+    if (key.includes('void')) return [90, 145, 255];
+    if (key.includes('blood')) return [245, 75, 85];
+    if (key.includes('drum') || key.includes('wolf')) return [115, 225, 105];
+    return [120, 205, 125];
+  };
   /** @type {Map<number, { x:number, y:number, radius:number, turnsLeft:number, maxTurns:number, pulseFlash:number, phase:number, fading:boolean, fadeLeft:number, fadeMax:number, medium:string }>} */
   const _fireCloudFx = new Map();
   /** @type {Map<number, { x:number, y:number, radius:number, turnsLeft:number, maxTurns:number, flash:number, phase:number, fading:boolean, fadeLeft:number, fadeMax:number }>} */
@@ -701,19 +714,20 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
       const pulse = 0.65 + 0.35 * Math.sin(now * 5.5 + aura.phase);
       const alpha = life * fade;
       const radius = Math.max(0.5, aura.radius | 0);
+      const [r, g, b] = aura.color || [120, 205, 125];
 
-      ctx.fillStyle = `rgba(90,190,80,${(0.035 * alpha).toFixed(3)})`;
+      ctx.fillStyle = `rgba(${r},${g},${b},${(0.035 * alpha).toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(aura.x, aura.y, radius + 0.1, 0, TAU);
       ctx.fill();
 
-      ctx.strokeStyle = `rgba(150,255,105,${(0.45 * alpha * pulse).toFixed(3)})`;
+      ctx.strokeStyle = `rgba(${Math.min(255, r + 55)},${Math.min(255, g + 35)},${Math.min(255, b + 35)},${(0.45 * alpha * pulse).toFixed(3)})`;
       ctx.lineWidth = 0.07 + 0.025 * pulse;
       ctx.beginPath();
       ctx.arc(aura.x, aura.y, radius, 0, TAU);
       ctx.stroke();
 
-      ctx.strokeStyle = `rgba(75,190,255,${(0.28 * alpha).toFixed(3)})`;
+      ctx.strokeStyle = `rgba(${Math.min(255, r + 25)},${Math.min(255, g + 25)},${Math.min(255, b + 75)},${(0.28 * alpha).toFixed(3)})`;
       ctx.lineWidth = 0.04;
       for (let i = 0; i < 3; i++) {
         const start = now * 0.35 + aura.phase + i * (TAU / 3);
@@ -814,8 +828,8 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
     });
 
     world.on('hazard:spawned', (evt) => {
-      const { hazardId, kind, at, radius, turnsLeft, medium } = evt;
-      if (String(kind || '').toLowerCase() === 'ally_aura') {
+      const { hazardId, kind, at, radius, turnsLeft, medium, identity } = evt;
+      if (isAuraKind(kind)) {
         const id = Number(hazardId || 0) | 0;
         if (!(id > 0) || !at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
         const ttl = Math.max(1, Number(turnsLeft || 1) | 0);
@@ -825,6 +839,7 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
           radius: Math.max(0, Number(radius || 0) | 0),
           turnsLeft: ttl,
           maxTurns: ttl,
+          color: auraColor(identity),
           phase: Math.random() * Math.PI * 2,
           fading: false,
           fadeLeft: 0,
@@ -920,7 +935,7 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
     });
 
     world.on('hazard:pulse', ({ hazardId, kind, at, radius, turnsLeft, affectedIds, medium }) => {
-      if (String(kind || '').toLowerCase() === 'ally_aura') {
+      if (isAuraKind(kind)) {
         const id = Number(hazardId || 0) | 0;
         if (!(id > 0)) return;
         const prev = _allyAuraFx.get(id);
@@ -930,6 +945,7 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
           radius: Math.max(0, Number(radius || 0) | 0),
           turnsLeft: Math.max(0, Number(turnsLeft || 0) | 0),
           maxTurns: Math.max(prev?.maxTurns ?? 0, Number(turnsLeft || 0) | 0),
+          color: prev?.color || auraColor(''),
           phase: prev?.phase ?? (Math.random() * Math.PI * 2),
           fading: false,
           fadeLeft: 0,
@@ -1082,7 +1098,7 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
     });
 
     world.on('hazard:expired', ({ hazardId, kind, at, radius }) => {
-      if (String(kind || '').toLowerCase() !== 'ally_aura') return;
+      if (!isAuraKind(kind)) return;
       const id = Number(hazardId || 0) | 0;
       const aura = _allyAuraFx.get(id);
       if (!aura) return;
@@ -1268,7 +1284,7 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
       for (let dy = -r; dy <= r; dy++) {
         for (let dx = -r; dx <= r; dx++) {
           if (Math.max(Math.abs(dx), Math.abs(dy)) > r) continue;
-          out.push({ x: aura.x + dx, y: aura.y + dy, radius: 0.45, color: [110, 210, 90], flicker: a * 0.35 });
+          out.push({ x: aura.x + dx, y: aura.y + dy, radius: 0.45, color: aura.color || [120, 205, 125], flicker: a * 0.35 });
         }
       }
     }

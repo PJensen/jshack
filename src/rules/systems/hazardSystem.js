@@ -6,7 +6,6 @@ import { applyHealing } from "../utils/applyHealing.js";
 import { Flying } from "../components/Flying.js";
 import { Pet } from "../components/Pet.js";
 import { Player } from "../components/Player.js";
-import { Faction } from "../components/Faction.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
 import { Burned } from "../components/Burned.js";
@@ -40,8 +39,7 @@ import { clamp01Or, clampInt } from "../utils/numberCoerce.js";
 import { applyMaterialStimulus } from "../utils/materialStimulus.js";
 import { applyMaterialTransform, resolveMaterialTransform } from "../utils/materialTransforms.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
-import { applyStatusEffect } from "../utils/effects.js";
-import { areFactionsAllied } from "../utils/factionHostility.js";
+import { applyAuraFieldPulse } from "../utils/auraFields.js";
 
 const DEFAULT_TURNS = 3;
 const DEFAULT_RADIUS = 1;
@@ -322,7 +320,7 @@ export function hazardSystem(world) {
     /** @type {number[]} */
     const affectedIds = [];
 
-    if (kind === "ally_aura") {
+    if (kind === "ally_aura" || kind === "aura") {
       const sourcePos = sourceId > 0 ? world.get(sourceId, Position) : null;
       if (sourcePos) {
         const sx = sourcePos.x | 0;
@@ -337,23 +335,18 @@ export function hazardSystem(world) {
       const effectKey = String(hazard.meta?.effectKey || "hastened");
       const effectTurns = Math.max(1, Number(hazard.meta?.effectTurns || 2) | 0);
       const potency = Math.max(1, Number(hazard.meta?.potency || 1));
-      const sourceFaction = world.get(sourceId, Faction)?.key || "";
-      for (const [id, targetPos, targetFaction, vit] of world.query(Position, Faction, Vitality)) {
-        if (id === hazardId || id === sourceId) continue;
-        if (!targetPos || !targetFaction || !vit || (vit.hp | 0) <= 0) continue;
-        if (!areFactionsAllied(sourceFaction, targetFaction.key)) continue;
-        if (!inHazardRadius(targetPos.x, targetPos.y, pos.x, pos.y, radius, metric)) continue;
-        applyStatusEffect(world, id, {
-          key: effectKey,
-          turnsLeft: effectTurns,
-          potency,
-          stacks: 1,
-          sourceId,
-          sourceKind: "aura",
-          sourceKey: String(world.get(hazardId, NamedIdentity)?.identity || kind),
-        });
-        affectedIds.push(id | 0);
-      }
+      affectedIds.push(...applyAuraFieldPulse(world, sourceId, pos, {
+        radius,
+        effectKey,
+        effectTurns,
+        potency,
+        targetRelation: kind === "ally_aura"
+          ? "allied"
+          : String(hazard.meta?.targetRelation || "allied"),
+        woundedOnly: hazard.meta?.woundedOnly === true,
+        sourceKind: "aura",
+        sourceKey: String(world.get(hazardId, NamedIdentity)?.identity || kind),
+      }));
     }
 
     if (kind === "fire" && medium === "floor") {

@@ -67,6 +67,7 @@ import { Web } from "../archetypes/RoomFeatures.js";
 import { spawnWeb } from "../utils/spawnWeb.js";
 import { ALL_DIRS } from "../utils/directions.js";
 import { forEachInRadius } from "../utils/spatialIndex.js";
+import { applyAuraFieldPulse } from "../utils/auraFields.js";
 import { resolveScrollEffectDuration } from "../utils/scrollReading.js";
 import { attachEntityToCurrentFloor } from "../utils/floorEntities.js";
 import { ArcaneBarrageCast, MagicMissileCast } from "../../events/ArcaneProjectileCast.js";
@@ -1927,6 +1928,51 @@ REGISTRY["web_spit"] = function webSpitScript(world, actor, spell, intent) {
     radius: Number(spell?.radius || 0) | 0,
   });
 };
+
+/**
+ * Shared script for monster abilities that create a faction-aware aura field.
+ * The persistent field handles late arrivals and repeated pulses; the initial
+ * pulse makes the ability feel immediate on the cast turn.
+ */
+function runFactionAuraScript(world, actor, spell) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return;
+
+  const radius = resolveSpellRadius(world, actor, spell);
+  const auraTurns = Math.max(1, Number(spell?.auraTurns || 5) | 0);
+  spawnHazard(world, {
+    x: apos.x | 0,
+    y: apos.y | 0,
+    kind: "aura",
+    medium: "air",
+    turnsLeft: auraTurns,
+    radius,
+    cause: `spell:${spell.id}`,
+    sourceId: actor,
+    sourceKind: spell.id,
+    identity: `${spell.id}_aura`,
+    name: `${spell.name || "Aura"} Field`,
+    meta: {
+      effectKey: spell.auraEffect,
+      effectTurns: spell.auraEffectTurns,
+      potency: spell.auraPotency,
+      targetRelation: spell.auraTarget,
+      woundedOnly: spell.auraWoundedOnly === true,
+    },
+  });
+  applyAuraFieldPulse(world, actor, apos, {
+    radius,
+    effectKey: spell.auraEffect,
+    effectTurns: spell.auraEffectTurns,
+    potency: spell.auraPotency,
+    targetRelation: spell.auraTarget,
+    woundedOnly: spell.auraWoundedOnly === true,
+    sourceKind: "aura",
+    sourceKey: spell.id,
+  });
+}
+
+REGISTRY["faction_aura"] = runFactionAuraScript;
 
 // Wolf Howl — alert nearby same-faction allies toward the player.
 REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
