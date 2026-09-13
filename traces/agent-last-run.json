@@ -1,0 +1,20 @@
+{
+  "v": 1,
+  "protocol": "jshack-agent-v1",
+  "seed": 12648430,
+  "classId": "outlaw",
+  "playerName": "Codex",
+  "startDepth": 1,
+  "actions": [
+    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.quickInteract", "payload": {} },
+    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
+    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } }
+  ]
+}

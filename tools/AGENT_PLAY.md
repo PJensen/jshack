@@ -3,10 +3,10 @@
 `agent-player.mjs` exposes one JSON object per line on stdout and accepts one
 JSON action per line on stdin. It is intentionally turn-based: a successful
 gameplay action returns a fresh observation after the rules scheduler resolves
-that turn.
+that turn. By default it records actions in `traces/agent-last-run.json`.
 
 ```bash
-deno run --allow-read tools/agent-player.mjs --seed 12648430 --class outlaw
+deno task agent:play --seed 12648430 --class outlaw
 ```
 
 The first response is a `ready` object. Each later response is either:
@@ -27,4 +27,13 @@ visible entities and interactables, player vitals, effects, inventory,
 equipment, learned spells, and `suggestedActions`. Entity IDs in the
 observation are the IDs expected by pickup, equipment, spell, and interaction
 actions. Send `{"type":"observe"}` to refresh without taking a turn, or
-`{"type":"quit"}` to stop the bridge.
+`{"type":"quit"}` to stop the bridge. Resume a recorded run with:
+
+```bash
+deno task agent:play --resume traces/agent-last-run.json
+```
+
+Resume reconstructs the same seeded run and replays the recorded actions, so
+the first `ready` observation starts where the previous agent left off. Use
+`--trace-file /tmp/my-trace.json` for a separate trace or `--no-trace` to
+disable recording.

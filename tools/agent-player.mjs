@@ -1,5 +1,5 @@
 // JSONL bridge for a game-playing agent.
-// Start it with: deno run --allow-read tools/agent-player.mjs
+// Start it with: deno run --allow-read --allow-write tools/agent-player.mjs
 
 import "../src/content/items/index.js";
 import "../src/content/monsters/index.js";
@@ -11,7 +11,15 @@ import { AGENT_ACTION_CATALOG } from "../src/main/runtime/agentView.js";
 installContent();
 
 function parseArgs(argv) {
-  const out = { seed: 0xC0FFEE, classId: "outlaw", playerName: "Agent", startDepth: 1, mapRadius: 10 };
+  const out = {
+    seed: 0xC0FFEE,
+    classId: "outlaw",
+    playerName: "Agent",
+    startDepth: 1,
+    mapRadius: 10,
+    traceFile: "traces/agent-last-run.json",
+    resumeFile: "",
+  };
   for (let i = 0; i < argv.length; i++) {
     const raw = String(argv[i] || "");
     if (!raw.startsWith("--")) continue;
@@ -22,8 +30,27 @@ function parseArgs(argv) {
     else if (key === "name") out.playerName = String(value);
     else if (key === "depth") out.startDepth = Number(value);
     else if (key === "map-radius") out.mapRadius = Number(value);
+    else if (key === "trace-file") out.traceFile = String(value);
+    else if (key === "resume") out.resumeFile = String(value);
+    else if (key === "no-trace") out.traceFile = "";
   }
   return out;
+}
+
+async function readTrace(path) {
+  if (!path) return null;
+  const parsed = JSON.parse(await Deno.readTextFile(path));
+  if (!parsed || parsed.v !== 1 || !Array.isArray(parsed.actions)) {
+    throw new Error("trace must be a v1 JSON object with an actions array");
+  }
+  return parsed;
+}
+
+async function writeTrace(path, trace) {
+  if (!path) return;
+  const slash = path.lastIndexOf("/");
+  if (slash > 0) await Deno.mkdir(path.slice(0, slash), { recursive: true });
+  await Deno.writeTextFile(path, `${JSON.stringify(trace, null, 2)}\n`);
 }
 
 function write(message) {
@@ -48,10 +75,40 @@ async function* inputLines() {
 }
 
 const cfg = parseArgs(Deno.args);
-const runtime = await createGameRuntime(cfg);
+const resume = await readTrace(cfg.resumeFile);
+const runtimeOptions = resume
+  ? {
+      seed: cfg.seed !== 0xC0FFEE ? cfg.seed : resume.seed,
+      classId: cfg.classId !== "outlaw" ? cfg.classId : resume.classId,
+      playerName: cfg.playerName !== "Agent" ? cfg.playerName : resume.playerName,
+      startDepth: cfg.startDepth !== 1 ? cfg.startDepth : resume.startDepth,
+    }
+  : cfg;
+const runtime = await createGameRuntime(runtimeOptions);
+if (resume) {
+  for (const action of resume.actions) runtime.dispatch(action);
+}
 const observe = () => runtime.observe({ mapRadius: cfg.mapRadius, includeActionCatalog: false });
+const trace = {
+  v: 1,
+  protocol: "jshack-agent-v1",
+  seed: runtimeOptions.seed,
+  classId: runtimeOptions.classId,
+  playerName: runtimeOptions.playerName,
+  startDepth: runtimeOptions.startDepth,
+  actions: resume ? [...resume.actions] : [],
+};
+await writeTrace(cfg.traceFile, trace);
 
-write({ type: "ready", protocol: "jshack-agent-v1", actionCatalog: AGENT_ACTION_CATALOG, observation: observe() });
+write({
+  type: "ready",
+  protocol: "jshack-agent-v1",
+  resumedFrom: cfg.resumeFile || null,
+  replayedActions: resume?.actions.length || 0,
+  traceFile: cfg.traceFile || null,
+  actionCatalog: AGENT_ACTION_CATALOG,
+  observation: observe(),
+});
 
 for await (const line of inputLines()) {
   let command;
@@ -78,6 +135,8 @@ for await (const line of inputLines()) {
   const before = runtime.snapshot();
   try {
     runtime.dispatch(action);
+    trace.actions.push(action);
+    await writeTrace(cfg.traceFile, trace);
     const after = runtime.snapshot();
     write({
       type: "result",

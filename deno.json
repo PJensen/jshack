@@ -23,7 +23,7 @@
     "coverage": "deno test --no-check --allow-read --coverage=coverage/ && deno coverage coverage/ --lcov --output=coverage.lcov",
     "bench": "deno bench --no-check --allow-read tests/perf/*.bench.mjs",
     "headless": "deno run --no-check --allow-read tools/headless-runner.mjs",
-    "agent:play": "deno run --allow-read tools/agent-player.mjs",
+    "agent:play": "deno run --allow-read --allow-write tools/agent-player.mjs",
     "download:audio": "deno run --allow-net --allow-read --allow-write tools/download-dropbox-audio.mjs",
     "audio:trim-silence": "deno run --allow-read --allow-write --allow-run tools/audio-trim-silence.mjs",
     "wrap:nwjs": "deno run --allow-read --allow-write packaging/nwjs/wrap.mjs"
