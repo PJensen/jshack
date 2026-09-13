@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "b6891a38beb8",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "deno.json",
+    "tools/AGENT_PLAY.md",
+    "tools/agent-player.mjs",
+    "traces/agent-last-run.json"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b6/891a38beb8/0/metadata.json",
+      "transcript": "/b6/891a38beb8/0/full.jsonl",
+      "compact_transcript": "/b6/891a38beb8/0/transcript.jsonl",
+      "content_hash": "/b6/891a38beb8/0/content_hash.txt",
+      "prompt": "/b6/891a38beb8/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 51390,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3277056,
+    "output_tokens": 15512,
+    "api_call_count": 19
+  }
+}
