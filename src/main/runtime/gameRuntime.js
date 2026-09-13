@@ -3,6 +3,7 @@ import { createRng } from "../../lib/ecs-js/rng.js";
 import { configureWorld } from "../scheduler.js";
 import { makeRulesDispatcher } from "../input/rulesDispatch.js";
 import { buildWorldView } from "../../bridge/schema/worldView.js";
+import { buildAgentObservation } from "./agentView.js";
 
 import { initDungeon } from "../../rules/environment/dungeon/index.js";
 import { createPlayer } from "../../rules/archetypes/Player.js";
@@ -377,6 +378,9 @@ export function createRuntimeFacade(world, opts = {}) {
     },
     view() {
       return buildWorldView(world);
+    },
+    observe(opts = {}) {
+      return buildAgentObservation(world, opts);
     },
     snapshot,
     getPlayer() {
