@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "7c4b666fa37e",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/systems/knockbackSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "tests/hydraulicsSystem.test.mjs",
+    "tests/movementRefactored.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/7c/4b666fa37e/0/metadata.json",
+      "transcript": "/7c/4b666fa37e/0/full.jsonl",
+      "compact_transcript": "/7c/4b666fa37e/0/transcript.jsonl",
+      "content_hash": "/7c/4b666fa37e/0/content_hash.txt",
+      "prompt": "/7c/4b666fa37e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 159261,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2564864,
+    "output_tokens": 14067,
+    "api_call_count": 25
+  }
+}
