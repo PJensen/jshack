@@ -3,17 +3,20 @@
   "checkpoint_id": "18c52ecd358d",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 6,
+  "checkpoints_count": 7,
   "files_touched": [
     "VERSION",
     "docs/notes/STASIS_INVESTIGATION_HANDOFF.md",
     "src/bridge/schema/worldView.js",
     "src/main/debug/debugCommands.js",
+    "src/main/scheduler.js",
     "src/rules/components/Duration.js",
     "src/rules/systems/effectSystem.js",
+    "src/rules/systems/movementSystem.js",
     "src/rules/utils/effects.js",
     "src/rules/utils/stasis.js",
     "src/rules/utils/statusFacade.js",
+    "tests/movementRefactored.test.mjs",
     "tests/stasisRuntime.test.mjs",
     "tests/wandOfStasis.test.mjs"
   ],
@@ -31,13 +34,20 @@
       "compact_transcript": "/18/c52ecd358d/1/transcript.jsonl",
       "content_hash": "/18/c52ecd358d/1/content_hash.txt",
       "prompt": "/18/c52ecd358d/1/prompt.txt"
+    },
+    {
+      "metadata": "/18/c52ecd358d/2/metadata.json",
+      "transcript": "/18/c52ecd358d/2/full.jsonl",
+      "compact_transcript": "/18/c52ecd358d/2/transcript.jsonl",
+      "content_hash": "/18/c52ecd358d/2/content_hash.txt",
+      "prompt": "/18/c52ecd358d/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 1544843,
+    "input_tokens": 1798421,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 50156288,
-    "output_tokens": 167523,
-    "api_call_count": 394
+    "cache_read_tokens": 56013312,
+    "output_tokens": 194074,
+    "api_call_count": 435
   }
 }
