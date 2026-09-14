@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "d0c859f25284",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/components/Intents/MoveIntent.js",
+    "src/rules/systems/intentValidationSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/systems/tauntSystem.js",
+    "tests/intentValidationSystem.test.mjs",
+    "tests/movementRefactored.test.mjs",
+    "tests/wandOfStasis.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d0/c859f25284/0/metadata.json",
+      "transcript": "/d0/c859f25284/0/full.jsonl",
+      "compact_transcript": "/d0/c859f25284/0/transcript.jsonl",
+      "content_hash": "/d0/c859f25284/0/content_hash.txt",
+      "prompt": "/d0/c859f25284/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 34352,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1711616,
+    "output_tokens": 7378,
+    "api_call_count": 10
+  }
+}
