@@ -1,0 +1,1 @@
+straight up: `mirrorLegacy` itself -- looks like absolutely trash -- I would remove it with authority. This is not the type of thing we want hanging around inside of an agentically developed codebase. You feel me?
