@@ -16,14 +16,7 @@
       "transcript": "/3c/63357a925a/0/full.jsonl",
       "compact_transcript": "/3c/63357a925a/0/transcript.jsonl",
       "content_hash": "/3c/63357a925a/0/content_hash.txt",
-      "prompt": "/3c/63357a925a/0/prompt.txt"
+      "prompt": ""
     }
-  ],
-  "token_usage": {
-    "input_tokens": 38038,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 3527680,
-    "output_tokens": 6980,
-    "api_call_count": 20
-  }
+  ]
 }

@@ -1,5 +1,0 @@
-"FROZEN IN TIME" message seen, used a wand, but it's not actually sticking or having an effect on the creature. In this instance it was a rat. Nothing happened. I tried it on several rats too.
-
----
-
-honestly -- I would decidedly NOT retain any legacy path. we have 0 players. I have zero concern about any legacy fallback. This is not the first time we've had a serious stasis issue!
