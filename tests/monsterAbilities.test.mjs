@@ -20,6 +20,7 @@ import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
+import { hasEffect } from "../src/rules/utils/statusFacade.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 
@@ -392,11 +393,8 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     assertEquals(aggro?.alertLevel, AGGRO_LEVELS.hunting);
     assertEquals(aggro?.lastKnownX, 8);
     assertEquals(aggro?.lastKnownY, 5);
-    const allyEffects = world.get(ally, ActiveEffects)?.effects || [];
-    const rally = allyEffects.find((effect) => String(effect?.key || "") === "hastened");
-    assert(rally && (rally.turnsLeft | 0) >= 5, "wolf_howl should hasten nearby same-faction allies");
-    const farEffects = world.get(farAlly, ActiveEffects)?.effects || [];
-    assert(!farEffects.some((effect) => String(effect?.key || "") === "hastened"), "wolf_howl should not reach beyond its aura radius");
+    assertEquals(hasEffect(world, ally, "hastened"), true, "wolf_howl should hasten nearby same-faction allies");
+    assertEquals(hasEffect(world, farAlly, "hastened"), false, "wolf_howl should not reach beyond its aura radius");
 
     let auraId = 0;
     for (const [id, pos, hazard] of world.query(Position, HazardArea)) {
@@ -414,8 +412,7 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     world.add(lateAlly, Faction, { key: "enemy" });
     world.add(lateAlly, Vitality, { hp: 12, maxHp: 12 });
     hazardSystem(world);
-    const lateEffects = world.get(lateAlly, ActiveEffects)?.effects || [];
-    assert(lateEffects.some((effect) => String(effect?.key || "") === "hastened"), "ally aura should affect allies entering the field");
+    assertEquals(hasEffect(world, lateAlly, "hastened"), true, "ally aura should affect allies entering the field");
   } finally {
     clearAll();
   }

@@ -1,7 +1,6 @@
 import "./helpers/installContentMonsters.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
-import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { Player } from "../src/rules/components/Player.js";
@@ -16,6 +15,7 @@ import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { createRng } from "../src/rules/utils/rng.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
+import { hasEffect } from "../src/rules/utils/statusFacade.js";
 
 function actor(world, faction, x, y, hp = 20, maxHp = hp) {
   const id = world.create();
@@ -23,10 +23,6 @@ function actor(world, faction, x, y, hp = 20, maxHp = hp) {
   world.add(id, Faction, { key: faction });
   world.add(id, Vitality, { hp, maxHp });
   return id;
-}
-
-function hasEffect(world, id, key) {
-  return (world.get(id, ActiveEffects)?.effects || []).some((effect) => effect?.key === key);
 }
 
 Deno.test("aura monsters are cataloged with their authored ability", () => {

@@ -6,6 +6,7 @@ import { Vitality } from "../src/rules/components/Vitality.js";
 import { getMonster } from "../src/rules/data/monsters.js";
 import { CombatCallbackContext, bonusDamageIfTargetAfflicted, phaseOutOnDamaged } from "../src/rules/data/callbacks/combat.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
+import { hasEffect } from "../src/rules/utils/statusFacade.js";
 
 Deno.test("bonusDamageIfTargetAfflicted adds damage and emits when defender is afflicted", () => {
   const world = new World({ seed: 77 });
@@ -70,9 +71,7 @@ Deno.test("phaseOutOnDamaged heals, adds invulnerable, emits, and cancels later 
   assertEquals(tailRan, false);
   assert(payload && payload.actor === defender && payload.attacker === attacker && payload.amount === 4);
 
-  const ae = world.get(defender, ActiveEffects);
-  assert(ae && Array.isArray(ae.effects), "defender should have active effects");
-  assert(ae.effects.some((e) => e.key === "invulnerable"), "phase out should apply invulnerable");
+  assertEquals(hasEffect(world, defender, "invulnerable"), true, "phase out should apply invulnerable");
 });
 
 Deno.test("carrion shade hooks chain affliction setup into next pre-hit bonus", () => {

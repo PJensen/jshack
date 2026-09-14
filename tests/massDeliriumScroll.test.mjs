@@ -1,8 +1,10 @@
 import "./helpers/installContentCatalog.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
+import { Duration } from "../src/rules/components/Duration.js";
 import { createPlayer } from "../src/rules/archetypes/Player.js";
 import { Position } from "../src/rules/components/Position.js";
+import { StatusEffectNode } from "../src/rules/components/StatusEffectNode.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { Brain } from "../src/rules/components/Brain.js";
@@ -11,12 +13,12 @@ import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { AggroState, AGGRO_LEVELS } from "../src/rules/components/AggroState.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { Hunger } from "../src/rules/components/Hunger.js";
-import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
 import { aiScrollPickupSystem, aiScrollUseSystem } from "../src/rules/systems/aiScrollSystem.js";
 import { createItemById } from "../src/rules/utils/itemFactory.js";
 import { addToInventory, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
+import { descendantsWith } from "../src/rules/utils/topology.js";
 import { evaluateScrollReadingQuality } from "../src/rules/utils/scrollReading.js";
 
 function addLiving(world, x, y, faction = "enemy") {
@@ -25,6 +27,14 @@ function addLiving(world, x, y, faction = "enemy") {
   world.add(id, Faction, { key: faction });
   world.add(id, Vitality, { hp: 10, maxHp: 10 });
   return id;
+}
+
+function effectDuration(world, entityId, key) {
+  for (const [nodeId, effect] of descendantsWith(world, entityId, StatusEffectNode)) {
+    if (String(effect?.key || "") !== key) continue;
+    return world.get(nodeId, Duration)?.turnsLeft || 0;
+  }
+  return 0;
 }
 
 Deno.test("scroll reading fails when eyesight is too poor", () => {
@@ -65,7 +75,7 @@ Deno.test("scroll of mass delirium applies fixed-duration confusion in a wide ar
 
   assert(!world.isAlive(scroll), "scroll should be consumed");
   assertEquals(statusStrength(world, near, "confused"), 1);
-  assertEquals(world.get(near, ActiveEffects).effects.find((e) => e.key === "confused").turnsLeft, 50);
+  assertEquals(effectDuration(world, near, "confused"), 50);
   assertEquals(statusStrength(world, far, "confused"), 0);
   assertEquals(statusStrength(world, player, "confused"), 0, "successful read should not confuse reader");
   assertEquals(events[0]?.duration, 50);

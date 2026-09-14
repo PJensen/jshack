@@ -1,7 +1,6 @@
 import "./helpers/installContentMonsters.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
-import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Beatitude } from "../src/rules/components/Beatitude.js";
 import { DungeonState } from "../src/rules/components/DungeonState.js";
 import { Inventory } from "../src/rules/components/Inventory.js";
@@ -22,6 +21,7 @@ import { installRatatoskrListeners, ratatoskrSystem } from "../src/rules/systems
 import { toMonsterSpawnParams } from "../src/rules/utils/monsterSpawnParams.js";
 import { inventoryContains, inventoryItems } from "../src/rules/utils/inventoryFacade.js";
 import { spawnMonsterEntity } from "../src/rules/utils/spawnMonsterEntity.js";
+import { effectStrength } from "../src/rules/utils/statusFacade.js";
 import "../src/rules/dialogues/ratatoskrDialog.js";
 
 function loadFloor() {
@@ -114,8 +114,7 @@ Deno.test("Ratatoskr branch bargain curses the player and grants a cursed legend
   world.emit("dialog:openRequest", { actorId: player, targetId: ratatoskr, dialogId: "norse:ratatoskr" });
   world.emit("dialog:choose", { sessionId: opened.at(-1).sessionId, choiceId: "branch_bargain" });
 
-  const effects = world.get(player, ActiveEffects)?.effects || [];
-  assert(effects.some((effect) => effect.key === "cursed" && effect.potency === 2));
+  assertEquals(effectStrength(world, player, "cursed"), 2);
   const cursedItems = inventoryItems(world, player).filter((itemId) => world.get(itemId, Beatitude)?.state === "cursed");
   assertEquals(cursedItems.length, 1);
 });
