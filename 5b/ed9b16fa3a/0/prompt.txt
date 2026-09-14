@@ -1,0 +1,3 @@
+UX: task -- interactions with quest giver should visual highlight the default option, that way, if a player presses "Enter" they can conceivably know what dialog interaction option was triggered.
+
+You feel me?
