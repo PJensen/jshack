@@ -1,0 +1,43 @@
+dumb -- didn't work -- like at all.
+
+give wand\_stasis
+spawn war\_drummer
+
+cast -> stasis -> war drummer
+moves around, casting, doing all sorts of "stuff" -- pretty bad friend
+
+---
+
+I very much doubt it's related to "war\_drummer" -- I'm near certain it could have just as well been "rat" or any other creature for that matter.
+
+---
+
+i'm near certain it's something to do with the real runtime vs the test runtime. gotta be right?
+
+---
+
+it seems like a super direct path to soliving this issue, but, hey, fine, I'm just vibing out.
+
+---
+
+NOPE -- not working friend. just brutcal.
+
+---
+
+nope not working, not working at all.
+
+---
+
+even rats start chasing me after being stasis'd -- I don't get it.
+
+---
+
+ahh  -- wild, okay, I'll bump version and re-test
+
+---
+
+telling you -- this still aint working. I see a glow, I know statis is on this rat, but the rat is still following me -- wand\_stasis is my pathway
+
+---
+
+something majorly not making any sense -- I may start a new session -- draft all we learned into an MD file -- I feel like I need a fresh look and a smaller context window.
