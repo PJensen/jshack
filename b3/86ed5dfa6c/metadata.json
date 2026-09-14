@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "b386ed5dfa6c",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "docs/design/ENCOUNTERS.md",
+    "docs/design/RATATOSKR_STATE_MACHINE.md",
+    "src/content/define.js",
+    "src/content/encounters/dungeonGroups.js",
+    "src/content/encounters/index.js",
+    "src/content/encounters/overworld.js",
+    "src/content/index.js",
+    "src/content/install.js",
+    "src/content/registry.js",
+    "src/events/EncounterActivated.js",
+    "src/main.js",
+    "src/main/scheduler.js",
+    "src/rules/components/EncounterState.js",
+    "src/rules/components/index.js",
+    "src/rules/data/encounters.js",
+    "src/rules/environment/dungeon/overworld.js",
+    "src/rules/environment/dungeon/tables.js",
+    "src/rules/systems/encounterSystem.js",
+    "src/rules/systems/ratatoskrSystem.js",
+    "src/rules/utils/encounters.js",
+    "tests/encounterDefinitions.test.mjs",
+    "tests/encounterSystem.test.mjs",
+    "tests/helpers/installContentCatalog.mjs",
+    "tests/helpers/installContentMonsters.mjs",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b3/86ed5dfa6c/0/metadata.json",
+      "transcript": "/b3/86ed5dfa6c/0/full.jsonl",
+      "compact_transcript": "/b3/86ed5dfa6c/0/transcript.jsonl",
+      "content_hash": "/b3/86ed5dfa6c/0/content_hash.txt",
+      "prompt": "/b3/86ed5dfa6c/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 408380,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10622720,
+    "output_tokens": 61825,
+    "api_call_count": 94
+  }
+}

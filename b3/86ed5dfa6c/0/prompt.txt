@@ -1,0 +1,26 @@
+ratatoskyr is far too powerful of an unlock, I feel like the player must do something before they can meet this mythical creature.. I almost dont care what it is, only that we solve for the issue in a generic way that supports other types of creature unlocks, especially herioc almost singleton creatures,but I see no reason why it wouldn't apply to broader creature definitions.
+
+think with me first, pitch the solution, then we'll make concrete moves.
+
+---
+
+it wasn't accidental, but we do need a general purpose way of turning him on, but also, my point earlier is that a point solution is kind of a waste of effort. maybe I'm wrong -- maybe we did this creature spawn in so specifically that it's not easy for it to apply to other creatures.
+
+---
+
+I think we're really close, I think we should do at least two creatures this way -- however, I'm not 100% sure it belongs on creature metadata -- where else *could* it go? Where would you naturally want to see it? Obviously, I'm still open to it being on creature metadata -- but I do want to think a bit more about where he could go.
+
+---
+
+do we have an encounter object? any how -- I like the direction!
+
+---
+
+Fantastic -- so we need to subsume what exists, and port into this new encounter structured approach. I really like what we're saying here. It makes life so much easier making encounters a first class concepts instead of burying it all over the place. I think I'm ready to proceeed when you are.
+
+---
+
+NOTE: please make sure we're not loosing all the wild overworld encounters
+NOTE: pllease make sure we're not loosing all the dungeon encounters
+
+I saw essentially both clusters basically hard coded into `tables.js` and `overworld.js` -- so you'll want to make sure those are at least roughly carried across as best as you can.
