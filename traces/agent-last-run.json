@@ -6,15 +6,728 @@
   "playerName": "Codex",
   "startDepth": 1,
   "actions": [
-    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.quickInteract", "payload": {} },
-    { "type": "rules.move", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } },
-    { "type": "rules.attackDirection", "payload": { "dx": 1, "dy": 0 } }
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.quickInteract",
+      "payload": {}
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "poison_blade"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.pickupItem",
+      "payload": {
+        "itemId": 50
+      }
+    },
+    {
+      "type": "rules.move",
+      "direction": "west"
+    },
+    {
+      "type": "rules.search"
+    },
+    {
+      "type": "rules.interact",
+      "payload": {
+        "targetId": 10
+      }
+    },
+    {
+      "type": "rules.shootRanged",
+      "payload": {}
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.pickupItem",
+      "payload": {
+        "itemId": 22
+      }
+    },
+    {
+      "type": "rules.pickupItem",
+      "payload": {
+        "itemId": 55
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.pickupItem",
+      "payload": {
+        "itemId": 14
+      }
+    },
+    {
+      "type": "rules.interact",
+      "payload": {
+        "targetId": 13
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.interact",
+      "payload": {
+        "targetId": 13
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.search",
+      "payload": {}
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": -1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.interact",
+      "payload": {
+        "targetId": 4
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.pickupItem",
+      "payload": {
+        "itemId": 11
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.interact",
+      "payload": {
+        "targetId": 5
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "poison_blade"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.drinkPotion",
+      "payload": {
+        "itemId": 42
+      }
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.castActiveSpell",
+      "payload": {
+        "spellId": "cheap_shot"
+      }
+    },
+    {
+      "type": "rules.attackDirection",
+      "payload": {
+        "dx": 0,
+        "dy": -1
+      }
+    },
+    {
+      "type": "rules.drinkPotion",
+      "payload": {
+        "itemId": 42
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 1,
+        "dy": 0
+      }
+    },
+    {
+      "type": "rules.move",
+      "payload": {
+        "dx": 0,
+        "dy": 1
+      }
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    },
+    {
+      "type": "rules.wait",
+      "payload": {}
+    }
   ]
 }
