@@ -1,0 +1,8 @@
+FAILURE:
+
+
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+
+overworld.js:1 Uncaught SyntaxError: The requested module '../define.js' does not provide an export named 'defineEncounter' (at overworld.js:1:10)
+
+^^ one error!
