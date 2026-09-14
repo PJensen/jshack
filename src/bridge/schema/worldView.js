@@ -61,6 +61,7 @@ import {
 	FACING_CONE_GRID_BIAS_DEG,
 } from "../../rules/utils/facing.js";
 import { readPlayerPerceptionState } from "../../rules/utils/perceptionState.js";
+import { statusStrength } from "../../rules/utils/statusFacade.js";
 import { chebyshevDistance, hasMindForEsp, isFixedDecorationEntity, isPerceptionMonster } from "../../rules/utils/perceptionChannels.js";
 import { PERCEPTION_TUNING } from "../../rules/environment/dungeon/perceptionTuning.js";
 import { BaseStats } from "../../rules/components/BaseStats.js";
@@ -454,6 +455,9 @@ function projectDisplayTags(world, id, rec) {
 			if (!rec.tags.includes(t)) rec.tags.push(t);
 		}
 	}
+	if (statusStrength(world, id, 'stasis') > 0 && !rec.tags.includes('stasis')) {
+		rec.tags.push('stasis');
+	}
 
 	/** @type {any} */ const ae = /** @type any */ (world.get(id, ActiveEffects));
 	// Stash on rec so projectProcStateTags can reuse without a second world.get
@@ -484,6 +488,7 @@ function projectDisplayTags(world, id, rec) {
 		if (!e || (Number(e.turnsLeft || 0) | 0) <= 0) continue;
 		if ((Number(e.onsetLeft || 0) | 0) > 0) continue;
 		const t = normalizeDisplayStatusType(canonicalStatusKey(e.key));
+		if (t === 'stasis') continue;
 		if (!t || !DISPLAY_STATUS_TAGS.has(t)) continue;
 		if (!rec.tags.includes(t)) rec.tags.push(t);
 	}

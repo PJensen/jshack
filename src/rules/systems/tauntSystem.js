@@ -220,6 +220,7 @@ export function tauntSteeringSystem(world) {
   refreshStoneTauntAuras(world);
 
   for (const [id, intent] of world.query(MoveIntent)) {
+    if (intent.cancelled === true) continue;
     const faction = world.get(id, Faction);
     if (String(faction?.key || "") !== "enemy") continue;
 

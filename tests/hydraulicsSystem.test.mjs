@@ -15,6 +15,8 @@ import { materializeSpawn } from "../src/rules/environment/dungeon/populate.js";
 import { clearAll as clearTileMap, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { INTERACT_PAYLOADS } from "../src/rules/content/interaction/interactPayloads.js";
 import { hydraulicsSystem } from "../src/rules/systems/hydraulicsSystem.js";
+import { knockbackSystem } from "../src/rules/systems/knockbackSystem.js";
+import { applyStatusEffect } from "../src/rules/utils/effects.js";
 
 Deno.test("materializeSpawn propagates hydraulics params into simple archetypes", () => {
   const world = new World({ seed: 7 });
@@ -155,4 +157,25 @@ Deno.test("hydraulicsSystem steam vent emits hazards and knockback in vent line"
   }
   assert(hazards.length >= 2, "expected vent to emit steam hazards downrange");
   assert(world.has(targetId, KnockbackPending), "target in vent line should be pushed");
+});
+
+Deno.test("knockbackSystem does not displace a stasis target", () => {
+  const world = new World({ seed: 13 });
+  clearTileMap();
+  const tiles = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
+  tiles.fill(TILE_FLOOR);
+  loadChunk(0, 0, tiles);
+
+  try {
+    const targetId = world.create();
+    world.add(targetId, Position, { x: 6, y: 4 });
+    world.add(targetId, Vitality, { hp: 10, maxHp: 10 });
+    applyStatusEffect(world, targetId, { key: "stasis", turnsLeft: 8 });
+    world.add(targetId, KnockbackPending, { dx: 1, dy: 0, force: 2 });
+
+    knockbackSystem(world);
+
+    assertEquals(world.get(targetId, Position), { x: 6, y: 4 });
+    assertEquals(world.has(targetId, KnockbackPending), false);
+  } finally { clearTileMap(); }
 });

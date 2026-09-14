@@ -169,8 +169,9 @@ export function createBubbleDialogController({ getPosition, playerEntity, canvas
     dom.body.textContent = String(detail?.text || "...");
     dom.choices.innerHTML = "";
     const armAt = performance.now() + INTERACTION_POPUP_ARM_DELAY_MS;
-    for (const choice of choices) {
+    for (const [choiceIndex, choice] of choices.entries()) {
       const btn = document.createElement("button");
+      const isDefaultChoice = choiceIndex === 0;
       btn.textContent = String(choice?.label || choice?.id || "Continue");
       Object.assign(btn.style, {
         minHeight: dialogPx(40),
@@ -184,6 +185,15 @@ export function createBubbleDialogController({ getPosition, playerEntity, canvas
         cursor: "pointer",
         touchAction: "manipulation",
       });
+      if (isDefaultChoice) {
+        Object.assign(btn.style, {
+          background: "rgba(255,235,177,0.98)",
+          outline: "2px solid rgba(186,145,63,0.72)",
+          outlineOffset: "1px",
+          boxShadow: "0 0 12px rgba(186,145,63,0.24)",
+          fontWeight: "700",
+        });
+      }
       btn.disabled = true;
       btn.style.opacity = "0.62";
       btn.style.cursor = "default";

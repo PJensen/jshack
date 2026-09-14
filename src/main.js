@@ -333,6 +333,7 @@ bootAdvance("Configured ECS systems");
 // ---- Content DSL: load all scripted content, then install into engine -------
 import './content/items/index.js';
 import './content/monsters/index.js';
+import './content/encounters/index.js';
 import './content/interactables/index.js';
 import { installContent } from './content/install.js';
 import { getUseAction } from './rules/content/useActions/useActionRegistry.js';

@@ -7,7 +7,6 @@ import { Duration } from "../components/Duration.js";
 import { Source } from "../components/Source.js";
 import { StatusEffectNode } from "../components/StatusEffectNode.js";
 import { TimedEffectNode } from "../components/TimedEffectNode.js";
-import { upsertTimedEffect } from "./effectSemantics.js";
 import { descendantsWith } from "./topology.js";
 
 function normalizeEffectKey(value) {
@@ -38,9 +37,6 @@ export function ensureActiveEffects(world, id) {
 /**
  * Create a topology-backed status effect node under `actorId`.
  *
- * ActiveEffects mirroring is kept on by default for compatibility while status
- * systems migrate. The topology node is the preferred runtime identity.
- *
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {number} actorId
  * @param {{
@@ -55,13 +51,15 @@ export function ensureActiveEffects(world, id) {
  *   sourceKey?:string,
  *   onsetLeft?:number,
  * }} effect
- * @param {{ mirrorLegacy?: boolean }} [opts]
  * @returns {number}
  */
-export function applyStatusEffect(world, actorId, effect, opts = {}) {
+export function applyStatusEffect(world, actorId, effect) {
   const id = Number(actorId || 0) | 0;
   const key = String(effect?.key || "").trim();
-  const turnsLeft = Number(effect?.turnsLeft ?? 0) | 0;
+  const requestedTurns = effect?.turnsLeft;
+  const turnsLeft = requestedTurns === Infinity
+    ? Infinity
+    : Number(requestedTurns ?? 0) | 0;
   if (!(id > 0)) throw new Error("applyStatusEffect: actorId must be a positive entity id");
   if (!key) throw new Error("applyStatusEffect: effect.key is required");
   if (!(turnsLeft >= 0)) throw new Error("applyStatusEffect: turnsLeft must be >= 0");
@@ -84,6 +82,10 @@ export function applyStatusEffect(world, actorId, effect, opts = {}) {
 
   const existingStatus = world.get(nodeId, StatusEffectNode);
   const existingDuration = world.get(nodeId, Duration);
+  // An explicitly permanent effect cannot be downgraded later. Finite stasis
+  // applications remain finite so callers can choose their intended duration.
+  const permanent = requestedTurns === Infinity
+    || existingDuration?.turnsLeft === Infinity;
   const nextStatus = {
     key,
     potency: Math.max(Number(existingStatus?.potency || 0), potency),
@@ -91,26 +93,30 @@ export function applyStatusEffect(world, actorId, effect, opts = {}) {
       ? Math.max(1, Number(existingStatus.stacks || 0) | 0) + stacks
       : stacks,
   };
+  if (existingStatus) world.set(nodeId, StatusEffectNode, nextStatus);
+  else world.add(nodeId, StatusEffectNode, nextStatus);
+
   const nextDuration = {
-    turnsLeft,
+    turnsLeft: permanent ? Infinity : turnsLeft,
     onsetLeft: Number(effect?.onsetLeft ?? 0) | 0,
-    maxTurns: Number(effect?.maxTurns ?? turnsLeft) | 0,
+    maxTurns: permanent ? Infinity : Number(effect?.maxTurns ?? turnsLeft) | 0,
     startedAtTurn: Number(effect?.startedAtTurn ?? 0) | 0,
   };
   if (existingDuration) {
-    nextDuration.turnsLeft = Math.max(Number(existingDuration.turnsLeft || 0) | 0, nextDuration.turnsLeft);
+    nextDuration.turnsLeft = existingDuration.turnsLeft === Infinity
+      ? Infinity
+      : Math.max(Number(existingDuration.turnsLeft || 0) | 0, nextDuration.turnsLeft);
     nextDuration.onsetLeft = Math.min(
       Math.max(0, Number(existingDuration.onsetLeft || 0) | 0),
       Math.max(0, nextDuration.onsetLeft),
     );
-    nextDuration.maxTurns = Math.max(Number(existingDuration.maxTurns || 0) | 0, nextDuration.maxTurns);
+    nextDuration.maxTurns = existingDuration.maxTurns === Infinity
+      ? Infinity
+      : Math.max(Number(existingDuration.maxTurns || 0) | 0, nextDuration.maxTurns);
     nextDuration.startedAtTurn = Number.isFinite(existingDuration.startedAtTurn)
       ? (Number(existingDuration.startedAtTurn) | 0)
       : nextDuration.startedAtTurn;
   }
-
-  if (existingStatus) world.set(nodeId, StatusEffectNode, nextStatus);
-  else world.add(nodeId, StatusEffectNode, nextStatus);
 
   if (world.has(nodeId, TimedEffectNode)) world.set(nodeId, TimedEffectNode, { key });
   else world.add(nodeId, TimedEffectNode, { key });
@@ -124,13 +130,6 @@ export function applyStatusEffect(world, actorId, effect, opts = {}) {
       id: Number(effect?.sourceId || 0) | 0,
       key: String(effect?.sourceKey || ""),
     });
-  }
-
-  if (opts.mirrorLegacy !== false) {
-    const ae = ensureActiveEffects(world, id);
-    if (ae) {
-      upsertTimedEffect(ae.effects, { ...effect, key, turnsLeft, potency, stacks });
-    }
   }
 
   return nodeId;

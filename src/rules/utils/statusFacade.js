@@ -18,13 +18,17 @@ export const STATUS_ALIASES = Object.freeze(new Map([
   ["sleeping", "sleep"],
 ]));
 
+// Stasis is topology-only. Do not let an old ActiveEffects or Status write
+// make it appear active again after its canonical migration.
+const TOPOLOGY_ONLY_KEYS = new Set(["stasis"]);
+
 export function canonicalStatusType(value) {
   const key = normalizeKey(value);
   return STATUS_ALIASES.get(key) || key;
 }
 
 function hasPositiveDuration(duration) {
-  return (Number(duration || 0) | 0) > 0;
+  return duration === Infinity || (Number.isFinite(Number(duration)) && Number(duration) > 0);
 }
 
 function normalizeStrength(potency, stacks) {
@@ -77,12 +81,13 @@ function readTopologyEffect(world, nodeId, effectNode, fallbackKey = "") {
   if (!key) return null;
 
   const duration = world.get(nodeId, Duration);
+  if (!duration) return null;
   if ((Number(duration?.onsetLeft || 0) | 0) > 0) return null;
   if (!hasPositiveDuration(duration?.turnsLeft)) return null;
 
   return {
     key,
-    turnsLeft: Number(duration.turnsLeft || 0) | 0,
+    turnsLeft: duration.turnsLeft === Infinity ? Infinity : Number(duration.turnsLeft || 0) | 0,
     onsetLeft: Number(duration.onsetLeft || 0) | 0,
     potency: effectNode?.potency,
     stacks: effectNode?.stacks,
@@ -114,7 +119,7 @@ function collectTopologyEffects(world, entityId) {
  * Build a topology-aware status/effect snapshot for one entity.
  *
  * - Effects are read from runtime topology nodes first.
- * - Legacy ActiveEffects entries are included for keys with no topology row.
+ * - Legacy ActiveEffects entries are included for migrated keys with no topology row.
  * - Statuses are projected from active effects via EFFECT_DEFS.
  * - If a status has no projected active-effect value, falls back to Status component.
  *
@@ -136,7 +141,10 @@ export function snapshotStatusState(world, entityId) {
   const ae = world.get(id, ActiveEffects);
   const legacyEffects = Array.isArray(ae?.effects) ? ae.effects : [];
   const effects = topologyEffects.concat(
-    legacyEffects.filter((effect) => !topologyKeys.has(normalizeKey(effect?.key)))
+    legacyEffects.filter((effect) => {
+      const key = normalizeKey(effect?.key);
+      return !topologyKeys.has(key) && !TOPOLOGY_ONLY_KEYS.has(key);
+    })
   );
   for (let i = 0; i < effects.length; i++) {
     const e = effects[i];
@@ -164,6 +172,7 @@ export function snapshotStatusState(world, entityId) {
       const type = canonicalStatusType(s?.type);
       if (!type) continue;
       if (!hasPositiveDuration(s?.duration)) continue;
+      if (TOPOLOGY_ONLY_KEYS.has(type)) continue;
       // ActiveEffects is canonical for projected statuses.
       if (projectedStatusStrengths.has(type)) continue;
       const strength = normalizeStrength(s?.potency, s?.stacks);

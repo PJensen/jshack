@@ -303,7 +303,12 @@ function stopDrainLifeChannel(world, casterId, effect, reason = 'ended') {
  * - Derives Status from currently active effects (e.g., poisoned, burning)
  * - Expires effects when their turnsLeft reach 0
  */
-export function effectSystem(world) {
+export function effectSystem(world, dt = 1) {
+    // A zero-delta tick is used by UI/debug wiring to flush projections. It
+    // must not advance turn-based effects; otherwise repeated refresh ticks
+    // can consume statuses without advancing the simulation.
+    if (!(Number(dt) > 0)) return;
+
     /** @type {Array<{sourceId:number, effect:any}>} */
     const _pendingSwarmJumps = [];
 
@@ -455,6 +460,7 @@ function tickTopologyStatusDurations(world) {
         if (!duration) continue;
 
         const onsetLeft = Number(duration.onsetLeft || 0) | 0;
+        if (duration.turnsLeft === Infinity) continue;
         const turnsLeft = Number(duration.turnsLeft || 0) | 0;
         if (onsetLeft > 0) {
             world.set(nodeId, Duration, { ...duration, onsetLeft: Math.max(0, onsetLeft - 1) });

@@ -412,6 +412,9 @@ export function aiChaseSystem(world) {
     const aggro = world.get(id, AggroState);
     if (!aggro) return; // no AggroState = no AI behaviour
     if (sleepPreventsPerception(world, id)) return;
+    // Stasis freezes the creature before any perception hook can mutate the
+    // world directly (teleports, breath attacks, channels, or casts).
+    if (statusStrength(world, id, "stasis") > 0) return;
 
     // ── Look up monster def and brain-backed awareness ──────────────
     const brain = world.get(id, Brain);

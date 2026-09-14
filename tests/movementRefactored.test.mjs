@@ -17,10 +17,15 @@ import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { Burned } from "../src/rules/components/Burned.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { DungeonState } from "../src/rules/components/DungeonState.js";
-import { movementSystem, installSpiderWebListener } from "../src/rules/systems/movementSystem.js";
+import {
+  movementSystem,
+  installSpiderWebListener,
+  stasisMovementFirewallExtension,
+} from "../src/rules/systems/movementSystem.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { installBumpInteractListener } from "../src/rules/systems/interactionSystem.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
+import { applyStatusEffect } from "../src/rules/utils/effects.js";
 import { setFacingTurnCostEnabled } from "../src/rules/utils/facing.js";
 import { loadChunk, clearAll, getTile, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR, TILE_WALL, TILE_TREE, TILE_GRASS } from "../src/rules/environment/dungeon/constants.js";
@@ -47,6 +52,47 @@ Deno.test("movementSystem: basic move updates position", () => {
     assertEquals(pos.x, 6);
     assertEquals(pos.y, 5);
     assertEquals(world.has(id, MoveIntent), false, "intent consumed");
+  } finally { clearAll(); }
+});
+
+Deno.test("movementSystem: stasis blocks a queued move without validation", () => {
+  loadFloorChunk();
+  try {
+    const world = new World({ seed: 42 });
+    const id = world.create();
+    world.add(id, Position, { x: 5, y: 5 });
+    world.add(id, Vitality, { hp: 10, maxHp: 10 });
+    applyStatusEffect(world, id, { key: "stasis", turnsLeft: 8 });
+    world.add(id, MoveIntent, { dx: 1, dy: 0 });
+    const blocked = [];
+    world.on("intent:blocked", (event) => blocked.push(event));
+
+    movementSystem(world);
+
+    assertEquals(world.get(id, Position), { x: 5, y: 5 });
+    assertEquals(world.has(id, MoveIntent), false, "stasis should consume the blocked intent");
+    assertEquals(blocked, [{ actor: id, reason: "stasis" }]);
+  } finally { clearAll(); }
+});
+
+Deno.test("stasis firewall restores direct moved displacement", () => {
+  loadFloorChunk();
+  try {
+    const world = new World({ seed: 42 });
+    world.install(stasisMovementFirewallExtension);
+    const id = world.create();
+    world.add(id, Position, { x: 5, y: 5 });
+    world.add(id, Vitality, { hp: 10, maxHp: 10 });
+    applyStatusEffect(world, id, { key: "stasis", turnsLeft: 8 });
+
+    world.set(id, Position, { x: 6, y: 5 });
+    world.emit("moved", {
+      id,
+      from: { x: 5, y: 5 },
+      to: { x: 6, y: 5 },
+    });
+
+    assertEquals(world.get(id, Position), { x: 5, y: 5 });
   } finally { clearAll(); }
 });
 

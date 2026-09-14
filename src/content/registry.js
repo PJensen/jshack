@@ -10,6 +10,9 @@ const _items = new Map();
 /** @type {Map<string, object>} id → compiled MonsterDef-compatible object */
 const _monsters = new Map();
 
+/** @type {Map<string, object>} id → compiled encounter definition */
+const _encounters = new Map();
+
 /** @type {Map<string, object>} action → compiled interaction definition */
 const _interactables = new Map();
 
@@ -39,6 +42,18 @@ export function registerMonster(id, compiledDef) {
 
 export function getContentMonster(id) { return _monsters.get(id) || null; }
 export function allContentMonsters() { return _monsters; }
+
+// ── Encounters ────────────────────────────────────────────────────
+
+export function registerEncounter(id, compiledDef) {
+  if (_encounters.has(id)) {
+    throw new Error(`[content] Duplicate encounter definition: "${id}"`);
+  }
+  _encounters.set(id, compiledDef);
+}
+
+export function getContentEncounter(id) { return _encounters.get(id) || null; }
+export function allContentEncounters() { return _encounters; }
 
 // ── Interactables ───────────────────────────────────────────────────
 
@@ -118,6 +133,7 @@ export function allContentAbilities() { return _abilities; }
 export function clearContentRegistry() {
   _items.clear();
   _monsters.clear();
+  _encounters.clear();
   _interactables.clear();
   _palettes.clear();
   _presentations.clear();

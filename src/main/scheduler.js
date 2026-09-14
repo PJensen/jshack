@@ -59,7 +59,10 @@ import { petBehaviorSystem } from "../rules/systems/petBehaviorSystem.js";
 import { summonedBehaviorSystem } from "../rules/systems/summonedBehaviorSystem.js";
 import { shopkeeperSystem } from "../rules/systems/shopkeeperSystem.js";
 import { shopAmbientSoundSystem } from "../rules/systems/shopAmbientSoundSystem.js";
-import { movementSystem, installMoveAutoPickupListener } from "../rules/systems/movementSystem.js";
+import {
+  movementSystem,
+  installMoveAutoPickupListener,
+} from "../rules/systems/movementSystem.js";
 import { intentValidationSystem } from "../rules/systems/intentValidationSystem.js";
 import { combatSystem, installBumpAttackListener } from "../rules/systems/combatSystem.js";
 import { installCombatInteractions } from "../rules/data/combatInteractions.js";
@@ -127,6 +130,7 @@ import { installEnchantingOpenRequestListener } from "../rules/content/enchantin
 import { tombstoneSystem } from "../rules/systems/tombstoneSystem.js";
 import { treasureGuardianListenerExtension, treasureGuardianSystem } from "../rules/systems/treasureGuardianSystem.js";
 import { experimentalAIExtension } from "./resources/AI.js";
+import { encounterListenerExtension, encounterSystem } from "../rules/systems/encounterSystem.js";
 
 /**
  * @param {World} world
@@ -135,6 +139,7 @@ export function configureWorld(world) {
   clearSystems();
   installScriptsAPI(world);
   world.install(experimentalAIExtension);
+  world.install(encounterListenerExtension);
   installVirtuals(world);
   defineInventoryVirtuals(world);
   defineDerivedStatVirtuals(world);
@@ -197,6 +202,7 @@ export function configureWorld(world) {
 
   // Jump scare triggers on first proximity to dangerous creatures (dragons, lich, etc.)
   registerSystem(jumpScareSystem, 'ai');
+  registerSystem(encounterSystem, 'ai');
   // Flying AI claims the action with FlyIntent before scurry/chase.
   registerSystem(aiFlyingSystem, 'ai');
   // Scurry before chase: dumb idle creatures set a random MoveIntent which

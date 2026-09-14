@@ -78,7 +78,7 @@ Deno.test("dealDamage: invulnerable target blocks damage", () => {
 Deno.test("dealDamage: topology-only invulnerable target blocks damage", () => {
   const world = new World({ seed: 1 });
   const id = makeTarget(world);
-  applyStatusEffect(world, id, { key: 'invulnerable', turnsLeft: 5 }, { mirrorLegacy: false });
+  applyStatusEffect(world, id, { key: 'invulnerable', turnsLeft: 5 });
   const result = dealDamage(world, { target: id, amount: 10 });
   assertEquals(result.applied, false);
   assertEquals(result.reason, 'invulnerable');

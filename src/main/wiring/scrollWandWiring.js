@@ -4,7 +4,6 @@
 // summoning, decay) are also wired here since they share the same pattern.
 
 import { scanVisibleEnemies } from "../targeting/targetingController.js";
-import { ActiveEffects } from "../../rules/components/ActiveEffects.js";
 import { AggroState, AGGRO_LEVELS, SEARCH_TURNS_HUNTING_GRACE } from "../../rules/components/AggroState.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
 import { Faction } from "../../rules/components/Faction.js";
@@ -28,9 +27,24 @@ import { getEffectiveVisionRange, blind } from "../../rules/utils/blind.js";
 import { listApplyTargetsForTool } from "../../rules/content/items/applyPayloads.js";
 import { getPolymorphControl, recordPolymorphAttempt, resolvePolymorphAttempt } from "../../rules/utils/polymorphPolicy.js";
 import { setInputLock } from "../../display/input/inputLock.js";
+import { defineExtension } from "../../lib/ecs-js/index.js";
+import { applyWandStasis } from "../../rules/utils/stasis.js";
 
-const INSTALLED_KEY = Symbol.for('jshack:scrollWandWiring:installed');
 const GENOCIDE_CHOOSER_LOCK = 'scroll:genocide:monsterChooser';
+const SCROLL_WAND_WIRING_EXTENSION_KEY = 'jshack:main:scrollWandWiring';
+
+export function installScrollWandWiring(deps) {
+  const world = deps?.world;
+  if (!world || typeof world.install !== 'function') {
+    throw new Error('installScrollWandWiring requires a world');
+  }
+  const extension = defineExtension(
+    SCROLL_WAND_WIRING_EXTENSION_KEY,
+    (installedWorld) => installScrollWandWiringImpl({ ...deps, world: installedWorld }),
+    { key: SCROLL_WAND_WIRING_EXTENSION_KEY },
+  );
+  world.install(extension);
+}
 
 /**
  * @param {object} deps
@@ -38,10 +52,7 @@ const GENOCIDE_CHOOSER_LOCK = 'scroll:genocide:monsterChooser';
  * @param {object} deps.targeting  TargetingController instance
  * @param {() => ({id:number, pos:{x:number,y:number}}|null)} deps.playerEntity
  */
-export function installScrollWandWiring({ world, targeting, playerEntity }) {
-  if (world[INSTALLED_KEY]) return;
-  world[INSTALLED_KEY] = true;
-
+function installScrollWandWiringImpl({ world, targeting, playerEntity }) {
   const pendingMonsterChoices = new Map();
   let nextMonsterChoiceRequestId = 1;
 
@@ -305,13 +316,7 @@ export function installScrollWandWiring({ world, targeting, playerEntity }) {
       range,
       enemies,
       onConfirm: (enemyId) => {
-        const ae = world.get(enemyId, ActiveEffects);
-        const stasisEffect = { key: 'stasis', turnsLeft: 8, stacks: 1, potency: 1 };
-        if (ae) {
-          ae.effects.push(stasisEffect);
-        } else {
-          try { world.add(enemyId, ActiveEffects, { effects: [stasisEffect] }); } catch {}
-        }
+        if (!applyWandStasis(world, enemyId)) return;
         const ni = world.get(enemyId, NamedIdentity);
         const name = ni?.name || 'creature';
         world.emit?.('message', { text: `The ${name} is frozen outside of time!`, type: 'system' });

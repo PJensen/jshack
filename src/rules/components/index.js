@@ -143,3 +143,4 @@ export { TreasureGuardian } from './TreasureGuardian.js';
 export { GuardedTreasure } from './GuardedTreasure.js';
 export { Landvaettir, LANDVAETTIR_DISPOSITIONS } from './Landvaettir.js';
 export { Hamingja } from './Hamingja.js';
+export { EncounterState, ENCOUNTER_STATES } from './EncounterState.js';

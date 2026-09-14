@@ -3,7 +3,7 @@
 // Each call compiles a single definition object into engine-compatible
 // registrations (catalog entry, palette entry, monster def, hooks).
 
-import { registerItem, registerMonster, registerInteractable, registerPalette, registerPresentation, registerAbility } from './registry.js';
+import { registerItem, registerMonster, registerEncounter, registerInteractable, registerPalette, registerPresentation, registerAbility } from './registry.js';
 import { registerMonsterDef } from '../rules/data/monsters.js';
 import { compileHook, ScriptCtx } from './scriptCtx.js';
 import { createWorldFacade } from './worldFacade.js';
@@ -60,6 +60,45 @@ export function defineInteractable(action, def) {
   });
   registerInteractable(action, compiled);
   return action;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  defineEncounter()
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Define how one or more creatures enter the world.
+ *
+ * Encounter definitions intentionally live beside, rather than inside,
+ * monster definitions. A creature can have several manifestations: a normal
+ * population entry, a guarded hoard, or a heroic singleton.
+ *
+ * @param {string} id
+ * @param {object} def
+ * @returns {string}
+ */
+export function defineEncounter(id, def) {
+  if (!id || typeof id !== 'string') throw new Error('[defineEncounter] id is required');
+  if (!def || typeof def !== 'object') throw new Error(`[defineEncounter "${id}"] definition is required`);
+  const kind = String(def.kind || '');
+  if (!kind) throw new Error(`[defineEncounter "${id}"] kind is required`);
+  if (kind !== 'overworld_population' && kind !== 'dungeon_group' && kind !== 'singleton') {
+    throw new Error(`[defineEncounter "${id}"] unknown kind "${kind}"`);
+  }
+  if (kind !== 'dungeon_group' && !def.creatureId) {
+    throw new Error(`[defineEncounter "${id}"] creatureId is required for ${kind}`);
+  }
+  const compiled = {
+    ...def,
+    id,
+    kind,
+    creatureId: def.creatureId ? String(def.creatureId) : '',
+    followers: Array.isArray(def.followers) ? def.followers.map((f) => ({ ...f })) : undefined,
+    activation: def.activation && typeof def.activation === 'object' ? { ...def.activation } : null,
+    placement: def.placement && typeof def.placement === 'object' ? { ...def.placement } : null,
+  };
+  registerEncounter(id, Object.freeze(compiled));
+  return id;
 }
 
 /**

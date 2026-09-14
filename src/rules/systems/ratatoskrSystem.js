@@ -15,6 +15,10 @@ import { CARDINAL_DIRS } from "../utils/directions.js";
 import { isEntityOnCurrentFloor } from "../utils/floorEntities.js";
 import { playerEntity } from "../utils/queries.js";
 import { currentDepth } from "../utils/worldAccess.js";
+import { getMonster } from "../data/monsters.js";
+import { toMonsterSpawnParams } from "../utils/monsterSpawnParams.js";
+import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
+import { findActiveEncounter } from "../utils/encounters.js";
 
 const APPEAR_MIN_TURNS = 45;
 const APPEAR_SPREAD_TURNS = 90;
@@ -137,6 +141,23 @@ function ratatoskrEntities(world) {
   return out;
 }
 
+function ensureActivatedRatatoskr(world, encounter) {
+  const state = encounter?.state;
+  const existingId = Number(state?.activeEntityId || 0) | 0;
+  if (existingId > 0 && world.isAlive(existingId)) return existingId;
+
+  const def = getMonster("ratatoskr");
+  if (!def) return 0;
+  const id = spawnMonsterEntity(world, {
+    ...toMonsterSpawnParams(def, 0),
+    x: 0,
+    y: 0,
+  });
+  if (world.has(id, Position)) world.remove(id, Position);
+  state.activeEntityId = id;
+  return id;
+}
+
 function emitRatatoskrTeleport(world, id, from, to) {
   world.emit(new Teleported({ id, from, to, source: "ratatoskr" }));
 }
@@ -230,12 +251,25 @@ export function ratatoskrSystem(world) {
   const player = playerEntity(world);
   if (!player) return;
 
+  const activatedEncounter = findActiveEncounter(world, "norse:ratatoskr");
+  const existing = ratatoskrEntities(world);
+  if (activatedEncounter) {
+    ensureActivatedRatatoskr(world, activatedEncounter);
+  } else if (existing.length === 0) {
+    return;
+  }
+
   for (const rec of ratatoskrEntities(world)) {
     const id = rec.id;
-    if (!isEntityOnCurrentFloor(world, id, { fallbackWhenNoDungeonState: true })) continue;
+    const stateBeforeFloor = ensureRatatoskrState(world, id);
+    if (rec.pos && !isEntityOnCurrentFloor(world, id, { fallbackWhenNoDungeonState: true })) continue;
     ensureRatatoskrAffordances(world, id);
-    const state = ensureRatatoskrState(world, id);
+    const state = stateBeforeFloor;
     if (!state) continue;
+    if (activatedEncounter && state.state === RATATOSKR_STATES.dormant && state.trigger === "" && String(activatedEncounter.state.activationSource || "").startsWith("quest:")) {
+      state.trigger = "quest:completed";
+      state.nextAppearTurn = Math.min(Number(state.nextAppearTurn || 0) | 0, (world.step | 0) + 2);
+    }
     const phase = String(state.state || RATATOSKR_STATES.dormant);
 
     if (phase === RATATOSKR_STATES.dormant) {

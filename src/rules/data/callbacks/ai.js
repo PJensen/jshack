@@ -23,6 +23,7 @@ import { worldChance } from "../../utils/rng.js";
 import { chebyshev, manhattan } from "../../utils/distance.js";
 import { spellCost, spellCostResource } from "../../data/spells.js";
 import { isAiOnCooldown, startAiCooldown } from "../../utils/aiCooldowns.js";
+import { statusStrength } from "../../utils/statusFacade.js";
 
 const SELF_THROW_COOLDOWN_KEY = Symbol.for("jshack:ai:selfThrowNearTargetOnSeen:cooldown");
 const FIRE_BREATH_COOLDOWN_KEY = Symbol.for("jshack:ai:fireBreathLineOnLOS:cooldown");
@@ -176,7 +177,10 @@ export class SeenCallbackContext {
   get cancelled() { return this._cancelled; }
   get cancelReason() { return this._cancelReason; }
   get handled() { return this._handled; }
-  get canActThisTurn() { return this._frame.canActThisTurn !== false; }
+  get canActThisTurn() {
+    return this._frame.canActThisTurn !== false
+      && statusStrength(this.world, this.actor, "stasis") <= 0;
+  }
   get hasQueuedMove() { return !!this._frame.hasQueuedMove; }
 
   /**
@@ -228,6 +232,7 @@ export function selfThrowNearTargetOnSeen(opts = {}) {
 
   return (ctx) => {
     if (!ctx || ctx.cancelled) return;
+    if (!ctx.canActThisTurn || ctx.hasQueuedMove) return;
     if (!worldChance(ctx.world, chance)) return;
     const from = ctx.actorPos;
     const target = ctx.targetPos;
@@ -471,6 +476,7 @@ export function gazeOnLOS(exposureTurns = 8) {
 
   return (ctx) => {
     if (!ctx || ctx.cancelled) return;
+    if (!ctx.canActThisTurn) return;
     const world = ctx.world;
     const actor = ctx.actor | 0;
     const target = ctx.target | 0;

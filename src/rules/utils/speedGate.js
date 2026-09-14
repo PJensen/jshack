@@ -12,6 +12,11 @@ import { statusStrength } from "./statusFacade.js";
  * @returns {boolean}
  */
 export function canActThisTurn(world, id) {
+  // Stasis is an absolute action lock, not a cadence modifier. Keep this
+  // gate authoritative for every AI producer so direct AI callbacks (for
+  // example LOS abilities) cannot act before intent validation runs.
+  if (statusStrength(world, id, "stasis") > 0) return false;
+
   const spd = world.get(id, Speed);
   let actEvery = (spd && spd.actEvery > 1) ? spd.actEvery : 1;
   const frostStacks = Math.min(3, statusStrength(world, id, "frozen"));

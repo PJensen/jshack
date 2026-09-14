@@ -34,8 +34,32 @@ import { isFacingTurnCostEnabled, normalizeFacingVector } from "../utils/facing.
 import { markMovedThisTurn } from "../utils/posture.js";
 import { ALL_DIRS } from "../utils/directions.js";
 import { xyKey } from "../utils/gridKey.js";
+import { defineExtension } from "../../lib/ecs-js/index.js";
 
 const NOCLIP_SYM = Symbol.for("jshack:debug:noclip");
+
+/**
+ * Final movement firewall for displacement paths that do not consume a
+ * MoveIntent (scripted movement, pushes, swaps, and similar direct writes).
+ *
+ * The normal movement resolver already rejects stasis, but the shared
+ * `moved` boundary is the only place every movement-producing path reports
+ * the position change. Restore the source position before downstream moved
+ * listeners can observe a frozen actor at the destination.
+ */
+export const stasisMovementFirewallExtension = defineExtension(
+  "jshack:rules:stasis-movement-firewall",
+  (world) => {
+    world.on("moved", ({ id, from, to }) => {
+      if (statusStrength(world, id, "stasis") <= 0) return;
+      const current = world.get(id, Position);
+      if (!current || !from || !to) return;
+      if ((current.x | 0) !== (to.x | 0) || (current.y | 0) !== (to.y | 0)) return;
+      world.set(id, Position, { x: from.x | 0, y: from.y | 0 });
+      world.emit("intent:blocked", { actor: id, reason: "stasis" });
+    });
+  },
+);
 
 /** Tracks per-entity move-attempt counter for the slowed cadence. */
 const slowMoveTicks = new Map();
@@ -95,7 +119,11 @@ const AUTO_PICKUP_INSTALLED = Symbol.for("jshack:moveAutoPickup:installed");
  * @param {import('../../lib/ecs-js/index.js').World} world
  */
 export function installMoveAutoPickupListener(world) {
-  if (!world || world[AUTO_PICKUP_INSTALLED]) return;
+  if (!world) return;
+  // Keep the movement firewall behind this pre-existing installer so a stale
+  // scheduler module cannot strand boot on a newly-added named export.
+  world.install(stasisMovementFirewallExtension);
+  if (world[AUTO_PICKUP_INSTALLED]) return;
   world[AUTO_PICKUP_INSTALLED] = true;
 
   world.on("moved", ({ id: actor, to }) => {
@@ -138,6 +166,7 @@ export function movementSystem(world) {
     try {
       const pos = world.get(actor, Position);
       if (!pos) { world.remove(actor, MoveIntent); continue; }
+      if (intent.cancelled === true) { world.remove(actor, MoveIntent); continue; }
 
       // Dead entities must not move — prevents a spurious "moved" event firing
       // after the entity dies mid-tick (e.g. grid bug killed while it still has
@@ -149,7 +178,20 @@ export function movementSystem(world) {
       const vit = world.get(actor, Vitality);
       if (vit && (vit.hp | 0) <= 0) { world.remove(actor, MoveIntent); continue; }
       if (sleepPreventsMovement(world, actor)) { world.remove(actor, MoveIntent); continue; }
-      if (statusStrength(world, actor, "stunned") > 0 || statusStrength(world, actor, "rooted") > 0) { world.remove(actor, MoveIntent); continue; }
+      if (statusStrength(world, actor, "stasis") > 0) {
+        world.set(actor, MoveIntent, {
+          ...intent,
+          cancelled: true,
+          cancelReason: "stasis",
+        });
+        world.emit?.("intent:blocked", { actor, reason: "stasis" });
+        world.remove(actor, MoveIntent);
+        continue;
+      }
+      if (statusStrength(world, actor, "stunned") > 0 || statusStrength(world, actor, "rooted") > 0) {
+        world.remove(actor, MoveIntent);
+        continue;
+      }
 
       const intendedDx = intent.dx | 0;
       const intendedDy = intent.dy | 0;

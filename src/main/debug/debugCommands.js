@@ -19,6 +19,7 @@ import { Collider } from "../../rules/components/Collider.js";
 import { Interactable } from "../../rules/components/Interactable.js";
 import { Material } from "../../rules/components/Material.js";
 import { AggroState } from "../../rules/components/AggroState.js";
+import { applyStatusEffect } from "../../rules/utils/effects.js";
 
 // All player-castable spells (from SPELL_DEFS) granted instantly in ?audio mode.
 const AUDIO_SPELLS = [
@@ -417,14 +418,13 @@ export function applyDebugCommands({ world, runtimeConfig }) {
           const aggro = world.get(mid, AggroState);
           if (aggro) world.mutate(mid, AggroState, r => { r.alertLevel = "unaware"; });
 
-          // Apply permanent stasis — same pattern as wand_stasis in scrollWandWiring.js.
-          const stasis = { key: "stasis", turnsLeft: 999999, potency: 1, stacks: 1 };
-          const ae = world.get(mid, ActiveEffects);
-          if (ae) {
-            ae.effects.push(stasis);
-          } else {
-            try { world.add(mid, ActiveEffects, { effects: [stasis] }); } catch {}
-          }
+          // Apply permanent stasis through the topology-only status path.
+          applyStatusEffect(world, mid, {
+            key: "stasis",
+            turnsLeft: Infinity,
+            potency: 1,
+            stacks: 1,
+          });
         }
       } catch (err) {
         console.warn(`[?audio] Failed to spawn monster "${AUDIO_MONSTERS[i]}":`, err);

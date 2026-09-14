@@ -9,6 +9,7 @@ import { WaitIntent } from "../src/rules/components/Intents/WaitIntent.js";
 import { DrinkIntent } from "../src/rules/components/Intents/DrinkIntent.js";
 import { CastSpellIntent } from "../src/rules/components/Intents/CastSpellIntent.js";
 import { intentValidationSystem } from "../src/rules/systems/intentValidationSystem.js";
+import { applyStatusEffect } from "../src/rules/utils/effects.js";
 
 // ── dead actors ─────────────────────────────────────────────────────
 
@@ -74,6 +75,19 @@ Deno.test("intentValidation: emits intent:blocked for stunned actors", () => {
   assert(blockedEvent, "should emit intent:blocked");
   assertEquals(blockedEvent.actor, id);
   assertEquals(blockedEvent.reason, "stunned");
+});
+
+Deno.test("intentValidation: marks stasis movement as cancelled with a reason", () => {
+  const world = new World({ seed: 42 });
+  const id = world.create();
+  world.add(id, Vitality, { maxHp: 10, hp: 10 });
+  applyStatusEffect(world, id, { key: "stasis", turnsLeft: 8 });
+  world.add(id, MoveIntent, { dx: 1, dy: 0 });
+
+  intentValidationSystem(world);
+
+  assertEquals(world.get(id, MoveIntent)?.cancelled, true);
+  assertEquals(world.get(id, MoveIntent)?.cancelReason, "stasis");
 });
 
 // ── multiple actors ─────────────────────────────────────────────────

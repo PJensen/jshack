@@ -61,7 +61,7 @@ export function resolveCharges(world, ownerId, opts = {}) {
  * @param {number} ownerId
  * @param {number} current
  * @param {number} [max]
- * @param {{ filter?: (nodeId:number, charges:any) => boolean, mirrorLegacy?: boolean }} [opts]
+ * @param {{ filter?: (nodeId:number, charges:any) => boolean }} [opts]
  * @returns {{ entityId:number, current:number, max:number, source:"topology"|"legacy"|"none" }}
  */
 export function setCharges(world, ownerId, current, max = null, opts = {}) {
@@ -74,12 +74,10 @@ export function setCharges(world, ownerId, current, max = null, opts = {}) {
 
   if (before.source === "topology") {
     world.set(before.entityId, Charges, { current: nextCurrent, max: nextMax });
-    if (opts.mirrorLegacy !== false) {
-      const info = world.get(owner, ItemInfo);
-      if (info) {
-        info.charges = nextCurrent;
-        info.maxCharges = nextMax;
-      }
+    const info = world.get(owner, ItemInfo);
+    if (info) {
+      info.charges = nextCurrent;
+      info.maxCharges = nextMax;
     }
     return { entityId: before.entityId, current: nextCurrent, max: nextMax, source: "topology" };
   }

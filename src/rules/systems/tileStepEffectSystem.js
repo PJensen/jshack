@@ -18,6 +18,7 @@ import { dealDamage } from "../utils/dealDamage.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { ensureActiveEffects } from "../utils/effects.js";
 import { getTileQuerySnapshot } from "../utils/tileQueryCache.js";
+import { statusStrength } from "../utils/statusFacade.js";
 
 const INSTALLED = Symbol.for("jshack:tileStepEffect:installed");
 const MAX_SLIDE = 50;
@@ -59,6 +60,7 @@ function _handleStep(world, id, from, to) {
   // Only living entities are affected
   const vit = world.get(id, Vitality);
   if (!vit || (vit.hp | 0) <= 0) return;
+  if (statusStrength(world, id, "stasis") > 0) return;
   if (world.has(id, Flying)) return;
 
   switch (effect.type) {

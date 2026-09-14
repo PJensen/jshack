@@ -42,8 +42,9 @@ export function renderDialog(panel, data = {}) {
   const armAt = performance.now() + INTERACTION_POPUP_ARM_DELAY_MS;
 
   const dialogChoices = choices.length > 0 ? choices : [{ id: "close", label: "Goodbye." }];
-  for (const choice of dialogChoices) {
+  for (const [choiceIndex, choice] of dialogChoices.entries()) {
     const btn = document.createElement("button");
+    const isDefaultChoice = choiceIndex === 0;
     btn.textContent = String(choice?.label || choice?.id || "Continue");
     Object.assign(btn.style, {
       minHeight: "48px",
@@ -58,6 +59,15 @@ export function renderDialog(panel, data = {}) {
       cursor: "pointer",
       touchAction: "manipulation",
     });
+    if (isDefaultChoice) {
+      Object.assign(btn.style, {
+        background: "rgba(43,60,78,0.96)",
+        outline: "2px solid rgba(140,164,188,0.85)",
+        outlineOffset: "1px",
+        boxShadow: "0 0 12px rgba(140,164,188,0.22)",
+        fontWeight: "700",
+      });
+    }
     btn.disabled = true;
     btn.style.opacity = "0.62";
     btn.style.cursor = "default";

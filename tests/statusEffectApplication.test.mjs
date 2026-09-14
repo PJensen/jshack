@@ -1,4 +1,4 @@
-import { assert, assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "jsr:@std/assert";
 import { getParent } from "../src/lib/ecs-js/hierarchy.js";
 import { World } from "../src/lib/ecs-js/index.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
@@ -14,7 +14,7 @@ import {
   statusStrength,
 } from "../src/rules/utils/statusFacade.js";
 
-Deno.test("applyStatusEffect creates topology node and legacy mirror", () => {
+Deno.test("applyStatusEffect creates a topology-only status node", () => {
   const world = new World({ seed: 6201 });
   const actor = world.create();
   const source = world.create();
@@ -50,14 +50,12 @@ Deno.test("applyStatusEffect creates topology node and legacy mirror", () => {
     key: "ale",
   });
 
-  const legacy = world.get(actor, ActiveEffects);
-  assert(legacy, "legacy ActiveEffects mirror should exist");
-  assertEquals(legacy.effects.length, 1);
+  assertEquals(world.get(actor, ActiveEffects), null);
   assertEquals(effectStrength(world, actor, "hangover"), 6);
   assertEquals(statusStrength(world, actor, "confused"), 6);
 });
 
-Deno.test("applyStatusEffect can create topology without legacy mirror", () => {
+Deno.test("applyStatusEffect never creates a legacy ActiveEffects component", () => {
   const world = new World({ seed: 6202 });
   const actor = world.create();
 
@@ -66,7 +64,7 @@ Deno.test("applyStatusEffect can create topology without legacy mirror", () => {
     turnsLeft: 5,
     potency: 2,
     stacks: 1,
-  }, { mirrorLegacy: false });
+  });
 
   assertEquals(world.get(actor, ActiveEffects), null);
   assertEquals(effectStrength(world, actor, "poison"), 2);
@@ -83,7 +81,7 @@ Deno.test("applyStatusEffect topology honors onset before projecting status", ()
     onsetLeft: 2,
     potency: 2,
     stacks: 1,
-  }, { mirrorLegacy: false });
+  });
 
   assertEquals(effectStrength(world, actor, "hangover"), 0);
   assertEquals(statusStrength(world, actor, "confused"), 0);
@@ -95,7 +93,7 @@ Deno.test("effectSystem ticks topology status durations", () => {
   const node = applyStatusEffect(world, actor, {
     key: "invulnerable",
     turnsLeft: 1,
-  }, { mirrorLegacy: false });
+  });
 
   assertEquals(statusStrength(world, actor, "invulnerable"), 1);
   effectSystem(world);
@@ -121,5 +119,5 @@ Deno.test("proc application routes invulnerability through topology", () => {
 
   assertEquals(statusStrength(world, actor, "invulnerable"), 1);
   assertEquals([...world.query(StatusEffectNode)].length, 1);
-  assert(world.get(actor, ActiveEffects), "legacy mirror remains during migration");
+  assertEquals(world.get(actor, ActiveEffects), null);
 });

@@ -24,6 +24,11 @@ export const CHANNEL_INTERRUPTION_RULES = Object.freeze([
     ),
   }),
   Object.freeze({
+    reason: "stasis",
+    detail: "Stasis is a hard interrupt and freezes the actor outside of time.",
+    when: (world, actorId) => statusStrength(world, actorId, "stasis") > 0,
+  }),
+  Object.freeze({
     reason: "mindlocked",
     detail: "Mindlock is a hard interrupt and blocks channel/cast start.",
     when: (world, actorId) => (

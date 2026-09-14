@@ -14,6 +14,7 @@ import { SeenCallbackContext, castSpellOnLOS } from "../src/rules/data/callbacks
 import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { aiChaseSystem } from "../src/rules/systems/aiChaseSystem.js";
+import { applyStatusEffect } from "../src/rules/utils/effects.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 
@@ -111,6 +112,43 @@ Deno.test("castSpellOnLOS queues cast intent and respects cooldown", () => {
   assert(!world.has(actor, CastSpellIntent), "cooldown should block immediate recast");
 });
 
+Deno.test("stasis blocks direct LOS ability callbacks before intent validation", () => {
+  const world = new World({ seed: 0x57A515 });
+  const windups = [];
+  const casts = [];
+  world.on("monster:ability:windup", (event) => windups.push(event));
+  world.on("monster:ability:cast", (event) => casts.push(event));
+
+  const actor = world.create();
+  world.add(actor, Position, { x: 1, y: 1 });
+  world.add(actor, Faction, { key: "enemy" });
+  world.add(actor, Vitality, { hp: 20, maxHp: 20 });
+  applyStatusEffect(world, actor, { key: "stasis", turnsLeft: 8 });
+
+  const target = world.create();
+  world.add(target, Position, { x: 4, y: 1 });
+  world.add(target, Faction, { key: "player" });
+  world.add(target, Vitality, { hp: 20, maxHp: 20 });
+
+  const callback = castSpellOnLOS({
+    spellId: "shadow_bolt",
+    telegraphTurns: 1,
+    minRange: 1,
+    maxRange: 10,
+    chance: 1,
+  });
+  callback(new SeenCallbackContext(world, {
+    actor,
+    target,
+    canActThisTurn: true,
+    hasQueuedMove: false,
+  }));
+
+  assertEquals(windups.length, 0);
+  assertEquals(casts.length, 0);
+  assert(!world.has(actor, CastSpellIntent));
+});
+
 Deno.test("skeletal_agony_warlock can queue cast at adjacent range", () => {
   const warlock = getMonster("skeletal_agony_warlock");
   assert(warlock, "warlock should exist");
@@ -165,4 +203,3 @@ Deno.test("enemy summon_skeleton creates hostile-faction summon", () => {
     clearAll();
   }
 });
-

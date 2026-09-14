@@ -2,6 +2,7 @@ import { KnockbackPending } from "../components/KnockbackPending.js";
 import { Position } from "../components/Position.js";
 import { isWalkable } from "../environment/dungeon/tileMap.js";
 import { getTileQuerySnapshot } from "../utils/tileQueryCache.js";
+import { statusStrength } from "../utils/statusFacade.js";
 
 /**
  * Resolves pending knockback vectors into grid movement.
@@ -21,6 +22,11 @@ export function knockbackSystem(world) {
   const tiles = getTileQuerySnapshot(world);
 
   for (const [id, pos, kb] of world.query(Position, KnockbackPending)) {
+    if (statusStrength(world, id, "stasis") > 0) {
+      try { world.remove(id, KnockbackPending); } catch { /* */ }
+      continue;
+    }
+
     const dx    = Math.sign(kb.dx | 0);
     const dy    = Math.sign(kb.dy | 0);
     const force = Math.max(1, Math.min(5, kb.force | 0));

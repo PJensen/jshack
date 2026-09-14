@@ -97,7 +97,14 @@ self.addEventListener('fetch', (event) => {
     const url = new URL(req.url);
     const sameOrigin = url.origin === self.location.origin;
     const isJs = req.destination === 'script' || url.pathname.endsWith('.js');
-    const inScope = url.pathname.startsWith('/src/') || url.pathname.startsWith('/app/');
+    // The app is also deployed below a path (for example /JSHack/ on
+    // GitHub Pages), so compare against the worker scope instead of assuming
+    // that the origin root is the app root.
+    const scopePath = new URL(self.registration.scope).pathname;
+    const relativePath = url.pathname.startsWith(scopePath)
+        ? url.pathname.slice(scopePath.length)
+        : '';
+    const inScope = relativePath.startsWith('src/') || relativePath.startsWith('app/');
     const hasVersion = url.searchParams.has('v');
 
     if (sameOrigin && isJs && inScope) {
@@ -106,6 +113,6 @@ self.addEventListener('fetch', (event) => {
             url.searchParams.set('v', getVersionParam(event.clientId));
         }
         const alt = new Request(url.href, { cache: 'no-store', mode: req.mode, credentials: req.credentials });
-        event.respondWith(fetch(alt).catch(() => fetch(req)));
+        event.respondWith(fetch(alt).catch(() => fetch(req, { cache: 'no-store' })));
     }
 });

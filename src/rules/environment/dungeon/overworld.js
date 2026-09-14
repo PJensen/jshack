@@ -6,6 +6,7 @@ import { LANDMARK_DEFS } from "../../data/buildings/buildingRegistry.js";
 import { applyTownPlacement } from "./townPlacement.js";
 import { stampBuilding } from "./stampBuilding.js";
 import { pickSpecificMonster } from "./tables.js";
+import { getEncountersByKind } from "../../data/encounters.js";
 import { exportRoofedChunk } from "./tileMap.js";
 import {
   CHUNK_SIZE,
@@ -813,21 +814,6 @@ async function spawnOverworldCreatures(chunks, townCenter, bounds, worldSeed, ti
   const _tick = typeof tick === 'function' ? tick : null;
   const TOWN_EXCLUSION_RADIUS_SQ = 45 * 45; // covers districts up to r=36 + footprint
 
-  const OVERWORLD_CREATURES = [
-    { id: 'rat', biomes: ['GRASSLAND', 'WETLAND'], count: 8, clusterR: 6 },
-    { id: 'cave_bear', biomes: ['MOUNTAIN', 'FOREST'], count: 4, clusterR: 8 },
-    { id: 'snake', biomes: ['WETLAND', 'COASTAL', 'GRASSLAND'], count: 6, clusterR: 5 },
-    { id: 'boar', biomes: ['FOREST', 'GRASSLAND'], count: 5, clusterR: 6 },
-    { id: 'wild_elk', biomes: ['GRASSLAND', 'FOREST'], count: 4, clusterR: 7 },
-    { id: 'giant_frog', biomes: ['WETLAND'], count: 6, clusterR: 5 },
-    { id: 'mountain_goat', biomes: ['MOUNTAIN'], count: 3, clusterR: 6 },
-    { id: 'stag_beetle', biomes: ['FOREST'], count: 5, clusterR: 4 },
-    { id: 'heron', biomes: ['COASTAL', 'WETLAND'], count: 2, clusterR: 8 },
-    { id: 'sand_crab', biomes: ['COASTAL'], count: 5, clusterR: 4 },
-    { id: 'marsh_witch', biomes: ['WETLAND'], count: 1, clusterR: 3 },
-    { id: 'ratatoskr', biomes: ['FOREST', 'GRASSLAND', 'WETLAND'], count: 1, clusterR: 4 },
-  ];
-
   const rng = new (function(seed) {
     this.seed = seed >>> 0;
     this.next = function() {
@@ -859,7 +845,7 @@ async function spawnOverworldCreatures(chunks, townCenter, bounds, worldSeed, ti
   }
 
   // Spawn each creature type
-  for (const creatureType of OVERWORLD_CREATURES) {
+  for (const creatureType of getEncountersByKind("overworld_population")) {
     let placed = 0;
 
     // Collect all candidate positions for this creature's biomes
@@ -879,7 +865,7 @@ async function spawnOverworldCreatures(chunks, townCenter, bounds, worldSeed, ti
     }
 
     // Compute monster params once for all placements
-    const monsterParams = pickSpecificMonster(creatureType.id, 0);
+    const monsterParams = pickSpecificMonster(creatureType.creatureId, 0);
     if (!monsterParams) continue; // creature ID doesn't exist
 
     // Spawn creatures around each anchor
@@ -907,7 +893,7 @@ async function spawnOverworldCreatures(chunks, townCenter, bounds, worldSeed, ti
         }
       }
     }
-    if (_tick && placed > 0) await _tick(`Spawned ${creatureType.id} ×${placed}`);
+    if (_tick && placed > 0) await _tick(`Spawned ${creatureType.creatureId} ×${placed}`);
   }
 }
 

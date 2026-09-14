@@ -4,6 +4,7 @@
 import { getMonster, getMonstersByTier, isGenocided } from '../../data/monsters.js';
 import { resolveLootTable } from '../../data/lootResolver.js';
 import { toMonsterSpawnParams } from '../../utils/monsterSpawnParams.js';
+import { getEncountersByKind } from '../../data/encounters.js';
 
 function isOverworldOnlyMonster(def) {
   return Array.isArray(def?.tags) && def.tags.includes('overworld');
@@ -254,37 +255,6 @@ export function pickSpawner(rng, depth, monsterFilter = null) {
   };
 }
 
-// ── Encounter Groups ────────────────────────────────────────────────
-// Themed monster compositions that replace random individual picks.
-// Each template defines a leader + followers drawn from the room's budget.
-
-const ENCOUNTER_GROUPS = [
-  // Tier 0
-  { tier: 0, leader: 'kobold_shaman', followers: [{ id: 'goblin', count: 2 }], minBudget: 3 },
-  { tier: 0, leader: 'skeleton_archer', followers: [{ id: 'rat', count: 2 }], minBudget: 3 },
-  { tier: 0, leader: 'goblin_archer', followers: [{ id: 'goblin', count: 2 }], minBudget: 3 },
-  { tier: 0, leader: 'skeletal_shadow_caster', followers: [{ id: 'skeleton_archer', count: 1 }], minBudget: 2 },
-  { tier: 0, leader: null, followers: [{ id: 'cave_spider', count: 3 }], minBudget: 3 },
-  { tier: 0, leader: null, followers: [{ id: 'centipede', count: 2 }], minBudget: 2 },
-
-  // Tier 1
-  // Mixed-role squads: utility/control + pressure (ranged or brute) for tactical fights.
-  { tier: 1, leader: 'orc_shaman', followers: [{ id: 'orc', count: 1 }, { id: 'bone_bowman', count: 1 }], minBudget: 3 },
-  { tier: 1, leader: 'wight', followers: [{ id: 'skeleton', count: 1 }, { id: 'bone_bowman', count: 1 }], minBudget: 3 },
-  { tier: 1, leader: 'hobgoblin', followers: [{ id: 'orc_shaman', count: 1 }, { id: 'bone_bowman', count: 1 }], minBudget: 3 },
-  { tier: 1, leader: 'phase_spider', followers: [{ id: 'bone_bowman', count: 1 }, { id: 'orc', count: 1 }], minBudget: 3 },
-
-  // Tier 2
-  { tier: 2, leader: 'orc_warchief', followers: [{ id: 'dark_acolyte', count: 1 }, { id: 'skeletal_marksman', count: 1 }], minBudget: 3 },
-  { tier: 2, leader: 'dark_acolyte', followers: [{ id: 'wraith', count: 1 }, { id: 'skeletal_marksman', count: 1 }], minBudget: 3 },
-  { tier: 2, leader: 'troll', followers: [{ id: 'dark_acolyte', count: 1 }, { id: 'ogre', count: 1 }], minBudget: 3 },
-  { tier: 2, leader: 'carrion_shade', followers: [{ id: 'skeletal_marksman', count: 1 }, { id: 'wight', count: 1 }], minBudget: 3 },
-
-  // Tier 3
-  { tier: 3, leader: 'lich', followers: [{ id: 'wraith', count: 1 }, { id: 'death_archer', count: 1 }], minBudget: 3 },
-  { tier: 3, leader: 'demon', followers: [{ id: 'death_archer', count: 1 }, { id: 'lich', count: 1 }], minBudget: 3 },
-];
-
 /**
  * Try to pick an encounter group for the given depth and budget.
  * Returns null if no group fits or the roll doesn't fire.
@@ -295,7 +265,7 @@ const ENCOUNTER_GROUPS = [
  */
 export function pickEncounterGroup(rng, depth, budget) {
   const tier = Math.min(Math.floor((depth - 1) / 5), 3);
-  const eligible = ENCOUNTER_GROUPS.filter(g =>
+  const eligible = getEncountersByKind('dungeon_group').filter(g =>
     g.tier === tier && budget >= g.minBudget
   );
   if (eligible.length === 0) return null;

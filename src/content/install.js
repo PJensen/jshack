@@ -3,9 +3,10 @@
 // Call installContent() once at game startup, after all content files
 // have been imported (so their defineItem/defineMonster calls have run).
 
-import { allContentItems, allContentMonsters, allContentInteractables, allContentPalettes } from './registry.js';
+import { allContentItems, allContentMonsters, allContentEncounters, allContentInteractables, allContentPalettes } from './registry.js';
 import { registerCatalogItem } from '../rules/data/itemCatalog.js';
 import { registerMonsterDef } from '../rules/data/monsters.js';
+import { registerEncounterDef } from '../rules/data/encounters.js';
 import { registerPaletteEntries } from '../display/palette/base.js';
 import { registerAuthoredInteractable } from '../rules/interaction/interactableRegistry.js';
 
@@ -26,6 +27,11 @@ export function installContent() {
   // ── Monsters → monster registry ───────────────────────────────
   for (const [_id, def] of allContentMonsters()) {
     registerMonsterDef(def);
+  }
+
+  // ── Encounters → encounter registry ───────────────────────────
+  for (const [_id, def] of allContentEncounters()) {
+    registerEncounterDef(def);
   }
 
   // ── Palette entries ───────────────────────────────────────────

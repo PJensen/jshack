@@ -44,6 +44,9 @@ const ALL_INTENTS = [
 /** Intents stripped while stunned (WaitIntent is allowed to burn the turn). */
 const STUNNED_BLOCKED = ALL_INTENTS.filter(c => c !== WaitIntent);
 
+/** Intents stripped during stasis; MoveIntent is retained as an explicit cancellation. */
+const STASIS_BLOCKED = ALL_INTENTS.filter(c => c !== WaitIntent && c !== MoveIntent);
+
 /** Intents stripped while rooted (can act but cannot move). */
 const ROOTED_BLOCKED = [MoveIntent, FlyIntent];
 
@@ -79,6 +82,26 @@ function stripAllIntents(world, id) {
 }
 
 /**
+ * Mark a queued movement as cancelled while leaving it available for the
+ * movement consumer to observe and consume.
+ * @param {import('../../lib/ecs-js/index.js').World} world
+ * @param {number} id
+ * @param {string} reason
+ * @returns {boolean}
+ */
+function cancelMoveIntent(world, id, reason) {
+  const intent = world.get(id, MoveIntent);
+  if (!intent) return false;
+  if (intent.cancelled === true && intent.cancelReason === reason) return false;
+  world.set(id, MoveIntent, {
+    ...intent,
+    cancelled: true,
+    cancelReason: String(reason || "unknown"),
+  });
+  return true;
+}
+
+/**
  * Intent validation system — runs first in the intents phase.
  * Strips invalid intents from actors who are dead or stunned so downstream
  * systems never process actions for incapacitated entities. Stunned actors
@@ -107,15 +130,29 @@ export function intentValidationSystem(world) {
       continue;
     }
 
-    // Stunned or stasis actors may only wait
+    // Stunned actors may only wait
     const stunned = statusStrength(world, id, "stunned") > 0;
     const inStasis = statusStrength(world, id, "stasis") > 0;
-    if (stunned || inStasis) {
-      const reason = inStasis ? "stasis" : "stunned";
+    if (stunned) {
       const blocked = stripIntents(world, id, STUNNED_BLOCKED);
       if (blocked) {
         try {
-          world.emit?.("intent:blocked", { actor: id, reason });
+          world.emit?.("intent:blocked", { actor: id, reason: "stunned" });
+        } catch (e) {
+          console.debug("[intentValidationSystem] emit intent:blocked failed:", e);
+        }
+      }
+      continue;
+    }
+
+    // Stasis may only wait. Keep MoveIntent as an explicit cancellation so
+    // downstream consumers can observe why the attempted move was rejected.
+    if (inStasis) {
+      const cancelled = cancelMoveIntent(world, id, "stasis");
+      const blocked = stripIntents(world, id, STASIS_BLOCKED) || cancelled;
+      if (blocked) {
+        try {
+          world.emit?.("intent:blocked", { actor: id, reason: "stasis" });
         } catch (e) {
           console.debug("[intentValidationSystem] emit intent:blocked failed:", e);
         }
