@@ -187,7 +187,7 @@ import { isApplyTool, listApplyTargetsForTool } from "./rules/content/items/appl
 import { installLodbrokSpawnWiring } from "./rules/data/procPackages.js";
 import { createTargetingController, scanVisibleEnemies, clampTargetToRange, worldToTile, bracketizeName } from "./main/targeting/targetingController.js";
 import { installScrollWandWiring } from "./main/wiring/scrollWandWiring.js";
-import { installContentAbilityHandler } from "./content/abilityHandler.js";
+import { createContentAbilityController } from "./main/targeting/itemAbilityController.js";
 import { installPetWiring } from "./main/wiring/petWiring.js";
 import { createDeathLootArcFx } from "./display/fx/deathLootArcFx.js";
 import { createBubbleDialogController } from "./display/ui/bubbleDialog.js";
@@ -1767,7 +1767,7 @@ targeting.installKeyboardHandlers();
 
 // ---- Extracted wiring modules -----------------------------------------------
 installScrollWandWiring({ world, targeting, playerEntity: () => playerEntity(world) });
-installContentAbilityHandler({ world, targeting, playerEntity: () => playerEntity(world), scanVisibleEnemies });
+const requestItemAbility = createContentAbilityController({ world, targeting, playerEntity: () => playerEntity(world), scanVisibleEnemies });
 installPetWiring({ world, playerEntity: () => playerEntity(world) });
 installLodbrokSpawnWiring(world);
 
@@ -2521,8 +2521,10 @@ addEventListener('ui:requestUse', (ev) => {
   const e = ev;
   const itemId = e?.detail?.itemId;
   if (!Number.isInteger(itemId)) return;
+  const abilityId = String(e?.detail?.abilityId || '');
+  if (requestItemAbility(itemId, abilityId)) return;
   if (tryOpenItemChannelTargeter(itemId)) return;
-  const action = { type: 'rules.useItem', payload: { itemId } };
+  const action = { type: 'rules.useItem', payload: { itemId, abilityId } };
   const rulesHandler = makeRulesDispatcher(world, () => (playerEntity(world)?.id || 0));
   rulesHandler(action);
 });

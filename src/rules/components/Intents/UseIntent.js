@@ -10,6 +10,7 @@ import { defineComponent } from "../../../lib/ecs-js/index.js";
  */
 export const UseIntent = defineComponent("UseIntent", {
     itemId: 0,
+    abilityId: "",
     targetId: null,
     x: null,
     y: null,

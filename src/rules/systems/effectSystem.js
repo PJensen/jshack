@@ -24,6 +24,8 @@ import { chebyshev } from '../utils/distance.js';
 import { hasSpellLineOfSight } from '../utils/spellTargeting.js';
 import { buildBlocksVisionMap, blockedCallback } from '../utils/vision.js';
 import { forEachInRadius } from '../utils/spatialIndex.js';
+import { EffectInstance } from '../components/EffectInstance.js';
+import { migrateLegacyEffectInstances, tickEffectInstances } from '../utils/effectInstances.js';
 
 /** @type {Record<string, { operation:string, operations:string[], statuses:string[] }>} */
 const EFFECTS_BY_KEY = buildEffectIndex(EFFECT_DEFS);
@@ -312,6 +314,8 @@ export function effectSystem(world, dt = 1) {
     /** @type {Array<{sourceId:number, effect:any}>} */
     const _pendingSwarmJumps = [];
 
+    migrateLegacyEffectInstances(world);
+    tickEffectInstances(world);
     tickTopologyStatusDurations(world);
 
     for (const [id, ae] of world.query(ActiveEffects)) {
@@ -456,6 +460,7 @@ export function effectSystem(world, dt = 1) {
 
 function tickTopologyStatusDurations(world) {
     for (const [nodeId, duration] of world.query(Duration)) {
+        if (world.has(nodeId, EffectInstance)) continue;
         if (!world.has(nodeId, StatusEffectNode) && !world.has(nodeId, TimedEffectNode)) continue;
         if (!duration) continue;
 

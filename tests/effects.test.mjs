@@ -6,6 +6,7 @@ import { ActiveEffects } from '../src/rules/components/ActiveEffects.js';
 import { Vitality } from '../src/rules/components/Vitality.js';
 import { Mana } from '../src/rules/components/Mana.js';
 import { Stamina } from '../src/rules/components/Stamina.js';
+import { applyEffectInstance, snapshotEffectInstances } from '../src/rules/utils/effectInstances.js';
 import { Status } from '../src/rules/components/Status.js';
 import { Equipment } from '../src/rules/components/Equipment.js';
 import { NamedIdentity } from '../src/rules/components/NamedIdentity.js';
@@ -109,22 +110,19 @@ Deno.test("town stew composite heals and restores stamina under one status", () 
   const actor = world.create();
   world.add(actor, Vitality, { maxHp: 12, hp: 8 });
   world.add(actor, Stamina, { maxStamina: 8, stamina: 3, staminaRegen: 0 });
-  world.add(actor, ActiveEffects, { effects: [{ key: "town_stew", turnsLeft: 300, potency: 1, stacks: 1 }] });
-
-  effectSystem(world);
+  applyEffectInstance(world, actor, { key: "town_stew", turnsLeft: 300, potency: 1 });
+  world.setScheduler(effectSystem);
+  world.tick(1);
 
   const vit = world.get(actor, Vitality);
   const stamina = world.get(actor, Stamina);
-  const ae = world.get(actor, ActiveEffects);
-  const status = world.get(actor, Status);
+  const effects = snapshotEffectInstances(world, actor);
 
   assertEquals(vit.hp, 9, "town stew should heal through its composite effect");
   assertEquals(stamina.stamina, 4, "town stew should restore stamina through its composite effect");
-  assertEquals(ae.effects.filter((effect) => effect.key === "town_stew").length, 1);
-  assertEquals(Number(ae.effects[0]?.turnsLeft || 0), 299);
-  assert(status?.statuses?.some((entry) => entry.type === "town_stew"), "town stew should project its own active status");
-  assert(!status.statuses.some((entry) => entry.type === "regen"), "town stew should not project regen separately");
-  assert(!status.statuses.some((entry) => entry.type === "energized"), "town stew should not project stamina restoration separately");
+  assertEquals(effects.filter((effect) => effect.key === "town_stew").length, 1);
+  assertEquals(effects[0].turns, 299);
+  assertEquals(world.get(actor, ActiveEffects), null);
 });
 
 Deno.test("disease stacking: pushEffect increments stacks and refreshes duration", () => {

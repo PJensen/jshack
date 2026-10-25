@@ -12,6 +12,12 @@ import { resolveWeaponFamily } from '../rules/data/weaponFamilies.js';
 import { resolveWeaponVisualMeta, isWeaponCatalogItem } from '../rules/data/weaponVisuals.js';
 import { clamp } from '../shared/math/math.js';
 import { normalizePolymorphStability } from '../rules/components/PolymorphProfile.js';
+import { registerEffectDefinition, getEffectDefinition } from '../rules/data/effectInstances.js';
+
+export function defineEffect(id, def) {
+  registerEffectDefinition(id, def);
+  return id;
+}
 
 // ── Hook names the DSL recognises, mapped to catalog hook keys ──────
 const ITEM_HOOK_MAP = {
@@ -180,6 +186,22 @@ export function defineItem(id, def) {
   if (!def || typeof def !== 'object') throw new Error('[defineItem] def is required');
   if (!def.name) throw new Error(`[defineItem "${id}"] name is required`);
   if (!def.type) throw new Error(`[defineItem "${id}"] type is required`);
+  if (def.chargePool && (!Number.isInteger(def.chargePool.max) || def.chargePool.max < 1
+    || !Number.isInteger(def.chargePool.current) || def.chargePool.current < 0 || def.chargePool.current > def.chargePool.max)) {
+    throw new Error('Item chargePool requires 0 <= current <= max with positive integer max');
+  }
+  for (const spec of Object.values(def.abilities || {})) {
+    if (!['none', 'enemy', 'ally'].includes(spec.targeting || 'none')) throw new Error(`Unsupported item targeting: ${spec.targeting}`);
+    if (!Number.isInteger(spec.range ?? 1) || (spec.range ?? 1) < 1) throw new Error('Ability range must be a positive integer');
+    if (!Number.isInteger(spec.cooldown ?? 0) || (spec.cooldown ?? 0) < 0) throw new Error('Ability cooldown must be non-negative');
+    if (!Number.isInteger(spec.chargeCost ?? 0) || (spec.chargeCost ?? 0) < 0) throw new Error('Ability chargeCost must be non-negative');
+    for (const effect of spec.effects || []) {
+      if (!getEffectDefinition(effect.key)) throw new Error(`Unknown ability effect: ${effect.key}`);
+      if (effect.turnsLeft !== Infinity && (!Number.isInteger(effect.turnsLeft) || effect.turnsLeft < 1)) throw new Error('Ability effect duration must be positive');
+      if (effect.potency != null && (!Number.isFinite(effect.potency) || effect.potency < 0)) throw new Error('Ability effect potency must be non-negative');
+      if (effect.target != null && !['self', 'target'].includes(effect.target)) throw new Error('Ability effect target must be self or target');
+    }
+  }
 
   const { catalogKind, slot: inferredSlot, itemType } = inferItemCategory(def.type);
   const { rarity, rarityName } = resolveRarity(def.rarity);
@@ -200,6 +222,7 @@ export function defineItem(id, def) {
     value: Number(def.value ?? 0),
     description: def.description || def.name,
     identified: def.identified ?? false,
+    chargePool: def.chargePool ? { ...def.chargePool } : null,
     tags: Array.isArray(def.tags) ? def.tags.slice() : [],
   };
 
@@ -300,18 +323,7 @@ export function defineItem(id, def) {
   if (def.abilities && !def.onUse) {
     const abilityIds = Object.keys(def.abilities);
     if (abilityIds.length > 0) {
-      const primaryAbilityId = abilityIds[0];
-      catalogEntry.hooks.on_use = (ctx, state) => {
-        const actorId = Number(state?.actor || ctx.actor || 0) | 0;
-        const itemId = Number(state?.itemId || ctx.primary || 0) | 0;
-        ctx.io.emit('content:ability:request', {
-          actor: actorId,
-          itemId,
-          abilityId: primaryAbilityId,
-          identity: id,
-        });
-        return { consumed: false };
-      };
+      catalogEntry._contentDefaultAbility = true;
     }
   }
 
@@ -381,9 +393,13 @@ export function defineItem(id, def) {
         targeting: spec.targeting || 'none',  // 'none' | 'enemy' | 'ally' | 'tile'
         range: spec.range || 1,
         cooldown: spec.cooldown || 0,
-        cost: spec.cost || 0,
-        costKind: spec.costKind || 'item',
+        cost: spec.chargeCost || spec.cost || 0,
+        costKind: spec.chargeCost ? 'charges' : (spec.costKind || 'item'),
         onActivate: spec.onActivate || null,
+        activate: typeof spec.onActivate === 'function' ? compileHook(spec.onActivate) : null,
+        effects: (spec.effects || []).map((effect) => Object.freeze({ ...effect })),
+        chargeCost: spec.chargeCost || 0,
+        requiresEquipped: spec.requiresEquipped === true,
         description: spec.description || '',
       };
       registerAbility(id, abilityId, compiled);

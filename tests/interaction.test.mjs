@@ -77,6 +77,7 @@ import { createItemById } from "../src/rules/utils/itemFactory.js";
 import { LockpickPrompted } from "../src/events/LockpickPrompted.js";
 import { LockpickResolved } from "../src/events/LockpickResolved.js";
 import { BedSleepRequested } from "../src/events/BedSleepRequested.js";
+import { snapshotEffectInstances } from "../src/rules/utils/effectInstances.js";
 
 function makeLockedShopDoor(world, role = "gem_vendor") {
   const door = world.create();
@@ -1648,9 +1649,10 @@ Deno.test("town stew feeds actor and applies one direct composite effect", () =>
   assertEquals(world.get(actor, Hunger)?.hunger, 30, "town stew should feed via normal nutrition");
 
   const effects = world.get(actor, ActiveEffects)?.effects || [];
-  const stewEffects = effects.filter((effect) => effect.key === "town_stew");
+  const stewEffects = snapshotEffectInstances(world, actor).filter((effect) => effect.key === "town_stew");
   assertEquals(stewEffects.length, 1, "town stew should create one direct composite effect row");
-  assert(stewEffects[0].turnsLeft >= 300, "town stew should last several hundred turns");
+  assert(stewEffects[0].turns >= 300, "town stew should last several hundred turns");
+  assert(!effects.some((effect) => effect.key === "town_stew"), "topology must be the only source of truth");
   assert(!effects.some((effect) => effect.key === "regen"), "town stew should not expose regen as a separate effect");
   assert(!effects.some((effect) => effect.key === "stamina_restore"), "town stew should not expose stamina restoration as a separate effect");
 });

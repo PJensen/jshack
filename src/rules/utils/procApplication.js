@@ -5,13 +5,14 @@ import { upsertTimedEffect } from "./effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects, isInvulnerabilityEffectKey } from "./effects.js";
 import { effectiveMaxMana, effectiveMaxStamina } from "./passiveBonuses.js";
 import { applyHealing } from "./applyHealing.js";
+import { getEffectDefinition } from "../data/effectInstances.js";
 
 function applyStatusEffects(world, out) {
   for (let i = 0; i < out.statusesToApply.length; i++) {
     const entry = out.statusesToApply[i];
     const entityId = Number(entry?.target || 0) | 0;
     if (!(entityId > 0) || !world.isAlive?.(entityId)) continue;
-    if (isInvulnerabilityEffectKey(entry?.status?.key)) {
+    if (getEffectDefinition(entry?.status?.key) || isInvulnerabilityEffectKey(entry?.status?.key)) {
       applyStatusEffect(world, entityId, { stacks: 1, ...(entry.status || {}), sourceId: Number(entry?.source || 0) | 0 });
       continue;
     }

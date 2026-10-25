@@ -8,6 +8,7 @@ import { StatusEffectNode } from "../components/StatusEffectNode.js";
 import { TimedEffectNode } from "../components/TimedEffectNode.js";
 import { EFFECT_DEFS } from "../data/effectDefs.js";
 import { descendantsWith } from "./topology.js";
+import { getEffectDefinition } from "../data/effectInstances.js";
 
 function normalizeKey(value) {
   return String(value || "").trim().toLowerCase();
@@ -155,7 +156,7 @@ export function snapshotStatusState(world, entityId) {
     const strength = normalizeStrength(e.potency, e.stacks);
     effectStrengths.set(key, (effectStrengths.get(key) || 0) + strength);
 
-    const statuses = EFFECT_KEY_TO_STATUSES.get(key);
+    const statuses = getEffectDefinition(key)?.statuses || EFFECT_KEY_TO_STATUSES.get(key);
     if (!Array.isArray(statuses) || statuses.length <= 0) continue;
     for (let s = 0; s < statuses.length; s++) {
       const statusType = canonicalStatusType(statuses[s]);

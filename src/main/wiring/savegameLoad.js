@@ -1,5 +1,6 @@
 import { applySnapshot } from "../../lib/ecs-js/serialization.js";
 import { buildSavegameSerializationRegistry } from "./savegameSerializationRegistry.js";
+import { normalizeEffectSnapshot } from "../../rules/utils/effectInstances.js";
 import { clearSpatialIndex } from "../../rules/utils/spatialIndex.js";
 import { invalidateTileQueryCache } from "../../rules/utils/tileQueryCache.js";
 import { normalizeInventorySnapshot } from "../../rules/utils/inventorySnapshotMigration.js";
@@ -111,7 +112,7 @@ export function readSavedSeed(save) {
  * @returns {{ playerId: number }}
  */
 export function restoreSnapshotFromSavegame(world, save) {
-  const normalizedWorld = normalizeInventorySnapshot(save?.world);
+  const normalizedWorld = normalizeEffectSnapshot(normalizeInventorySnapshot(save?.world));
   const normalizedSave = (normalizedWorld === save?.world)
     ? save
     : { ...save, world: normalizedWorld };
@@ -126,6 +127,7 @@ export function restoreSnapshotFromSavegame(world, save) {
   }
 
   applySnapshot(world, normalizedSave.world, reg, { mode: "replace" });
+  if (Number.isInteger(normalizedSave.world.meta?.step)) world.step = normalizedSave.world.meta.step;
   ensureCalendarState(world);
   clearSpatialIndex(world);
   invalidateTileQueryCache(world);

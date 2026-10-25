@@ -16,6 +16,12 @@ import { COMBAT_INTERACTION_RULES } from '../src/rules/data/combatInteractions.j
 import { statusStrength } from '../src/rules/utils/statusFacade.js';
 import { getEffectiveVisionRange } from '../src/rules/utils/blind.js';
 import { getItemHooksByIdentity } from '../src/rules/content/items/itemHooks.js';
+import { executeInteraction } from '../src/rules/interaction/runtime/actionRuntime.js';
+import { usePipeline } from '../src/rules/interaction/verbs/usePipeline.js';
+import { ItemAbilityActivated } from '../src/events/ItemAbilityActivated.js';
+import { getItemCooldownRemaining } from '../src/rules/utils/itemCooldowns.js';
+import { clearAll, loadChunk } from '../src/rules/environment/dungeon/tileMap.js';
+import { CHUNK_SIZE, TILE_FLOOR } from '../src/rules/environment/dungeon/constants.js';
 import '../src/content/items/sunsword.js';
 import { installContent } from '../src/content/install.js';
 installContent();
@@ -140,30 +146,21 @@ Deno.test("sunsword: blinding ray applies blinded effect", () => {
   assert(strength > 0, "enemy should have blinded status after ray");
 });
 
-Deno.test("sunsword: on_use dispatches content ability request", () => {
-  const hooks = getItemHooksByIdentity('sunsword');
-  const emits = [];
-  const result = hooks.onUse({
-    actor: 1,
-    query: {
-      worldStep() { return 0; },
-      get() { return null; },
-    },
-    io: {
-      emit(name, payload) { emits.push({ name, payload }); },
-      message() {},
-    },
-  }, {
-    actor: 1,
-    itemId: 42,
-    identity: 'sunsword',
-  });
-
-  assertEquals(result?.consumed, false);
-  assertEquals(emits.length, 1);
-  assertEquals(emits[0].name, 'content:ability:request');
-  assertEquals(emits[0].payload.abilityId, 'blinding_ray');
-  assertEquals(emits[0].payload.identity, 'sunsword');
+Deno.test("sunsword: canonical use activates its default ability with target and cooldown", () => {
+  clearAll();
+  loadChunk(0, 0, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+  const world = makeWorld();
+  const actor = makePlayer(world, 5, 5);
+  const sword = equipSunsword(world, actor);
+  const target = makeUndead(world, 7, 5);
+  const receipts = [];
+  world.on(ItemAbilityActivated, (event) => receipts.push(event));
+  const result = executeInteraction(world, { verb: 'use', actor, primary: sword, target, pipeline: usePipeline });
+  assert(result.ok);
+  assertEquals(receipts.length, 1);
+  assertEquals(receipts[0].abilityId, 'blinding_ray');
+  assertEquals(getItemCooldownRemaining(world, sword), 12);
+  assert(world.get(target, ActiveEffects).effects.some((effect) => effect.key === 'blinded'));
 });
 
 // ── Permanent blindness on hit ─────────────────────────────────────────────

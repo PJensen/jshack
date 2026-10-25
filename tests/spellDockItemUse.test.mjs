@@ -73,7 +73,7 @@ Deno.test("pinned spell dock item actions emit ui:requestUse on tap", () => {
     itemButton.dispatchEvent(mouseEvent("mousedown"));
     itemButton.dispatchEvent(mouseEvent("mouseup"));
 
-    assertEquals(requests, [{ itemId: 42 }]);
+    assertEquals(requests, [{ itemId: 42, abilityId: "cast_line" }]);
   } finally {
     globalThis.window = previousWindow;
     globalThis.document = previousDocument;

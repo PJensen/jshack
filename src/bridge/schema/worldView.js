@@ -61,7 +61,7 @@ import {
 	FACING_CONE_GRID_BIAS_DEG,
 } from "../../rules/utils/facing.js";
 import { readPlayerPerceptionState } from "../../rules/utils/perceptionState.js";
-import { statusStrength } from "../../rules/utils/statusFacade.js";
+import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
 import { chebyshevDistance, hasMindForEsp, isFixedDecorationEntity, isPerceptionMonster } from "../../rules/utils/perceptionChannels.js";
 import { PERCEPTION_TUNING } from "../../rules/environment/dungeon/perceptionTuning.js";
 import { BaseStats } from "../../rules/components/BaseStats.js";
@@ -455,8 +455,10 @@ function projectDisplayTags(world, id, rec) {
 			if (!rec.tags.includes(t)) rec.tags.push(t);
 		}
 	}
-	if (statusStrength(world, id, 'stasis') > 0 && !rec.tags.includes('stasis')) {
-		rec.tags.push('stasis');
+	// Attached effect packages project the same semantic tags as legacy statuses.
+	for (const status of snapshotStatusState(world, id)?.allStatuses || []) {
+		const type = normalizeDisplayStatusType(status.type);
+		if (DISPLAY_STATUS_TAGS.has(type) && !rec.tags.includes(type)) rec.tags.push(type);
 	}
 
 	/** @type {any} */ const ae = /** @type any */ (world.get(id, ActiveEffects));

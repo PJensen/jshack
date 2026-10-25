@@ -8,6 +8,8 @@ import { Source } from "../components/Source.js";
 import { StatusEffectNode } from "../components/StatusEffectNode.js";
 import { TimedEffectNode } from "../components/TimedEffectNode.js";
 import { descendantsWith } from "./topology.js";
+import { getEffectDefinition } from "../data/effectInstances.js";
+import { applyEffectInstance } from "./effectInstances.js";
 
 function normalizeEffectKey(value) {
   return String(value || "").trim().toLowerCase();
@@ -54,6 +56,7 @@ export function ensureActiveEffects(world, id) {
  * @returns {number}
  */
 export function applyStatusEffect(world, actorId, effect) {
+  if (getEffectDefinition(effect?.key)) return applyEffectInstance(world, actorId, effect);
   const id = Number(actorId || 0) | 0;
   const key = String(effect?.key || "").trim();
   const requestedTurns = effect?.turnsLeft;

@@ -33,6 +33,9 @@ import { dropLoot } from "../data/lootResolver.js";
 import { createCorpse } from "../archetypes/Food.js";
 import { createFrom } from "../../lib/ecs-js/archetype.js";
 import { Ashes, Bone } from "../archetypes/Items.js";
+import { EffectInstance } from "../components/EffectInstance.js";
+import { childrenWith } from "../utils/topology.js";
+import { removeEffectInstance } from "../utils/effectInstances.js";
 
 const GROUND_STACK_SEQ_KEY = Symbol.for("jshack:groundStack:seq");
 const DEATH_IMPACT_KEY = Symbol.for("jshack:deathImpact:map");
@@ -300,6 +303,9 @@ export function cleanupSystem(world) {
         } catch { /* */ }
       }
 
+      for (const [effectId] of [...childrenWith(world, id, EffectInstance)]) {
+        removeEffectInstance(world, effectId, "death");
+      }
       destroyInventoryRoot(world, id);
       world.destroy(id);
     }

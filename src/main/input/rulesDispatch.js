@@ -177,9 +177,9 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
         break;
       }
       case "rules.useItem": {
-        const { itemId = 0, targetId = actorId, x = null, y = null } = action.payload || {};
+        const { itemId = 0, targetId = actorId, abilityId = "", x = null, y = null } = action.payload || {};
         if (!Number.isInteger(itemId) || itemId <= 0) break;
-        const use = { itemId, targetId };
+        const use = { itemId, targetId, abilityId };
         if (Number.isFinite(x) && Number.isFinite(y)) {
           use.x = Math.floor(Number(x));
           use.y = Math.floor(Number(y));

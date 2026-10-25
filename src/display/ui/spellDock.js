@@ -345,7 +345,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
         }
         closeFan();
       } else if (slot.entry?.kind === 'item-use' && Number(slot.entry?.itemId || 0) > 0) {
-        window.dispatchEvent(new CustomEvent('ui:requestUse', { detail: { itemId: slot.entry.itemId } }));
+        window.dispatchEvent(new CustomEvent('ui:requestUse', { detail: { itemId: slot.entry.itemId, abilityId: slot.entry.abilityId } }));
         btn.style.animation = 'none';
         void btn.offsetWidth;
         btn.style.animation = 'jshackPinnedSpellBump 200ms cubic-bezier(0.2, 0.9, 0.2, 1)';

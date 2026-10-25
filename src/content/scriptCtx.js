@@ -119,6 +119,9 @@ export class ScriptCtx {
       stack: opts.stack ?? "refresh",
       maxStacks: opts.maxStacks ?? 1,
       sourceId: this.item,
+      sourceActorId: this.user,
+      sourceKind: 'item',
+      sourceKey: this.identity,
       meta: {
         source: this.identity || "script",
         ...(opts.meta || {}),
@@ -142,6 +145,12 @@ export class ScriptCtx {
 
   /** Alias for cure. */
   removeBuff(entity, keys) { return this.cure(entity, keys); }
+
+  cancel(message = "You cannot use that.") {
+    return this._ctx.cancel(typeof message === 'string'
+      ? { code: 'USE_CANCELLED', message, consumesTurn: false }
+      : message);
+  }
 
   /**
    * Check if an entity has a status.
@@ -635,6 +644,17 @@ function _ensureExtendedCtx(ictx, state) {
 
   // Build a worldFacade for the extended APIs only
   const facade = createWorldFacade(world, actor, itemId);
+  const pendingStates = new Map();
+  const readState = (id) => {
+    if (!pendingStates.has(id)) pendingStates.set(id, { ...facade._getScriptState(id) });
+    return pendingStates.get(id);
+  };
+  const patchState = (id, patch) => {
+    if (!ictx.query.get(id, facade._ScriptState)) return;
+    const data = { ...readState(id), ...patch };
+    pendingStates.set(id, data);
+    ictx.mutate.patchComponent(id, facade._ScriptState, { data });
+  };
 
   // Overlay extended APIs onto the interaction context.
   // Keep the interaction context's helpers/query/io (they're richer),
@@ -643,14 +663,14 @@ function _ensureExtendedCtx(ictx, state) {
     ...ictx,
     _ScriptState:       facade._ScriptState,
     _ItemInfo:          facade._ItemInfo,
-    _getScriptState:    facade._getScriptState.bind(facade),
-    _setScriptState:    facade._setScriptState.bind(facade),
-    _mutateScriptState: facade._mutateScriptState.bind(facade),
+    _getScriptState:    readState,
+    _setScriptState:    patchState,
+    _mutateScriptState: patchState,
     _hasTag:            facade._hasTag.bind(facade),
     _entitiesInRadius:  facade._entitiesInRadius.bind(facade),
     _hpPercent:         facade._hpPercent.bind(facade),
     _tileAt:            facade._tileAt.bind(facade),
-    _setCooldown:       facade._setCooldown.bind(facade),
+    _setCooldown:       (id, turns) => ictx.mutate.queue({ type: 'setItemCooldown', entityId: id, turns }),
     _isOnCooldown:      facade._isOnCooldown.bind(facade),
     _cooldownRemaining: facade._cooldownRemaining.bind(facade),
   };

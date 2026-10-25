@@ -1,4 +1,4 @@
-import { makeRegistry } from "../../lib/ecs-js/serialization.js";
+import { makeRegistry, serializeWorld } from "../../lib/ecs-js/serialization.js";
 import * as Exported from "../../rules/components/index.js";
 import { Alignment } from "../../rules/components/Alignment.js";
 import { Brain } from "../../rules/components/Brain.js";
@@ -34,6 +34,8 @@ import { Trigger } from "../../rules/components/Trigger.js";
 import { Parent, Sibling } from "../../lib/ecs-js/hierarchy.js";
 import { InventoryRoot } from "../../rules/components/InventoryRoot.js";
 import { Weight } from "../../rules/components/Weight.js";
+import { ItemCooldown } from "../../rules/components/ItemCooldown.js";
+import { ScriptState } from "../../rules/components/ScriptState.js";
 
 // Chest-relevant components are intentionally prioritized at the front.
 const CHEST_FIRST_COMPONENTS = Object.freeze([
@@ -78,6 +80,8 @@ const KNOWN_COMPONENTS = Object.freeze([
   Sibling,
   InventoryRoot,
   Weight,
+  ItemCooldown,
+  ScriptState,
 ]);
 
 /**
@@ -103,4 +107,11 @@ export function buildSavegameSerializationRegistry(world) {
  */
 export function getSavegameRegistryNames(world) {
   return Array.from(buildSavegameSerializationRegistry(world).keys());
+}
+
+// The game turn is separate from ecs-js's serialized time/frame metadata.
+// Absolute item cooldowns must resume against the same turn after loading.
+export function serializeSavegameWorld(world, options = {}) {
+  const snapshot = serializeWorld(world, { include: getSavegameRegistryNames(world), ...options });
+  return { ...snapshot, meta: { ...snapshot.meta, step: world.step } };
 }

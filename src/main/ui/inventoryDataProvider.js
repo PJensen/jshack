@@ -3,7 +3,6 @@
 // message-log and death-log data to display overlays.
 
 import { playerEntity, itemsAt, findNearestValidTileAround } from "../../rules/utils/queries.js";
-import { serializeWorld } from "../../lib/ecs-js/serialization.js";
 import { Inventory } from "../../rules/components/Inventory.js";
 import { getCarriedWeight, inventoryItems } from "../../rules/utils/inventoryFacade.js";
 import { Equipment, GEAR_SLOTS, GEAR_SLOT_SET, getEquippedSlot } from "../../rules/components/Equipment.js";
@@ -18,8 +17,6 @@ import { Vitality } from "../../rules/components/Vitality.js";
 import { Mana } from "../../rules/components/Mana.js";
 import { Stamina } from "../../rules/components/Stamina.js";
 import { Hunger } from "../../rules/components/Hunger.js";
-import { ActiveEffects } from "../../rules/components/ActiveEffects.js";
-import { Status } from "../../rules/components/Status.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
 import { CalendarState } from "../../rules/components/CalendarState.js";
 import { Speed } from "../../rules/components/Speed.js";
@@ -29,12 +26,12 @@ import { getHungerLevel } from "../../rules/data/food.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
 import { isApplyTool, listApplyTargetsForTool, resolveApplyPayloadForWorld } from "../../rules/content/items/applyPayloads.js";
-import { canonicalStatusKey } from "../../rules/utils/effectSemantics.js";
 import { resolveItemDisplayName, resolveAffixes, buildItemDisplayData as _buildItemDisplayData } from "../wiring/itemName.js";
 import { makeRulesDispatcher } from "../input/rulesDispatch.js";
 import { getIdentifiedSnapshot, isIdentificationEnabled, setIdentificationEnabled } from "../../rules/data/identification.js";
 import { createItemById, listAllItemIds } from "../../rules/utils/itemFactory.js";
 import { ScriptState } from "../../rules/components/ScriptState.js";
+import { Charges } from "../../rules/components/Charges.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import { addToInventory } from "../../rules/utils/inventoryFacade.js";
 import { listAllMonsterIds } from "../../rules/data/monsters.js";
@@ -45,7 +42,7 @@ import { getItemCooldown } from "../../rules/utils/itemCooldowns.js";
 import { groupDisplayItems } from "./itemGrouping.js";
 import { spawnDebugMonsterNearPlayer } from "../debug/spawnDebugMonster.js";
 import { getGemPricingSnapshot } from "../../rules/data/gemPricing.js";
-import { getSavegameRegistryNames } from "../wiring/savegameSerializationRegistry.js";
+import { getSavegameRegistryNames, serializeSavegameWorld } from "../wiring/savegameSerializationRegistry.js";
 import { isChestIdentity } from "../../shared/chests.js";
 import { readAISettings, writeAISettings } from "../../shared/aiSettings.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
@@ -58,7 +55,8 @@ import { getQuestDef } from "../../rules/quests/registry.js";
 import { buildPalette } from "../../display/palette/index.js";
 import { getItemHooksByIdentity } from "../../rules/content/items/itemHooks.js";
 import { questRewardDetailText } from "./questRewards.js";
-import { enrichStatusRowDisplay } from "./statusDisplayMetadata.js";
+import { defineExtension } from "../../lib/ecs-js/index.js";
+import { buildEffectRows } from "./effectRows.js";
 
 const TRAIT_DISPLAY = Object.freeze({
   iron_stomach:  { label: "Iron Stomach",  description: "Halves sickness chance from spoiled food." },
@@ -67,6 +65,7 @@ const TRAIT_DISPLAY = Object.freeze({
 });
 
 const _installed = Symbol.for('inventoryDataProvider');
+const _providers = new WeakMap();
 const _uiEventTarget = globalThis.window || globalThis;
 const _itemPalette = buildPalette();
 
@@ -140,8 +139,16 @@ function questJournalCompletionText(state, vars) {
  * @returns {{ buildGroundPickupDetailAt: (actorId: number, x: number, y: number) => object|null }}
  */
 export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo }) {
-  if (/** @type {any} */ (world)[_installed]) return { buildGroundPickupDetailAt };
-  /** @type {any} */ (world)[_installed] = true;
+  if (_providers.has(world)) return _providers.get(world);
+  let provider;
+  world.install(defineExtension("jshack:main:inventoryDataProvider", () => {
+    provider = createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo });
+  }, { key: _installed }));
+  _providers.set(world, provider);
+  return provider;
+}
+
+function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo }) {
 
   function findScrollOfIdentify(playerId) {
     for (const id of inventoryItems(world, playerId)) {
@@ -171,7 +178,8 @@ export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiB
     const hooks = getItemHooksByIdentity(identity);
     const canUse = typeof hooks.beforeUse === "function"
       || typeof hooks.onUse === "function"
-      || typeof hooks.afterUse === "function";
+      || typeof hooks.afterUse === "function"
+      || !!getCatalogItem(identity)?._contentDefaultAbility;
     const p = _itemPalette[identity] || null;
     // Content-DSL status lines: read ScriptState, call authored status function
     let contentStatus = null;
@@ -182,12 +190,18 @@ export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiB
         try { contentStatus = catDef._contentStatus(ss.data); } catch {}
       }
     }
+    const charges = world.get(itemId, Charges);
+    if (charges) contentStatus = [
+      { text: `Charges: ${charges.current}/${charges.max}`, color: charges.current > 0 ? '#cfe8ff' : '#888888' },
+      ...(contentStatus || []),
+    ];
     return {
       ...base,
       canUse,
       glyph: String(base?.glyph || p?.glyph || ""),
       glyphColor: String(base?.glyphColor || p?.fg || "#cfe8ff"),
       contentStatus,
+      ...(charges ? { charges: { current: charges.current, max: charges.max } } : {}),
     };
   }
 
@@ -260,36 +274,7 @@ export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiB
   }
 
   function buildStatusRows(playerId) {
-    /** @type {Map<string, { key: string, turns: number, stacks: number }>} */
-    const byKey = new Map();
-    const effectComp = world.get(playerId, ActiveEffects);
-    const statusComp = world.get(playerId, Status);
-    if (Array.isArray(effectComp?.effects)) {
-      for (const entry of effectComp.effects) {
-        if (entry?.key === 'stat_envelope') continue; // displayed via Status as blinded/deafened
-        const key = canonicalStatusKey(String(entry?.key || ""));
-        if (!key) continue;
-        const turns = Math.max(0, Number(entry?.turnsLeft || 0) | 0);
-        const stacks = Math.max(1, Number(entry?.stacks || 1) | 0);
-        const potency = Number(entry?.potency || 0);
-        const prev = byKey.get(key);
-        if (!prev) byKey.set(key, { key, turns, stacks, potency });
-        else byKey.set(key, { key, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, stacks), potency: Math.max(Number(prev.potency || 0), potency) });
-      }
-    }
-    if (Array.isArray(statusComp?.statuses)) {
-      for (const entry of statusComp.statuses) {
-        const key = canonicalStatusKey(String(entry?.type || entry?.key || ""));
-        if (!key) continue;
-        const turns = Math.max(0, Number(entry?.duration || entry?.turns || 0) | 0);
-        const stacks = Math.max(1, Number(entry?.stacks || 1) | 0);
-        const potency = Number(entry?.potency || 0);
-        const prev = byKey.get(key);
-        if (!prev) byKey.set(key, { key, turns, stacks, potency });
-        else byKey.set(key, { key, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, stacks), potency: Math.max(Number(prev.potency || 0), potency) });
-      }
-    }
-    return Array.from(byKey.values()).map(enrichStatusRowDisplay);
+    return buildEffectRows(world, playerId);
   }
 
   function sumPlayerGold(playerId) {
@@ -867,7 +852,7 @@ export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiB
       v: 1,
       exportedAt: Date.now(),
       reason: "settings_export",
-      world: serializeWorld(world, { note: "settings_export", include: registryNames }),
+      world: serializeSavegameWorld(world, { note: "settings_export", include: registryNames }),
       schema: { registry: registryNames },
       identified: getIdentifiedSnapshot(),
       gemPricing: getGemPricingSnapshot(),

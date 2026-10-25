@@ -48,6 +48,10 @@ import { attachEntityToCurrentFloor } from "../utils/floorEntities.js";
 import { invalidateTileQueryCache } from "../utils/tileQueryCache.js";
 import { applyWaterExposure } from "../utils/waterExposure.js";
 import { materializeDrop } from "../data/lootResolver.js";
+import { getEffectDefinition } from "../data/effectInstances.js";
+import { removeEffectInstance } from "../utils/effectInstances.js";
+import { EffectInstance } from "../components/EffectInstance.js";
+import { childrenWith } from "../utils/topology.js";
 
 /**
  * @param {any} world
@@ -58,7 +62,8 @@ import { materializeDrop } from "../data/lootResolver.js";
 function isEffectImmune(world, entityId, effectKey) {
   if (!effectKey) return false;
   const imm = /** @type any */ (world.get(entityId, EffectImmunities));
-  return Array.isArray(imm?.immuneTo) && imm.immuneTo.includes(effectKey);
+  const keys = [effectKey, ...(getEffectDefinition(effectKey)?.statuses || [])];
+  return Array.isArray(imm?.immuneTo) && keys.some((key) => imm.immuneTo.includes(key));
 }
 
 /**
@@ -178,7 +183,7 @@ export function applyMutation(world, op, resolvers = {}) {
     }
     case "pushEffect": {
       if (isEffectImmune(world, op.entityId, op.effect?.key)) break;
-      if (isInvulnerabilityEffectKey(op.effect?.key)) {
+      if (getEffectDefinition(op.effect?.key) || isInvulnerabilityEffectKey(op.effect?.key)) {
         applyStatusEffect(world, op.entityId, { stacks: 1, ...(op.effect || {}) });
         break;
       }
@@ -190,15 +195,13 @@ export function applyMutation(world, op, resolvers = {}) {
     }
     case "upsertTimedEffect": {
       if (isEffectImmune(world, op.entityId, op.effect?.key)) break;
-      const ae = ensureActiveEffects(world, op.entityId);
-      if (!ae) break;
-
       const input = op.effect && typeof op.effect === "object" ? op.effect : {};
       const key = String(input.key || "");
       if (!key) break;
-      const turnsLeft = Math.max(0, Number(input.turnsLeft ?? input.duration ?? 0) | 0);
+      const requestedTurns = input.turnsLeft ?? input.duration ?? 0;
+      const turnsLeft = requestedTurns === Infinity ? Infinity : Math.max(0, Number(requestedTurns) | 0);
       if (turnsLeft <= 0) break;
-      if (isInvulnerabilityEffectKey(key)) {
+      if (getEffectDefinition(key) || isInvulnerabilityEffectKey(key)) {
         applyStatusEffect(world, op.entityId, {
           ...input,
           key,
@@ -210,6 +213,9 @@ export function applyMutation(world, op, resolvers = {}) {
         });
         break;
       }
+
+      const ae = ensureActiveEffects(world, op.entityId);
+      if (!ae) break;
 
       const normalized = {
         key,
@@ -302,14 +308,16 @@ export function applyMutation(world, op, resolvers = {}) {
     }
     case "removeTimedEffectsByKey": {
       const ae = /** @type any */ (world.get(op.entityId, ActiveEffects));
-      if (!ae || !Array.isArray(ae.effects)) break;
       const keys = new Set(
         Array.isArray(op.keys)
           ? op.keys.map((k) => String(k || "").toLowerCase()).filter(Boolean)
           : [],
       );
       if (keys.size <= 0) break;
-      ae.effects = ae.effects.filter((effect) => !keys.has(String(effect?.key || "").toLowerCase()));
+      for (const [id, instance] of [...childrenWith(world, op.entityId, EffectInstance)]) {
+        if (keys.has(instance.definitionId)) removeEffectInstance(world, id, "dispelled");
+      }
+      if (Array.isArray(ae?.effects)) ae.effects = ae.effects.filter((effect) => !keys.has(String(effect?.key || "").toLowerCase()));
       break;
     }
     case "setMaterial": {

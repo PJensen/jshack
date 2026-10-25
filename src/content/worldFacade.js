@@ -16,6 +16,11 @@ import { dealDamage } from '../rules/utils/dealDamage.js';
 import { applyHealing } from '../rules/utils/applyHealing.js';
 import { getMonster, monsterHasTag } from '../rules/data/monsters.js';
 import { setItemCooldown, getItemCooldownRemaining, isItemOnCooldown } from '../rules/utils/itemCooldowns.js';
+import { getEffectDefinition } from '../rules/data/effectInstances.js';
+import { applyEffectInstance, removeEffectInstance } from '../rules/utils/effectInstances.js';
+import { EffectInstance } from '../rules/components/EffectInstance.js';
+import { childrenWith } from '../rules/utils/topology.js';
+import { hasStatus, hasEffect } from '../rules/utils/statusFacade.js';
 
 /**
  * Create a world-backed context suitable for ScriptCtx.
@@ -52,11 +57,15 @@ export function createWorldFacade(world, actor, itemId) {
       });
     },
     addEffect(entityId, effect) {
+      if (getEffectDefinition(effect?.key)) return applyEffectInstance(world, entityId, { ...effect, sourceActorId: actor });
       const ae = world.get(entityId, ActiveEffects);
       if (!ae) return;
       world.mutate(entityId, ActiveEffects, a => { a.effects.push({ ...effect }); });
     },
     clearEffects(entityId, keys) {
+      for (const [id, instance] of [...childrenWith(world, entityId, EffectInstance)]) {
+        if (keys.includes(instance.definitionId)) removeEffectInstance(world, id, 'dispelled');
+      }
       const ae = world.get(entityId, ActiveEffects);
       if (!ae) return;
       const keySet = new Set(keys);
@@ -65,10 +74,9 @@ export function createWorldFacade(world, actor, itemId) {
       });
     },
     hasStatus(entityId, key) {
-      const ae = world.get(entityId, ActiveEffects);
-      return ae ? ae.effects.some(e => e.key === key) : false;
+      return hasStatus(world, entityId, key);
     },
-    hasEffect(entityId, key) { return helpers.hasStatus(entityId, key); },
+    hasEffect(entityId, key) { return hasEffect(world, entityId, key); },
     roll(expr) { return Math.max(0, rollDice(String(expr), () => world.rand())); },
     chance(pct) { const p = pct <= 1 ? pct * 100 : pct; return world.rand() * 100 < p; },
     int(min, max) { return min + Math.floor(world.rand() * (max - min + 1)); },

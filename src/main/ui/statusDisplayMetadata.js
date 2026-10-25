@@ -1,7 +1,7 @@
-import { buildPalette } from "../../display/palette/index.js";
+import { basePalette } from "../../display/palette/base.js";
+import { equipmentPalette } from "../../display/palette/equipment.js";
 import { EFFECT_DEFS } from "../../rules/data/effectDefs.js";
-
-const _palette = buildPalette();
+import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 
 function hexToHue(value, fallback = 210) {
   const hex = String(value || "").trim().replace(/^#/, "");
@@ -19,21 +19,6 @@ function hexToHue(value, fallback = 210) {
   else h = ((r - g) / d) + 4;
   return Math.round((h * 60 + 360) % 360);
 }
-
-const FOOD_STEW_VIS = (() => {
-  const p = _palette.food_stew || {};
-  return Object.freeze({
-    name: "Town Stew",
-    glyph: String(p.glyph || "%"),
-    glyphColor: String(p.fg || "#c88a4a"),
-    glowColor: String(p.glow || "#8a5a2a"),
-    hue: hexToHue(p.glow || p.fg, 30),
-  });
-})();
-
-const STATUS_DISPLAY = Object.freeze({
-  town_stew: FOOD_STEW_VIS,
-});
 
 const EFFECT_META_BY_KEY = (() => {
   const map = new Map();
@@ -76,11 +61,11 @@ function operationLine(operation, potency) {
 
 function effectDetailData(row) {
   const def = effectDefForKey(row?.key);
-  const turns = Math.max(0, Number(row?.turns || 0) | 0);
+  const turns = row?.turns === Infinity ? Infinity : Math.max(0, Number(row?.turns || 0) | 0);
   const stacks = Math.max(1, Number(row?.stacks || 1) | 0);
   const potency = Number(row?.potency || 0);
   const detailLines = [];
-  if (turns >= 9999) detailLines.push("Duration indefinite");
+  if (turns === Infinity || turns >= 9999) detailLines.push("Duration indefinite");
   else detailLines.push(`${turns} turns remaining`);
   if (stacks > 1) detailLines.push(`Stacks x${stacks}`);
   if (potency > 0) detailLines.push(`Potency ${potency}`);
@@ -106,13 +91,34 @@ function effectDetailData(row) {
   };
 }
 
-export function statusDisplayMetadata(key) {
-  return STATUS_DISPLAY[String(key || "").toLowerCase()] || null;
+export function statusDisplayMetadata(key, sourceKey = "") {
+  const definition = getEffectDefinition(key);
+  if (!definition) return null;
+  const identity = definition.visualIdentity || sourceKey;
+  const palette = equipmentPalette[identity] || basePalette[identity];
+  return {
+    name: definition.name || humanizeKey(key),
+    ...(palette ? { glyph: palette.glyph, glyphColor: palette.fg, glowColor: palette.glow, hue: hexToHue(palette.glow || palette.fg) } : {}),
+  };
 }
 
 export function enrichStatusRowDisplay(row) {
   if (!row || typeof row !== "object") return row;
-  const meta = statusDisplayMetadata(row.key);
+  const definition = getEffectDefinition(row.key);
+  const meta = statusDisplayMetadata(row.key, row.sourceKey);
   const details = effectDetailData(row);
+  if (definition) {
+    if (row.sourceKey) details.detailLines.push(`Source: ${humanizeKey(row.sourceKey)}`);
+    details.description = definition.description || "";
+    details.targetEffects = definition.periodic.map((op) => {
+      const amount = op.amount * Number(row.potency ?? 1) * Number(row.stacks || 1);
+      const cadence = op.interval === 1 ? "each turn" : `every ${op.interval} turns`;
+      const labels = { heal: "Restores HP", damage: "Deals damage", stamina_restore: "Restores stamina", mana_restore: "Restores mana", mana_drain: "Drains mana", stamina_drain: "Drains stamina" };
+      return `${labels[op.operation]} ${amount} ${cadence}.`;
+    });
+    for (const status of definition.statuses) {
+      if (status !== row.key) details.targetEffects.push(humanizeKey(status));
+    }
+  }
   return meta ? { ...row, ...meta, ...details } : { ...row, ...details };
 }

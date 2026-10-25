@@ -15,6 +15,8 @@ import { NamedIdentity } from "../components/NamedIdentity.js";
 import { Position } from "../components/Position.js";
 import { Unpaid } from "../components/Unpaid.js";
 import { Weight } from "../components/Weight.js";
+import { Charges } from "../components/Charges.js";
+import { ScriptState } from "../components/ScriptState.js";
 import { resolveEquipmentView } from "./equipmentTopology.js";
 import {
   attach,
@@ -100,6 +102,8 @@ function capacityStackKey(world, itemId) {
   if (!(itemId > 0) || !world.isAlive(itemId)) return `__dead_${itemId}`;
   const ni = world.get(itemId, NamedIdentity);
   const base = ni?.identity ? String(ni.identity) : `__entity_${itemId}`;
+  // Stateful artifacts own independent charge pools and script state.
+  if (world.has(itemId, Charges) || world.has(itemId, ScriptState)) return `${base}::entity:${itemId}`;
   const unpaid = world.get(itemId, Unpaid);
   if (!unpaid) return base;
   const shopkeeperId = Number(unpaid.shopkeeperId || 0) | 0;

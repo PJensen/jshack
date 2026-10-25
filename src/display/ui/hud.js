@@ -1484,7 +1484,7 @@ export function initHUD() {
     btn.addEventListener('click', () => {
       const entry = _slotEntries[index] || null;
       if (entry?.kind === 'item-use' && Number(entry?.itemId || 0) > 0) {
-        window.dispatchEvent(new CustomEvent('ui:requestUse', { detail: { itemId: entry.itemId } }));
+        window.dispatchEvent(new CustomEvent('ui:requestUse', { detail: { itemId: entry.itemId, abilityId: entry.abilityId } }));
         return;
       }
       window.dispatchEvent(new CustomEvent('ui:castSpellSlot', { detail: { slot: index } }));
@@ -1902,7 +1902,12 @@ function ensureEffectsStack(container) {
   }
 
   function setAngle(rec, remaining) {
-    const total = Math.max(1, rec.total | 0);
+    if (remaining === Infinity) {
+      rec.overlay.style.background = 'transparent';
+      rec.ticksEl.textContent = '\u221E';
+      return;
+    }
+    const total = Math.max(1, Number(rec.total || 1));
     const pct = Math.max(0, Math.min(1, remaining / total));
     const deg = (pct * 360).toFixed(2) + 'deg';
     rec.overlay.style.background = `conic-gradient(rgba(180,190,200,.2) ${deg}, transparent 0)`;
@@ -1917,6 +1922,7 @@ function ensureEffectsStack(container) {
     for (const s of (Array.isArray(statuses) ? statuses : [])) {
       const key = String(s.key || '').toLowerCase();
       if (!key) continue;
+      const badgeKey = s.instanceId ? `effect:${s.instanceId}` : key;
       const turns = Math.max(0, Number(s.turns || 0));
       const stacks = Math.max(1, Number(s.stacks || 1));
       const masked = !!s.masked;
@@ -1930,19 +1936,19 @@ function ensureEffectsStack(container) {
         : null;
       const spellFallback = !masked && !VIS[key] && s.spellGlyph ? { name: s.spellName || key, glyph: s.spellGlyph, hue: 210 } : null;
       const spec = masked ? MASKED_SPEC : (rowSpec || VIS[key] || spellFallback || { name: key.replace(/^./, c => c.toUpperCase()), glyph: '\u2728', hue: 210 });
-      let rec = byKey.get(key);
+      let rec = byKey.get(badgeKey);
       if (!rec) {
         const { el, overlay, ticksEl, stacksEl } = createBadge(spec, turns || 1);
         rec = { el, overlay, ticksEl, stacksEl, total: Math.max(1, turns || 1), status: s };
         installBadgeInputGuards(el, () => rec.status);
-        byKey.set(key, rec);
+        byKey.set(badgeKey, rec);
         container.appendChild(el);
       }
       rec.status = s;
       rec.total = Math.max(1, Math.max(rec.total || 1, turns || 1));
       setAngle(rec, turns);
       rec.stacksEl.textContent = stacks >= 9999 ? '\u221E' : `x${stacks}`;
-      seen.add(key);
+      seen.add(badgeKey);
     }
     for (const [key, rec] of byKey.entries()) {
       if (!seen.has(key)) {

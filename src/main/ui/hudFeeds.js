@@ -2,8 +2,6 @@ import { playerEntity } from "../../rules/utils/queries.js";
 import { Vitality } from "../../rules/components/Vitality.js";
 import { Stamina } from "../../rules/components/Stamina.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../../rules/components/Equipment.js";
-import { ActiveEffects } from "../../rules/components/ActiveEffects.js";
-import { Status } from "../../rules/components/Status.js";
 import { ItemInfo } from "../../rules/components/ItemInfo.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { inventoryItems } from "../../rules/utils/inventoryFacade.js";
@@ -17,7 +15,6 @@ import { Pet } from "../../rules/components/Pet.js";
 import { PetState } from "../../rules/components/PetState.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
 import { resolveResistance } from "../../rules/utils/dealDamage.js";
-import { canonicalStatusKey } from "../../rules/utils/effectSemantics.js";
 import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana } from "../../rules/utils/passiveBonuses.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
 import { getSpell } from "../../rules/data/spells.js";
@@ -35,6 +32,7 @@ import { STARTER_RAT_QUEST_ID } from "../../rules/quests/runtime.js";
 import { REQUIRED_RAT_KILLS } from "../../rules/quests/definitions/ratInfestation.js";
 import { questRewardPreviewText } from "./questRewards.js";
 import { enrichStatusRowDisplay } from "./statusDisplayMetadata.js";
+import { buildEffectRows } from "./effectRows.js";
 
 export function formatClockLabel12Hour(turn) {
   const safeTurn = Math.max(0, Number(turn || 0) | 0);
@@ -332,8 +330,6 @@ export function createHudFeeds(world, deps) {
     const eq = /** @type any */ (world.get(pe.id, Equipment));
     const passive = getPassiveBonuses(world, pe.id);
     const canonical = resolveCanonicalStats(world, pe.id);
-    const st = /** @type any */ (world.get(pe.id, ActiveEffects));
-    const semanticStatus = /** @type any */ (world.get(pe.id, Status));
     const wid = Number(eq?.weapon || 0);
     const rangedId = Number(eq?.ranged || 0);
     const combat = resolveCombatSnapshot(world, pe.id, { mode: "melee" });
@@ -369,32 +365,8 @@ export function createHudFeeds(world, deps) {
     const rangedType = String(rangedInfo?.type || "");
     /** @type {Map<string, { key: string, turns: number, stacks: number }>} */
     const statusMap = new Map();
-    if (Array.isArray(st?.effects)) {
-      for (const e of st.effects) {
-        if (e?.key === 'stat_envelope') continue; // displayed via Status as blinded/deafened
-        const key = canonicalStatusKey(String(e?.key || e?.type || ""));
-        if (!key) continue;
-        const turns = Math.max(0, Number(e?.turnsLeft || e?.duration || 0));
-        const stacks = Math.max(1, Number(e?.stacks || 1));
-        const potency = Number(e?.potency || 0);
-        const masked = e?.meta?.masked === true;
-        const prev = statusMap.get(key);
-        if (!prev) statusMap.set(key, { key, turns, stacks, potency, masked });
-        else statusMap.set(key, { key, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, stacks), potency: Math.max(Number(prev.potency || 0), potency), masked: prev.masked && masked });
-      }
-    }
-    if (Array.isArray(semanticStatus?.statuses)) {
-      for (const s of semanticStatus.statuses) {
-        const key = canonicalStatusKey(String(s?.type || s?.key || ""));
-        if (!key) continue;
-        const turns = Math.max(0, Number(s?.duration || s?.turns || 0));
-        const stacks = Math.max(1, Number(s?.stacks || 1));
-        const potency = Number(s?.potency || 0);
-        const prev = statusMap.get(key);
-        if (!prev) statusMap.set(key, { key, turns, stacks, potency, masked: false });
-        else statusMap.set(key, { key, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, stacks), potency: Math.max(Number(prev.potency || 0), potency), masked: prev.masked });
-      }
-    }
+    const effectRows = buildEffectRows(world, pe.id);
+    for (const row of effectRows) statusMap.set(row.instanceId || row.key, row);
     const hc = /** @type any */ (world.get(pe.id, Hunger));
     if (hc) {
       const level = hc.satiation > 0 ? "satiated" : getHungerLevel(Number(hc.hunger || 0));
@@ -414,7 +386,7 @@ export function createHudFeeds(world, deps) {
       const spDef = getSpell(s.key);
       if (spDef?.symbol) { s.spellGlyph = spDef.symbol; s.spellName = spDef.name; }
     }
-    const statusSig = statuses.map((s) => `${s.key}:${s.turns}:${s.stacks}:${Number(s.potency || 0)}:${s.masked ? 1 : 0}`).join("|");
+    const statusSig = statuses.map((s) => `${s.instanceId || s.key}:${s.turns}:${s.stacks}:${Number(s.potency || 0)}:${s.sourceKey || ''}:${s.masked ? 1 : 0}`).join("|");
 
     const affixIds = [];
     const pushAffixes = (id) => {

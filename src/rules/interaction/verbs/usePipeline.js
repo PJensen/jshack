@@ -4,6 +4,8 @@ import { MaterialState } from "../../components/MaterialState.js";
 import { findUsePayload } from "../../content/items/usePayloads.js";
 import { queueShopDebtForUnauthorizedUse } from "../../utils/shopClaims.js";
 import { interceptUseForWaterDamage } from "../../utils/waterExposure.js";
+import { getCatalogItem } from "../../data/itemCatalog.js";
+import { itemAbilityPipeline } from "./itemAbilityPipeline.js";
 
 /**
  * @param {any} value
@@ -110,6 +112,14 @@ export function usePipeline(ctx) {
     materialState: ctx.query.get(itemId, MaterialState),
     effectParams: (cons?.effectParams && typeof cons.effectParams === "object") ? cons.effectParams : {},
   };
+
+  const def = getCatalogItem(identity);
+  const abilityId = String(intent?.abilityId || (def?._contentDefaultAbility ? Object.keys(def._contentAbilities || {})[0] : "") || "");
+  if (abilityId) {
+    const ability = def?._contentAbilities?.[abilityId];
+    if (!ability) return ctx.cancel({ code: "ABILITY_UNKNOWN", message: "Unknown item ability.", consumesTurn: false });
+    return itemAbilityPipeline(ctx, ability, state, equippedSlot);
+  }
 
   const payload = findUsePayload(state);
   const wetIntercept = interceptUseForWaterDamage(ctx, state);

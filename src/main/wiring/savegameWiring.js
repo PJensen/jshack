@@ -1,7 +1,7 @@
-import { serializeWorld } from "../../lib/ecs-js/serialization.js";
+import { defineExtension } from "../../lib/ecs-js/index.js";
 import { getIdentifiedSnapshot } from "../../rules/data/identification.js";
 import { getGemPricingSnapshot } from "../../rules/data/gemPricing.js";
-import { getSavegameRegistryNames } from "./savegameSerializationRegistry.js";
+import { getSavegameRegistryNames, serializeSavegameWorld } from "./savegameSerializationRegistry.js";
 import { SAVEGAME_KEY, clearSavegamePayload } from "./savegameLoad.js";
 
 const INSTALLED = Symbol.for("jshack:main:savegameWiring:installed");
@@ -19,9 +19,12 @@ const INSTALLED = Symbol.for("jshack:main:savegameWiring:installed");
  */
 export function installSavegameWiring({ world, playerEntity, getActiveSpellId, getActionBarSlots, getPinnedSpellSlots, log }) {
   if (!world || typeof playerEntity !== "function") return;
-  if (world[INSTALLED]) return;
-  world[INSTALLED] = true;
+  world.install(defineExtension("jshack:main:savegameWiring", () => {
+    createSavegameListeners({ world, playerEntity, getActiveSpellId, getActionBarSlots, getPinnedSpellSlots, log });
+  }, { key: INSTALLED }));
+}
 
+function createSavegameListeners({ world, playerEntity, getActiveSpellId, getActionBarSlots, getPinnedSpellSlots, log }) {
   world.on("bed:rested", ({ actor }) => {
     const pe = playerEntity(world);
     if (!pe || Number(actor || 0) !== pe.id) return;
@@ -31,7 +34,7 @@ export function installSavegameWiring({ world, playerEntity, getActiveSpellId, g
       v: 1,
       savedAt: Date.now(),
       reason: "bed:rested",
-      world: serializeWorld(world, { note: "sleep_autosave", include: registryNames }),
+      world: serializeSavegameWorld(world, { note: "sleep_autosave", include: registryNames }),
       schema: { registry: registryNames },
       identified: getIdentifiedSnapshot(),
       gemPricing: getGemPricingSnapshot(),

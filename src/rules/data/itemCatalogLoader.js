@@ -9,6 +9,7 @@ import { Potion } from "../components/Potion.js";
 import { attachProcPackage } from "./procPackages.js";
 import { ScriptRef } from "../components/ScriptRef.js";
 import { ScriptState } from "../components/ScriptState.js";
+import { Charges } from "../components/Charges.js";
 
 function cloneWeaponVfxProfile(profile) {
   if (typeof profile === "string") return profile;
@@ -70,6 +71,7 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     tags: Array.isArray(def.tags) ? def.tags.slice() : [],
   };
   world.add(id, ItemInfo, info);
+  if (def.chargePool) world.add(id, Charges, { ...def.chargePool });
 
   if (String(def.type || "").toLowerCase() === "potion") {
     const potionDef = (def.potion && typeof def.potion === "object") ? def.potion : {};

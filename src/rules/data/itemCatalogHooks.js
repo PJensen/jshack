@@ -177,6 +177,7 @@ export function createBuffFoodOnUseHook(opts = {}) {
         stacks: Math.max(1, Number(effect.stacks || 1) | 0),
         sourceId: itemId,
         sourceKind: "cooked_food",
+        sourceActorId: actor,
         sourceKey: String(state?.identity || ""),
       });
     }
