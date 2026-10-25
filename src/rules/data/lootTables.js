@@ -13,6 +13,16 @@ export const LOOT_TABLES = {
 
   // ── Shared sub-tables ─────────────────────────────────────────────
 
+  "sub:pocket_relics": {
+    rolls: { min: 1, max: 1 },
+    entries: [
+      { type: "item", weight: 30, itemId: "brass_cricket" },
+      { type: "item", weight: 25, itemId: "widows_spool" },
+      { type: "item", weight: 25, itemId: "drowned_bell" },
+      { type: "item", weight: 20, itemId: "bloodglass_hourglass" },
+    ],
+  },
+
   "sub:equip_common": {
     rolls: { min: 1, max: 1 },
     entries: [
@@ -360,6 +370,9 @@ export const LOOT_TABLES = {
       { type: "archetype", weight: 25, archetype: "IronRation" },
       { type: "archetype", weight: 18, archetype: "WildBerries" },
       { type: "archetype", weight: 12, archetype: "WildHerbs" },
+      { type: "item", weight: 16, itemId: "food_pilgrim_stew" },
+      { type: "item", weight: 12, itemId: "food_moonmilk_chowder" },
+      { type: "item", weight: 8, itemId: "food_witchlight_broth" },
     ],
   },
 
@@ -466,6 +479,8 @@ export const LOOT_TABLES = {
     rolls: { min: 1, max: 1 },
     entries: [
       { type: "nothing",   weight: 50 },
+      { type: "table",     weight: 4, tableId: "sub:pocket_relics" },
+      { type: "table",     weight: 8, tableId: "sub:food" },
       { type: "gold",      weight: 35, count: { base: 10, perDepth: 6 } },
       { type: "archetype", weight: 5, archetype: "HealthPotion" },
       { type: "item",      weight: 8, itemId: "scroll_identify" },
@@ -499,6 +514,8 @@ export const LOOT_TABLES = {
     rolls: { min: 1, max: 1 },
     entries: [
       { type: "nothing",   weight: 40 },
+      { type: "table",     weight: 6, tableId: "sub:pocket_relics" },
+      { type: "table",     weight: 8, tableId: "sub:food" },
       { type: "gold",      weight: 35, count: { base: 22, perDepth: 8 } },
       { type: "table",     weight: 12, tableId: "sub:potions" },
       { type: "item",      weight: 6, itemId: "potion_mana" },
@@ -523,6 +540,8 @@ export const LOOT_TABLES = {
     rolls: { min: 1, max: 1 },
     entries: [
       { type: "nothing",   weight: 40 },
+      { type: "table",     weight: 6, tableId: "sub:pocket_relics" },
+      { type: "table",     weight: 8, tableId: "sub:food" },
       { type: "gold",      weight: 28, count: { base: 28, perDepth: 9 } },
       { type: "table",     weight: 10, tableId: "sub:potions" },
       { type: "item",      weight: 5, itemId: "potion_mana" },
@@ -547,6 +566,8 @@ export const LOOT_TABLES = {
     rolls: { min: 1, max: 1 },
     entries: [
       { type: "nothing",   weight: 35 },
+      { type: "table",     weight: 6, tableId: "sub:pocket_relics" },
+      { type: "table",     weight: 8, tableId: "sub:food" },
       { type: "gold",      weight: 25, count: { base: 55, perDepth: 12 } },
       { type: "table",     weight: 8, tableId: "sub:potions" },
       { type: "table",     weight: 11, tableId: "sub:equip_magic" },

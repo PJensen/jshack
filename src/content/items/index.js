@@ -24,3 +24,5 @@ import "./spellbooks.js";
 import "./scrolls.js";
 import "./wands.js";
 import "./economy.js";
+import "./pocketRelics.js";
+import "./dungeonSoups.js";

@@ -131,6 +131,26 @@ materialized through the canonical facade and removed before legacy resolution,
 so they cannot tick twice. Other legacy effect families retain their existing
 resolver while they are migrated incrementally.
 
+## Playable authoring examples
+
+`src/content/items/pocketRelics.js` demonstrates four bag tools, usable without
+equipment or gem sockets. Bloodglass Hourglass couples mana recovery to periodic
+self-damage; Widow's Spool stacks targeted venom to three; Bell of the Drowned
+Saint combines enemy stun with healing that same enemy; Brass Cricket creates
+independently expiring stamina/damage songs. The charged tools keep their own
+charge pools, and all four author activation presentations beside their rules.
+
+`src/content/items/dungeonSoups.js` demonstrates the existing food hook applying
+composite effect instances. Pilgrim's Barley Stew mixes two recovery cadences;
+Moonmilk Chowder trades mana for healing; Witchlight Broth restores mana while
+hurting the eater. Eating consumes the item, feeds the actor, and leaves one
+inspectable effect badge. Another serving refreshes the existing package.
+
+All seven items have authored glyphs, colors, descriptions, and ordinary tier
+0–3 loot routes. Soups also join `sub:food`; pocket tools use `sub:pocket_relics`.
+Their acquisition and complete activation/lifetime behaviors are exercised in
+`tests/pocketRelicsAndSoups.test.mjs`.
+
 ## Subsequent milestones
 
 The first slice provides control statuses, periodic operations, charges, named
