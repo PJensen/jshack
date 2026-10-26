@@ -1,0 +1,38 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "b84a05e81bca",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/CONTENT-AUTHORING.md",
+    "src/content/define.js",
+    "src/content/items/dawnbreaker.js",
+    "src/content/items/sunVessel.js",
+    "src/content/worldFacade.js",
+    "src/main/scheduler.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/systems/itemProcTickSystem.js",
+    "src/rules/systems/scriptTickSystem.js",
+    "src/rules/utils/affixTopology.js",
+    "src/rules/utils/procApplication.js",
+    "src/rules/utils/procEvaluator.js",
+    "tests/itemProcTick.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b8/4a05e81bca/0/metadata.json",
+      "transcript": "/b8/4a05e81bca/0/full.jsonl",
+      "compact_transcript": "/b8/4a05e81bca/0/transcript.jsonl",
+      "content_hash": "/b8/4a05e81bca/0/content_hash.txt",
+      "prompt": "/b8/4a05e81bca/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 97003,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4866816,
+    "output_tokens": 22221,
+    "api_call_count": 51
+  }
+}
