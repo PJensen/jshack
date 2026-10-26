@@ -126,6 +126,17 @@ export const BluntHeadArrowsStack = defineArchetype(
     [Material, { kind: "wood" }],
 );
 
+export const ChalkArrowsStack = defineArchetype(
+    "ChalkArrowsStack",
+    [ItemInfo, {
+        type: "ammo", slot: "ammo", subtype: "chalk",
+        description: "Arrows tipped with soft chalk that leave marks on impact.",
+        weight: 0.25, value: 6, count: 6, rarity: 3, rarityName: "rare",
+    }],
+    [NamedIdentity, /** @param {any} p */ (p) => ({ name: (p && p.name) ?? "Chalk Arrows", identity: "ammo_chalk_arrows" })],
+    [Material, { kind: "chalk" }],
+);
+
 // Generic magic item (spellbooks, wands, scrolls) — resolves from item def params
 export const MagicItem = defineArchetype(
     "MagicItem",

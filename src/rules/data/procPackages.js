@@ -55,6 +55,7 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   BreadcrumbBoots: "procPackage:breadcrumbBoots",
   Dawnbreaker: "procPackage:dawnbreaker",
   SunVessel: "procPackage:sunVessel",
+  PatientThunder: "procPackage:patientThunder",
 });
 
 function getEffect(world, entityId, key) {
@@ -214,6 +215,34 @@ registerScript(PROC_PACKAGE_KEYS.SunVessel, {
       ctx.proc.present("leak", { target: source });
       if (charge - 1 <= 0) ctx.proc.message("The last light drains from the Sun-Vessel.", "system");
     }
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.PatientThunder, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    const kind = String(ctx?.kind || "");
+    const source = Number(ctx?.source || 0) | 0;
+    if (!(source > 0)) return;
+    const state = ctx.proc.getState();
+    const maxPatience = Math.max(1, Number(state.maxPatience || 3));
+    if (kind === "onTurnWhileEquipped") {
+      if (Number(state.patience || 0) < maxPatience) {
+        ctx.proc.setState({ patience: Number(state.patience || 0) + 1 });
+      }
+      return;
+    }
+    if (kind !== "onHit") return;
+    const patience = Math.max(0, Number(state.patience || 0));
+    if (patience <= 0) return;
+    const target = Number(ctx?.target || 0) | 0;
+    ctx.proc.dealDamage(target, patience * 2, "electric", {
+      source,
+      cause: "procPackage:patientThunder",
+      noTrigger: true,
+    });
+    ctx.proc.setState({ patience: 0 });
+    ctx.proc.present("discharge", { target, patience });
+    ctx.proc.message("Patient Thunder finally answers.", "good");
   },
 });
 
@@ -1458,6 +1487,18 @@ const PROC_PACKAGE_SPECS = Object.freeze([
     procTrees: Object.freeze([
       Object.freeze({ trigger: "onHit", script: PROC_PACKAGE_KEYS.Dawnbreaker, priority: 10 }),
       Object.freeze({ trigger: "onTurnWhileEquipped", script: PROC_PACKAGE_KEYS.Dawnbreaker, priority: 10 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "patientThunder",
+    name: "Patient Thunder",
+    summary: "A patient storm weapon that gathers charge while equipped and discharges it on a later hit.",
+    stateKeys: Object.freeze(["patience", "maxPatience"]),
+    hostIdeas: Object.freeze(["storm weapons", "waiting rods", "thunder relics"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onTurnWhileEquipped", script: PROC_PACKAGE_KEYS.PatientThunder, priority: 10 }),
+      Object.freeze({ trigger: "onHit", script: PROC_PACKAGE_KEYS.PatientThunder, priority: 20 }),
     ]),
   }),
   Object.freeze({

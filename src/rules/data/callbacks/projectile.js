@@ -3,10 +3,12 @@
 // Callbacks are plain (ctx) => void functions invoked via runCallbackList.
 
 import { ActiveEffects } from "../../components/ActiveEffects.js";
+import { Position } from "../../components/Position.js";
 import { rngInt, rollDice } from "../../utils/rng.js";
 import { createCombatStatFacade } from "../../utils/resolveCombatSnapshot.js";
 import { createStatusFacade } from "../../utils/statusFacade.js";
 import { upsertTimedEffect } from "../../utils/effectSemantics.js";
+import { spawnHazard } from "../../utils/hazardSpawn.js";
 
 // ── ProjectileImpactCallbackContext ────────────────────────────────
 
@@ -104,6 +106,19 @@ export class ProjectileImpactCallbackContext {
   get killed() { return !!this._damageResult?.killed; }
   get amountApplied() { return Number(this._damageResult?.amount || 0) | 0; }
   get resultReason() { return String(this._damageResult?.reason || ""); }
+
+  get impact() {
+    const point = this._frame.impact;
+    if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) return { x: point.x | 0, y: point.y | 0 };
+    const pos = this.world.get(this.defender, Position);
+    return pos ? { x: pos.x | 0, y: pos.y | 0 } : null;
+  }
+
+  spawnHazard(params = {}) {
+    const at = this.impact;
+    if (!at) return 0;
+    return spawnHazard(this.world, { ...params, x: at.x, y: at.y, sourceId: this.attacker });
+  }
 
   cancel(reason) {
     this._cancelled = true;

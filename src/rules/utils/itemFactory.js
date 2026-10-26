@@ -8,7 +8,7 @@ import * as gems from '../data/gems.js';
 import { ItemInfo } from '../components/ItemInfo.js';
 
 // Archetypes
-import { GoldStack, HealthPotion, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, ScrollOfMapping, GemItem, Bone } from '../archetypes/Items.js';
+import { GoldStack, HealthPotion, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, ChalkArrowsStack, ScrollOfMapping, GemItem, Bone } from '../archetypes/Items.js';
 import {
   Ration, IronRation, WildBerries, WildHerbs,
   DungeonMushrooms, Wheat, Carrot, Corn,
@@ -32,6 +32,7 @@ function simpleItemArchetypes() {
     'ammo_piercing_arrows': PiercingArrowsStack,
     'ammo_bodkin_arrows': BodkinArrowsStack,
     'ammo_blunt_arrows': BluntHeadArrowsStack,
+    'ammo_chalk_arrows': ChalkArrowsStack,
     'scroll_mapping': ScrollOfMapping,
     'bone': Bone,
     'food_ration': Ration,

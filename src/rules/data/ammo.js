@@ -22,6 +22,9 @@ const AMMO_FIRE_ARROW_ACTOR_IMPACT = "ammo:fireArrows:onProjectileActorImpact";
 const AMMO_PIERCING_ARROW_ACTOR_IMPACT = "ammo:piercingArrows:onProjectileActorImpact";
 const AMMO_BODKIN_ARROW_ACTOR_IMPACT = "ammo:bodkinArrows:onProjectileActorImpact";
 const AMMO_BLUNT_ARROW_ACTOR_IMPACT = "ammo:bluntArrows:onProjectileActorImpact";
+const AMMO_CHALK_ARROW_ACTOR_IMPACT = "ammo:chalkArrows:onProjectileActorImpact";
+const AMMO_CHALK_ARROW_WALL_IMPACT = "ammo:chalkArrows:onProjectileWallImpact";
+const AMMO_CHALK_ARROW_MISS = "ammo:chalkArrows:onProjectileMiss";
 
 registerScript(AMMO_FIRE_ARROW_ACTOR_IMPACT, {
   [ScriptVerb.ProjectileActorImpact]: (_world, ctx) => {
@@ -76,6 +79,48 @@ registerScript(AMMO_BLUNT_ARROW_ACTOR_IMPACT, {
         target: resolvedCtx.defender,
       });
     });
+  },
+});
+
+registerScript(AMMO_CHALK_ARROW_ACTOR_IMPACT, {
+  [ScriptVerb.ProjectileActorImpact]: (world, ctx) => {
+    ctx.deferResolved((resolvedCtx) => {
+      if (!resolvedCtx.applied || resolvedCtx.killed) return;
+      resolvedCtx.pushEffect(resolvedCtx.defender, { key: "chalk_mark", turnsLeft: 5, potency: 1, stacks: 1 });
+      resolvedCtx.emit("proc:chalkArrows:mark", { actor: resolvedCtx.attacker, target: resolvedCtx.defender });
+    });
+  },
+});
+
+registerScript(AMMO_CHALK_ARROW_WALL_IMPACT, {
+  [ScriptVerb.ProjectileWallImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "chalk_mark",
+      medium: "floor",
+      turnsLeft: 6,
+      radius: 1,
+      identity: "chalk_arrow_mark",
+      name: "Chalk Mark",
+      cause: "chalk_arrows:wall",
+      meta: { chalk: true },
+    });
+    ctx.emit("proc:chalkArrows:wallMark", { actor: ctx.attacker, at: ctx.impact });
+  },
+});
+
+registerScript(AMMO_CHALK_ARROW_MISS, {
+  [ScriptVerb.ProjectileMiss]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "chalk_mark",
+      medium: "floor",
+      turnsLeft: 4,
+      radius: 0,
+      identity: "chalk_arrow_miss",
+      name: "Chalk Mark",
+      cause: "chalk_arrows:miss",
+      meta: { chalk: true, miss: true },
+    });
+    ctx.emit("proc:chalkArrows:missMark", { actor: ctx.attacker, at: ctx.impact });
   },
 });
 
@@ -149,6 +194,7 @@ const AMMO_ID_ALIASES = Object.freeze({
   bodkin_arrows: "ammo_bodkin_arrows",
   blunt_arrows: "ammo_blunt_arrows",
   blunt_head_arrows: "ammo_blunt_arrows",
+  chalk_arrows: "ammo_chalk_arrows",
   plain: "ammo_arrows",
   fire: "ammo_fire_arrows",
   piercing: "ammo_piercing_arrows",
@@ -212,6 +258,15 @@ export const AMMO_DEFS = Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_BLUNT_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
+    }),
+  }),
+  ammo_chalk_arrows: Object.freeze({
+    id: "ammo_chalk_arrows",
+    name: "Chalk Arrows",
+    scripts: Object.freeze({
+      onProjectileActorImpact: Object.freeze([AMMO_CHALK_ARROW_ACTOR_IMPACT]),
+      onProjectileWallImpact: Object.freeze([AMMO_CHALK_ARROW_WALL_IMPACT]),
+      onProjectileMiss: Object.freeze([AMMO_CHALK_ARROW_MISS]),
     }),
   }),
 });

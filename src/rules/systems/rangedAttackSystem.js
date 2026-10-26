@@ -127,6 +127,10 @@ export function rangedAttackSystem(world) {
 
     // LOS check
     if (!hasLOS(ax, ay, tx, ty, isBlocked)) {
+      let wallImpact = { x: tx, y: ty };
+      for (const [x, y] of bresenhamLine(ax, ay, tx, ty)) {
+        if (isBlocked(x, y)) { wallImpact = { x, y }; break; }
+      }
       runAmmoScripts(world, ammoIdentity, 'onProjectileWallImpact', {
         phase: 'projectile-wall-impact',
         attacker,
@@ -137,6 +141,7 @@ export function rangedAttackSystem(world) {
         style: ammoStyle,
         distance: dist,
         damage: 0,
+        impact: wallImpact,
       });
       world.emit?.('ranged:blocked', { attacker, target: defender });
       world.remove(attacker, RangedAttackIntent);
@@ -224,6 +229,15 @@ export function rangedAttackSystem(world) {
     const isNat1 = d20 === 1;
 
     if (!isCrit && (isNat1 || totalToHit < armorClass)) {
+      const missTo = computeMissEndpoint(world, apos, dpos, {
+        sourceId: attacker,
+        targetId: defender,
+        key: 'ranged:shot',
+        salt: 0x52a9,
+        maxAngleDeg: 15,
+        minDistanceScale: 1.2,
+        distanceExtraScale: 0.2,
+      });
       runAmmoScripts(world, ammoIdentity, 'onProjectileMiss', {
         phase: 'projectile-miss',
         attacker,
@@ -239,18 +253,10 @@ export function rangedAttackSystem(world) {
         armorClass,
         critical: isCrit,
         rng: r,
+        impact: { x: Math.round(missTo.x), y: Math.round(missTo.y) },
       });
       world.emit?.('status', createStatusEvent({ id: defender, kind: 'miss', source: attacker }));
       world.emit?.('ranged:missed-target', { attacker, target: defender });
-      const missTo = computeMissEndpoint(world, apos, dpos, {
-        sourceId: attacker,
-        targetId: defender,
-        key: 'ranged:shot',
-        salt: 0x52a9,
-        maxAngleDeg: 15,
-        minDistanceScale: 1.2,
-        distanceExtraScale: 0.2,
-      });
       const missRay = resolveMissRayImpact(world, {
         attacker,
         defender,

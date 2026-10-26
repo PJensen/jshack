@@ -5,6 +5,7 @@ import "./potionOfRadiance.js";
 import "./potionEchoingFocus.js";
 import "./sunVessel.js";
 import "./dawnbreaker.js";
+import "./patientThunder.js";
 import "./sunsword.js";
 import "./fishingRod.js";
 import "./lodbrokSerpentBoundBreeches.js";
