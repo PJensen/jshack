@@ -9,6 +9,7 @@ import { Faction } from "../src/rules/components/Faction.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { RangedAttackIntent } from "../src/rules/components/Intents/RangedAttackIntent.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
+import { TargetLock } from "../src/rules/components/TargetLock.js";
 import { setFovDisabled } from "../src/rules/environment/dungeon/exploredMap.js";
 
 function withVisibilityDisabled(fn) {
@@ -20,7 +21,7 @@ function withVisibilityDisabled(fn) {
   }
 }
 
-Deno.test("rulesDispatch: shootRanged auto-target with bow queues RangedAttackIntent", () => withVisibilityDisabled(() => {
+Deno.test("rulesDispatch: shootRanged fires at the persistent bow target", () => withVisibilityDisabled(() => {
   const world = new World({ seed: 91 });
   const actor = world.create();
   world.add(actor, Position, { x: 5, y: 5 });
@@ -33,6 +34,7 @@ Deno.test("rulesDispatch: shootRanged auto-target with bow queues RangedAttackIn
   world.add(nearEnemy, Position, { x: 6, y: 5 });
   world.add(nearEnemy, Faction, { key: "enemy" });
   world.add(nearEnemy, Vitality, { hp: 9, maxHp: 9 });
+  world.add(actor, TargetLock, { targetId: nearEnemy });
 
   const farEnemy = world.create();
   world.add(farEnemy, Position, { x: 8, y: 5 });
@@ -51,7 +53,7 @@ Deno.test("rulesDispatch: shootRanged auto-target with bow queues RangedAttackIn
   assertEquals(tickCount, 1);
 }));
 
-Deno.test("rulesDispatch: shootRanged auto-target with wand queues UseIntent + coords", () => withVisibilityDisabled(() => {
+Deno.test("rulesDispatch: shootRanged fires a wand at the persistent target", () => withVisibilityDisabled(() => {
   const world = new World({ seed: 92 });
   const actor = world.create();
   world.add(actor, Position, { x: 10, y: 10 });
@@ -65,6 +67,7 @@ Deno.test("rulesDispatch: shootRanged auto-target with wand queues UseIntent + c
   world.add(enemy, Position, { x: 12, y: 10 });
   world.add(enemy, Faction, { key: "enemy" });
   world.add(enemy, Vitality, { hp: 12, maxHp: 12 });
+  world.add(actor, TargetLock, { targetId: enemy });
 
   let tickCount = 0;
   world.tick = () => { tickCount += 1; };
@@ -81,7 +84,7 @@ Deno.test("rulesDispatch: shootRanged auto-target with wand queues UseIntent + c
   assertEquals(tickCount, 1);
 }));
 
-Deno.test("rulesDispatch: shootRanged emits system message when no target is in range", () => withVisibilityDisabled(() => {
+Deno.test("rulesDispatch: shootRanged without a target opens point targeting without a turn", () => withVisibilityDisabled(() => {
   const world = new World({ seed: 93 });
   const actor = world.create();
   world.add(actor, Position, { x: 2, y: 2 });
@@ -89,9 +92,6 @@ Deno.test("rulesDispatch: shootRanged emits system message when no target is in 
   const bowId = world.create();
   world.add(bowId, ItemInfo, { type: "equip", subtype: "bow", range: 5, count: 1 });
   world.add(actor, Equipment, { ranged: bowId });
-
-  const messages = [];
-  world.on("message", (ev) => messages.push(ev));
 
   let tickCount = 0;
   world.tick = () => { tickCount += 1; };
@@ -101,7 +101,5 @@ Deno.test("rulesDispatch: shootRanged emits system message when no target is in 
 
   assertEquals(world.has(actor, RangedAttackIntent), false);
   assertEquals(world.has(actor, UseIntent), false);
-  assertEquals(messages.length, 1);
-  assertEquals(messages[0]?.text, "No target in range.");
   assertEquals(tickCount, 0);
 }));

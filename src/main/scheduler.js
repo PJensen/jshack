@@ -132,6 +132,7 @@ import { tombstoneSystem } from "../rules/systems/tombstoneSystem.js";
 import { treasureGuardianListenerExtension, treasureGuardianSystem } from "../rules/systems/treasureGuardianSystem.js";
 import { experimentalAIExtension } from "./resources/AI.js";
 import { encounterListenerExtension, encounterSystem } from "../rules/systems/encounterSystem.js";
+import { targetLockSystem } from "../rules/systems/targetLockSystem.js";
 
 /**
  * @param {World} world
@@ -292,6 +293,7 @@ export function configureWorld(world) {
   registerSystem(threatDamageReactionSystem, 'effects', { after: [stealthAmbushSystem], before: [effectSystem] });
   registerSystem(deityDamageReactionSystem, 'effects', { after: [stealthAmbushSystem], before: [effectSystem] });
   registerSystem(effectSystem, 'effects');
+  registerSystem(targetLockSystem, 'effects');
   // Keep shield guard/break icon state synced to equipped offhand shields.
   registerSystem(shieldGuardSystem, 'effects');
   registerSystem(threatSystem, 'effects', { after: [shieldGuardSystem] });

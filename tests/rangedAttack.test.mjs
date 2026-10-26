@@ -11,6 +11,7 @@ import { Faction } from '../src/rules/components/Faction.js';
 import { NamedIdentity } from '../src/rules/components/NamedIdentity.js';
 import { Facing } from '../src/rules/components/Facing.js';
 import { ActiveEffects } from '../src/rules/components/ActiveEffects.js';
+import { HazardArea } from '../src/rules/components/HazardArea.js';
 import { Resistances } from '../src/rules/components/Resistences.js';
 import { ProcPackageNode } from '../src/rules/components/ProcPackageNode.js';
 import { AttackIntent } from '../src/rules/components/Intents/AttackIntent.js';
@@ -126,6 +127,16 @@ Deno.test("ranged: hit with bow, ammo, LOS clear, in range", () => {
   assertEquals(String(hit?.projectileKind || ''), 'arrow');
   assert(Math.abs(Number(hit?.impactVector?.dx || 0) - 1) < 1e-6, `impactVector.dx should face target, got ${Number(hit?.impactVector?.dx || 0)}`);
   assert(Math.abs(Number(hit?.impactVector?.dy || 0)) < 1e-6, `impactVector.dy should be 0 for horizontal shot, got ${Number(hit?.impactVector?.dy || 0)}`);
+});
+
+Deno.test("ranged: coordinate shot resolves empty endpoint as ground impact", () => {
+  const { world, archer, ammoId } = setup({ ammoIdentity: "ammo_chalk_arrows", ammoName: "Chalk Arrows" });
+  world.add(archer, RangedAttackIntent, { targetId: 0, toX: 6, toY: 1 });
+  rangedAttackSystem(world);
+  assert(!world.has(archer, RangedAttackIntent), "intent removed");
+  assertEquals(world.get(ammoId, ItemInfo)?.count, 9);
+  const marks = [...world.query(Position, HazardArea)].map(([, pos]) => `${pos.x},${pos.y}`);
+  assert(marks.includes("6,1"), "ground impact should author a hazard at the endpoint");
 });
 
 Deno.test("ranged: hits do not apply implicit bleed without explicit proc source", () => {
@@ -364,7 +375,7 @@ Deno.test("buildCatalogItem attaches proc packages for mirror bow", () => {
   assertEquals(world.get(packageChildren[0], ProcPackageNode)?.packageId, "ricochetTheology");
 });
 
-Deno.test("ranged: mirror bow ricochets in live combat when target is wall-adjacent", () => {
+Deno.test("ranged: physical projectile collision stops at an intervening actor", () => {
   clearAll();
   const tiles = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR);
   tiles[3 * CHUNK_SIZE + 4] = TILE_WALL;
@@ -374,6 +385,8 @@ Deno.test("ranged: mirror bow ricochets in live combat when target is wall-adjac
   world.step = 1;
   const projectileEvents = [];
   world.on("projectile:spawn", (payload) => projectileEvents.push(payload));
+  const shots = [];
+  world.on("ranged:shot", (payload) => shots.push(payload));
 
   const bowId = buildCatalogItem(world, "bow_mirror");
   const ammoId = makeAmmo(world, 10);
@@ -412,10 +425,11 @@ Deno.test("ranged: mirror bow ricochets in live combat when target is wall-adjac
   world.add(archer, RangedAttackIntent, { targetId: target, toX: 4, toY: 4 });
   rangedAttackSystem(world);
 
-  assertEquals(projectileEvents.length, 2);
-  assert(world.get(bystanderA, Vitality).hp < 20, "first ricochet target should take damage");
-  assert(world.get(bystanderB, Vitality).hp < 20, "forward non-hostile target should take damage");
-  assertEquals(world.get(backward, Vitality).hp, 20, "backward target should be ignored");
+  assertEquals(projectileEvents.length, 0);
+  assertEquals(shots[0]?.target, backward, "intervening actor should resolve as the impact target");
+  assertEquals(world.get(target, Vitality).hp, 20, "locked target behind an actor should not be hit");
+  assertEquals(world.get(bystanderA, Vitality).hp, 20, "actors beyond the first collision should be ignored");
+  assertEquals(world.get(bystanderB, Vitality).hp, 20, "actors beyond the first collision should be ignored");
 });
 
 Deno.test("combat: mirror bow proc does not fire on melee hits", () => {

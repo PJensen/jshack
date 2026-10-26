@@ -36,6 +36,7 @@ export { DeityAuthorshipState } from './DeityAuthorshipState.js';
 export { DeityChallengeCadence } from './DeityChallengeCadence.js';
 export { DeityChallengeMember } from './DeityChallengeMember.js';
 export { Player } from './Player.js';
+export { TargetLock } from './TargetLock.js';
 export { Inventory } from './Inventory.js';
 export { InventoryRoot } from './InventoryRoot.js';
 export { NamedIdentity } from './NamedIdentity.js';

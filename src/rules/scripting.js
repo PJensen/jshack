@@ -7,6 +7,7 @@ export const ScriptVerb = Object.freeze({
   SpellCast: "spell:cast",
   ProjectileActorImpact: "projectile:actorImpact",
   ProjectileWallImpact: "projectile:wallImpact",
+  ProjectileGroundImpact: "projectile:groundImpact",
   ProjectileMiss: "projectile:miss",
   AffixOnBeforeHit: "affix:onBeforeHit",
   AffixOnHit: "affix:onHit",

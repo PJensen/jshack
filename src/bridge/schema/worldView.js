@@ -3,6 +3,7 @@
 
 import { Position } from "../../rules/components/Position.js";
 import { Player } from "../../rules/components/Player.js";
+import { TargetLock } from "../../rules/components/TargetLock.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { DoorState } from "../../rules/components/DoorState.js";
 import { SecretDoor } from "../../rules/components/SecretDoor.js";
@@ -83,7 +84,7 @@ import {
 /** @typedef {{ x:number, y:number, kind:string, alpha:number, burning?:boolean, smoking?:boolean }} RoofTileView */
 /** @typedef {{ id:number, profile:string, pos:{x:number,y:number}, interior:boolean }} AudioEmitterView */
 /** @typedef {{ id:number, pos:{x:number,y:number}, radius:number, shadowSoftness:number, temporalPattern:string, phaseSeed:number, intensity:number, intensityScale:number, colorShiftScale:number, voidStrength:number|null, baseColor:[number,number,number] }} LightEmitterView */
-/** @typedef {{ turn:number, seed:number, player: { id:number, pos:{x:number,y:number} } | null, entities: EntityView[], solids: SolidView[], emissives: any[], audioEmitters: AudioEmitterView[], lightEmitters: LightEmitterView[], roofs: RoofTileView[], fisheries: any[], tileGrid: any, isVisible: ((x:number,y:number)=>boolean)|null, isExplored: ((x:number,y:number)=>boolean)|null, currentDepth?: number }} WorldView */
+/** @typedef {{ turn:number, seed:number, player: { id:number, targetId?:number, pos:{x:number,y:number} } | null, entities: EntityView[], solids: SolidView[], emissives: any[], audioEmitters: AudioEmitterView[], lightEmitters: LightEmitterView[], roofs: RoofTileView[], fisheries: any[], tileGrid: any, isVisible: ((x:number,y:number)=>boolean)|null, isExplored: ((x:number,y:number)=>boolean)|null, currentDepth?: number }} WorldView */
 
 /** @typedef {{ id:number, text:string, profane:boolean, pos:{x:number,y:number} }} EngravingView */
 
@@ -1037,7 +1038,7 @@ export function buildWorldView(world) {
 	let playerVisionRadius = 0;
 
 	for (const [id, _p, pos] of world.query(Player, Position)) {
-		_view.player = { id, pos: { x: pos.x, y: pos.y } };
+		_view.player = { id, targetId: Number(world.get(id, TargetLock)?.targetId || 0) | 0, pos: { x: pos.x, y: pos.y } };
 		break;
 	}
 
@@ -1267,6 +1268,7 @@ export function buildWorldView(world) {
 			projectItemAffixDisplayTags(kind, itemInfo, rec, world.get(id, Material)?.kind ?? null);
 			projectCombatUi(world, id, rec, playerFactionKey);
 			projectAggroUi(world, id, rec);
+			if (_view.player && Number(world.get(_view.player.id, TargetLock)?.targetId || 0) === (id | 0)) rec.targetLocked = true;
 			projectProcStateTags(world, id, rec);
 			projectDungeonEntranceBadge(world, id, rec);
 			// Placed torches get the torch tag for particle/light sync
@@ -1432,7 +1434,7 @@ export function buildWorldView(world) {
 			_allEntities.push(rec);
 			collectedIds.add(id);
 			if (isPlayer) {
-				if (!_view.player) _view.player = { id, pos: { x: pos.x, y: pos.y } };
+				if (!_view.player) _view.player = { id, targetId: Number(world.get(id, TargetLock)?.targetId || 0) | 0, pos: { x: pos.x, y: pos.y } };
 				else { _view.player.id = id; _view.player.pos.x = pos.x; _view.player.pos.y = pos.y; }
 				_view.playerEntity = rec;
 			}

@@ -9,7 +9,9 @@ import { buildBlocksVisionMap, blockedCallback } from "../../rules/utils/vision.
 import { Position } from "../../rules/components/Position.js";
 import { Faction } from "../../rules/components/Faction.js";
 import { Vitality } from "../../rules/components/Vitality.js";
+import { TargetLock } from "../../rules/components/TargetLock.js";
 import { isVisible as isTileVisible } from "../../rules/environment/dungeon/exploredMap.js";
+import { resolveProjectileImpact } from "../../rules/utils/projectileImpact.js";
 
 /**
  * Scan for visible enemies in range of a player position.
@@ -118,6 +120,8 @@ export function bracketizeName(s) {
  *   index: number,
  *   onConfirm?: (enemyId: number) => void,
  * }} EnemyTargeting
+ *
+ * @typedef {{ actorId:number, itemId:number, itemName:string, range:number, isBow?:boolean }} RangedTargeting
  */
 
 /**
@@ -138,6 +142,8 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
   let _throw = null;
   /** @type {EnemyTargeting|null} */
   let _enemy = null;
+  /** @type {RangedTargeting|null} */
+  let _ranged = null;
   /** @type {{x:number,y:number}|null} */
   let _cursor = null;
 
@@ -147,16 +153,32 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  function isActive() { return !!(_spell || _throw || _enemy); }
+  function isActive() { return !!(_spell || _throw || _enemy || _ranged); }
   function getCursor() { return _cursor; }
   function getSpell() { return _spell; }
   function getThrow() { return _throw; }
   function getEnemy() { return _enemy; }
+  function getRanged() { return _ranged; }
+  function getRangedImpact() {
+    if (!_ranged || !_cursor) return null;
+    const pe = playerEntity();
+    if (!pe) return null;
+    const blocked = buildBlocksVisionMap(world);
+    const impact = resolveProjectileImpact(
+      world,
+      { x: pe.pos.x | 0, y: pe.pos.y | 0 },
+      _cursor,
+      blockedCallback(blocked),
+      pe.id,
+    );
+    return { x: impact.x | 0, y: impact.y | 0, kind: impact.kind };
+  }
 
   function cancelAll() {
     _spell = null;
     _throw = null;
     _enemy = null;
+    _ranged = null;
     _cursor = null;
   }
 
@@ -182,6 +204,16 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     _spell = null;
     _throw = null;
     log(`Choose target for ${spellName}. Tab to cycle enemies, Enter to confirm, Esc to cancel.`);
+  }
+
+  function openRangedPointTargeting(opts) {
+    _ranged = { ...opts };
+    _spell = null;
+    _throw = null;
+    _enemy = null;
+    const pe = playerEntity();
+    if (pe) _cursor = { x: pe.pos.x | 0, y: pe.pos.y | 0 };
+    log(`Choose a tile for ${bracketizeName(opts.itemName)}. Tap a tile to fire. Esc cancels.`);
   }
 
   /**
@@ -263,6 +295,13 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       ev.preventDefault();
       return true;
     }
+    if (_ranged) {
+      log(`${bracketizeName(_ranged.itemName)} targeting cancelled.`);
+      _ranged = null;
+      _cursor = null;
+      ev.preventDefault();
+      return true;
+    }
     return false;
   }
 
@@ -314,7 +353,46 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     return false;
   }
 
+  function _selectHostileTarget(targetId) {
+    const id = Number(targetId || 0) | 0;
+    if (!(id > 0)) return false;
+    dispatchRules({ type: 'rules.setHostileTarget', payload: { targetId: id } });
+    return true;
+  }
+
+  function _cycleHostileTarget(reverse = false) {
+    const pe = playerEntity();
+    if (!pe) return false;
+    const enemies = scanVisibleEnemies(world, pe.pos.x | 0, pe.pos.y | 0, 64, { playerId: pe.id });
+    if (!enemies.length) {
+      log('No visible hostile targets.');
+      return true;
+    }
+    const current = Number(world.get(pe.id, TargetLock)?.targetId || 0) | 0;
+    let index = enemies.findIndex((enemy) => enemy.id === current);
+    index = reverse ? (index <= 0 ? enemies.length - 1 : index - 1) : (index + 1) % enemies.length;
+    if (index < 0) index = reverse ? enemies.length - 1 : 0;
+    _selectHostileTarget(enemies[index].id);
+    return true;
+  }
+
   function _handleTileKeys(ev) {
+    if (_ranged) {
+      if (ev.key === 'Tab') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        _ranged = null;
+        _cursor = null;
+        _cycleHostileTarget(ev.shiftKey);
+        return true;
+      }
+      if (ev.key === 'Enter' || ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','a','d','w','s','h','j','k','l','y','u','b','n'].includes(ev.key)) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        return true;
+      }
+      return false;
+    }
     if (!_spell && !_throw) return false;
     if (!_cursor) return false;
 
@@ -465,6 +543,21 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
    * @returns {boolean} true if event was consumed
    */
   function handleTilePointer(rawTx, rawTy) {
+    if (_ranged) {
+      const pe = playerEntity();
+      if (!pe) { cancelAll(); return true; }
+      const pending = _ranged;
+      const clamped = clampTargetToRange(pe.pos.x, pe.pos.y, rawTx, rawTy, pending.range);
+      _ranged = null;
+      _cursor = null;
+      dispatchRules({
+        type: pending.isBow ? 'rules.rangedAttack' : 'rules.useItem',
+        payload: pending.isBow
+          ? { toX: clamped.x | 0, toY: clamped.y | 0 }
+          : { itemId: pending.itemId, targetId: pe.id, x: clamped.x | 0, y: clamped.y | 0 },
+      });
+      return true;
+    }
     if (!_spell && !_throw?.itemId) return false;
     const pe = playerEntity();
     if (!pe) { cancelAll(); return true; }
@@ -546,6 +639,12 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     });
 
     addEventListener('keydown', (ev) => {
+      if (!_spell && !_throw && !_enemy && !_ranged && ev.key === 'Tab') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        _cycleHostileTarget(ev.shiftKey);
+        return;
+      }
       if (_handleEnemyKeys(ev)) return;
     }, { capture: true });
 
@@ -560,6 +659,15 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
    * @param {(ev:PointerEvent) => [number,number]} clientToWorld  returns [wx, wy]
    */
   function installPointerHandlers(canvas, clientToWorld) {
+    canvas.addEventListener('pointermove', (ev) => {
+      if (!_ranged) return;
+      const pe = playerEntity();
+      if (!pe) return;
+      const [wx, wy] = clientToWorld(ev);
+      const clamped = clampTargetToRange(pe.pos.x, pe.pos.y, worldToTile(wx), worldToTile(wy), _ranged.range);
+      _cursor = { x: clamped.x | 0, y: clamped.y | 0 };
+    }, { capture: true });
+
     canvas.addEventListener('pointerdown', (ev) => {
       if (!_enemy) return;
       const [wx, wy] = clientToWorld(ev);
@@ -572,7 +680,7 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     }, { capture: true });
 
     canvas.addEventListener('pointerdown', (ev) => {
-      if (!_spell && !_throw?.itemId) return;
+      if (!_spell && !_throw?.itemId && !_ranged) return;
       const [wx, wy] = clientToWorld(ev);
       const rawTx = worldToTile(wx);
       const rawTy = worldToTile(wy);
@@ -580,6 +688,22 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       ev.stopPropagation();
       if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
       handleTilePointer(rawTx, rawTy);
+    }, { capture: true });
+
+    canvas.addEventListener('pointerdown', (ev) => {
+      if (isActive()) return;
+      const [wx, wy] = clientToWorld(ev);
+      const tapX = worldToTile(wx);
+      const tapY = worldToTile(wy);
+      const pe = playerEntity();
+      if (!pe) return;
+      const enemies = scanVisibleEnemies(world, pe.pos.x | 0, pe.pos.y | 0, 64, { playerId: pe.id });
+      const selected = enemies.find((enemy) => enemy.x === tapX && enemy.y === tapY);
+      if (!selected) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+      _selectHostileTarget(selected.id);
     }, { capture: true });
   }
 
@@ -590,10 +714,13 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     getSpell,
     getThrow,
     getEnemy,
+    getRanged,
+    getRangedImpact,
 
     // Actions
     cancelAll,
     openEnemyTargeting,
+    openRangedPointTargeting,
     openSpellTargeting,
     openThrowTargeting,
     toggleSpellOff,

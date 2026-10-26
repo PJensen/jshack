@@ -5,12 +5,14 @@ export function drawTargetingReticle({
   bctx,
   targetCursor,
   pendingSpellTargeting,
+  pendingRangedTargeting,
   hasPendingSpellTargeting,
   hasPendingThrowTargeting,
   hasPendingEnemyTargeting,
+  hasPendingRangedTargeting,
   fxTime,
 }) {
-  if (!bctx || !targetCursor || (!hasPendingSpellTargeting && !hasPendingThrowTargeting && !hasPendingEnemyTargeting)) return;
+  if (!bctx || !targetCursor || (!hasPendingSpellTargeting && !hasPendingThrowTargeting && !hasPendingEnemyTargeting && !hasPendingRangedTargeting)) return;
   bctx.save();
   const cx = targetCursor.x;
   const cy = targetCursor.y;
@@ -20,10 +22,14 @@ export function drawTargetingReticle({
   const isEnemy = !!hasPendingEnemyTargeting;
   const circleColor = isEnemy
     ? `rgba(180,60,220,${(0.7 * pulse).toFixed(3)})`
-    : `rgba(255,220,80,${(0.7 * pulse).toFixed(3)})`;
+    : hasPendingRangedTargeting
+      ? `rgba(80,220,255,${(0.7 * pulse).toFixed(3)})`
+      : `rgba(255,220,80,${(0.7 * pulse).toFixed(3)})`;
   const bracketColor = isEnemy
     ? `rgba(220,140,255,${(0.85 * pulse).toFixed(3)})`
-    : `rgba(255,255,200,${(0.85 * pulse).toFixed(3)})`;
+    : hasPendingRangedTargeting
+      ? `rgba(180,255,255,${(0.85 * pulse).toFixed(3)})`
+      : `rgba(255,255,200,${(0.85 * pulse).toFixed(3)})`;
   const spellRadius = hasPendingSpellTargeting
     ? Math.max(0, Number(pendingSpellTargeting?.radius || 0) | 0)
     : 0;

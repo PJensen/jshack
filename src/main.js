@@ -750,6 +750,8 @@ window.addEventListener('ui:confirmActionAccepted', (ev) => {
 function get_pendingEnemyTargeting() { return targeting?.getEnemy() ?? null; }
 function get_pendingSpellTargeting() { return targeting?.getSpell() ?? null; }
 function get_pendingThrowTargeting() { return targeting?.getThrow() ?? null; }
+function get_pendingRangedTargeting() { return targeting?.getRanged() ?? null; }
+function get_rangedImpactCursor() { return targeting?.getRangedImpact?.() ?? null; }
 function get_targetCursor() { return targeting?.getCursor() ?? null; }
 const throwFx = createThrowFxController({
   world,
@@ -1764,6 +1766,17 @@ const targeting = createTargetingController({
   isVisibleAt: (x, y) => isVisibleAt(x, y),
 });
 targeting.installKeyboardHandlers();
+addEventListener('ui:openRangedPointTargeting', (ev) => {
+  if (targeting.isActive()) return;
+  const detail = /** @type {CustomEvent} */ (ev).detail || {};
+  targeting.openRangedPointTargeting({
+    actorId: Number(detail.actorId || 0) | 0,
+    itemId: Number(detail.itemId || 0) | 0,
+    itemName: String(detail.itemName || 'ranged weapon'),
+    range: Math.max(1, Number(detail.range || 1) | 0),
+    isBow: detail.isBow === true,
+  });
+});
 
 // ---- Extracted wiring modules -----------------------------------------------
 installScrollWandWiring({ world, targeting, playerEntity: () => playerEntity(world) });
@@ -5796,11 +5809,13 @@ function render(worldView) {
 
   drawTargetingReticle({
     bctx,
-    targetCursor: get_targetCursor(),
+    targetCursor: get_rangedImpactCursor() || get_targetCursor(),
     pendingSpellTargeting: get_pendingSpellTargeting(),
+    pendingRangedTargeting: get_pendingRangedTargeting(),
     hasPendingSpellTargeting: !!get_pendingSpellTargeting(),
     hasPendingThrowTargeting: !!get_pendingThrowTargeting(),
     hasPendingEnemyTargeting: !!get_pendingEnemyTargeting(),
+    hasPendingRangedTargeting: !!get_pendingRangedTargeting(),
     fxTime: _fxTime,
   });
 

@@ -14,7 +14,7 @@ function frame(world, phase, attacker, defender, impact) {
   });
 }
 
-Deno.test("Chalk Arrows branch actor, wall, and miss impacts through tile-owned marks", () => {
+Deno.test("Chalk Arrows branch actor, wall, ground, and miss impacts through tile-owned marks", () => {
   const world = new World({ seed: 37 });
   const attacker = world.create();
   const defender = world.create();
@@ -28,9 +28,11 @@ Deno.test("Chalk Arrows branch actor, wall, and miss impacts through tile-owned 
   assert(world.get(defender, ActiveEffects));
 
   frame(world, "onProjectileWallImpact", attacker, defender, { x: 4, y: 2 });
+  frame(world, "onProjectileGroundImpact", attacker, defender, { x: 7, y: 2 });
   frame(world, "onProjectileMiss", attacker, defender, { x: 6, y: 3 });
   const marks = [...world.query(Position, HazardArea)].map(([, pos, hazard]) => ({ pos, hazard }));
-  assertEquals(marks.length, 2);
+  assertEquals(marks.length, 3);
   assert(marks.some(({ pos }) => pos.x === 4 && pos.y === 2));
+  assert(marks.some(({ pos }) => pos.x === 7 && pos.y === 2));
   assert(marks.some(({ pos }) => pos.x === 6 && pos.y === 3));
 });

@@ -1,5 +1,6 @@
 // rules/systems/rangedAttackSystem.js
-// Processes RangedAttackIntent: validates bow, ammo, LOS, range, then resolves d20 combat.
+// Processes RangedAttackIntent: validates bow/ammo/range, resolves the physical
+// projectile impact, then applies the existing d20 combat pipeline when an actor is hit.
 
 import { RangedAttackIntent } from '../components/Intents/RangedAttackIntent.js';
 import { Equipment } from '../components/Equipment.js';
@@ -13,7 +14,6 @@ import { Position } from '../components/Position.js';
 import { NamedIdentity } from '../components/NamedIdentity.js';
 import { Player } from '../components/Player.js';
 import { COMBAT_POSTURES } from '../components/CombatPosture.js';
-import { hasLOS } from '../../shared/math/gridLOS.js';
 import { buildBlocksVisionMap, blockedCallback } from '../utils/vision.js';
 import { mulberry32, rngInt, rollDice, combatSeed, pct } from '../utils/rng.js';
 import { dealDamage } from '../utils/dealDamage.js';
@@ -41,6 +41,7 @@ import { setCombatPosture } from '../utils/posture.js';
 import { chebyshevScalar } from '../utils/distance.js';
 import { computeImpactVectorXY, computeMissEndpoint, computeProjectileDelay } from '../utils/projectileKinematics.js';
 import { bresenhamLine } from '../../shared/math/bresenham.js';
+import { resolveProjectileImpact } from '../utils/projectileImpact.js';
 
 const RANGED_PROJECTILE_SPEED = 18;
 const RANGED_PROJECTILE_MIN_DURATION = 0.06;
@@ -59,21 +60,27 @@ export function rangedAttackSystem(world) {
   const isBlocked = blockedCallback(blocked);
 
   for (const [attacker, intent] of intents) {
-    const defender = intent.targetId | 0;
-    if (!world.isAlive(defender)) { world.remove(attacker, RangedAttackIntent); continue; }
+    const requestedTarget = intent.targetId | 0;
+    let defender = requestedTarget;
+    let physicalCollision = false;
 
     const apos = world.get(attacker, Position);
-    const dpos = world.get(defender, Position);
-    if (!apos || !dpos) { world.remove(attacker, RangedAttackIntent); continue; }
+    const requestedPos = requestedTarget > 0
+      ? world.get(requestedTarget, Position)
+      : { x: intent.toX | 0, y: intent.toY | 0 };
+    let dpos = requestedPos;
+    if (!apos || !dpos || (requestedTarget > 0 && !world.isAlive(requestedTarget))) {
+      world.remove(attacker, RangedAttackIntent);
+      continue;
+    }
 
     const atkVit = world.get(attacker, Vitality);
-    const defVit = world.get(defender, Vitality);
-    if (!atkVit || !defVit) { world.remove(attacker, RangedAttackIntent); continue; }
+    if (!atkVit) { world.remove(attacker, RangedAttackIntent); continue; }
 
     // Require a bow in the ranged slot
     const eq = world.get(attacker, Equipment);
     ensureEquippedAffixTopology(world, attacker);
-    ensureEquippedAffixTopology(world, defender);
+    if (requestedTarget > 0) ensureEquippedAffixTopology(world, requestedTarget);
     const weaponId = eq?.ranged || 0;
     const weaponInfo = weaponId ? world.get(weaponId, ItemInfo) : null;
     if (!weaponInfo || weaponInfo.subtype !== 'bow') {
@@ -115,35 +122,41 @@ export function rangedAttackSystem(world) {
     );
 
     const ax = apos.x | 0, ay = apos.y | 0;
-    const tx = dpos.x | 0, ty = dpos.y | 0;
-    const dist = chebyshevScalar(ax, ay, tx, ty);
-    const facing = getNormalizedEntityFacing(world, attacker);
-    const coneDegrees = getEntityFacingConeDegrees(world, attacker);
-    if (facing && !isPointInFacingCone(ax, ay, tx, ty, facing.dx, facing.dy, coneDegrees)) {
-      world.emit?.('ranged:blocked', { attacker, target: defender, reason: 'facing' });
-      world.remove(attacker, RangedAttackIntent);
-      continue;
-    }
-
-    // LOS check
-    if (!hasLOS(ax, ay, tx, ty, isBlocked)) {
-      let wallImpact = { x: tx, y: ty };
-      for (const [x, y] of bresenhamLine(ax, ay, tx, ty)) {
-        if (isBlocked(x, y)) { wallImpact = { x, y }; break; }
-      }
-      runAmmoScripts(world, ammoIdentity, 'onProjectileWallImpact', {
-        phase: 'projectile-wall-impact',
+    let tx = dpos.x | 0, ty = dpos.y | 0;
+    let dist = chebyshevScalar(ax, ay, tx, ty);
+    const impact = resolveProjectileImpact(world, { x: ax, y: ay }, { x: tx, y: ty }, isBlocked, attacker);
+    if (impact.kind === 'wall' || impact.kind === 'ground') {
+      runAmmoScripts(world, ammoIdentity, impact.kind === 'wall' ? 'onProjectileWallImpact' : 'onProjectileGroundImpact', {
+        phase: impact.kind === 'wall' ? 'projectile-wall-impact' : 'projectile-ground-impact',
         attacker,
-        defender,
+        defender: requestedTarget,
         ammoId,
         ammoIdentity,
         ammoInfo,
         style: ammoStyle,
-        distance: dist,
+        distance: chebyshevScalar(ax, ay, impact.x, impact.y),
         damage: 0,
-        impact: wallImpact,
+        impact: { x: impact.x, y: impact.y },
       });
-      world.emit?.('ranged:blocked', { attacker, target: defender });
+      consumeAmmo(world, attacker, ammoId, ammoInfo);
+      if (impact.kind === 'wall') world.emit?.('ranged:blocked', { attacker, target: requestedTarget, impact: { x: impact.x, y: impact.y } });
+      world.remove(attacker, RangedAttackIntent);
+      continue;
+    }
+    if (impact.kind === 'actor') {
+      defender = impact.actorId | 0;
+      dpos = world.get(defender, Position) || { x: impact.x, y: impact.y };
+      tx = dpos.x | 0;
+      ty = dpos.y | 0;
+      dist = chebyshevScalar(ax, ay, tx, ty);
+      physicalCollision = defender !== requestedTarget || requestedTarget <= 0;
+    }
+    const defVit = world.get(defender, Vitality);
+    if (!defVit) { world.remove(attacker, RangedAttackIntent); continue; }
+    const facing = getNormalizedEntityFacing(world, attacker);
+    const coneDegrees = getEntityFacingConeDegrees(world, attacker);
+    if (facing && !isPointInFacingCone(ax, ay, tx, ty, facing.dx, facing.dy, coneDegrees)) {
+      world.emit?.('ranged:blocked', { attacker, target: defender, reason: 'facing' });
       world.remove(attacker, RangedAttackIntent);
       continue;
     }
@@ -159,7 +172,7 @@ export function rangedAttackSystem(world) {
     // Faction check
     const af = world.get(attacker, Faction)?.key || '';
     const df = world.get(defender, Faction)?.key || '';
-    if (!areFactionsHostile(af, df)) {
+    if (!physicalCollision && !areFactionsHostile(af, df)) {
       world.remove(attacker, RangedAttackIntent);
       continue;
     }
@@ -238,6 +251,15 @@ export function rangedAttackSystem(world) {
         minDistanceScale: 1.2,
         distanceExtraScale: 0.2,
       });
+      const missRay = resolveMissRayImpact(world, {
+        attacker,
+        defender,
+        from: { x: apos.x | 0, y: apos.y | 0 },
+        intended: { x: dpos.x | 0, y: dpos.y | 0 },
+        missTo,
+        isBlocked,
+      });
+      const terminalMissImpact = missRay ? { x: missRay.x | 0, y: missRay.y | 0 } : { x: Math.round(missTo.x), y: Math.round(missTo.y) };
       runAmmoScripts(world, ammoIdentity, 'onProjectileMiss', {
         phase: 'projectile-miss',
         attacker,
@@ -253,18 +275,29 @@ export function rangedAttackSystem(world) {
         armorClass,
         critical: isCrit,
         rng: r,
-        impact: { x: Math.round(missTo.x), y: Math.round(missTo.y) },
+        impact: terminalMissImpact,
       });
+      if (!missRay || missRay.kind === 'wall') {
+        runAmmoScripts(world, ammoIdentity, missRay?.kind === 'wall' ? 'onProjectileWallImpact' : 'onProjectileGroundImpact', {
+          phase: missRay?.kind === 'wall' ? 'projectile-wall-impact' : 'projectile-ground-impact',
+          attacker,
+          defender,
+          ammoId,
+          ammoIdentity,
+          ammoInfo,
+          style: ammoStyle,
+          distance: chebyshevScalar(ax, ay, terminalMissImpact.x, terminalMissImpact.y),
+          damage: 0,
+          d20,
+          totalToHit,
+          armorClass,
+          critical: isCrit,
+          rng: r,
+          impact: terminalMissImpact,
+        });
+      }
       world.emit?.('status', createStatusEvent({ id: defender, kind: 'miss', source: attacker }));
       world.emit?.('ranged:missed-target', { attacker, target: defender });
-      const missRay = resolveMissRayImpact(world, {
-        attacker,
-        defender,
-        from: { x: apos.x | 0, y: apos.y | 0 },
-        intended: { x: dpos.x | 0, y: dpos.y | 0 },
-        missTo,
-        isBlocked,
-      });
       if (missRay?.hitTargetId > 0) {
         const strayId = missRay.hitTargetId | 0;
         const strayPos = world.get(strayId, Position);

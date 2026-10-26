@@ -9,12 +9,14 @@ const EMPTY_HOOK_SCRIPTS = Object.freeze([]);
 export const AMMO_HOOK_ALIASES = Object.freeze({
   on_projectile_actor_impact: "onProjectileActorImpact",
   on_projectile_wall_impact: "onProjectileWallImpact",
+  on_projectile_ground_impact: "onProjectileGroundImpact",
   on_projectile_miss: "onProjectileMiss",
 });
 
 export const AMMO_HOOK_KEYS = Object.freeze([
   "onProjectileActorImpact",
   "onProjectileWallImpact",
+  "onProjectileGroundImpact",
   "onProjectileMiss",
 ]);
 
@@ -24,6 +26,7 @@ const AMMO_BODKIN_ARROW_ACTOR_IMPACT = "ammo:bodkinArrows:onProjectileActorImpac
 const AMMO_BLUNT_ARROW_ACTOR_IMPACT = "ammo:bluntArrows:onProjectileActorImpact";
 const AMMO_CHALK_ARROW_ACTOR_IMPACT = "ammo:chalkArrows:onProjectileActorImpact";
 const AMMO_CHALK_ARROW_WALL_IMPACT = "ammo:chalkArrows:onProjectileWallImpact";
+const AMMO_CHALK_ARROW_GROUND_IMPACT = "ammo:chalkArrows:onProjectileGroundImpact";
 const AMMO_CHALK_ARROW_MISS = "ammo:chalkArrows:onProjectileMiss";
 
 registerScript(AMMO_FIRE_ARROW_ACTOR_IMPACT, {
@@ -105,6 +108,21 @@ registerScript(AMMO_CHALK_ARROW_WALL_IMPACT, {
       meta: { chalk: true },
     });
     ctx.emit("proc:chalkArrows:wallMark", { actor: ctx.attacker, at: ctx.impact });
+  },
+});
+
+registerScript(AMMO_CHALK_ARROW_GROUND_IMPACT, {
+  [ScriptVerb.ProjectileGroundImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "chalk_mark",
+      medium: "floor",
+      turnsLeft: 5,
+      radius: 1,
+      identity: "chalk_arrow_ground_mark",
+      name: "Chalk Mark",
+      cause: "chalk_arrows:ground",
+      meta: { chalk: true },
+    });
   },
 });
 
@@ -266,6 +284,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_CHALK_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: Object.freeze([AMMO_CHALK_ARROW_WALL_IMPACT]),
+      onProjectileGroundImpact: Object.freeze([AMMO_CHALK_ARROW_GROUND_IMPACT]),
       onProjectileMiss: Object.freeze([AMMO_CHALK_ARROW_MISS]),
     }),
   }),

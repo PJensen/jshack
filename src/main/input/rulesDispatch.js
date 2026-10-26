@@ -2,7 +2,7 @@
 // App-owned translation from display/input Actions → rules intents on the ECS world.
 // This file is allowed to import rules and the ECS World (per Separation Manifest).
 
-import { MoveIntent, WaitIntent, PrayIntent, DrinkIntent, CastSpellIntent, PickupIntent, DropIntent, EquipIntent, RangedAttackIntent, AttackDirectionIntent, EngraveIntent, DisarmIntent, SetPostureIntent, Position, ItemInfo, Settings } from "../../rules/components/index.js";
+import { MoveIntent, WaitIntent, PrayIntent, DrinkIntent, CastSpellIntent, PickupIntent, DropIntent, EquipIntent, RangedAttackIntent, AttackDirectionIntent, EngraveIntent, DisarmIntent, SetPostureIntent, Position, ItemInfo, Settings, TargetLock } from "../../rules/components/index.js";
 import { Equipment } from "../../rules/components/Equipment.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { Faction } from "../../rules/components/Faction.js";
@@ -240,49 +240,93 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           coneDegrees,
         });
 
-        let bestId = 0;
-        let bestDist = Infinity;
-        forEachInRadius(world, px, py, maxRange, (id, pos) => {
-          if (id === actorId) return;
-          const fac = world.get(id, Faction);
-          if (!fac || fac.key !== "enemy") return;
-          const vit = world.get(id, Vitality);
-          if (!vit || (vit.hp | 0) <= 0) return;
-          const tx = pos.x | 0;
-          const ty = pos.y | 0;
-          if (!hasLOS(px, py, tx, ty, isBlocked)) return;
-          if (!isTileVisible(tx, ty)) return;
-          const dist = chebyshevScalar(tx, ty, px, py);
-          if (dist < bestDist) {
-            bestDist = dist;
-            bestId = id;
-          }
-        });
+        const lockedId = Number(world?.get?.(actorId, TargetLock)?.targetId || 0) | 0;
+        const lockedPos = lockedId > 0 ? world?.get?.(lockedId, Position) : null;
+        const lockedFaction = lockedId > 0 ? world?.get?.(lockedId, Faction)?.key : "";
+        const lockedVit = lockedId > 0 ? world?.get?.(lockedId, Vitality) : null;
+        const lockValid = lockedId > 0 && world?.isAlive?.(lockedId) && lockedPos && lockedVit
+          && (lockedVit.hp | 0) > 0 && lockedFaction === "enemy";
 
-        if (!(bestId > 0)) {
-          world?.emit?.("message", { text: "No target in range.", type: "system" });
+        if (lockedId > 0 && !lockValid) {
+          world?.remove?.(actorId, TargetLock);
+          world?.emit?.("message", { text: "Your target is no longer valid.", type: "system" });
           break;
         }
 
-        if (isBow) {
-          world?.add?.(actorId, RangedAttackIntent, { targetId: bestId });
+        if (isBow && lockValid) {
+          world?.add?.(actorId, RangedAttackIntent, {
+            targetId: lockedId,
+            toX: lockedPos.x | 0,
+            toY: lockedPos.y | 0,
+          });
           world?.tick?.(1);
           break;
         }
 
-        const targetPos = world?.get?.(bestId, Position);
-        const use = { itemId: rangedId, targetId: bestId };
-        if (targetPos && Number.isFinite(targetPos.x) && Number.isFinite(targetPos.y)) {
-          use.x = targetPos.x | 0;
-          use.y = targetPos.y | 0;
+        if (isWand && lockValid) {
+          const identity = String(world?.get?.(rangedId, NamedIdentity)?.identity || "");
+          const spellId = identity.startsWith("wand_") ? identity.slice(5) : "";
+          const spell = spellId ? getSpell(spellId) : null;
+          const targeting = String(spell?.targeting || "enemy");
+          if (targeting === "enemy" || targeting === "auto") {
+            world?.add?.(actorId, UseIntent, {
+              itemId: rangedId,
+              targetId: lockedId,
+              x: lockedPos.x | 0,
+              y: lockedPos.y | 0,
+            });
+            world?.tick?.(1);
+            break;
+          }
+          if (targeting === "self") {
+            world?.add?.(actorId, UseIntent, { itemId: rangedId, targetId: actorId });
+            world?.tick?.(1);
+            break;
+          }
+        } else if (isWand) {
+          const identity = String(world?.get?.(rangedId, NamedIdentity)?.identity || "");
+          const spellId = identity.startsWith("wand_") ? identity.slice(5) : "";
+          const spell = spellId ? getSpell(spellId) : null;
+          const targeting = String(spell?.targeting || "enemy");
+          if (targeting === "enemy" || targeting === "auto") {
+            world?.emit?.("message", { text: "Select a hostile target first (Tab or tap an enemy).", type: "system" });
+            break;
+          }
+          if (targeting === "self") {
+            world?.add?.(actorId, UseIntent, { itemId: rangedId, targetId: actorId });
+            world?.tick?.(1);
+            break;
+          }
         }
-        world?.add?.(actorId, UseIntent, use);
-        world?.tick?.(1);
+
+        dispatchUiEvent("ui:openRangedPointTargeting", {
+          actorId,
+          itemId: rangedId,
+          itemName: world?.get?.(rangedId, NamedIdentity)?.name || rangedInfo.name || "ranged weapon",
+          range: maxRange,
+          isBow,
+          isWand,
+        });
+        break;
+      }
+      case "rules.setHostileTarget": {
+        const targetId = Number(action?.payload?.targetId || 0) | 0;
+        const targetPos = targetId > 0 ? world?.get?.(targetId, Position) : null;
+        const targetFaction = targetId > 0 ? world?.get?.(targetId, Faction)?.key : "";
+        const targetVit = targetId > 0 ? world?.get?.(targetId, Vitality) : null;
+        if (!(targetId > 0) || !world?.isAlive?.(targetId) || !targetPos || targetFaction !== "enemy" || !targetVit || (targetVit.hp | 0) <= 0) break;
+        world?.add?.(actorId, TargetLock, { targetId });
+        break;
+      }
+      case "rules.clearHostileTarget": {
+        world?.remove?.(actorId, TargetLock);
         break;
       }
       case "rules.rangedAttack": {
-        const { targetId = 0, toX = 0, toY = 0 } = action.payload || {};
-        if (!Number.isInteger(targetId) || targetId <= 0) break;
+        const payload = action.payload || {};
+        const { targetId = 0, toX = 0, toY = 0 } = payload;
+        const hasCoordinates = Number.isFinite(payload.toX) && Number.isFinite(payload.toY);
+        if ((!Number.isInteger(targetId) || targetId <= 0) && !hasCoordinates) break;
         world?.add?.(actorId, RangedAttackIntent, { targetId, toX, toY });
         world?.tick?.(1);
         break;

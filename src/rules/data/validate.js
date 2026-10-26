@@ -35,12 +35,14 @@ const ITEM_HOOK_KEYS = new Set([
 const AMMO_HOOK_KEY_ALIASES = Object.freeze({
   on_projectile_actor_impact: "onProjectileActorImpact",
   on_projectile_wall_impact: "onProjectileWallImpact",
+  on_projectile_ground_impact: "onProjectileGroundImpact",
   on_projectile_miss: "onProjectileMiss",
 });
 
 const AMMO_HOOK_KEYS = new Set([
   "onProjectileActorImpact",
   "onProjectileWallImpact",
+  "onProjectileGroundImpact",
   "onProjectileMiss",
   ...Object.keys(AMMO_HOOK_KEY_ALIASES),
 ]);
