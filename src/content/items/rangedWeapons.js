@@ -94,6 +94,10 @@ defineItem('bow_flaming', {
   weight: 1.9,
   description: 'Its string hums like a forge draft. Shots land hot enough to ignite flesh.',
   affixes: ['flaming'],
+  ammoAffinities: {
+    ammo_fire_arrows: { damageBonus: 1, fireSpreadChanceBonus: 0.15 },
+  },
+  lootBiases: { FireArrowsStack: 1.35 },
 });
 
 defineItem('bow_composite', {

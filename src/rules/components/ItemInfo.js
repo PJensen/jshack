@@ -27,6 +27,8 @@ export const ItemInfo = defineComponent(
     weaponFamily: "", // semantic weapon family for combat/audio affordances
     noQuickChip: false, // suppress pickup quick-chip UI for this item
     tags: [], // behavioral flags: "conflict", "sunlight", "levitate", etc.
+    ammoAffinities: {}, // ammo identity -> projectile modifiers from this gear
+    lootBiases: {}, // loot/archetype id -> weight multiplier while equipped
   },
   {
     validate(rec) {
@@ -58,6 +60,10 @@ export const ItemInfo = defineComponent(
         throw new Error("ItemInfo.validate(): noQuickChip must be a boolean");
       if (!Array.isArray(rec.tags))
         throw new Error("ItemInfo.validate(): tags must be an array");
+      if (!rec.ammoAffinities || typeof rec.ammoAffinities !== 'object' || Array.isArray(rec.ammoAffinities))
+        throw new Error("ItemInfo.validate(): ammoAffinities must be an object");
+      if (!rec.lootBiases || typeof rec.lootBiases !== 'object' || Array.isArray(rec.lootBiases))
+        throw new Error("ItemInfo.validate(): lootBiases must be an object");
       if (rec.weaponLengthCm != null && (!Number.isFinite(rec.weaponLengthCm) || rec.weaponLengthCm <= 0))
         throw new Error("ItemInfo.validate(): weaponLengthCm must be null or a positive number");
       if (rec.weaponVfxProfile != null && typeof rec.weaponVfxProfile !== "string" && typeof rec.weaponVfxProfile !== "object")

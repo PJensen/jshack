@@ -17,6 +17,7 @@ import { Player } from '../components/Player.js';
 import { Inventory } from '../components/Inventory.js';
 import { inventoryItems } from '../utils/inventoryFacade.js';
 import { NamedIdentity } from '../components/NamedIdentity.js';
+import { getEquippedLootBiases } from '../utils/ammoAffinities.js';
 
 const MAX_NESTING = 5;
 const TOUCHSTONE_IDENTITY = 'stone_touchstone';
@@ -154,6 +155,9 @@ function effectiveWeight(entry, opts) {
     const pool = Array.isArray(entry.pool) ? entry.pool : [];
     return hasEligibleEquipPool(pool, opts) ? w : 0;
   }
+  if (entry.type === "archetype") {
+    return w * Number(opts?.lootBiases?.[entry.archetype] || 1);
+  }
   if (entry.type !== "item") return w;
   const id = String(entry.itemId || "");
   const def = getCatalogItem(id);
@@ -179,7 +183,7 @@ function effectiveWeight(entry, opts) {
     }
   }
 
-  return w;
+  return w * Number(opts?.lootBiases?.[id] || 1);
 }
 
 function passesDropRequirement(def, opts) {
@@ -421,9 +425,15 @@ function getPlayerKnownSpells(world) {
 export function dropLoot(world, tableId, rng, depth, pos, meta) {
   const knownSpells = getPlayerKnownSpells(world);
   const playerItemIds = getPlayerItemIdentities(world);
-  const opts = (knownSpells || playerItemIds) ? {
+  let lootBiases = null;
+  for (const [playerId] of world.query(Player)) {
+    lootBiases = getEquippedLootBiases(world, playerId);
+    if (lootBiases) break;
+  }
+  const opts = (knownSpells || playerItemIds || lootBiases) ? {
     knownSpells: knownSpells ?? undefined,
     playerItemIds: playerItemIds ?? undefined,
+    lootBiases: lootBiases ?? undefined,
   } : undefined;
   const drops = resolveLootTable(tableId, rng, depth, 0, opts);
   const ids = [];

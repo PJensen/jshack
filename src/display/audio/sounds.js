@@ -28,6 +28,7 @@ const SOUNDS = {
   "melee:crit":       combatAlias([...COMBAT_PACK.sword_large.impact_hard, ...COMBAT_PACK.axe_large.impact_hard, ...COMBAT_PACK.hammer_large.impact_hard], { volume: 1.05 }),
   "melee:miss":       combatAlias([...COMBAT_PACK.dagger.whoosh_short, ...COMBAT_PACK.sword_small.whoosh_short], { volume: 0.74 }),
   "ranged:shot":      { file: "ranged_shot.mp3",   bus: "combat", randomPitch: 35, volume: 1.35 },
+  "ranged:bomb-impact": { file: "spell_meteor_impact.mp3", bus: "combat", maxVoices: 3, volume: 0.9 },
   "death":            combatAlias([...COMBAT_PACK.gore.impact_medium, ...COMBAT_PACK.gore.slice_medium, ...COMBAT_PACK.gore.stab_medium], { maxVoices: 3, volume: 0.85 }),
   "creature:boar:died": { file: "boar_died.mp3",      bus: "combat", maxVoices: 1 },
   "creature:skeleton:died": { file: "skeleton_died.mp3", bus: "combat", maxVoices: 2, randomPitch: 18 },

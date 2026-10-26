@@ -37,6 +37,7 @@ export class ProjectileImpactCallbackContext {
  *   damageType?: string,
  *   armorPenetration?: number,
  *   rng?: () => number,
+ *   ammoAffinity?: Record<string, number>,
  * }} frame
    */
   constructor(world, frame) {
@@ -70,6 +71,7 @@ export class ProjectileImpactCallbackContext {
   get ammoId() { return this._frame.ammoId | 0; }
   get ammoIdentity() { return String(this._frame.ammoIdentity || ""); }
   get ammoInfo() { return this._frame.ammoInfo || null; }
+  get ammoAffinity() { return this._frame.ammoAffinity || {}; }
   get style() { return String(this._frame.style || "plain"); }
   get distance() { return Number(this._frame.distance || 0) | 0; }
   get d20() { return Number(this._frame.d20 || 0) | 0; }
@@ -117,7 +119,18 @@ export class ProjectileImpactCallbackContext {
   spawnHazard(params = {}) {
     const at = this.impact;
     if (!at) return 0;
-    return spawnHazard(this.world, { ...params, x: at.x, y: at.y, sourceId: this.attacker });
+    const radiusBonus = Number(this.ammoAffinity.hazardRadiusBonus || 0) | 0;
+    const spreadBonus = Number(this.ammoAffinity.fireSpreadChanceBonus || 0);
+    const meta = params.meta && typeof params.meta === "object" ? { ...params.meta } : {};
+    if (spreadBonus) meta.fireSpreadChance = Math.min(1, Number(meta.fireSpreadChance || 0.25) + spreadBonus);
+    return spawnHazard(this.world, {
+      ...params,
+      radius: Math.max(0, (Number(params.radius || 0) | 0) + radiusBonus),
+      meta,
+      x: at.x,
+      y: at.y,
+      sourceId: this.attacker,
+    });
   }
 
   cancel(reason) {

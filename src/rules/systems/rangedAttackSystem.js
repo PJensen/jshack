@@ -42,6 +42,7 @@ import { chebyshevScalar } from '../utils/distance.js';
 import { computeImpactVectorXY, computeMissEndpoint, computeProjectileDelay } from '../utils/projectileKinematics.js';
 import { bresenhamLine } from '../../shared/math/bresenham.js';
 import { resolveProjectileImpact } from '../utils/projectileImpact.js';
+import { getAmmoAffinity } from '../utils/ammoAffinities.js';
 
 const RANGED_PROJECTILE_SPEED = 18;
 const RANGED_PROJECTILE_MIN_DURATION = 0.06;
@@ -115,6 +116,7 @@ export function rangedAttackSystem(world) {
       || 'ammo_arrows',
     ).toLowerCase();
     const ammoStyle = ammoInfo.subtype || (ammoIdentity.includes('fire') ? 'fire' : 'plain');
+    const ammoAffinity = getAmmoAffinity(world, attacker, ammoIdentity);
     const projectileSpeed = RANGED_PROJECTILE_SPEED * (
       ammoStyle === 'blunt'
         ? BLUNT_ARROW_SPEED_MULT
@@ -138,6 +140,7 @@ export function rangedAttackSystem(world) {
         distance: chebyshevScalar(ax, ay, impact.x, impact.y),
         damage: 0,
         impact: impactPoint,
+        ammoAffinity,
       });
       consumeAmmo(world, attacker, ammoId, ammoInfo);
       if (impact.kind === 'wall') world.emit?.('ranged:blocked', { attacker, target: requestedTarget, impact: { x: impact.x, y: impact.y } });
@@ -287,6 +290,7 @@ export function rangedAttackSystem(world) {
         critical: isCrit,
         rng: r,
         impact: terminalMissImpact,
+        ammoAffinity,
       });
       if (!missRay || missRay.kind === 'wall') {
         runAmmoScripts(world, ammoIdentity, missRay?.kind === 'wall' ? 'onProjectileWallImpact' : 'onProjectileGroundImpact', {
@@ -305,6 +309,7 @@ export function rangedAttackSystem(world) {
           critical: isCrit,
           rng: r,
           impact: terminalMissImpact,
+          ammoAffinity,
         });
       }
       world.emit?.('status', createStatusEvent({ id: defender, kind: 'miss', source: attacker }));
@@ -331,6 +336,8 @@ export function rangedAttackSystem(world) {
           const damageRoll = rollDice(baseDice, r);
           const flatBonus = strayAtkSnapshot.damageFlatBonus;
           let strayDamage = Math.max(1, damageRoll + flatBonus);
+          strayDamage += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
+          strayDamage = Math.max(1, Math.floor(strayDamage * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
           strayDamage = Math.max(1, Math.floor(strayDamage * strayPositional.damageMult));
           if ((Number(strayAtkSnapshot?.posture?.lastMoveStep ?? -1) | 0) === (Number(world.step || 0) | 0)) {
             strayDamage += 1;
@@ -375,6 +382,7 @@ export function rangedAttackSystem(world) {
             damageType: strayDamageType,
             armorPenetration: strayArmorPenetration,
             rng: r,
+            ammoAffinity,
           });
           if (strayActorImpactCtx) {
             strayDamage = Math.max(0, strayActorImpactCtx.damage);
@@ -469,6 +477,8 @@ export function rangedAttackSystem(world) {
     const damageRoll = rollDice(baseDice, r);
     const flatBonus = atkSnapshot.damageFlatBonus;
     let dmg = Math.max(1, damageRoll + flatBonus);
+    dmg += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
+    dmg = Math.max(1, Math.floor(dmg * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
     dmg = Math.max(1, Math.floor(dmg * positional.damageMult));
     if ((Number(atkSnapshot?.posture?.lastMoveStep ?? -1) | 0) === (Number(world.step || 0) | 0)) {
       dmg += 1; // movement commitment momentum
@@ -514,6 +524,7 @@ export function rangedAttackSystem(world) {
       damageType,
       armorPenetration,
       rng: r,
+      ammoAffinity,
     });
     if (actorImpactCtx) {
       dmg = Math.max(0, actorImpactCtx.damage);

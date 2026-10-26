@@ -69,6 +69,8 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     identified: def.identified === true,
     noQuickChip: def.noQuickChip === true,
     tags: Array.isArray(def.tags) ? def.tags.slice() : [],
+    ammoAffinities: def.ammoAffinities && typeof def.ammoAffinities === "object" ? structuredClone(def.ammoAffinities) : {},
+    lootBiases: def.lootBiases && typeof def.lootBiases === "object" ? { ...def.lootBiases } : {},
   };
   world.add(id, ItemInfo, info);
   if (def.chargePool) world.add(id, Charges, { ...def.chargePool });

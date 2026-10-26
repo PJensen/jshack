@@ -917,6 +917,12 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
     sfxAt("ranged:shot", pos, pp(), null, zg());
   });
 
+  world.on('hazard:spawned', ({ cause, at }) => {
+    if (String(cause || '').startsWith('bomb_arrows:blast')) {
+      sfxAt('ranged:bomb-impact', at, pp(), { priority: 1 }, zg());
+    }
+  });
+
   world.on('died', ({ id, critical, amount, weaponId, cause, damageType, sizeClass }) => {
     const pos = getPosition(id);
     if (isPlayer(id)) {
