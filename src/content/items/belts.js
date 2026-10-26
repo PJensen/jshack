@@ -49,11 +49,17 @@ defineItem('belt_bombardier', {
   mechanicFormats: {
     ammoAffinities: {
       ammo_bomb_arrows: {
-        hazardRadiusBonus: 'Bomb arrows gain +{value} hazard radius.',
+        hazardRadiusBonus: {
+          context: 'Wearing',
+          format: 'Bomb arrows gain +{value} hazard radius.',
+        },
       },
     },
     lootBiases: {
-      BombArrowsStack: 'Bomb arrows appear at {value}× loot weighting.',
+      BombArrowsStack: {
+        context: 'Loot',
+        format: 'Bomb arrows appear at {value}× weighting.',
+      },
     },
   },
   weight: 0.6,

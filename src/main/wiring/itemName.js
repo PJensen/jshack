@@ -182,6 +182,16 @@ function applyMechanicFormat(format, value) {
   return String(format || '').replace(/\{value\}/g, String(value));
 }
 
+function authoredMechanic(format, value, fallbackContext) {
+  if (typeof format === 'string') {
+    return { context: fallbackContext, text: applyMechanicFormat(format, value) };
+  }
+  if (!format || typeof format !== 'object') return null;
+  const text = applyMechanicFormat(format.format, value);
+  const context = String(format.context || fallbackContext).trim();
+  return context && text ? { context, text } : null;
+}
+
 function formatAmmoMechanics(info, mechanicFormats = {}) {
   const mechanics = [];
   const affinities = info?.ammoAffinities && typeof info.ammoAffinities === 'object'
@@ -195,10 +205,13 @@ function formatAmmoMechanics(info, mechanicFormats = {}) {
     const ammoName = humanizeToken(ammoId).replace(/^Ammo\s+/i, '');
     for (const [key, value] of Object.entries(modifiers)) {
       const authoredFormat = authoredAffinities?.[ammoId]?.[key];
-      const text = authoredFormat
-        ? applyMechanicFormat(authoredFormat, value)
-        : formatAmmoModifier(key, value);
-      if (ammoName && text) mechanics.push({ context: `Wearing — ${ammoName}`, text });
+      const authored = authoredMechanic(authoredFormat, value, 'Wearing');
+      if (authored) {
+        mechanics.push(authored);
+        continue;
+      }
+      const text = formatAmmoModifier(key, value);
+      if (ammoName && text) mechanics.push({ context: 'Wearing', text });
     }
   }
 
@@ -213,10 +226,12 @@ function formatAmmoMechanics(info, mechanicFormats = {}) {
     if (!Number.isFinite(multiplier) || multiplier <= 0 || multiplier === 1) continue;
     const lootName = humanizeToken(lootId).replace(/\s+Stack$/i, '');
     const authoredFormat = authoredLootBiases?.[lootId];
-    const text = authoredFormat
-      ? applyMechanicFormat(authoredFormat, multiplier)
-      : `${multiplier}× loot weighting`;
-    mechanics.push({ context: `Loot — ${lootName}`, text });
+    const authored = authoredMechanic(authoredFormat, multiplier, 'Loot');
+    if (authored) {
+      mechanics.push(authored);
+      continue;
+    }
+    mechanics.push({ context: 'Loot', text: `${lootName} appear at ${multiplier}× weighting` });
   }
   return mechanics;
 }
