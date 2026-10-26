@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "3b706fff6aa7",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/display/composition/targetingReticle.js",
+    "src/main.js",
+    "src/main/input/rulesDispatch.js",
+    "src/main/runtime/agentView.js",
+    "src/main/scheduler.js",
+    "src/main/targeting/targetingController.js",
+    "src/rules/components/TargetLock.js",
+    "src/rules/components/index.js",
+    "src/rules/data/ammo.js",
+    "src/rules/data/validate.js",
+    "src/rules/scripting.js",
+    "src/rules/systems/rangedAttackSystem.js",
+    "src/rules/systems/targetLockSystem.js",
+    "src/rules/utils/projectileImpact.js",
+    "src/rules/utils/projectileScriptDispatch.js",
+    "tests/chalkArrows.test.mjs",
+    "tests/rangedAttack.test.mjs",
+    "tests/rulesDispatchShootRanged.test.mjs",
+    "tests/targetLock.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/3b/706fff6aa7/0/metadata.json",
+      "transcript": "/3b/706fff6aa7/0/full.jsonl",
+      "compact_transcript": "/3b/706fff6aa7/0/transcript.jsonl",
+      "content_hash": "/3b/706fff6aa7/0/content_hash.txt",
+      "prompt": "/3b/706fff6aa7/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 407261,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 12235648,
+    "output_tokens": 49156,
+    "api_call_count": 112
+  }
+}
