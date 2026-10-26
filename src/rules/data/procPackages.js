@@ -1,6 +1,7 @@
 import { children } from "../../lib/ecs-js/index.js";
 import { destroySubtree } from "../../lib/ecs-js/hierarchy.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
+import { Charges } from "../components/Charges.js";
 import { Faction } from "../components/Faction.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { Lifespan } from "../components/Lifespan.js";
@@ -9,6 +10,7 @@ import { Owner } from "../components/Owner.js";
 import { PetState } from "../components/PetState.js";
 import { Position } from "../components/Position.js";
 import { ProcPackageNode } from "../components/ProcPackageNode.js";
+import { ScriptState } from "../components/ScriptState.js";
 import { Vitality } from "../components/Vitality.js";
 import { isOpaque } from "../environment/dungeon/tileMap.js";
 import { registerScript, getScriptHandlers, ScriptVerb } from "../scripting.js";
@@ -17,6 +19,7 @@ import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshevScalar } from "../utils/distance.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
+import { leaveBreadcrumb } from "../utils/breadcrumbs.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import {
   addAttachedComponent,
@@ -49,6 +52,7 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   ConductionLens: "procPackage:conductionLens",
   EchoGrimoire: "procPackage:echoGrimoire",
   SerpentBoundBreeches: "procPackage:serpentBoundBreeches",
+  BreadcrumbBoots: "procPackage:breadcrumbBoots",
 });
 
 function getEffect(world, entityId, key) {
@@ -56,6 +60,36 @@ function getEffect(world, entityId, key) {
   if (!activeEffects || !Array.isArray(activeEffects.effects)) return null;
   return activeEffects.effects.find((entry) => entry?.key === key) || null;
 }
+
+registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    if (String(ctx?.kind || "") !== "onStep") return;
+    const source = Number(ctx?.source || 0) | 0;
+    const item = Number(ctx?.item || 0) | 0;
+    if (!(source > 0) || !(item > 0) || !world.isAlive?.(source) || !world.isAlive?.(item)) return;
+
+    const state = world.get(item, ScriptState);
+    if (!state) return;
+    const nextStep = (Number(state.data?.stepsTowardCrumb || 0) | 0) + 1;
+    if (nextStep < 4) {
+      world.set(item, ScriptState, { data: { ...state.data, stepsTowardCrumb: nextStep } });
+      return;
+    }
+
+    world.set(item, ScriptState, { data: { ...state.data, stepsTowardCrumb: 0 } });
+    leaveBreadcrumb(world, {
+      actorId: source,
+      itemId: item,
+      x: Number(ctx?.from?.x || 0) | 0,
+      y: Number(ctx?.from?.y || 0) | 0,
+    });
+
+    const charges = world.get(item, Charges);
+    if (charges && charges.current < charges.max) {
+      world.set(item, Charges, { ...charges, current: charges.current + 1 });
+    }
+  },
+});
 
 function removeEffect(world, entityId, key) {
   const activeEffects = world.get(entityId, ActiveEffects);
@@ -1277,6 +1311,17 @@ export function installLodbrokSpawnWiring(world) {
 }
 
 const PROC_PACKAGE_SPECS = Object.freeze([
+  Object.freeze({
+    id: "breadcrumbBoots",
+    name: "Breadcrumb Boots",
+    summary: "Leaves an investigating trail every fourth genuine step and stores a Scatter charge.",
+    stateKeys: Object.freeze(["stepsTowardCrumb"]),
+    hostIdeas: Object.freeze(["trail boots", "investigation lures", "decoy gear"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onStep", script: PROC_PACKAGE_KEYS.BreadcrumbBoots, priority: 10 }),
+    ]),
+  }),
   Object.freeze({
     id: "echoStrike",
     name: "Echo Strike",

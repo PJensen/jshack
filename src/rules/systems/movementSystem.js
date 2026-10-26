@@ -308,7 +308,7 @@ export function movementSystem(world) {
         const from = { x: pos.x, y: pos.y };
         world.set(actor, Position, { x: nx, y: ny });
         markMovedThisTurn(world, actor);
-        world.emit?.("moved", { id: actor, from, to: { x: nx, y: ny } });
+        world.emit?.("moved", { id: actor, from, to: { x: nx, y: ny }, kind: "step" });
         // Reserve the destination so subsequent movers can't step into the same tile
         blocking.add(k);
         // Keep livingByCell in sync so bump resolvers see entities that moved

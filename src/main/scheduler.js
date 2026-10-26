@@ -15,7 +15,6 @@ import { rangedAttackSystem } from "../rules/systems/rangedAttackSystem.js";
 import { attackDirectionSystem } from "../rules/systems/attackDirectionSystem.js";
 import { interactionSystem } from "../rules/systems/interactionSystem.js";
 import { effectSystem } from "../rules/systems/effectSystem.js";
-import { breadcrumbBootsMovementExtension } from "../rules/content/items/breadcrumbBoots.js";
 import { aggroDamageReactionSystem } from "../rules/systems/damageReactions/aggroDamageReactionSystem.js";
 import { channelingDamageReactionSystem } from "../rules/systems/damageReactions/channelingDamageReactionSystem.js";
 import { deathImpactDamageReactionSystem } from "../rules/systems/damageReactions/deathImpactDamageReactionSystem.js";
@@ -64,6 +63,7 @@ import {
   movementSystem,
   installMoveAutoPickupListener,
 } from "../rules/systems/movementSystem.js";
+import { movementProcExtension } from "../rules/systems/movementProcSystem.js";
 import { intentValidationSystem } from "../rules/systems/intentValidationSystem.js";
 import { combatSystem, installBumpAttackListener } from "../rules/systems/combatSystem.js";
 import { installCombatInteractions } from "../rules/data/combatInteractions.js";
@@ -156,7 +156,7 @@ export function configureWorld(world) {
   installRatatoskrListeners(world);
 
   installTownfolkDoorListener(world);
-  world.install(breadcrumbBootsMovementExtension);
+  world.install(movementProcExtension);
   installBellListener(world);
   installGemSocketListener(world);
   // Install engraving scramble-on-step listener once per world

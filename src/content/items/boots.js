@@ -177,6 +177,7 @@ defineItem('breadcrumb_boots', {
   bonuses: { defense: 1, maxStamina: 8 },
   description: 'Enchanted leather boots. Every fourth step leaves a glowing crumb that lingers for 8 turns and draws curious creatures toward it. Each crumb stores one Scatter charge, up to four. Use Scatter while equipped to spend four charges and lay a decoy trail nearby. The shoemaker made them for a child who was terrible at finding her way home.',
   chargePool: { current: 0, max: 4 },
+  procPackages: ['breadcrumbBoots'],
   state: { stepsTowardCrumb: 0 },
   abilities: {
     scatter: {
