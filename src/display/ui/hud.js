@@ -2031,6 +2031,7 @@ function createQuickSlot(opts = {}) {
       staminaCost: item?.staminaCost ?? null,
       twoHanded: item?.twoHanded || false,
       contentStatus: item?.contentStatus || null,
+      mechanics: item?.mechanics || null,
       affixes: item?.affixes || null,
       maxSockets: item?.maxSockets || 0,
       sockets: item?.sockets || null,
