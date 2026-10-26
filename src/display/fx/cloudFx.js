@@ -874,7 +874,9 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
         _quakeCloudFx.set(id, {
           x: at.x, y: at.y, radius: r,
           turnsLeft: ttl, maxTurns: ttl,
-          pulseFlash: 0.20,
+          // A pulse updates the persistent fire; it does not replay the
+          // ignition flash or restart the ember burst.
+          pulseFlash: prev?.pulseFlash ?? 0,
           phase: Math.random() * Math.PI * 2,
           fading: false, fadeLeft: 0, fadeMax: 0,
           enhanced,
@@ -1044,20 +1046,6 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
           medium: String(medium || prev?.medium || 'floor').toLowerCase() === 'floor' ? 'floor' : 'air',
         };
         _fireCloudFx.set(id, next);
-        if (Array.isArray(affectedIds) && affectedIds.length > 0) {
-          for (let i = 0; i < affectedIds.length; i++) {
-            const pos = getPosition(Number(affectedIds[i] || 0));
-            if (!pos) continue;
-            spawnFireCloudEmbers(pos.x, pos.y, 5);
-          }
-        } else {
-          for (let dy = -r; dy <= r; dy++) {
-            for (let dx = -r; dx <= r; dx++) {
-              if (Math.max(Math.abs(dx), Math.abs(dy)) > r) continue;
-              if (Math.random() < 0.35) spawnFireCloudEmbers(next.x + dx, next.y + dy, 2);
-            }
-          }
-        }
         return;
       }
       const hazardKind = String(kind || '').toLowerCase();

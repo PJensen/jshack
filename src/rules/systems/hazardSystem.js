@@ -451,8 +451,8 @@ export function hazardSystem(world) {
             sourceId,
             sourceKind,
             meta: hazard.meta && typeof hazard.meta === "object"
-              ? { ...hazard.meta, source: hazard.meta.source ?? "fire_spread" }
-              : { source: "fire_spread" },
+              ? { ...hazard.meta, source: hazard.meta.source ?? "fire_spread", delivery: "fire_spread" }
+              : { source: "fire_spread", delivery: "fire_spread" },
           });
           fireHazardCells.add(key);
         }
@@ -687,6 +687,7 @@ function spawnFireSpreadHazard(world, spread) {
       cause: spread.cause,
       sourceId: spread.sourceId,
       sourceKind: spread.sourceKind,
+      meta: spread.meta,
       identity: "wildfire",
       name: "Wildfire",
     });

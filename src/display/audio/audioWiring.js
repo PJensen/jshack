@@ -917,8 +917,8 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
     sfxAt("ranged:shot", pos, pp(), null, zg());
   });
 
-  world.on('hazard:spawned', ({ cause, at }) => {
-    if (String(cause || '').startsWith('bomb_arrows:blast')) {
+  world.on('hazard:spawned', ({ cause, at, meta }) => {
+    if (String(cause || '') === 'bomb_arrows:blast' && meta?.delivery !== 'fire_spread') {
       sfxAt('ranged:bomb-impact', at, pp(), { priority: 1 }, zg());
     }
   });

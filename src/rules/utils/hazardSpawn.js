@@ -101,6 +101,7 @@ export function spawnHazard(world, params) {
       cause,
       sourceId,
       sourceKind,
+      meta,
       identity,
       name,
     });
