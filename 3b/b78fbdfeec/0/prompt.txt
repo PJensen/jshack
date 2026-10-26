@@ -1,0 +1,127 @@
+you know what I don't like,  we have features that are only surfaced in the oddest way possible, some random bit of grey text at the bottom.
+
+we could say:
+
+Equip: 0.25% chance of finding more shit
+Equip: 5% chance of dropping more goodies
+Worn: blah
+Wearing: blah
+
+you feel me? like some kind of bolded "thing" -- and we need not hand write all the percents, ideally they'd come righ from item meta/stats -- but I digress.
+
+---
+
+^^ planning and thinking only please
+
+---
+
+no -- I was just saying "for example" -- WOW uses "Equip: some lasting {pct} effect" -- see what I mean? I was only suggesting worn to not copy them 1:1
+
+---
+
+passive and equip in he above context are identical. all mechanical effects should somehow have bolded something right?!
+
+---
+
+look at this:
+
+---
+
+right -- it's a potentially big lift -- but still -- right, i mean it's critical to explain what gear ACTUALLUY DOES
+
+---
+
+lets tackle one challenging item to start, sunsword maybe?
+
+---
+
+pitch it to me, exactly as we'd write it -- then I'll commen about the approach.
+
+---
+
+and you understand these are not just basic stats, +21 haste or whatever, these are item mechanics themselves.
+
+---
+
+do the sunfire one, as built, for real.
+
+---
+
+text here only
+
+---
+
+nope --- text here only, from actual item as it sits.
+
+---
+
+Sunsword BTW.
+
+---
+
+is that 100% real versus that items stat sheet?
+
+---
+
+okay, draft it back to me in the cleanest way we can please.
+
+---
+
+Why would we list on hit twice?  Wouldn't you rather a longer single line? I could see why not potentially since the proc tree has two of em. fine.
+
+---
+
+this seems ike a huge lift, but lets **try** Sunsword.
+
+---
+
+would you rather attempt: belt_bombardier in addition ?
+
+---
+
+this shit of guessing from flavor text was a nighmare, lol. (increment VERSION)
+
+---
+
+YOUR APPROACH MAKES NO SENSE.
+
+  },
+
+  // ── Abilities ─────────────────────────────────────────────────
+  // Declared here, shows up in the spell bar automatically.
+  // Targeting, cooldown, and activation — all in one place.
+  abilities: {
+    blinding_ray: {
+      name:        'Blinding Ray',
+      icon:        '☼',
+      targeting:   'enemy',
+      range:       6,
+      cooldown:    12,
+      description: 'A searing ray of sunlight that blinds the target.',
+
+
+IS ALL ALREADY LISTED. You only needed a printf style format string inside the ailbity.
+
+ALSO -- I do not see +4 damage to undead anywhere in sunsword.js
+
+??
+
+---
+
+canonical combat is NOT part of the item, so it must be left out -- try again, stay sunsword.js focused please.
+
+---
+
+Wouldn't you want "Use: " in front? or -- does that come in -- nevermind I see it -- let me experiment, will report back.
+
+---
+
+NOPE -- not shown yet.
+
+---
+
+it's inside inventory at least.
+
+---
+
+increment version please.
