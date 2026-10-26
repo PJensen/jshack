@@ -339,13 +339,6 @@ export function defineItem(id, def) {
     catalogEntry._contentStatus = def.status;
   }
 
-  // Combat hooks — stored for combatSystem integration
-  const combatHooks = {};
-  if (typeof def.onHit === 'function') combatHooks.onHit = def.onHit;
-  if (typeof def.onEquip === 'function') combatHooks.onEquip = def.onEquip;
-  if (typeof def.onUnequip === 'function') combatHooks.onUnequip = def.onUnequip;
-  if (Object.keys(combatHooks).length > 0) catalogEntry._contentCombatHooks = combatHooks;
-
   // Recipe pointer (stored for future recipe system integration)
   if (def.recipe) catalogEntry._contentRecipe = def.recipe;
 
