@@ -125,3 +125,23 @@ export function evaluateEquippedAffixProcs(world, actorId, ctx, options = {}) {
 
   return out;
 }
+
+export function evaluateItemProcs(world, actorId, itemId, ctx, options = {}) {
+  const resolvedActorId = Number(actorId || 0) | 0;
+  const resolvedItemId = Number(itemId || 0) | 0;
+  const out = options.out || createProcAccumulator();
+  if (!(resolvedActorId > 0) || !(resolvedItemId > 0) || !world?.isAlive?.(resolvedItemId)) return out;
+
+  ensureAffixTopology(world, resolvedItemId);
+  const sourceStats = options.sourceStats || resolveDerivedStats(world, Number(ctx?.source || resolvedActorId) | 0);
+  const targetStats = options.targetStats || {};
+  const procNodes = gatherItemProcNodes(world, resolvedItemId);
+  for (let i = 0; i < procNodes.length; i++) {
+    evaluateProcNode(world, procNodes[i], {
+      ...ctx,
+      actor: resolvedActorId,
+      item: resolvedItemId,
+    }, sourceStats, targetStats, out);
+  }
+  return out;
+}

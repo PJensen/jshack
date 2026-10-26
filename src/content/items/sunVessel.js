@@ -25,6 +25,7 @@ defineItem('sun_vessel', {
   material:    'bronze',
   description: 'A sealed reliquary of captive daylight. It hums with quiet warmth.',
   tags:        ['light', 'holy', 'volatile'],
+  procPackages: ['sunVessel'],
 
   // ── Local persistent state ──────────────────────────────────────
   state: {
@@ -131,91 +132,6 @@ defineItem('sun_vessel', {
       charge: chargeLeft,
     });
     ctx.consume();
-  },
-
-  // ── TICK: While carried ─────────────────────────────────────────
-  // Each turn, if undead are nearby, the vessel pulses.
-  // Drains stability. When stability hits 0, the vessel cracks.
-  // While cracked, leaks radiance that damages nearby undead.
-  onTurnWhileCarried(ctx) {
-    const st = ctx.state();
-    if (st.charge <= 0) {
-      ctx.light(ctx.user, 0);
-      return;
-    }
-
-    // ── Dynamic light ───────────────────────────────────────────
-    // The vessel's light IS its mood. Four axes drive it:
-    //   charge    → radius (how far it reaches)
-    //   stability → speed/wobble (how anxious it feels)
-    //   cracked   → jitter/color (bleeding, volatile)
-    //   undead    → sway amplitude (reacting to the dead)
-
-    const chargeRatio = st.charge / st.maxCharge;         // 0–1
-    const stabRatio   = st.stability / 10;                // 0–1 (1 = calm)
-    const undead      = ctx.entitiesInRadius(ctx.user, 4, { tag: 'undead' });
-    const threat      = Math.min(undead.length / 3, 1.0); // 0–1
-
-    // Radius: charge drives reach, cracked bleeds brighter
-    const radius = st.cracked
-      ? 2.0 + chargeRatio * 3.5                           // cracked: 2.0–5.5
-      : 1.5 + chargeRatio * 2.5;                          // intact:  1.5–4.0
-
-    // Color: gold → amber → orange as it destabilizes
-    const color = st.cracked  ? '#ff9933'                  // cracked: deep amber
-      : threat > 0.5          ? '#f5b840'                  // sensing undead: warm
-      : stabRatio < 0.5       ? '#f0c040'                  // stressed: shifting
-                              : '#f6d365';                 // calm: soft gold
-
-    // Temporal: every axis nudges the waveform
-    ctx.light(ctx.user, radius, {
-      color,
-      temporal: {
-        speed:  0.6 + (1 - stabRatio) * 1.2 + threat * 0.8,   // calm=0.6, panicked=2.6
-        sway:   0.04 + threat * 0.12,                           // reacts to undead
-        wobble: 0.02 + (1 - stabRatio) * 0.10,                 // anxiety → wobble
-        jitter: st.cracked ? 0.08 + (1 - chargeRatio) * 0.06   // cracked: noisy, worse when low
-                           : 0.01,                              // intact: rock steady
-        rShift: st.cracked ? 0.06 : threat * 0.03,             // warm shift under stress
-        gShift: st.cracked ? -0.04 : 0,                        // cracked loses green
-        bShift: -threat * 0.03,                                 // undead drain blue
-      },
-    });
-
-    if (undead.length === 0) {
-      if (st.stability < 10) {
-        ctx.setState({ stability: Math.min(10, st.stability + 1) });
-      }
-      return;
-    }
-
-    // Drain stability proportional to undead count
-    const drain = Math.min(undead.length, 3);
-    const newStab = Math.max(0, st.stability - drain);
-    ctx.setState({ stability: newStab });
-
-    // Pulse presentation
-    ctx.present('pulse', { target: ctx.user, intensity: drain });
-
-    // Crack threshold
-    if (newStab <= 0 && !st.cracked) {
-      ctx.setState({ cracked: true });
-      ctx.message('The Sun-Vessel shudders — hairline fractures race across the glass!', 'danger');
-      ctx.present('crack', { target: ctx.user });
-    }
-
-    // Cracked: leak radiance — bleed charge, damage undead, pulse light
-    if (st.cracked) {
-      for (const uid of undead) {
-        ctx.damage(uid, '1d4', 'radiant');
-      }
-      ctx.setState({ charge: st.charge - 1 });
-      ctx.present('leak', { target: ctx.user });
-
-      if (st.charge - 1 <= 0) {
-        ctx.message('The last light drains from the Sun-Vessel.', 'system');
-      }
-    }
   },
 
   // ── AI HINTS ────────────────────────────────────────────────────

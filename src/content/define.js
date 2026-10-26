@@ -225,6 +225,9 @@ export function defineItem(id, def) {
     chargePool: def.chargePool ? { ...def.chargePool } : null,
     tags: Array.isArray(def.tags) ? def.tags.slice() : [],
   };
+  if (Array.isArray(def.procPackages) && def.procPackages.length > 0) {
+    catalogEntry.procPackages = def.procPackages.slice();
+  }
 
   // Equipment-specific
   if (catalogKind === 'equipment') {
@@ -239,7 +242,6 @@ export function defineItem(id, def) {
     if (def.affixes) catalogEntry.affixes = def.affixes;
     if (def.subtype) catalogEntry.subtype = def.subtype;
     if (def.beatitude) catalogEntry.beatitude = def.beatitude;
-    if (Array.isArray(def.procPackages) && def.procPackages.length > 0) catalogEntry.procPackages = def.procPackages.slice();
     if (def.tags) catalogEntry.tags = def.tags;
     if (def.maxCharges != null) catalogEntry.maxCharges = def.maxCharges;
     if (def.charges != null) catalogEntry.charges = def.charges;
@@ -336,12 +338,6 @@ export function defineItem(id, def) {
   if (typeof def.status === 'function') {
     catalogEntry._contentStatus = def.status;
   }
-
-  // Tick hooks — stored separately, consumed by scriptTickSystem
-  const tickHooks = {};
-  if (typeof def.onTurnWhileCarried === 'function') tickHooks.onTurnWhileCarried = def.onTurnWhileCarried;
-  if (typeof def.onTurnWhileEquipped === 'function') tickHooks.onTurnWhileEquipped = def.onTurnWhileEquipped;
-  if (Object.keys(tickHooks).length > 0) catalogEntry._contentTickHooks = tickHooks;
 
   // Combat hooks — stored for combatSystem integration
   const combatHooks = {};

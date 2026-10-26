@@ -1,17 +1,20 @@
 import { children } from "../../lib/ecs-js/index.js";
 import { ActivationGate } from "../components/ActivationGate.js";
 import { CreatureType } from "../components/CreatureType.js";
+import { Faction } from "../components/Faction.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { Mana } from "../components/Mana.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { ProcEffect } from "../components/ProcEffect.js";
 import { ProcNode } from "../components/ProcNode.js";
+import { Position } from "../components/Position.js";
 import { ScriptState } from "../components/ScriptState.js";
 import { Stamina } from "../components/Stamina.js";
 import { Status } from "../components/Status.js";
 import { Vitality } from "../components/Vitality.js";
 import { runEntityScript, ScriptVerb } from "../scripting.js";
 import { gatherStatTopology, resolveDerivedStats } from "./derivedStats.js";
+import { forEachInRadius } from "./spatialIndex.js";
 
 function compareByPriorityThenId(a, b) {
   return Number(a.record.priority || 0) - Number(b.record.priority || 0)
@@ -78,6 +81,7 @@ export function createProcAccumulator() {
     cancelled: false,
     messages: [],
     presentations: [],
+    lightEvents: [],
   };
 }
 
@@ -161,8 +165,8 @@ function createProcScriptApi(world, out, procNodeId, ctx) {
     cancel() {
       out.cancelled = true;
     },
-    message(text) {
-      out.messages.push({ source: procNodeId, text: String(text || "") });
+    message(text, type = "system") {
+      out.messages.push({ source: procNodeId, text: String(text || ""), type: String(type || "system") });
     },
     getState(entityId = ctx?.item || ctx?.source) {
       const state = world.get(Number(entityId || 0) | 0, ScriptState);
@@ -189,6 +193,34 @@ function createProcScriptApi(world, out, procNodeId, ctx) {
         id: String(id || ""),
         identity: String(world.get(Number(ctx?.item || 0) | 0, NamedIdentity)?.identity || ""),
         payload: { ...payload, user: Number(ctx?.source || 0) | 0, target: Number(ctx?.target || 0) | 0, item: Number(ctx?.item || 0) | 0 },
+      });
+    },
+    entitiesInRadius(center, radius, filter = {}) {
+      const centerPos = typeof center === "number"
+        ? world.get(Number(center || 0) | 0, Position)
+        : center;
+      if (!centerPos) return [];
+      const result = [];
+      forEachInRadius(world, centerPos.x | 0, centerPos.y | 0, radius, (entityId) => {
+        if (typeof center === "number" && entityId === (Number(center) | 0)) return;
+        if (filter?.tag && !hasSemanticTag(world, entityId, filter.tag)) return;
+        if (filter?.faction && String(world.get(entityId, Faction)?.key || "") !== String(filter.faction)) return;
+        result.push(entityId);
+      });
+      return result;
+    },
+    light(entityId, radius, opts = {}) {
+      const resolvedEntity = Number(entityId || ctx?.source || 0) | 0;
+      const identity = String(world.get(Number(ctx?.item || 0) | 0, NamedIdentity)?.identity || "");
+      const temporal = opts.temporal && typeof opts.temporal === "object" ? opts.temporal : null;
+      const pattern = temporal ? `_proc_${identity}_${resolvedEntity}` : String(opts.pattern || "holy");
+      out.lightEvents.push({
+        entity: resolvedEntity,
+        radius: Number(radius || 0),
+        color: String(opts.color || "#fff5c8"),
+        pattern,
+        softness: Number(opts.softness || 10),
+        temporal,
       });
     },
     emit(name, payload = {}) {

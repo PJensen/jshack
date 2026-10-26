@@ -128,7 +128,11 @@ export function applyProcAccumulator(world, out, options = {}) {
   for (let i = 0; i < out.messages.length; i++) {
     const message = out.messages[i];
     try {
-      world.emit("proc:message", { source: message?.source || 0, text: String(message?.text || "") });
+      world.emit("proc:message", {
+        source: message?.source || 0,
+        text: String(message?.text || ""),
+        type: String(message?.type || "system"),
+      });
     } catch {
       // keep proc application side-effect safe
     }
@@ -137,5 +141,28 @@ export function applyProcAccumulator(world, out, options = {}) {
   for (let i = 0; i < presentations.length; i++) {
     const presentation = presentations[i];
     world.emit("script:present", presentation);
+  }
+  const lightEvents = Array.isArray(out.lightEvents) ? out.lightEvents : [];
+  for (let i = 0; i < lightEvents.length; i++) {
+    const light = lightEvents[i];
+    if (light?.temporal) {
+      world.emit("content:light:registerPattern", {
+        name: light.pattern,
+        speed: light.temporal.speed ?? 1.0,
+        sway: light.temporal.sway ?? 0.10,
+        wobble: light.temporal.wobble ?? 0.06,
+        jitter: light.temporal.jitter ?? 0.04,
+        rShift: light.temporal.rShift ?? 0,
+        gShift: light.temporal.gShift ?? 0,
+        bShift: light.temporal.bShift ?? 0,
+      });
+    }
+    world.emit("content:light:set", {
+      entity: light?.entity || 0,
+      radius: light?.radius || 0,
+      color: light?.color || "#fff5c8",
+      pattern: light?.pattern || "holy",
+      softness: light?.softness || 10,
+    });
   }
 }

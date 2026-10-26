@@ -54,6 +54,7 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   SerpentBoundBreeches: "procPackage:serpentBoundBreeches",
   BreadcrumbBoots: "procPackage:breadcrumbBoots",
   Dawnbreaker: "procPackage:dawnbreaker",
+  SunVessel: "procPackage:sunVessel",
 });
 
 function getEffect(world, entityId, key) {
@@ -94,10 +95,43 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
 
 registerScript(PROC_PACKAGE_KEYS.Dawnbreaker, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
-    if (String(ctx?.kind || "") !== "onHit") return;
+    const kind = String(ctx?.kind || "");
     const source = Number(ctx?.source || 0) | 0;
-    const target = Number(ctx?.target || 0) | 0;
     const item = Number(ctx?.item || 0) | 0;
+    if (kind === "onTurnWhileEquipped") {
+      if (!(source > 0) || !(item > 0)) return;
+      const state = ctx.proc.getState();
+      if (Number(state.radiance || 0) <= 0) {
+        ctx.proc.light(source, 0);
+        return;
+      }
+      const radiance = Number(state.radiance || 0);
+      const ratio = radiance / Math.max(1, Number(state.maxRad || 10));
+      ctx.proc.light(source, 1.0 + ratio * 3.0, {
+        color: state.awakened ? "#ffe577" : "#f0c040",
+        pattern: state.awakened ? "holy" : "breathe",
+      });
+      if (state.awakened) {
+        const undead = ctx.proc.entitiesInRadius(source, 2, { tag: "undead" });
+        for (let i = 0; i < undead.length; i++) {
+          ctx.proc.dealDamage(undead[i], 1, "radiant", { source, cause: "procPackage:dawnbreaker" });
+        }
+        if (undead.length > 0) ctx.proc.present("aura_sear", { target: source });
+        ctx.proc.present("aura_glow", { target: source });
+      }
+      if ((typeof world.rand === "function" ? world.rand() : 0) < 0.16) {
+        const nextRadiance = Math.max(0, radiance - 1);
+        ctx.proc.setState({ radiance: nextRadiance });
+        if (state.awakened && nextRadiance < 4) {
+          ctx.proc.setState({ awakened: false });
+          ctx.proc.message("Dawnbreaker’s glow fades — the blade sleeps.", "system");
+          ctx.proc.present("dormant", { target: source });
+        }
+      }
+      return;
+    }
+    if (kind !== "onHit") return;
+    const target = Number(ctx?.target || 0) | 0;
     if (!(source > 0) || !(target > 0) || !(item > 0)) return;
 
     const state = ctx.proc.getState();
@@ -123,6 +157,62 @@ registerScript(PROC_PACKAGE_KEYS.Dawnbreaker, {
 
     if (!state.awakened && gain >= 2) {
       ctx.proc.present("radiance_gain", { target: source, radiance: newRadiance });
+    }
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.SunVessel, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    if (String(ctx?.kind || "") !== "onTurnWhileCarried") return;
+    const source = Number(ctx?.source || 0) | 0;
+    const item = Number(ctx?.item || 0) | 0;
+    if (!(source > 0) || !(item > 0)) return;
+    const state = ctx.proc.getState();
+    const charge = Number(state.charge || 0);
+    const maxCharge = Math.max(1, Number(state.maxCharge || 8));
+    if (charge <= 0) {
+      ctx.proc.light(source, 0);
+      return;
+    }
+
+    const stability = Number(state.stability ?? 10);
+    const undead = ctx.proc.entitiesInRadius(source, 4, { tag: "undead" });
+    const threat = Math.min(undead.length / 3, 1.0);
+    const chargeRatio = charge / maxCharge;
+    const stabilityRatio = stability / 10;
+    ctx.proc.light(source, state.cracked ? 2.0 + chargeRatio * 3.5 : 1.5 + chargeRatio * 2.5, {
+      color: state.cracked ? "#ff9933" : threat > 0.5 ? "#f5b840" : stabilityRatio < 0.5 ? "#f0c040" : "#f6d365",
+      temporal: {
+        speed: 0.6 + (1 - stabilityRatio) * 1.2 + threat * 0.8,
+        sway: 0.04 + threat * 0.12,
+        wobble: 0.02 + (1 - stabilityRatio) * 0.10,
+        jitter: state.cracked ? 0.08 + (1 - chargeRatio) * 0.06 : 0.01,
+        rShift: state.cracked ? 0.06 : threat * 0.03,
+        gShift: state.cracked ? -0.04 : 0,
+        bShift: -threat * 0.03,
+      },
+    });
+    if (undead.length === 0) {
+      if (stability < 10) ctx.proc.setState({ stability: Math.min(10, stability + 1) });
+      return;
+    }
+
+    const drain = Math.min(undead.length, 3);
+    const nextStability = Math.max(0, stability - drain);
+    ctx.proc.setState({ stability: nextStability });
+    ctx.proc.present("pulse", { target: source, intensity: drain });
+    if (nextStability <= 0 && !state.cracked) {
+      ctx.proc.setState({ cracked: true });
+      ctx.proc.message("The Sun-Vessel shudders — hairline fractures race across the glass.", "danger");
+      ctx.proc.present("crack", { target: source });
+    }
+    if (state.cracked) {
+      for (let i = 0; i < undead.length; i++) {
+        ctx.proc.dealDamage(undead[i], ctx.proc.roll(4), "radiant", { source, cause: "procPackage:sunVessel" });
+      }
+      ctx.proc.setState({ charge: Math.max(0, charge - 1) });
+      ctx.proc.present("leak", { target: source });
+      if (charge - 1 <= 0) ctx.proc.message("The last light drains from the Sun-Vessel.", "system");
     }
   },
 });
@@ -1348,6 +1438,17 @@ export function installLodbrokSpawnWiring(world) {
 
 const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
+    id: "sunVessel",
+    name: "Sun-Vessel",
+    summary: "A carried reliquary whose radiance responds to nearby undead and eventually cracks under pressure.",
+    stateKeys: Object.freeze(["charge", "maxCharge", "stability", "cracked"]),
+    hostIdeas: Object.freeze(["holy vessels", "volatile reliquaries", "undead detectors"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onTurnWhileCarried", script: PROC_PACKAGE_KEYS.SunVessel, priority: 10 }),
+    ]),
+  }),
+  Object.freeze({
     id: "dawnbreaker",
     name: "Dawnbreaker",
     summary: "Stores radiance through combat, awakens at seven charges, and adds radiant force to awakened strikes.",
@@ -1356,6 +1457,7 @@ const PROC_PACKAGE_SPECS = Object.freeze([
     passiveExpressions: Object.freeze([]),
     procTrees: Object.freeze([
       Object.freeze({ trigger: "onHit", script: PROC_PACKAGE_KEYS.Dawnbreaker, priority: 10 }),
+      Object.freeze({ trigger: "onTurnWhileEquipped", script: PROC_PACKAGE_KEYS.Dawnbreaker, priority: 10 }),
     ]),
   }),
   Object.freeze({

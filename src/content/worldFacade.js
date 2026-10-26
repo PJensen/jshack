@@ -1,6 +1,6 @@
 // src/content/worldFacade.js
 // Builds a lightweight interaction-context-shaped facade backed directly
-// by world operations. Used by scriptTickSystem and other non-interaction
+// by world operations. Used by itemProcTickSystem and other non-interaction
 // hook contexts where the full interaction runtime isn't available.
 
 import { Position } from '../rules/components/Position.js';

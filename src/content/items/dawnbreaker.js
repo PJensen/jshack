@@ -115,52 +115,6 @@ defineItem('dawnbreaker', {
   },
 
   // ═════════════════════════════════════════════════════════════
-  //  TICK — while equipped, each turn
-  // ═════════════════════════════════════════════════════════════
-  // While awakened: ambient glow, nearby undead take minor radiant.
-  // Radiance decays slowly if the player isn't fighting.
-  onTurnWhileEquipped(ctx) {
-    const st = ctx.state();
-    if (st.radiance <= 0) {
-      ctx.light(ctx.user, 0);
-      return;
-    }
-
-    // ── Dynamic light: scales with radiance ─────────────────────
-    const radRatio = st.radiance / st.maxRad;
-    ctx.light(ctx.user, 1.0 + radRatio * 3.0, {
-      color: st.awakened ? '#ffe577' : '#f0c040',
-      pattern: st.awakened ? 'holy' : 'breathe',
-    });
-
-    // ── Awakened aura ───────────────────────────────────────────
-    if (st.awakened) {
-      const undead = ctx.entitiesInRadius(ctx.user, 2, { tag: 'undead' });
-      for (const uid of undead) {
-        ctx.damage(uid, 1, 'radiant');
-      }
-      if (undead.length > 0) {
-        ctx.present('aura_sear', { target: ctx.user });
-      }
-      ctx.present('aura_glow', { target: ctx.user });
-    }
-
-    // ── Radiance decay ──────────────────────────────────────────
-    // Lose 1 radiance every 6 turns if you're not hitting things.
-    // (Kill streak resets on each kill — tracked externally by the
-    // hit hook via state. Here we just tick toward decay.)
-    if (ctx.chance(16)) {  // ~1 in 6 turns
-      const newRad = Math.max(0, st.radiance - 1);
-      ctx.setState({ radiance: newRad });
-      if (st.awakened && newRad < 4) {
-        ctx.setState({ awakened: false });
-        ctx.message('Dawnbreaker\'s glow fades — the blade sleeps.', 'system');
-        ctx.present('dormant', { target: ctx.user });
-      }
-    }
-  },
-
-  // ═════════════════════════════════════════════════════════════
   //  AI HINTS
   // ═════════════════════════════════════════════════════════════
   aiHints: {

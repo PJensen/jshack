@@ -266,12 +266,18 @@ defineItem('food_bread', {
 | `onHit(ctx)` | Equipped weapon lands a hit | enchant procs |
 | `onEquip(ctx)` | Item equipped | stat bonuses, status apply |
 | `onUnequip(ctx)` | Item unequipped | status remove |
-| `onTurnWhileCarried(ctx)` | Each game turn while in inventory | cursed tick effects |
-| `onTurnWhileEquipped(ctx)` | Each game turn while equipped | regen rings |
+| `onTurnWhileCarried` proc trigger | Each game turn while in inventory | carried passive effects |
+| `onTurnWhileEquipped` proc trigger | Each game turn while equipped | equipped passive effects |
 | `beforeUse` / `afterUse` | Before/after use pipeline | cancel/augment |
 | `beforeDrink` / `afterDrink` | Before/after drink pipeline | cancel/augment |
 
-All hooks receive a `ScriptCtx` (`ctx`). Key properties and methods:
+Proc-triggered passives are authored through `procPackages` and the generic proc
+script API. They receive the same proc context as combat triggers, including
+`ctx.proc.getState()`, `ctx.proc.setState(...)`, `ctx.proc.entitiesInRadius(...)`,
+`ctx.proc.light(...)`, and `ctx.proc.present(...)`. Legacy direct item tick
+functions are not compiled into the catalog.
+
+All interaction hooks receive a `ScriptCtx` (`ctx`). Key properties and methods:
 
 ```js
 ctx.actor          // entity id of the actor
