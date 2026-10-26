@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "ae36b4a5975d",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/display/fx/fxEntries.js",
+    "src/display/fx/projectileFx.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/systems/rangedAttackSystem.js",
+    "tests/hazardSystem.test.mjs",
+    "tests/rangedAttack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/ae/36b4a5975d/0/metadata.json",
+      "transcript": "/ae/36b4a5975d/0/full.jsonl",
+      "compact_transcript": "/ae/36b4a5975d/0/transcript.jsonl",
+      "content_hash": "/ae/36b4a5975d/0/content_hash.txt",
+      "prompt": "/ae/36b4a5975d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 114206,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3319040,
+    "output_tokens": 9860,
+    "api_call_count": 38
+  }
+}
