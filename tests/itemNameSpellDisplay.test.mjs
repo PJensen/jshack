@@ -10,6 +10,7 @@ import { buildItemDisplayData } from "../src/main/wiring/itemName.js";
 import { identify, resetIdentification } from "../src/rules/data/identification.js";
 import "../src/content/items/sunsword.js";
 import "../src/content/items/belts.js";
+import "../src/content/items/pocketRelics.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -108,6 +109,32 @@ Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", (
   assertEquals(data.mechanics, [
     { context: "Wearing", text: "Bomb arrows gain +1 hazard radius." },
     { context: "Loot", text: "Bomb arrows appear at 1.4× weighting." },
+  ]);
+});
+
+Deno.test("buildItemDisplayData exposes authored pocket relic mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 31 });
+
+  const hourglass = buildItemDisplayData(world, buildCatalogItem(world, "bloodglass_hourglass"));
+  assertEquals(hourglass.mechanics, [
+    { context: "Use — Turn the Glass", text: "Restore 3 mana each turn for 6 turns, but take 2 damage every 2 turns. Cooldown: 18 turns." },
+  ]);
+
+  const spool = buildItemDisplayData(world, buildCatalogItem(world, "widows_spool"));
+  assertEquals(spool.mechanics, [
+    { context: "Use — Stitch Venom", text: "Knot a venom thread for 6 turns. Each thread deals 1 poison damage per turn; stacks to 3. Range: 5 tiles. Cooldown: 1 turn. Cost: 1 charge." },
+  ]);
+
+  const bell = buildItemDisplayData(world, buildCatalogItem(world, "drowned_bell"));
+  assertEquals(bell.mechanics, [
+    { context: "Use — Merciful Toll", text: "Stun the enemy for 3 turns, but heal it for 2 HP each turn. Range: 4 tiles. Cooldown: 12 turns. Cost: 1 charge." },
+  ]);
+
+  const cricket = buildItemDisplayData(world, buildCatalogItem(world, "brass_cricket"));
+  assertEquals(cricket.mechanics, [
+    { context: "Use — Wind the Cricket", text: "Restore 3 stamina each turn for 6 turns, but take 1 damage every 2 turns. Songs overlap independently. Cooldown: 2 turns. Cost: 1 charge." },
   ]);
 });
 

@@ -266,6 +266,11 @@ surface that should own it:
 - Existing rules pipelines for spawn, damage, use/apply, status, inventory, and
   transitions.
 
+For item mechanic copy, authored prose must use placeholders for mechanical
+values (for example `{duration}` or `{effect.damage.amount}`). Resolve those
+values from the canonical ability/effect/stat metadata; never duplicate live
+numbers inside English descriptions or display formats.
+
 The standard is not "least code today." The standard is whether the next weird
 rule becomes small, explicit, composable, deterministic, and inspectable.
 

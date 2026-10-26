@@ -19,6 +19,8 @@ defineItem('bloodglass_hourglass', {
   abilities: {
     turn_glass: {
       name: 'Turn the Glass', icon: '⌛', targeting: 'none', cooldown: 18,
+      description: 'Restore {effect.mana_restore.amount} mana each turn for {duration} turns, but take {effect.damage.amount} damage every {effect.damage.interval} turns.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
       effects: [{ key: 'bloodglass_tithe', turnsLeft: 6 }],
       onActivate(ctx) {
         ctx.message('The {item} turns. Red sand rises toward your heart.', 'danger');
@@ -49,6 +51,8 @@ defineItem('widows_spool', {
   abilities: {
     stitch: {
       name: 'Stitch Venom', icon: '§', targeting: 'enemy', range: 5, cooldown: 1, chargeCost: 1,
+      description: 'Knot a venom thread for {duration} turns. Each thread deals {effect.damage.amount} poison damage per turn; stacks to {effect.maxStacks}.',
+      displayFormat: '{description} Range: {range} tiles. Cooldown: {cooldown} turn. Cost: {cost} charge.',
       effects: [{ key: 'widows_thread', turnsLeft: 6 }],
       onActivate(ctx) {
         ctx.message('A green thread slips from the {item} and knots itself tight.', 'system');
@@ -79,6 +83,8 @@ defineItem('drowned_bell', {
   abilities: {
     toll: {
       name: 'Merciful Toll', icon: '♧', targeting: 'enemy', range: 4, cooldown: 12, chargeCost: 1,
+      description: 'Stun the enemy for {duration} turns, but heal it for {effect.heal.amount} HP each turn.',
+      displayFormat: '{description} Range: {range} tiles. Cooldown: {cooldown} turns. Cost: {cost} charge.',
       effects: [{ key: 'drowned_mercy', turnsLeft: 3 }],
       onActivate(ctx) {
         ctx.message('The {item} rings like a prayer heard underwater.', 'system');
@@ -112,6 +118,8 @@ defineItem('brass_cricket', {
   abilities: {
     wind: {
       name: 'Wind the Cricket', icon: '♪', targeting: 'none', cooldown: 2, chargeCost: 1,
+      description: 'Restore {effect.stamina_restore.amount} stamina each turn for {duration} turns, but take {effect.damage.amount} damage every {effect.damage.interval} turns. Songs overlap independently.',
+      displayFormat: '{description} Cooldown: {cooldown} turns. Cost: {cost} charge.',
       effects: [{ key: 'brass_cricket_song', turnsLeft: 6 }],
       onActivate(ctx) {
         ctx.message('The {item} chirrs. Your legs hurry to keep time.', 'system');

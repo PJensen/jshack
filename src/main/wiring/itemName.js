@@ -21,6 +21,7 @@ import { ProcNode } from "../../rules/components/ProcNode.js";
 import { ProcPackageNode } from "../../rules/components/ProcPackageNode.js";
 import { ScriptRef } from "../../rules/components/ScriptRef.js";
 import { getProcPackage } from "../../rules/data/procPackages.js";
+import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import {
   getSpell,
@@ -190,6 +191,26 @@ function authoredMechanic(format, value, fallbackContext) {
   const text = applyMechanicFormat(format.format, value);
   const context = String(format.context || fallbackContext).trim();
   return context && text ? { context, text } : null;
+}
+
+function abilityDisplayValues(ability) {
+  const values = {};
+  const effects = Array.isArray(ability?.effects) ? ability.effects : [];
+  const firstEffect = effects[0];
+  if (firstEffect?.turnsLeft != null && firstEffect.turnsLeft !== Infinity) {
+    values.duration = firstEffect.turnsLeft;
+  }
+  for (const effect of effects) {
+    const definition = getEffectDefinition(effect?.key);
+    if (definition?.maxStacks != null) values['effect.maxStacks'] = definition.maxStacks;
+    for (const operation of definition?.periodic || []) {
+      const prefix = `effect.${operation.operation}`;
+      values[`${prefix}.amount`] = operation.amount;
+      values[`${prefix}.interval`] = operation.interval;
+      if (operation.damageType) values[`${prefix}.damageType`] = operation.damageType;
+    }
+  }
+  return values;
 }
 
 function formatAmmoMechanics(info, mechanicFormats = {}) {
@@ -467,7 +488,9 @@ export function buildItemDisplayData(world, itemId) {
   const mechanics = catalogItem?._contentAbilities
     ? Object.values(catalogItem._contentAbilities).map((ability) => {
         const format = String(ability.displayFormat || ability.description || '').trim();
-        const text = format.replace(/\{(name|description|range|cooldown|icon)\}/g, (_match, key) => String(ability[key] ?? ''));
+        const values = { ...abilityDisplayValues(ability), ...ability };
+        const interpolate = (value) => value.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, key) => String(values[key] ?? ''));
+        const text = interpolate(interpolate(format));
         return {
           context: `Use — ${String(ability.name || ability.id || 'Ability')}`,
           text,
