@@ -1,0 +1,178 @@
+is there a pathway that supports shooting arrows in any direction, or, are they always targeted -- my memory says they are always targeted -- but with the new `ammo_chalk_arrows` I'm kind of interested in how we migh make arrows more tactical by allowing them to be shot in any directiojn.
+
+imagine if fire arrows served as an area denial weapon
+imagine if we had bomb arrows (lol)
+
+---
+
+I kind of love this direction, it makes shooting much more tacticle, one major consideration of course is that if you tap a create (maybe double tap) that's when you'd shoot in an aimed way, otherwise, the flow, to my eyes at least, seems like it would want to be similar to how certain wands work.
+
+if you do not feel capable of this task, please let me know.
+
+NOTE: melee attacks are interesting in this context
+NOTE: NPCs getting hit are *also* interesting  in this context.
+
+---
+
+it's a big lift -- but I think we can make it happen :-) I think we should plan before such a deep bit of cooking
+
+---
+
+I do not like keyboard confirm for ranged, I feel like melee is different since movement involves collision, a ranged attack in my mind is much more different, 
+
+NOTE: wands may need a small tweak
+
+---
+
+from a gameplay standpoint, I feel like two-phase seems right, I cannot imagine some ranged mode you'd want to shift in an out of, I cannot imaginejust wild random tapping either. the only exception I'd make is if we added hostile targeting like world of warcraft, tab between enemies -- I swear we had something like that a long time ago, but that is the only circumstance were I would accept tapping ranged would auto-fire.
+
+should we re-plan? you tellme
+
+---
+
+draft up the full please, keyboard, in my experience has to be the WOW tab experience since we cannot strictly anchor to orthoganal directions.
+
+---
+
+what is my concern: area denial isn't clear yet
+
+---
+
+I know roughly how a hunter in wow would operate, certain abilities allow for point selection, but what I don't yet understand is how we wireup the equivalent here.
+
+---
+
+thats it! record this plan! it's super nuanced when you really start thinking about it -- we're going to work off of the above as being canonical targetin
+
+---
+
+Lets plan out the new and improved targeting model!
+
+
+
+- Persistent hostile target selection: tap a distant hostile or use Tab/Shift+Tab.
+- Ranged activation fires immediately at a valid locked target.
+- Without a lock, ranged activation opens temporary point targeting.
+- Point targeting selects coordinates, not creatures.
+- The rules ray resolves the first actor, wall, or ground impact.
+- Ammo behavior runs from that resolved impact, enabling true area denial.
+- Wands share the same target-lock versus point-target distinction.
+- No ranged keyboard-direction or Enter-confirm system; keyboard uses WoW-style target selection.
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Unified Tactical Ranged Targeting
+
+## Summary
+
+Replace ranged auto-nearest behavior with two explicit paths:
+
+- A persistent hostile target lock selected by tapping an enemy or Tab/Shift+Tab.
+- A temporary point-targeting mode opened when ranged activation has no lock.
+
+Locked targets fire immediately. Point targeting selects coordinates by pointer tap; keyboard does not use ranged direction keys or Enter confirmation.
+
+## Implementation Changes
+
+- Add an ECS target-lock component for the controlled actor, storing the selected hostile entity.
+  - Target locks persist through range/LOS failure.
+  - Dead, removed, or no-longer-hostile targets are cleared.
+  - Firing at an unusable lock reports the failure and does not silently retarget.
+
+- Extend the targeting controller:
+  - Tap a hostile creature to select it without firing.
+  - Tab/Shift+Tab cycles visible hostile targets and updates the persistent lock.
+  - Preserve ordinary tap-to-move for non-hostile tiles.
+  - Keep point targeting transient and pointer-committed.
+  - Escape cancels temporary point targeting; no ranged keyboard cursor movement or Enter confirmation.
+
+- Update ranged activation:
+  - Validate the equipped bow or wand.
+  - If a valid lock exists, dispatch an immediate ranged action against that entity.
+  - Otherwise open point targeting using the weapon/spell range.
+  - Remove nearest-enemy auto-selection.
+  - Preserve AI and explicit programmatic target dispatch compatibility.
+
+- Refactor ranged projectile resolution around a physical ray:
+  - The intent carries an endpoint coordinate and may optionally carry a locked target.
+  - Traverse the ray in order.
+  - The first actor, blocking wall, or terminal ground tile becomes the resolved impact.
+  - Actors—including friendly and neutral NPCs—are physical projectile collisions and consume the shot without a ranged confirmation dialog.
+  - A locked target establishes the aim endpoint but never bypasses intervening collisions.
+
+- Split projectile content hooks into distinct impact semantics:
+  - `onProjectileActorImpact`
+  - `onProjectileWallImpact`
+  - `onProjectileGroundImpact`
+  - Keep miss resolution for combat misses, but route the final miss location through the same terminal-impact model.
+  - Pass the resolved impact coordinate to every relevant ammo hook.
+  - This gives chalk, fire, and future bomb arrows a real ground-impact surface for area denial.
+
+- Make wand routing use authored targeting mode:
+  - Creature-targeted wand/spell actions use the persistent hostile lock.
+  - Point/area-targeted wand/spell actions open coordinate targeting without a lock.
+  - Self-targeted actions remain immediate.
+  - Do not infer targeting from nearest-enemy proximity.
+
+- Add bridge/display projection for the locked target so the UI can show the current hostile target and the point-targeting reticle can show the actual terminal impact tile when a wall or actor blocks the ray.
+
+## Test Plan
+
+- Target-lock selection:
+  - Tap hostile selects without firing.
+  - Tab/Shift+Tab cycles deterministically.
+  - Lock persists when temporarily out of range or LOS.
+  - Invalid/dead/faction-changed locks clear.
+
+- Activation behavior:
+  - Valid lock fires immediately.
+  - No lock opens point targeting.
+  - Pointer tile commit dispatches coordinates.
+  - Keyboard direction keys and Enter never fire ranged attacks.
+  - Non-hostile taps retain movement behavior.
+
+- Projectile resolution:
+  - Empty tile produces ground impact.
+  - Wall terminates the ray.
+  - Friendly/neutral/hostile actors terminate the ray.
+  - Intervening actors block a locked target.
+  - Combat misses resolve to actor, wall, or ground through the same impact model.
+
+- Ammo and wand behavior:
+  - Chalk applies to actor, wall, and ground impacts.
+  - Fire arrows can attach future ground/area-denial effects without ranged-system changes.
+  - Wand targeting follows authored creature, point/area, or self mode.
+  - Existing AI ranged attacks and explicit `rules.rangedAttack` callers remain valid.
+
+- Run focused ranged, chalk, wand/use, targeting, interaction, event, architecture, and determinism tests.
+
+## Assumptions
+
+- Touch/pointer is the commit mechanism for point-targeted ranged actions.
+- A persistent lock is gameplay state modeled as an ECS component, not controller-local state or `world[...]`.
+- Locked-target firing does not automatically fall back to another enemy.
+- Core ray and targeting infrastructure comes first; fire-arrow area denial and bomb-arrow content are follow-up authored behaviors.
+
+---
+
+yooooo -- such a much better experience, that is fantastic -- I'm a huge fan. 10/10 work here.
+
+ACK
+
+---
+
+I just realized normal arrows cannot target the ground, that might be a missed oppertunity
+
+---
+
+I would, while we're at it, we should also:
+
+
+
+1. lets tweak fire arrows to create a single tile fire <-- different ground strike behavior
+2. lets make our bomb arrows <-- new ammo item
+
+
+
+I think that together that would all be pretty radical.
