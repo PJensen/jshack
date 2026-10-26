@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "b712cc8be9b5",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/hud.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/b7/12cc8be9b5/0/metadata.json",
+      "transcript": "/b7/12cc8be9b5/0/full.jsonl",
+      "compact_transcript": "/b7/12cc8be9b5/0/transcript.jsonl",
+      "content_hash": "/b7/12cc8be9b5/0/content_hash.txt",
+      "prompt": "/b7/12cc8be9b5/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 166631,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5809536,
+    "output_tokens": 24257,
+    "api_call_count": 87
+  }
+}
