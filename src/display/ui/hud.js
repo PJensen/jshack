@@ -2386,7 +2386,7 @@ function renderQuickChip(it, h) {
     color: '#cfe8ff',
     textAlign: 'left',
     cursor: 'pointer',
-    paddingRight: QUICK_CHIP_DISMISS_LAYOUT.contentPaddingRight,
+    paddingRight: it.equippedComparison ? '96px' : QUICK_CHIP_DISMISS_LAYOUT.contentPaddingRight,
   });
 
   const glyph = document.createElement('span');
@@ -2464,10 +2464,16 @@ function renderQuickChip(it, h) {
     borderRadius: '6px',
     background: '#0a111f',
   });
-  // Use the item directly — it IS the canonical inventory display data.
-  renderItemDetails(detailPanel, it);
-  // Quick-chip header already shows item identity; hide duplicated title row in expanded details.
-  if (detailPanel.firstElementChild) detailPanel.firstElementChild.remove();
+  const canCompare = !!it.equippedComparison;
+  let comparisonOpen = false;
+  const renderQuickDetails = () => {
+    // Use the same item display renderer as inventory. Only the optional
+    // comparison block is gated by the chip's contextual Compare control.
+    renderItemDetails(detailPanel, comparisonOpen ? it : { ...it, equippedComparison: null });
+    // Quick-chip header already shows item identity; hide duplicated title row in expanded details.
+    if (detailPanel.firstElementChild) detailPanel.firstElementChild.remove();
+  };
+  renderQuickDetails();
   expandedWrap.appendChild(detailPanel);
 
   const btn = document.createElement('button');
@@ -2581,6 +2587,31 @@ function renderQuickChip(it, h) {
     });
   }
 
+  let compareBtn = null;
+  if (canCompare) {
+    compareBtn = document.createElement('button');
+    Object.assign(compareBtn.style, {
+      padding: '6px 8px', background: '#101626', color: '#cfe8ff',
+      border: '1px solid #2d3b52',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      minWidth: '28px',
+      position: 'absolute',
+      top: QUICK_CHIP_DISMISS_LAYOUT.top,
+      right: '68px',
+    });
+    compareBtn.textContent = '⇄';
+    compareBtn.title = 'Compare with equipped';
+    compareBtn.setAttribute('aria-label', 'Compare with equipped');
+    compareBtn.addEventListener('click', () => {
+      markInteracted();
+      comparisonOpen = !comparisonOpen;
+      compareBtn.title = comparisonOpen ? 'Hide comparison' : 'Compare with equipped';
+      compareBtn.setAttribute('aria-label', compareBtn.title);
+      renderQuickDetails();
+    });
+  }
+
   const actions = document.createElement('div');
   Object.assign(actions.style, {
     display: 'flex',
@@ -2610,6 +2641,7 @@ function renderQuickChip(it, h) {
 
   chip.appendChild(x);
   if (pinBtn) chip.appendChild(pinBtn);
+  if (compareBtn) chip.appendChild(compareBtn);
   chip.appendChild(header);
   chip.appendChild(expandedWrap);
   return chip;
