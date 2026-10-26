@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "6e70fe2a5584",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "src/content/define.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/6e/70fe2a5584/0/metadata.json",
+      "transcript": "/6e/70fe2a5584/0/full.jsonl",
+      "compact_transcript": "/6e/70fe2a5584/0/transcript.jsonl",
+      "content_hash": "/6e/70fe2a5584/0/content_hash.txt",
+      "prompt": "/6e/70fe2a5584/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 429975,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 21431168,
+    "output_tokens": 63130,
+    "api_call_count": 177
+  }
+}
