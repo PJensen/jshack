@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "f290e6efab82",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/architecture/ITEM_EFFECT_LIFECYCLE.md",
+    "src/content/items/boots.js",
+    "src/main/scheduler.js",
+    "src/rules/content/items/breadcrumbBoots.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/systems/movementProcSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "tests/movementProc.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/f2/90e6efab82/0/metadata.json",
+      "transcript": "/f2/90e6efab82/0/full.jsonl",
+      "compact_transcript": "/f2/90e6efab82/0/transcript.jsonl",
+      "content_hash": "/f2/90e6efab82/0/content_hash.txt",
+      "prompt": "/f2/90e6efab82/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 85066,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3260800,
+    "output_tokens": 10919,
+    "api_call_count": 31
+  }
+}
