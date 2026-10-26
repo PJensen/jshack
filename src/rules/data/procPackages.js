@@ -53,6 +53,7 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   EchoGrimoire: "procPackage:echoGrimoire",
   SerpentBoundBreeches: "procPackage:serpentBoundBreeches",
   BreadcrumbBoots: "procPackage:breadcrumbBoots",
+  Dawnbreaker: "procPackage:dawnbreaker",
 });
 
 function getEffect(world, entityId, key) {
@@ -87,6 +88,41 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
     const charges = world.get(item, Charges);
     if (charges && charges.current < charges.max) {
       world.set(item, Charges, { ...charges, current: charges.current + 1 });
+    }
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.Dawnbreaker, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    if (String(ctx?.kind || "") !== "onHit") return;
+    const source = Number(ctx?.source || 0) | 0;
+    const target = Number(ctx?.target || 0) | 0;
+    const item = Number(ctx?.item || 0) | 0;
+    if (!(source > 0) || !(target > 0) || !(item > 0)) return;
+
+    const state = ctx.proc.getState();
+    let gain = ctx.proc.hasTag(target, "undead") ? 3 : 1;
+    if (ctx.damage?.crit) gain += 1;
+    const newRadiance = Math.min(Number(state.maxRad || 10), Number(state.radiance || 0) + gain);
+    ctx.proc.setState({ radiance: newRadiance });
+
+    if (!state.awakened && newRadiance >= 7) {
+      ctx.proc.setState({ awakened: true });
+      ctx.proc.message("Dawnbreaker flares to life — the blade blazes white!");
+      ctx.proc.present("awaken", { target: source });
+    }
+
+    if (state.awakened) {
+      const bonus = ctx.proc.roll(4) + Math.floor(newRadiance / 3);
+      ctx.proc.dealDamage(target, bonus, "radiant", {
+        source,
+        cause: "procPackage:dawnbreaker",
+      });
+      ctx.proc.present("radiant_strike", { target, bonus });
+    }
+
+    if (!state.awakened && gain >= 2) {
+      ctx.proc.present("radiance_gain", { target: source, radiance: newRadiance });
     }
   },
 });
@@ -1311,6 +1347,17 @@ export function installLodbrokSpawnWiring(world) {
 }
 
 const PROC_PACKAGE_SPECS = Object.freeze([
+  Object.freeze({
+    id: "dawnbreaker",
+    name: "Dawnbreaker",
+    summary: "Stores radiance through combat, awakens at seven charges, and adds radiant force to awakened strikes.",
+    stateKeys: Object.freeze(["radiance", "maxRad", "awakened", "killStreak"]),
+    hostIdeas: Object.freeze(["sun blades", "holy weapons", "radiant relics"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onHit", script: PROC_PACKAGE_KEYS.Dawnbreaker, priority: 10 }),
+    ]),
+  }),
   Object.freeze({
     id: "breadcrumbBoots",
     name: "Breadcrumb Boots",

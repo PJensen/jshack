@@ -32,6 +32,7 @@ defineItem('dawnbreaker', {
   damageType:  'slash',
   staminaCost: 10,
   maxSockets:  1,
+  procPackages: ['dawnbreaker'],
 
   // ── Swing identity ────────────────────────────────────────────
   swingProfile: {
@@ -62,42 +63,6 @@ defineItem('dawnbreaker', {
       lines.push({ text: 'AWAKENED — bonus radiant damage', color: '#ffe577' });
     }
     return lines;
-  },
-
-  // ═════════════════════════════════════════════════════════════
-  //  ON HIT — fires each time the player lands a blow with this
-  // ═════════════════════════════════════════════════════════════
-  // Every strike builds radiance. Undead give more.
-  // While awakened, each hit deals bonus radiant damage.
-  onHit(ctx) {
-    const st = ctx.state();
-
-    // ── Gain radiance ───────────────────────────────────────────
-    let gain = 1;
-    if (ctx.hasTag(ctx.target, 'undead')) gain = 3;  // undead feed it faster
-    if (ctx.wasCrit) gain += 1;                       // crits spark extra
-
-    const newRad = Math.min(st.maxRad, st.radiance + gain);
-    ctx.setState({ radiance: newRad });
-
-    // ── Awakening threshold ─────────────────────────────────────
-    if (!st.awakened && newRad >= 7) {
-      ctx.setState({ awakened: true });
-      ctx.message('Dawnbreaker flares to life — the blade blazes white!', 'good');
-      ctx.present('awaken', { target: ctx.user });
-    }
-
-    // ── Awakened: bonus radiant damage ──────────────────────────
-    if (st.awakened) {
-      const bonus = ctx.roll('1d4') + Math.floor(newRad / 3);
-      ctx.damage(ctx.target, bonus, 'radiant');
-      ctx.present('radiant_strike', { target: ctx.target, bonus });
-    }
-
-    // ── Subtle gain feedback ────────────────────────────────────
-    if (!st.awakened && gain >= 2) {
-      ctx.present('radiance_gain', { target: ctx.user, radiance: newRad });
-    }
   },
 
   // ═════════════════════════════════════════════════════════════

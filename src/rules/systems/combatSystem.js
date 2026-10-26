@@ -39,7 +39,6 @@ import {
 import { getEntityFacingConeDegrees, getNormalizedEntityFacing, isPointInFacingCone } from '../utils/facing.js';
 import { getPositionalAttackBonus, hasOffhandShield } from '../utils/combatPositioning.js';
 import { setCombatPosture } from '../utils/posture.js';
-import { runWeaponContentHook } from '../../content/weaponHookBridge.js';
 import { upsertTimedEffect } from '../utils/effectSemantics.js';
 import { ensureActiveEffects } from '../utils/effects.js';
 import { computeImpactVector } from '../utils/projectileKinematics.js';
@@ -520,7 +519,6 @@ function resolveHitRoll(world, {
     });
 
     runLegacyMonsterHook(world, source, 'onHit', hitCtx);
-    runWeaponContentHook(world, source, target, weaponId, finalDmg, isCrit);
     applyReactionProcPhase(world, target, buildProcContext('onHit', {
         source, target, item: ctx.weaponId || 0, damage: finalDmg,
         damageType, crit: isCrit, tags: actionTags, scratch: procScratch, offhand,

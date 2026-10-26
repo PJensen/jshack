@@ -6,6 +6,7 @@ import { Mana } from "../components/Mana.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { ProcEffect } from "../components/ProcEffect.js";
 import { ProcNode } from "../components/ProcNode.js";
+import { ScriptState } from "../components/ScriptState.js";
 import { Stamina } from "../components/Stamina.js";
 import { Status } from "../components/Status.js";
 import { Vitality } from "../components/Vitality.js";
@@ -76,6 +77,7 @@ export function createProcAccumulator() {
     chargesToConsume: [],
     cancelled: false,
     messages: [],
+    presentations: [],
   };
 }
 
@@ -161,6 +163,33 @@ function createProcScriptApi(world, out, procNodeId, ctx) {
     },
     message(text) {
       out.messages.push({ source: procNodeId, text: String(text || "") });
+    },
+    getState(entityId = ctx?.item || ctx?.source) {
+      const state = world.get(Number(entityId || 0) | 0, ScriptState);
+      return state?.data && typeof state.data === "object" ? { ...state.data } : {};
+    },
+    setState(patch, entityId = ctx?.item || ctx?.source) {
+      const id = Number(entityId || 0) | 0;
+      if (!(id > 0) || !world.isAlive?.(id) || !patch || typeof patch !== "object") return;
+      const state = world.get(id, ScriptState);
+      if (!state) return;
+      world.set(id, ScriptState, { data: { ...state.data, ...patch } });
+    },
+    hasTag(entityId, tag) {
+      return hasSemanticTag(world, Number(entityId || 0) | 0, tag);
+    },
+    roll(sides = 1) {
+      const count = Math.max(1, Number(sides || 1) | 0);
+      return 1 + Math.floor((typeof world.rand === "function" ? world.rand() : 0) * count);
+    },
+    present(id, payload = {}) {
+      out.presentations.push({
+        source: procNodeId,
+        entity: Number(payload.target ?? payload.entity ?? ctx?.source ?? 0) | 0,
+        id: String(id || ""),
+        identity: String(world.get(Number(ctx?.item || 0) | 0, NamedIdentity)?.identity || ""),
+        payload: { ...payload, user: Number(ctx?.source || 0) | 0, target: Number(ctx?.target || 0) | 0, item: Number(ctx?.item || 0) | 0 },
+      });
     },
     emit(name, payload = {}) {
       try {

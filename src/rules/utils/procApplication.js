@@ -133,4 +133,9 @@ export function applyProcAccumulator(world, out, options = {}) {
       // keep proc application side-effect safe
     }
   }
+  const presentations = Array.isArray(out.presentations) ? out.presentations : [];
+  for (let i = 0; i < presentations.length; i++) {
+    const presentation = presentations[i];
+    world.emit("script:present", presentation);
+  }
 }
