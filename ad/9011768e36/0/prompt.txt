@@ -1,0 +1,21 @@
+what was the other items we wanted to create? what about juicing up existing items according to the new topology? are there any that need additional updating?
+
+---
+
+I totally agree with:
+
+
+
+1. Migrate Dawnbreaker’s passive combat behavior.
+2. Generalize `onTurnWhileCarried` / `onTurnWhileEquipped` into topology-backed triggers.
+3. Migrate Sun-Vessel’s passive tick.
+4. Build Patient Thunder as the next clean lifecycle demo.
+5. Then tackle Chalk Arrows, since they exercise projectile hit/wall/miss branching and tile-owned effects.
+
+
+
+These are really great next items?!
+
+---
+
+approve
