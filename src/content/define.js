@@ -228,6 +228,9 @@ export function defineItem(id, def) {
   if (Array.isArray(def.procPackages) && def.procPackages.length > 0) {
     catalogEntry.procPackages = def.procPackages.slice();
   }
+  if (def.mechanicFormats && typeof def.mechanicFormats === 'object') {
+    catalogEntry.mechanicFormats = structuredClone(def.mechanicFormats);
+  }
 
   // Equipment-specific
   if (catalogKind === 'equipment') {

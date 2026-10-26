@@ -46,6 +46,16 @@ defineItem('belt_bombardier', {
     ammo_bomb_arrows: { hazardRadiusBonus: 1 },
   },
   lootBiases: { BombArrowsStack: 1.4 },
+  mechanicFormats: {
+    ammoAffinities: {
+      ammo_bomb_arrows: {
+        hazardRadiusBonus: 'Bomb arrows gain +{value} hazard radius.',
+      },
+    },
+    lootBiases: {
+      BombArrowsStack: 'Bomb arrows appear at {value}× loot weighting.',
+    },
+  },
   weight: 0.6,
   description: 'A belt of padded bomb-pouches. Its wearer always seems to find one more explosive arrow.',
 });

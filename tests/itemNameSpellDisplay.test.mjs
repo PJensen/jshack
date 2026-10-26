@@ -106,8 +106,8 @@ Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", (
   const data = buildItemDisplayData(world, belt);
   assert(data, "display data should exist");
   assertEquals(data.mechanics, [
-    { context: "Wearing — Bomb Arrows", text: "+1 hazard radius" },
-    { context: "Loot — Bomb Arrows", text: "1.4× loot weighting" },
+    { context: "Wearing — Bomb Arrows", text: "Bomb arrows gain +1 hazard radius." },
+    { context: "Loot — Bomb Arrows", text: "Bomb arrows appear at 1.4× loot weighting." },
   ]);
 });
 

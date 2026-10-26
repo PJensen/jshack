@@ -178,16 +178,26 @@ function formatAmmoModifier(key, value) {
   return `${signedNumber(n)} ${humanizeToken(key).toLowerCase()}`;
 }
 
-function formatAmmoMechanics(info) {
+function applyMechanicFormat(format, value) {
+  return String(format || '').replace(/\{value\}/g, String(value));
+}
+
+function formatAmmoMechanics(info, mechanicFormats = {}) {
   const mechanics = [];
   const affinities = info?.ammoAffinities && typeof info.ammoAffinities === 'object'
     ? info.ammoAffinities
+    : {};
+  const authoredAffinities = mechanicFormats?.ammoAffinities && typeof mechanicFormats.ammoAffinities === 'object'
+    ? mechanicFormats.ammoAffinities
     : {};
   for (const [ammoId, modifiers] of Object.entries(affinities)) {
     if (!modifiers || typeof modifiers !== 'object') continue;
     const ammoName = humanizeToken(ammoId).replace(/^Ammo\s+/i, '');
     for (const [key, value] of Object.entries(modifiers)) {
-      const text = formatAmmoModifier(key, value);
+      const authoredFormat = authoredAffinities?.[ammoId]?.[key];
+      const text = authoredFormat
+        ? applyMechanicFormat(authoredFormat, value)
+        : formatAmmoModifier(key, value);
       if (ammoName && text) mechanics.push({ context: `Wearing — ${ammoName}`, text });
     }
   }
@@ -195,11 +205,18 @@ function formatAmmoMechanics(info) {
   const lootBiases = info?.lootBiases && typeof info.lootBiases === 'object'
     ? info.lootBiases
     : {};
+  const authoredLootBiases = mechanicFormats?.lootBiases && typeof mechanicFormats.lootBiases === 'object'
+    ? mechanicFormats.lootBiases
+    : {};
   for (const [lootId, value] of Object.entries(lootBiases)) {
     const multiplier = Number(value);
     if (!Number.isFinite(multiplier) || multiplier <= 0 || multiplier === 1) continue;
     const lootName = humanizeToken(lootId).replace(/\s+Stack$/i, '');
-    mechanics.push({ context: `Loot — ${lootName}`, text: `${multiplier}× loot weighting` });
+    const authoredFormat = authoredLootBiases?.[lootId];
+    const text = authoredFormat
+      ? applyMechanicFormat(authoredFormat, multiplier)
+      : `${multiplier}× loot weighting`;
+    mechanics.push({ context: `Loot — ${lootName}`, text });
   }
   return mechanics;
 }
@@ -442,7 +459,7 @@ export function buildItemDisplayData(world, itemId) {
         };
       }).filter((mechanic) => mechanic.text)
     : [];
-  mechanics.push(...formatAmmoMechanics(info));
+  mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
 
   return {
     id: itemId,
