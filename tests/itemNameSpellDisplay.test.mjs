@@ -9,6 +9,7 @@ import { ProcPackageNode } from "../src/rules/components/ProcPackageNode.js";
 import { buildItemDisplayData } from "../src/main/wiring/itemName.js";
 import { identify, resetIdentification } from "../src/rules/data/identification.js";
 import "../src/content/items/sunsword.js";
+import "../src/content/items/belts.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -93,6 +94,20 @@ Deno.test("buildItemDisplayData exposes Sunsword mechanics separately from stats
   assertEquals(data.bonuses.attack, 2);
   assertEquals(data.mechanics, [
     { context: "Use — Blinding Ray", text: "A searing ray of sunlight that blinds the target. Range: 6 tiles. Cooldown: 12 turns." },
+  ]);
+});
+
+Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 29 });
+  const belt = buildCatalogItem(world, "belt_bombardier");
+
+  const data = buildItemDisplayData(world, belt);
+  assert(data, "display data should exist");
+  assertEquals(data.mechanics, [
+    { context: "Wearing — Bomb Arrows", text: "+1 hazard radius" },
+    { context: "Loot — Bomb Arrows", text: "1.4× loot weighting" },
   ]);
 });
 

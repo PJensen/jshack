@@ -155,6 +155,55 @@ function humanizeToken(token) {
     .replace(/\b\w/g, (m) => m.toUpperCase());
 }
 
+function signedNumber(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '';
+  return `${n > 0 ? '+' : ''}${n}`;
+}
+
+function signedPercent(value) {
+  const n = Number(value) * 100;
+  if (!Number.isFinite(n)) return '';
+  const rounded = Math.round(n * 100) / 100;
+  return `${rounded > 0 ? '+' : ''}${rounded}%`;
+}
+
+function formatAmmoModifier(key, value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return '';
+  if (key === 'damageMultiplier') return `${signedPercent(n - 1)} damage`;
+  if (key === 'fireSpreadChanceBonus') return `${signedPercent(n)} fire spread chance`;
+  if (key === 'damageBonus') return `${signedNumber(n)} damage`;
+  if (key === 'hazardRadiusBonus') return `${signedNumber(n)} hazard radius`;
+  return `${signedNumber(n)} ${humanizeToken(key).toLowerCase()}`;
+}
+
+function formatAmmoMechanics(info) {
+  const mechanics = [];
+  const affinities = info?.ammoAffinities && typeof info.ammoAffinities === 'object'
+    ? info.ammoAffinities
+    : {};
+  for (const [ammoId, modifiers] of Object.entries(affinities)) {
+    if (!modifiers || typeof modifiers !== 'object') continue;
+    const ammoName = humanizeToken(ammoId).replace(/^Ammo\s+/i, '');
+    for (const [key, value] of Object.entries(modifiers)) {
+      const text = formatAmmoModifier(key, value);
+      if (ammoName && text) mechanics.push({ context: `Wearing — ${ammoName}`, text });
+    }
+  }
+
+  const lootBiases = info?.lootBiases && typeof info.lootBiases === 'object'
+    ? info.lootBiases
+    : {};
+  for (const [lootId, value] of Object.entries(lootBiases)) {
+    const multiplier = Number(value);
+    if (!Number.isFinite(multiplier) || multiplier <= 0 || multiplier === 1) continue;
+    const lootName = humanizeToken(lootId).replace(/\s+Stack$/i, '');
+    mechanics.push({ context: `Loot — ${lootName}`, text: `${multiplier}× loot weighting` });
+  }
+  return mechanics;
+}
+
 function formatEventKind(value) {
   const key = String(value || "").trim();
   if (!key) return "On Trigger";
@@ -393,6 +442,7 @@ export function buildItemDisplayData(world, itemId) {
         };
       }).filter((mechanic) => mechanic.text)
     : [];
+  mechanics.push(...formatAmmoMechanics(info));
 
   return {
     id: itemId,
