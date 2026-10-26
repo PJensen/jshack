@@ -1,5 +1,0 @@
-that's wild -- any other TODO items from this conversation?
-
----
-
-git commit checkpoints along the way , followin existing comit guidance.
