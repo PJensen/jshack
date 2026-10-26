@@ -85,7 +85,7 @@ export function getVersionState() {
  * Loads the application version from the VERSION file and stores it on global scope.
  */
 export async function loadVersion() {
-  const res = await fetch('VERSION');
+  const res = await fetch('./VERSION', { cache: 'no-store' });
   if (!res.ok) throw new Error('not ok');
   const text = (await res.text()).trim();
   (/** @type {any} */ (globalThis)).VERSION = text;
