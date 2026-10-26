@@ -103,6 +103,19 @@ defineItem('predator_wraps', {
   weight: 0.3,
 });
 
+defineItem('emberfletch_bracers', {
+  name: 'Emberfletch Bracers', type: 'gloves',
+  glyph: '"', color: '#e27a4d', glow: '#a84327', scale: 0.6,
+  material: 'leather', rarity: 3,
+  bonuses: { accuracy: 1, fireResist: 0.05 },
+  ammoAffinities: {
+    ammo_fire_arrows: { damageBonus: 1, fireSpreadChanceBonus: 0.15 },
+  },
+  lootBiases: { FireArrowsStack: 1.35 },
+  weight: 0.3,
+  description: 'Charred leather bracers that teach every flaming shaft to seek dry tinder.',
+});
+
 defineItem('tithe_wrapped_fists', {
   name: 'Tithe-Wrapped Fists', type: 'gloves',
   glyph: '"', color: '#c2a38b', glow: '#8a6e57', scale: 0.6,

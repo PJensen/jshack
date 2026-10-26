@@ -160,6 +160,20 @@ defineItem('ring_fateweaver', {
   weight: 0.06,
 });
 
+defineItem('ring_fletcher_focus', {
+  name: "Fletcher's Focus", type: 'ring',
+  glyph: '◌', color: '#c6a86a', glow: '#8a6c36', scale: 0.45,
+  material: 'gold', rarity: 3,
+  bonuses: { accuracy: 1, critChance: 0.02 },
+  ammoAffinities: {
+    ammo_piercing_arrows: { damageMultiplier: 1.1 },
+    ammo_bodkin_arrows: { damageMultiplier: 1.1 },
+  },
+  lootBiases: { PiercingArrowsStack: 1.3, BodkinArrowsStack: 1.3 },
+  weight: 0.05,
+  description: 'A tiny golden sight-ring that rewards armor-punching heads and makes them easier to find.',
+});
+
 defineItem('ring_voidchannel', {
   name: 'Voidchannel Ring', type: 'ring',
   glyph: '◌', color: '#6a5a8a', glow: '#3a2a5a', scale: 0.45,

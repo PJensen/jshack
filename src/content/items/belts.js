@@ -37,6 +37,19 @@ defineItem('belt_ranger', {
   description: 'A worn utility belt with loops for blades and pouches for herbs.',
 });
 
+defineItem('belt_bombardier', {
+  name: "Bombardier's Belt", type: 'belt',
+  glyph: '=', color: '#b58b62', glow: '#795538', scale: 0.6,
+  material: 'leather', rarity: 3,
+  bonuses: { maxStamina: 6, fireResist: 0.05 },
+  ammoAffinities: {
+    ammo_bomb_arrows: { hazardRadiusBonus: 1 },
+  },
+  lootBiases: { BombArrowsStack: 1.4 },
+  weight: 0.6,
+  description: 'A belt of padded bomb-pouches. Its wearer always seems to find one more explosive arrow.',
+});
+
 defineItem('belt_ironhide', {
   name: 'Ironhide Girdle', type: 'belt',
   glyph: '=', color: '#8b98a6', glow: '#5a6775', scale: 0.6,
