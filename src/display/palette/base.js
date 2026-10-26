@@ -211,6 +211,7 @@ export const basePalette = {
   ammo_piercing_arrows: { glyph: "/", fg: "#bfc8d6", glow: "#6d7685", baseScale: 0.6 },
   ammo_bodkin_arrows: { glyph: "/", fg: "#d0d4db", glow: "#8b929d", baseScale: 0.6 },
   ammo_blunt_arrows: { glyph: "/", fg: "#b89b72", glow: "#8f6f45", baseScale: 0.6 },
+  ammo_bomb_arrows: { glyph: "/", fg: "#ffcc33", glow: "#bb7711", baseScale: 0.6 },
 
   // Pets
   kitty: { glyph: "f", fg: "#ffcc88", glow: "#cc9955" },

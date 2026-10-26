@@ -141,6 +141,7 @@ const STARTER_PIN_SKIP_IDENTITIES = new Set([
   'ammo_piercing_arrows',
   'ammo_bodkin_arrows',
   'ammo_blunt_arrows',
+  'ammo_bomb_arrows',
 ]);
 
 /**

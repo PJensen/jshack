@@ -526,6 +526,7 @@ export const LOOT_TABLES = {
       { type: "archetype", weight: 5,  archetype: "BluntHeadArrowsStack" },
       { type: "archetype", weight: 3,  archetype: "PiercingArrowsStack" },
       { type: "archetype", weight: 4,  archetype: "BodkinArrowsStack" },
+      { type: "archetype", weight: 1,  archetype: "BombArrowsStack" },
       { type: "table",     weight: 8,  tableId: "sub:equip_common" },
       { type: "table",     weight: 10, tableId: "sub:equip_magic" },
       { type: "table",     weight: 12, tableId: "sub:spellbooks" },

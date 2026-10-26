@@ -123,6 +123,7 @@ const AUDIO_SECTIONS = [
       { id: "ammo_piercing_arrows", count: 20 },
       { id: "ammo_bodkin_arrows",   count: 20 },
       { id: "ammo_blunt_arrows",    count: 20 },
+      { id: "ammo_bomb_arrows",     count: 20 },
     ],
   },
   {

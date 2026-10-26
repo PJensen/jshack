@@ -2,7 +2,7 @@
 // Generate shop inventory items for a shopkeeper.
 
 import { createFrom } from '../../lib/ecs-js/archetype.js';
-import { HealthPotion, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, ScrollOfMapping, GemItem } from '../archetypes/Items.js';
+import { HealthPotion, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, BombArrowsStack, ScrollOfMapping, GemItem } from '../archetypes/Items.js';
 import { resolveLootTable, materializeDrop } from './lootResolver.js';
 import { Position } from '../components/Position.js';
 import { ItemInfo } from '../components/ItemInfo.js';
@@ -33,6 +33,7 @@ function createArrowStock(world, rng) {
         { weight: 12, archetype: PiercingArrowsStack },
         { weight: 10, archetype: BodkinArrowsStack },
         { weight: 6, archetype: BluntHeadArrowsStack },
+        { weight: 2, archetype: BombArrowsStack },
     ]);
     const Arch = pick?.archetype || ArrowsStack;
     return createFrom(world, Arch, {});

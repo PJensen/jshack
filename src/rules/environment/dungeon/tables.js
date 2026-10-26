@@ -100,6 +100,7 @@ export function pickItem(rng, depth) {
       if (drop.params.archetype === 'PiercingArrowsStack') return { kind: 'piercing_arrows' };
       if (drop.params.archetype === 'BodkinArrowsStack') return { kind: 'bodkin_arrows' };
       if (drop.params.archetype === 'BluntHeadArrowsStack') return { kind: 'blunt_arrows' };
+      if (drop.params.archetype === 'BombArrowsStack') return { kind: 'bomb_arrows' };
       if (drop.params.archetype === 'ScrollOfMapping') return { kind: 'scroll' };
       return { kind: 'potion' };
     case 'item':

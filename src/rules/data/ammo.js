@@ -21,6 +21,7 @@ export const AMMO_HOOK_KEYS = Object.freeze([
 ]);
 
 const AMMO_FIRE_ARROW_ACTOR_IMPACT = "ammo:fireArrows:onProjectileActorImpact";
+const AMMO_FIRE_ARROW_GROUND_IMPACT = "ammo:fireArrows:onProjectileGroundImpact";
 const AMMO_PIERCING_ARROW_ACTOR_IMPACT = "ammo:piercingArrows:onProjectileActorImpact";
 const AMMO_BODKIN_ARROW_ACTOR_IMPACT = "ammo:bodkinArrows:onProjectileActorImpact";
 const AMMO_BLUNT_ARROW_ACTOR_IMPACT = "ammo:bluntArrows:onProjectileActorImpact";
@@ -28,6 +29,7 @@ const AMMO_CHALK_ARROW_ACTOR_IMPACT = "ammo:chalkArrows:onProjectileActorImpact"
 const AMMO_CHALK_ARROW_WALL_IMPACT = "ammo:chalkArrows:onProjectileWallImpact";
 const AMMO_CHALK_ARROW_GROUND_IMPACT = "ammo:chalkArrows:onProjectileGroundImpact";
 const AMMO_CHALK_ARROW_MISS = "ammo:chalkArrows:onProjectileMiss";
+const AMMO_BOMB_ARROW_IMPACT = "ammo:bombArrows:onProjectileImpact";
 
 registerScript(AMMO_FIRE_ARROW_ACTOR_IMPACT, {
   [ScriptVerb.ProjectileActorImpact]: (_world, ctx) => {
@@ -45,6 +47,51 @@ registerScript(AMMO_FIRE_ARROW_ACTOR_IMPACT, {
         actor: resolvedCtx.attacker,
         target: resolvedCtx.defender,
       });
+    });
+  },
+});
+
+registerScript(AMMO_FIRE_ARROW_GROUND_IMPACT, {
+  [ScriptVerb.ProjectileGroundImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "fire",
+      medium: "floor",
+      turnsLeft: 3,
+      radius: 0,
+      tickDamage: 2,
+      damageType: "fire",
+      cause: "fire_arrows:ground",
+      sourceKind: "fire_arrow",
+      identity: "fire_arrow_fire",
+      name: "Arrow Fire",
+      meta: { source: "fire_arrow", delivery: "ground_impact" },
+    });
+  },
+});
+
+registerScript(AMMO_BOMB_ARROW_IMPACT, {
+  [ScriptVerb.ProjectileActorImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "fire", medium: "floor", turnsLeft: 3, radius: 1,
+      tickDamage: 4, damageType: "fire", cause: "bomb_arrows:blast",
+      sourceKind: "bomb_arrow", identity: "bomb_arrow_blast",
+      name: "Bomb Arrow Blast", meta: { source: "bomb_arrow", delivery: "actor_impact" },
+    });
+  },
+  [ScriptVerb.ProjectileWallImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "fire", medium: "floor", turnsLeft: 3, radius: 1,
+      tickDamage: 4, damageType: "fire", cause: "bomb_arrows:blast",
+      sourceKind: "bomb_arrow", identity: "bomb_arrow_blast",
+      name: "Bomb Arrow Blast", meta: { source: "bomb_arrow", delivery: "wall_impact" },
+    });
+  },
+  [ScriptVerb.ProjectileGroundImpact]: (_world, ctx) => {
+    ctx.spawnHazard({
+      kind: "fire", medium: "floor", turnsLeft: 3, radius: 1,
+      tickDamage: 4, damageType: "fire", cause: "bomb_arrows:blast",
+      sourceKind: "bomb_arrow", identity: "bomb_arrow_blast",
+      name: "Bomb Arrow Blast", meta: { source: "bomb_arrow", delivery: "ground_impact" },
     });
   },
 });
@@ -213,11 +260,13 @@ const AMMO_ID_ALIASES = Object.freeze({
   blunt_arrows: "ammo_blunt_arrows",
   blunt_head_arrows: "ammo_blunt_arrows",
   chalk_arrows: "ammo_chalk_arrows",
+  bomb_arrows: "ammo_bomb_arrows",
   plain: "ammo_arrows",
   fire: "ammo_fire_arrows",
   piercing: "ammo_piercing_arrows",
   bodkin: "ammo_bodkin_arrows",
   blunt: "ammo_blunt_arrows",
+  bomb: "ammo_bomb_arrows",
 });
 
 /**
@@ -239,6 +288,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
+      onProjectileGroundImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
@@ -248,6 +298,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_FIRE_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
+      onProjectileGroundImpact: Object.freeze([AMMO_FIRE_ARROW_GROUND_IMPACT]),
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
@@ -257,6 +308,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_PIERCING_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
+      onProjectileGroundImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
@@ -266,6 +318,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_BODKIN_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
+      onProjectileGroundImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
@@ -275,6 +328,7 @@ export const AMMO_DEFS = Object.freeze({
     scripts: Object.freeze({
       onProjectileActorImpact: Object.freeze([AMMO_BLUNT_ARROW_ACTOR_IMPACT]),
       onProjectileWallImpact: EMPTY_HOOK_SCRIPTS,
+      onProjectileGroundImpact: EMPTY_HOOK_SCRIPTS,
       onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
@@ -286,6 +340,16 @@ export const AMMO_DEFS = Object.freeze({
       onProjectileWallImpact: Object.freeze([AMMO_CHALK_ARROW_WALL_IMPACT]),
       onProjectileGroundImpact: Object.freeze([AMMO_CHALK_ARROW_GROUND_IMPACT]),
       onProjectileMiss: Object.freeze([AMMO_CHALK_ARROW_MISS]),
+    }),
+  }),
+  ammo_bomb_arrows: Object.freeze({
+    id: "ammo_bomb_arrows",
+    name: "Bomb Arrows",
+    scripts: Object.freeze({
+      onProjectileActorImpact: Object.freeze([AMMO_BOMB_ARROW_IMPACT]),
+      onProjectileWallImpact: Object.freeze([AMMO_BOMB_ARROW_IMPACT]),
+      onProjectileGroundImpact: Object.freeze([AMMO_BOMB_ARROW_IMPACT]),
+      onProjectileMiss: EMPTY_HOOK_SCRIPTS,
     }),
   }),
 });

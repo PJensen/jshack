@@ -20,7 +20,7 @@ import { Equipment } from '../../components/Equipment.js';
 import { ShopInventory } from '../../components/ShopInventory.js';
 import * as shopStock from '../../data/shopStock.js';
 import { Unpaid } from '../../components/Unpaid.js';
-import { HealthPotion, GoldStack, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, ScrollOfMapping } from '../../archetypes/Items.js';
+import { HealthPotion, GoldStack, ArrowsStack, FireArrowsStack, PiercingArrowsStack, BodkinArrowsStack, BluntHeadArrowsStack, BombArrowsStack, ScrollOfMapping } from '../../archetypes/Items.js';
 import { buildCatalogItem } from '../../data/itemCatalogLoader.js';
 import { getCatalogItem, listCatalogItems } from '../../data/itemCatalog.js';
 import { pickMonster, pickSentinelMonster, pickItem, pickTrap, pickSpawner, pickSpecificMonster, pickSpecificSpawner, pickEncounterGroup } from './tables.js';
@@ -2269,6 +2269,7 @@ export function equipMonster(world, entityId, equipment) {
       || ammoKey === 'blunt_head_arrows'
       || ammoKey === 'ammo_blunt_arrows'
     ) ammoArch = BluntHeadArrowsStack;
+    else if (ammoKey === 'bomb_arrows' || ammoKey === 'ammo_bomb_arrows') ammoArch = BombArrowsStack;
     const arrowId = createFrom(world, ammoArch, {});
     eq.ammo = arrowId;
   }
@@ -2372,6 +2373,11 @@ export function materializeSpawn(world, spawn) {
     }
     case 'blunt_arrows': {
       const id = createFrom(world, BluntHeadArrowsStack, {});
+      world.add(id, Position, { x: spawn.x, y: spawn.y });
+      return id;
+    }
+    case 'bomb_arrows': {
+      const id = createFrom(world, BombArrowsStack, {});
       world.add(id, Position, { x: spawn.x, y: spawn.y });
       return id;
     }

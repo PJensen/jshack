@@ -139,6 +139,31 @@ Deno.test("ranged: coordinate shot resolves empty endpoint as ground impact", ()
   assert(marks.includes("6,1"), "ground impact should author a hazard at the endpoint");
 });
 
+Deno.test("ranged: fire arrows leave a single-tile fire impact", () => {
+  const { world, archer, ammoId } = setup({ ammoIdentity: "ammo_fire_arrows", ammoName: "Fire Arrows" });
+  world.add(archer, RangedAttackIntent, { targetId: 0, toX: 6, toY: 1 });
+  rangedAttackSystem(world);
+  const fire = [...world.query(Position, HazardArea)].find(([, pos, hazard]) =>
+    pos.x === 6 && pos.y === 1 && hazard.kind === "fire" && hazard.cause === "fire_arrows:ground"
+  );
+  assert(fire, "fire arrows should leave fire at the ground impact");
+  assertEquals(fire[2].radius, 0, "fire arrow ground impact should remain a single tile");
+  assertEquals(world.get(ammoId, ItemInfo)?.count, 9);
+});
+
+Deno.test("ranged: bomb arrows leave a radius-one blast zone", () => {
+  const { world, archer, ammoId } = setup({ ammoIdentity: "ammo_bomb_arrows", ammoName: "Bomb Arrows" });
+  world.add(archer, RangedAttackIntent, { targetId: 0, toX: 6, toY: 1 });
+  rangedAttackSystem(world);
+  const blast = [...world.query(Position, HazardArea)].find(([, pos, hazard]) =>
+    pos.x === 6 && pos.y === 1 && hazard.kind === "fire" && hazard.cause === "bomb_arrows:blast"
+  );
+  assert(blast, "bomb arrows should leave a blast zone at the ground impact");
+  assertEquals(blast[2].radius, 1);
+  assertEquals(blast[2].tickDamage, 4);
+  assertEquals(world.get(ammoId, ItemInfo)?.count, 9);
+});
+
 Deno.test("ranged: hits do not apply implicit bleed without explicit proc source", () => {
   let validated = false;
   for (let seed = 1; seed <= 64; seed++) {
