@@ -3,6 +3,16 @@
 
 import { defineItem } from '../define.js';
 
+const FISHING_CAST_TURNS = 12;
+
+function requestFishingCast(ctx) {
+  ctx.emit('fishing:cast:request', {
+    actor: ctx.user,
+    itemId: ctx.item,
+    turns: FISHING_CAST_TURNS,
+  });
+}
+
 defineItem('fishing_rod', {
   name:        'Fishing Rod',
   type:        'weapon',
@@ -28,23 +38,17 @@ defineItem('fishing_rod', {
       icon:        '🎣',
       targeting:   'none',
       cooldown:    0,
-      description: 'Cast into nearby water and wait for a bite.',
+      displayValues: { castTurns: FISHING_CAST_TURNS },
+      description: 'Cast into nearby water and channel the catch for {castTurns} turns.',
+      displayFormat: '{description}',
 
       onActivate(ctx) {
-        ctx.emit('fishing:cast:request', {
-          actor: ctx.user,
-          itemId: ctx.item,
-          turns: 12,
-        });
+        requestFishingCast(ctx);
       },
     },
   },
 
   onUse(ctx) {
-    ctx.emit('fishing:cast:request', {
-      actor: ctx.user,
-      itemId: ctx.item,
-      turns: 12,
-    });
+    requestFishingCast(ctx);
   },
 });

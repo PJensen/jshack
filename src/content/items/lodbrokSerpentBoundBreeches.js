@@ -3,6 +3,10 @@
 
 import { defineItem } from '../define.js';
 
+const SERPENT_SUMMON_COUNT = 3;
+const SERPENT_HIDE_TURNS = 8;
+const SPECTRAL_SERPENT_TURNS = 10;
+
 defineItem('lodbrok_serpent_bound_breeches', {
   name: "Loðbrók's Serpent-Bound Breeches",
   type: 'armor',
@@ -48,7 +52,13 @@ defineItem('lodbrok_serpent_bound_breeches', {
       icon: '🐍',
       targeting: 'none',
       cooldown: 100,
-      description: 'Breaks snares, roots, webs, freezing, grapples, and constriction. Summons 3 spectral serpents and grants serpent-hide for 8 turns.',
+      displayValues: {
+        serpentCount: SERPENT_SUMMON_COUNT,
+        serpentHideTurns: SERPENT_HIDE_TURNS,
+        serpentTurns: SPECTRAL_SERPENT_TURNS,
+      },
+      description: 'Breaks snares, roots, webs, freezing, grapples, and constriction. Summons {serpentCount} spectral serpents for {serpentTurns} turns and grants serpent-hide for {serpentHideTurns} turns.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
       onActivate(ctx) {
         ctx.cure(ctx.user, [
           'slowed',
@@ -61,13 +71,17 @@ defineItem('lodbrok_serpent_bound_breeches', {
           'constricted',
         ]);
 
-        ctx.apply(ctx.user, 'serpent_hide', 8, { potency: 1 });
+        ctx.apply(ctx.user, 'serpent_hide', SERPENT_HIDE_TURNS, { potency: 1 });
 
         ctx.setCooldown(100);
         ctx.message('{user} laughs at the pit — spectral serpents coil around them.', 'good');
-        ctx.present('laugh_at_the_pit', { user: ctx.user, turns: 10 });
+        ctx.present('laugh_at_the_pit', { user: ctx.user, turns: SPECTRAL_SERPENT_TURNS });
 
-        ctx.emit('lodbrok:laugh_at_pit', { actor: ctx.user });
+        ctx.emit('lodbrok:laugh_at_pit', {
+          actor: ctx.user,
+          serpentCount: SERPENT_SUMMON_COUNT,
+          serpentTurns: SPECTRAL_SERPENT_TURNS,
+        });
       },
     },
   },

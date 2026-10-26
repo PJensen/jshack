@@ -400,6 +400,9 @@ export function defineItem(id, def) {
         requiresEquipped: spec.requiresEquipped === true,
         description: spec.description || '',
         displayFormat: spec.displayFormat || '',
+        displayValues: spec.displayValues && typeof spec.displayValues === 'object'
+          ? Object.freeze({ ...spec.displayValues })
+          : Object.freeze({}),
       };
       registerAbility(id, abilityId, compiled);
       abilityMap[abilityId] = compiled;

@@ -20,6 +20,7 @@ import { areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshevScalar } from "../utils/distance.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { leaveBreadcrumb } from "../utils/breadcrumbs.js";
+import { getCatalogItem } from "./itemCatalog.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import {
   addAttachedComponent,
@@ -73,8 +74,12 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
 
     const state = world.get(item, ScriptState);
     if (!state) return;
+    const identity = world.get(item, NamedIdentity)?.identity || '';
+    const breadcrumbConfig = getCatalogItem(identity)?._contentMeta?.breadcrumb || {};
+    const stepInterval = Math.max(1, Number(breadcrumbConfig.stepInterval || 4) | 0);
+    const lifespanTurns = Math.max(1, Number(breadcrumbConfig.lifespanTurns || 8) | 0);
     const nextStep = (Number(state.data?.stepsTowardCrumb || 0) | 0) + 1;
-    if (nextStep < 4) {
+    if (nextStep < stepInterval) {
       world.set(item, ScriptState, { data: { ...state.data, stepsTowardCrumb: nextStep } });
       return;
     }
@@ -85,6 +90,7 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
       itemId: item,
       x: Number(ctx?.from?.x || 0) | 0,
       y: Number(ctx?.from?.y || 0) | 0,
+      lifespanTurns,
     });
 
     const charges = world.get(item, Charges);
@@ -1443,18 +1449,24 @@ export function installLodbrokSpawnWiring(world) {
   if (/** @type {any} */ (world)[_lodbrokSpawnInstalled]) return;
   /** @type {any} */ (world)[_lodbrokSpawnInstalled] = true;
 
-  world.on?.('lodbrok:laugh_at_pit', ({ actor }) => {
+  world.on?.('lodbrok:laugh_at_pit', ({ actor, serpentCount, serpentTurns }) => {
     const actorId = Number(actor || 0) | 0;
     if (!(actorId > 0)) return;
 
-    const spawned = spawnSpectralSnakes(world, actorId, 3, 10, []);
+    const spawned = spawnSpectralSnakes(
+      world,
+      actorId,
+      Math.max(1, Number(serpentCount || 3) | 0),
+      Math.max(1, Number(serpentTurns || 10) | 0),
+      [],
+    );
     if (spawned > 0) {
       const actorPos = world.get(actorId, Position);
       if (actorPos) {
         emit(world, 'proc:serpentBound:spectralSnakes', {
           actor: actorId,
           target: 0,
-          turns: 10,
+          turns: Math.max(1, Number(serpentTurns || 10) | 0),
           spawned,
           from: { x: actorPos.x | 0, y: actorPos.y | 0 },
           to: { x: actorPos.x | 0, y: actorPos.y | 0 },

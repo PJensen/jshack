@@ -170,6 +170,10 @@ defineItem('hollow_tide_boots', {
   procPackages: ['bloodsport'],
 });
 
+const BREADCRUMB_STEP_INTERVAL = 4;
+const BREADCRUMB_LIFESPAN_TURNS = 8;
+const BREADCRUMB_SCATTER_COUNT = 4;
+
 defineItem('breadcrumb_boots', {
   name: 'Breadcrumb Boots', type: 'boots',
   glyph: 'u', color: '#d4b36a', glow: '#9e7137', scale: 0.68,
@@ -179,13 +183,27 @@ defineItem('breadcrumb_boots', {
   chargePool: { current: 0, max: 4 },
   procPackages: ['breadcrumbBoots'],
   state: { stepsTowardCrumb: 0 },
+  meta: {
+    breadcrumb: {
+      stepInterval: BREADCRUMB_STEP_INTERVAL,
+      lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
+      scatterCount: BREADCRUMB_SCATTER_COUNT,
+    },
+  },
   abilities: {
     scatter: {
       name: 'Scatter', icon: '·', targeting: 'none', requiresEquipped: true,
-      cooldown: 20, chargeCost: 4,
+      cooldown: 20, chargeCost: BREADCRUMB_SCATTER_COUNT,
+      displayValues: {
+        stepInterval: BREADCRUMB_STEP_INTERVAL,
+        lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
+        scatterCount: BREADCRUMB_SCATTER_COUNT,
+      },
+      description: 'Every {stepInterval} steps, leave a glowing crumb that lingers for {lifespanTurns} turns. Scatter lays {scatterCount} decoy crumbs nearby.',
+      displayFormat: '{description} Cooldown: {cooldown} turns. Cost: {cost} charges.',
       onActivate(ctx) {
-        ctx.scatterBreadcrumbs(4);
-        ctx.message('Four golden crumbs leap from your heels and skip into the dark.', 'system');
+        ctx.scatterBreadcrumbs(BREADCRUMB_SCATTER_COUNT);
+        ctx.message(`${BREADCRUMB_SCATTER_COUNT} golden crumbs leap from your heels and skip into the dark.`, 'system');
         ctx.present('scatter', { target: ctx.user });
       },
     },

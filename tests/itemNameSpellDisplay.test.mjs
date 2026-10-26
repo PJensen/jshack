@@ -11,6 +11,9 @@ import { identify, resetIdentification } from "../src/rules/data/identification.
 import "../src/content/items/sunsword.js";
 import "../src/content/items/belts.js";
 import "../src/content/items/pocketRelics.js";
+import "../src/content/items/fishingRod.js";
+import "../src/content/items/lodbrokSerpentBoundBreeches.js";
+import "../src/content/items/boots.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -135,6 +138,27 @@ Deno.test("buildItemDisplayData exposes authored pocket relic mechanics", () => 
   const cricket = buildItemDisplayData(world, buildCatalogItem(world, "brass_cricket"));
   assertEquals(cricket.mechanics, [
     { context: "Use — Wind the Cricket", text: "Restore 3 stamina each turn for 6 turns, but take 1 damage every 2 turns. Songs overlap independently. Cooldown: 2 turns. Cost: 1 charge." },
+  ]);
+});
+
+Deno.test("buildItemDisplayData exposes authored mechanics for fishing rod, breeches, and boots", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 37 });
+
+  const rod = buildItemDisplayData(world, buildCatalogItem(world, "fishing_rod"));
+  assertEquals(rod.mechanics, [
+    { context: "Use — Cast Line", text: "Cast into nearby water and channel the catch for 12 turns." },
+  ]);
+
+  const breeches = buildItemDisplayData(world, buildCatalogItem(world, "lodbrok_serpent_bound_breeches"));
+  assertEquals(breeches.mechanics, [
+    { context: "Use — Laugh at the Pit", text: "Breaks snares, roots, webs, freezing, grapples, and constriction. Summons 3 spectral serpents for 10 turns and grants serpent-hide for 8 turns. Cooldown: 100 turns." },
+  ]);
+
+  const boots = buildItemDisplayData(world, buildCatalogItem(world, "breadcrumb_boots"));
+  assertEquals(boots.mechanics, [
+    { context: "Use — Scatter", text: "Every 4 steps, leave a glowing crumb that lingers for 8 turns. Scatter lays 4 decoy crumbs nearby. Cooldown: 20 turns. Cost: 4 charges." },
   ]);
 });
 

@@ -488,7 +488,7 @@ export function buildItemDisplayData(world, itemId) {
   const mechanics = catalogItem?._contentAbilities
     ? Object.values(catalogItem._contentAbilities).map((ability) => {
         const format = String(ability.displayFormat || ability.description || '').trim();
-        const values = { ...abilityDisplayValues(ability), ...ability };
+        const values = { ...abilityDisplayValues(ability), ...(ability.displayValues || {}), ...ability };
         const interpolate = (value) => value.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, key) => String(values[key] ?? ''));
         const text = interpolate(interpolate(format));
         return {

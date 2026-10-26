@@ -6,7 +6,7 @@ import { InvestigationSignal, Breadcrumb } from "../components/InvestigationSign
 import { findNearestValidTileAround } from "./queries.js";
 
 /** Create one short-lived, visible trail marker with a reusable investigation signal. */
-export function leaveBreadcrumb(world, { actorId, itemId, x, y, kind = "trail" }) {
+export function leaveBreadcrumb(world, { actorId, itemId, x, y, kind = "trail", lifespanTurns = 8 }) {
   if (!world || !world.isAlive(actorId) || !world.isAlive(itemId)) return 0;
   const point = { x: Number.isFinite(x) ? x | 0 : 0, y: Number.isFinite(y) ? y | 0 : 0 };
   const createdAt = world.step | 0;
@@ -29,7 +29,7 @@ export function leaveBreadcrumb(world, { actorId, itemId, x, y, kind = "trail" }
     shadowSoftness: 8,
     intensityScale: 0.45,
   });
-  world.add(id, Lifespan, { turnsLeft: 8 });
+  world.add(id, Lifespan, { turnsLeft: Math.max(1, Number(lifespanTurns || 8) | 0) });
   return id;
 }
 
