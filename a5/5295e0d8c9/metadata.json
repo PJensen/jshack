@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "a55295e0d8c9",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/architecture/ITEM_EFFECT_LIFECYCLE.md",
+    "docs/design/ITEM_PLAYGROUND_BRAINSTORM.md",
+    "src/content/items/boots.js",
+    "src/content/scriptCtx.js",
+    "src/display/palette/base.js",
+    "src/display/palette/index.js",
+    "src/main/scheduler.js",
+    "src/rules/components/InvestigationSignal.js",
+    "src/rules/components/index.js",
+    "src/rules/content/items/breadcrumbBoots.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/soundPropagationSystem.js",
+    "src/rules/utils/breadcrumbs.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/a5/5295e0d8c9/0/metadata.json",
+      "transcript": "/a5/5295e0d8c9/0/full.jsonl",
+      "compact_transcript": "/a5/5295e0d8c9/0/transcript.jsonl",
+      "content_hash": "/a5/5295e0d8c9/0/content_hash.txt",
+      "prompt": "/a5/5295e0d8c9/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 218069,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3927296,
+    "output_tokens": 23146,
+    "api_call_count": 22
+  }
+}
