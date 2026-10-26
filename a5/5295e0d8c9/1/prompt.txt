@@ -1,0 +1,7 @@
+We're inside JSHack
+
+so I've got kind of a major issue, I appreciate that you created a file for the boots -- however, is there really no better way of addressing the movement situation than a movement extension?
+
+breadcrumbBootsMovementExtension
+
+You see what I mean? That seems wildly narrow, not reusable, and out of place. I'll turn your thinking up a bit.
