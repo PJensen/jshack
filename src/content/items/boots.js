@@ -169,3 +169,30 @@ defineItem('hollow_tide_boots', {
   description: 'Tidal runes circle the ankle straps. Below 75% HP, hits gain +1. Below 50%, +3. Below 25%, +6 and targets weaken. They were made for a fighter who never planned to be at full health.',
   procPackages: ['bloodsport'],
 });
+
+defineItem('breadcrumb_boots', {
+  name: 'Breadcrumb Boots', type: 'boots',
+  glyph: 'u', color: '#d4b36a', glow: '#9e7137', scale: 0.68,
+  material: 'leather', rarity: 3, value: 175, weight: 1.0,
+  bonuses: { defense: 1, maxStamina: 8 },
+  description: 'Enchanted leather boots. Every fourth step leaves a glowing crumb that lingers for 8 turns and draws curious creatures toward it. Each crumb stores one Scatter charge, up to four. Use Scatter while equipped to spend four charges and lay a decoy trail nearby. The shoemaker made them for a child who was terrible at finding her way home.',
+  chargePool: { current: 0, max: 4 },
+  state: { stepsTowardCrumb: 0 },
+  abilities: {
+    scatter: {
+      name: 'Scatter', icon: '·', targeting: 'none', requiresEquipped: true,
+      cooldown: 20, chargeCost: 4,
+      onActivate(ctx) {
+        ctx.scatterBreadcrumbs(4);
+        ctx.message('Four golden crumbs leap from your heels and skip into the dark.', 'system');
+        ctx.present('scatter', { target: ctx.user });
+      },
+    },
+  },
+  presentations: {
+    scatter: { vfx: [
+      { type: 'burst', color: '#f3c86a', count: 16, speed: 1.4, life: 0.8 },
+      { type: 'glow', color: '#e6aa4b', radius: 2.5, life: 1.1 },
+    ] },
+  },
+});

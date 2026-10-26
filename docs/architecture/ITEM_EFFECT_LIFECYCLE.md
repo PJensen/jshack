@@ -165,3 +165,10 @@ architecture plan includes authored stat/proc children with lifecycle-aware
 traversal, percentage movement/attack timing, scoped immunity definitions,
 persistent world VFX profiles, and incremental migration of other legacy families.
 New definitions should extend these shared surfaces as those capabilities land.
+
+Breadcrumb Boots adds one related world-owned surface: short-lived
+`InvestigationSignal` entities can attract curious AI to a position. Boots leave
+glowing `Breadcrumb` entities from the shared movement event; the effects-phase
+signal pass updates the existing AI last-known position. Signals do not redirect
+creatures that are already hunting. `ctx.scatterBreadcrumbs()` queues the active
+scatter in the normal use transaction.

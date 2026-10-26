@@ -110,6 +110,7 @@ export { FountainOutcomeApplied } from './FountainOutcomeApplied.js';
 export { AltarOfferingState } from './AltarOfferingState.js';
 export { KnockbackPending } from './KnockbackPending.js';
 export { SoundEmitter } from './SoundEmitter.js';
+export { InvestigationSignal, Breadcrumb } from './InvestigationSignal.js';
 export { AudioEmitter } from './AudioEmitter.js';
 export { LightEmitter } from './LightEmitter.js';
 export { CreatureType, CREATURE_TYPES, creatureTypeFromTags } from './CreatureType.js';

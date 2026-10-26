@@ -228,6 +228,16 @@ export class ScriptCtx {
     }
   }
 
+  /** Queue a world-owned breadcrumb scatter in the current item-use transaction. */
+  scatterBreadcrumbs(count = 4) {
+    this._ctx.mutate.queue({
+      type: 'scatterBreadcrumbs',
+      actorId: this.user,
+      itemId: this.item,
+      count: Math.max(0, Math.min(4, Number(count) | 0)),
+    });
+  }
+
   /**
    * Check if the item is on cooldown.
    * @returns {boolean}

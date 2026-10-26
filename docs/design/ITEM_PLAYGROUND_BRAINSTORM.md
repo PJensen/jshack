@@ -8,8 +8,10 @@
 
 - **Player's current pick: Breadcrumb Boots.** Treat these as the lead
   exploration: attractive trails that let players lure, divert, or reposition
-  creatures. Their persistent breadcrumbs and AI investigation imply reusable
-  tile-owned effects and sound/trail investigation behavior.
+  creatures. **Now implemented as the first world-owned investigation signal:**
+  every fourth step leaves a glowing, eight-turn marker; each marker stores a
+  Scatter charge, and four charges place a decoy trail. The general signal
+  component and curious-enemy response can support later baits and beacons too.
 - **Wand of Patient Thunder** remains the strongest small demonstration of the
   actor-owned effect lifecycle: delayed onset, independent overlapping
   instances, periodic electric damage, and expiration.

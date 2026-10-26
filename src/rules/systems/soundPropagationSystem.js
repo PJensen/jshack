@@ -4,6 +4,7 @@ import { Anatomy, HEARING_HL_THRESHOLD } from "../components/Anatomy.js";
 import { Faction } from "../components/Faction.js";
 import { Position } from "../components/Position.js";
 import { Player } from "../components/Player.js";
+import { InvestigationSignal } from "../components/InvestigationSignal.js";
 import { queryEnemyListeners } from "../utils/queries.js";
 import { chebyshevScalar } from "../utils/distance.js";
 
@@ -26,7 +27,7 @@ function detectRadius(sourceDb, hearingTier) {
 
 /**
  * soundPropagationSystem — checks SoundEmitter entities against nearby
- * Anatomy hearing tiers and escalates AggroState accordingly.
+ * Anatomy hearing tiers and routes InvestigationSignal entities to curious AI.
  *
  * Phase: effects (runs after movement/combat produce sounds; before the
  * next ai phase where AggroState is read to produce intents).
@@ -57,7 +58,20 @@ export function soundPropagationSystem(world) {
     emitter.lastActionNoise = 0;
   }
 
-  if (sources.length === 0) return;
+  const signals = [];
+  for (const [signalId, signal, pos] of world.query(InvestigationSignal, Position)) {
+    signals.push({
+      x: pos.x | 0,
+      y: pos.y | 0,
+      range: Math.max(0, Number(signal.range) || 0),
+      priority: Number(signal.priority) || 0,
+      createdAt: Number(signal.createdAt) | 0,
+      id: signalId,
+    });
+  }
+  signals.sort((a, b) => b.priority - a.priority || b.createdAt - a.createdAt || b.id - a.id);
+
+  if (sources.length === 0 && signals.length === 0) return;
 
   // Check each entity that has hearing + aggro capability.
   // queryEnemyListeners already filters to faction.key === "enemy".
@@ -105,6 +119,19 @@ export function soundPropagationSystem(world) {
       }
 
       // One escalation per tick is enough; stop checking sources for this listener.
+      break;
+    }
+
+    // Persistent investigation signals can draw curious creatures along a trail.
+    // Hunting creatures keep their live target and ignore decoys.
+    if (aggroState.alertLevel === AGGRO_LEVELS.hunting) continue;
+    for (const signal of signals) {
+      if (lx === signal.x && ly === signal.y) continue;
+      if (chebyshevScalar(lx, ly, signal.x, signal.y) > signal.range) continue;
+      aggroState.alertLevel = AGGRO_LEVELS.curious;
+      aggroState.lastKnownX = signal.x;
+      aggroState.lastKnownY = signal.y;
+      aggroState.searchTurnsLeft = SEARCH_TURNS_CURIOUS;
       break;
     }
   }

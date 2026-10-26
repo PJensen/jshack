@@ -111,6 +111,7 @@ export const LOOT_TABLES = {
       { type: "equip", weight: 14, pool: ["gauntlets_steel", "gloves_thieves"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["legguards_plated", "leggings_scout"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["boots_ironshod", "boots_strider"], affixChance: 0 },
+      { type: "equip", weight: 10, pool: ["breadcrumb_boots"], affixChance: 0 },
     ],
   },
 
