@@ -153,6 +153,12 @@ Their acquisition and complete activation/lifetime behaviors are exercised in
 
 ## Subsequent milestones
 
+The broader item playground brainstorm, including the fourteen item concepts
+and the proposed entity-owned persistent behavior direction, is recorded in
+[`docs/design/ITEM_PLAYGROUND_BRAINSTORM.md`](../design/ITEM_PLAYGROUND_BRAINSTORM.md).
+Breadcrumb Boots is the current player pick; Patient Thunder remains a compact
+effect-lifecycle demo.
+
 The first slice provides control statuses, periodic operations, charges, named
 activation, persistence, and shared visual identity. Remaining work from the
 architecture plan includes authored stat/proc children with lifecycle-aware
