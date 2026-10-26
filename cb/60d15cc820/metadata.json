@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "cb60d15cc820",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 5,
+  "files_touched": [
+    "src/content/items/rangedWeapons.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/sounds.js",
+    "src/rules/components/ItemInfo.js",
+    "src/rules/data/callbacks/projectile.js",
+    "src/rules/data/itemCatalogLoader.js",
+    "src/rules/data/lootResolver.js",
+    "src/rules/systems/rangedAttackSystem.js",
+    "src/rules/utils/ammoAffinities.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/cb/60d15cc820/0/metadata.json",
+      "transcript": "/cb/60d15cc820/0/full.jsonl",
+      "compact_transcript": "/cb/60d15cc820/0/transcript.jsonl",
+      "content_hash": "/cb/60d15cc820/0/content_hash.txt",
+      "prompt": "/cb/60d15cc820/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 66711,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3593728,
+    "output_tokens": 9876,
+    "api_call_count": 23
+  }
+}
