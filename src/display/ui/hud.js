@@ -2008,6 +2008,10 @@ function createQuickSlot(opts = {}) {
   function normalizeQuickItem(item) {
     const id = Number(item?.id || 0) | 0;
     return {
+      // Keep the complete inventory display object intact. The quick chip uses
+      // the same renderItemDetails path as inventory; dropping fields here
+      // creates a second, incomplete tooltip contract.
+      ...(item && typeof item === 'object' ? item : {}),
       id,
       identity: String(item?.identity || ''),
       type: String(item?.type || ''),
