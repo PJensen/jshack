@@ -246,6 +246,12 @@ export function defineItem(id, def) {
     if (def.maxCharges != null) catalogEntry.maxCharges = def.maxCharges;
     if (def.charges != null) catalogEntry.charges = def.charges;
     if (def.dropRequirement) catalogEntry.dropRequirement = def.dropRequirement;
+    if (def.ammoAffinities && typeof def.ammoAffinities === 'object') {
+      catalogEntry.ammoAffinities = def.ammoAffinities;
+    }
+    if (def.lootBiases && typeof def.lootBiases === 'object') {
+      catalogEntry.lootBiases = def.lootBiases;
+    }
 
     // Swing profile — authored weapon VFX identity
     if (def.swingProfile) {

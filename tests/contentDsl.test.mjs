@@ -527,6 +527,19 @@ Deno.test("end-to-end: defineItem with onUse hook, simulate pipeline call", () =
   clearContentRegistry();
 });
 
+Deno.test("defineItem forwards ammo affinities and loot biases into the catalog", () => {
+  clearContentRegistry();
+  defineItem("e2e_ammo_affinity_gloves", {
+    name: "Affinity Gloves",
+    type: "gloves",
+    ammoAffinities: { ammo_fire_arrows: { damageBonus: 1 } },
+    lootBiases: { FireArrowsStack: 1.35 },
+  });
+  const entry = getContentItem("e2e_ammo_affinity_gloves");
+  assertEquals(entry.ammoAffinities.ammo_fire_arrows.damageBonus, 1);
+  assertEquals(entry.lootBiases.FireArrowsStack, 1.35);
+});
+
 // ═══════════════════════════════════════════════════════════════════
 //  Test helpers
 // ═══════════════════════════════════════════════════════════════════
