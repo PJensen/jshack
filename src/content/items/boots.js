@@ -194,11 +194,9 @@ defineItem('breadcrumb_boots', {
     scatter: {
       name: 'Scatter', icon: '·', targeting: 'none', requiresEquipped: true,
       cooldown: 20, chargeCost: BREADCRUMB_SCATTER_COUNT,
-      displayValues: {
-        stepInterval: BREADCRUMB_STEP_INTERVAL,
-        lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
-        scatterCount: BREADCRUMB_SCATTER_COUNT,
-      },
+      stepInterval: BREADCRUMB_STEP_INTERVAL,
+      lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
+      scatterCount: BREADCRUMB_SCATTER_COUNT,
       description: 'Every {stepInterval} steps, leave a glowing crumb that lingers for {lifespanTurns} turns. Scatter lays {scatterCount} decoy crumbs nearby.',
       displayFormat: '{description} Cooldown: {cooldown} turns. Cost: {cost} charges.',
       onActivate(ctx) {

@@ -52,11 +52,9 @@ defineItem('lodbrok_serpent_bound_breeches', {
       icon: '🐍',
       targeting: 'none',
       cooldown: 100,
-      displayValues: {
-        serpentCount: SERPENT_SUMMON_COUNT,
-        serpentHideTurns: SERPENT_HIDE_TURNS,
-        serpentTurns: SPECTRAL_SERPENT_TURNS,
-      },
+      serpentCount: SERPENT_SUMMON_COUNT,
+      serpentHideTurns: SERPENT_HIDE_TURNS,
+      serpentTurns: SPECTRAL_SERPENT_TURNS,
       description: 'Breaks snares, roots, webs, freezing, grapples, and constriction. Summons {serpentCount} spectral serpents for {serpentTurns} turns and grants serpent-hide for {serpentHideTurns} turns.',
       displayFormat: '{description} Cooldown: {cooldown} turns.',
       onActivate(ctx) {

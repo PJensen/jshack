@@ -385,6 +385,7 @@ export function defineItem(id, def) {
     const abilityMap = {};
     for (const [abilityId, spec] of Object.entries(def.abilities)) {
       const compiled = {
+        ...spec,
         id: abilityId,
         name: spec.name || abilityId,
         icon: spec.icon || '?',
@@ -400,9 +401,6 @@ export function defineItem(id, def) {
         requiresEquipped: spec.requiresEquipped === true,
         description: spec.description || '',
         displayFormat: spec.displayFormat || '',
-        displayValues: spec.displayValues && typeof spec.displayValues === 'object'
-          ? Object.freeze({ ...spec.displayValues })
-          : Object.freeze({}),
       };
       registerAbility(id, abilityId, compiled);
       abilityMap[abilityId] = compiled;

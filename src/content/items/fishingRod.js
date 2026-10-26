@@ -38,7 +38,7 @@ defineItem('fishing_rod', {
       icon:        '🎣',
       targeting:   'none',
       cooldown:    0,
-      displayValues: { castTurns: FISHING_CAST_TURNS },
+      castTurns: FISHING_CAST_TURNS,
       description: 'Cast into nearby water and channel the catch for {castTurns} turns.',
       displayFormat: '{description}',
 
