@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "d760badf547c",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/items/belts.js",
+    "src/content/items/gloves.js",
+    "src/content/items/rings.js",
+    "src/rules/data/lootTables.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d7/60badf547c/0/metadata.json",
+      "transcript": "/d7/60badf547c/0/full.jsonl",
+      "compact_transcript": "/d7/60badf547c/0/transcript.jsonl",
+      "content_hash": "/d7/60badf547c/0/content_hash.txt",
+      "prompt": "/d7/60badf547c/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 195156,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8210560,
+    "output_tokens": 22444,
+    "api_call_count": 68
+  }
+}
