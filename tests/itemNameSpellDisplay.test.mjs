@@ -8,6 +8,9 @@ import { ProcNode } from "../src/rules/components/ProcNode.js";
 import { ProcPackageNode } from "../src/rules/components/ProcPackageNode.js";
 import { buildItemDisplayData } from "../src/main/wiring/itemName.js";
 import { identify, resetIdentification } from "../src/rules/data/identification.js";
+import "../src/content/items/sunsword.js";
+import { installContent } from "../src/content/install.js";
+import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
 Deno.test("buildItemDisplayData enriches spell-linked items with target effects", () => {
   resetIdentification();
@@ -76,6 +79,21 @@ Deno.test("buildItemDisplayData includes proc-node summaries for gear items", ()
   assertEquals(data.procNodes[0].trigger, "On Hit");
   assert(data.procNodes[0].qualifiers.includes("35%"), "chance gate should be represented in qualifiers");
   assert(data.procNodes[0].effects.some((line) => String(line).includes("+1-4 Fire Damage")), "effect summary should include damage range and type");
+});
+
+Deno.test("buildItemDisplayData exposes Sunsword mechanics separately from stats", () => {
+  resetIdentification();
+  identify("sunsword");
+  installContent();
+  const world = new World({ seed: 23 });
+  const sword = buildCatalogItem(world, "sunsword");
+
+  const data = buildItemDisplayData(world, sword);
+  assert(data, "display data should exist");
+  assertEquals(data.bonuses.attack, 2);
+  assertEquals(data.mechanics, [
+    { context: "Use — Blinding Ray", text: "A searing ray of sunlight that blinds the target. Range: 6 tiles. Cooldown: 12 turns." },
+  ]);
 });
 
 Deno.test("buildItemDisplayData preserves rarityName for unidentified items", () => {

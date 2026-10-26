@@ -60,6 +60,7 @@ defineItem('sunsword', {
       range:       6,
       cooldown:    12,
       description: 'A searing ray of sunlight that blinds the target.',
+      displayFormat: '{description} Range: {range} tiles. Cooldown: {cooldown} turns.',
 
       onActivate(ctx) {
         // Apply blind to the targeted enemy

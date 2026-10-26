@@ -21,6 +21,7 @@ import { ProcNode } from "../../rules/components/ProcNode.js";
 import { ProcPackageNode } from "../../rules/components/ProcPackageNode.js";
 import { ScriptRef } from "../../rules/components/ScriptRef.js";
 import { getProcPackage } from "../../rules/data/procPackages.js";
+import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import {
   getSpell,
   describeSpellDetailLines,
@@ -381,6 +382,17 @@ export function buildItemDisplayData(world, itemId) {
         ? String(linkedSpell.description || info.details || info.description || "").trim()
         : String(info.details || info.description || "").trim())
     : "";
+  const catalogItem = identified ? getCatalogItem(identity) : null;
+  const mechanics = catalogItem?._contentAbilities
+    ? Object.values(catalogItem._contentAbilities).map((ability) => {
+        const format = String(ability.displayFormat || ability.description || '').trim();
+        const text = format.replace(/\{(name|description|range|cooldown|icon)\}/g, (_match, key) => String(ability[key] ?? ''));
+        return {
+          context: `Use — ${String(ability.name || ability.id || 'Ability')}`,
+          text,
+        };
+      }).filter((mechanic) => mechanic.text)
+    : [];
 
   return {
     id: itemId,
@@ -392,6 +404,7 @@ export function buildItemDisplayData(world, itemId) {
     rarityName: info.rarityName || 'common',
     description,
     bonuses: identified && info.bonuses && typeof info.bonuses === 'object' ? { ...info.bonuses } : {},
+    mechanics,
     affixes: identified ? resolveAffixes(info.affixes) : [],
     damageDice: identified ? (info.damageDice || null) : null,
     staminaCost: identified ? (info.staminaCost ?? null) : null,

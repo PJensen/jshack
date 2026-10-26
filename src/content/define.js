@@ -396,6 +396,7 @@ export function defineItem(id, def) {
         chargeCost: spec.chargeCost || 0,
         requiresEquipped: spec.requiresEquipped === true,
         description: spec.description || '',
+        displayFormat: spec.displayFormat || '',
       };
       registerAbility(id, abilityId, compiled);
       abilityMap[abilityId] = compiled;

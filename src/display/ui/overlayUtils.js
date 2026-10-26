@@ -2221,6 +2221,35 @@ export function renderItemDetails(container, it) {
     }
   }
 
+  // --- Item mechanics (triggered/conditional behavior) ---
+  const mechanics = Array.isArray(it.mechanics) ? it.mechanics : [];
+  if (mechanics.length) {
+    const mechanicBlock = document.createElement('div');
+    mechanicBlock.style.marginTop = '4px';
+    for (const mechanic of mechanics) {
+      const context = String(mechanic?.context || '').trim();
+      const text = String(mechanic?.text || '').trim();
+      if (!context || !text) continue;
+
+      const line = document.createElement('div');
+      line.style.color = '#b8e6b8';
+      line.style.fontSize = '12px';
+      line.style.marginBottom = '2px';
+
+      const contextSpan = document.createElement('span');
+      contextSpan.textContent = `${context}: `;
+      contextSpan.style.fontWeight = 'bold';
+      contextSpan.style.color = '#d9ffd9';
+      line.appendChild(contextSpan);
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = text;
+      line.appendChild(textSpan);
+      mechanicBlock.appendChild(line);
+    }
+    if (mechanicBlock.childNodes.length) container.appendChild(mechanicBlock);
+  }
+
   // --- Affixes (name + description) ---
   const affixes = Array.isArray(it.affixes) ? it.affixes : [];
   if (affixes.length) {
