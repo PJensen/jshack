@@ -1,0 +1,51 @@
+for bomb arrows -- honestly --  would look how meteor operates ;-) it's absolutely over the top -- maybe it's too powerfull, maybe bomb arrows just needs an explosion noise.
+
+question:
+with a certain ranged item equipped, can we make a small bias towards mobs dropping more of those?
+
+question:
+could a piece of gear boost a certain ammo type?
+
+---
+
+damn, that's super cool -- I kind of love both of those ammendents -- in a crazy sort of way -- righ
+
+---
+
+super cool -- make it so, stay generally applicable, think braodly, stay aligned with me -- what else -- I love the drop behavior steering too; that's a conceptual area of gear.
+
+---
+
+in english please
+
+---
+
+you are very close, in fact, I'd keep it -- but what I was saying is that simply using fire arrows, increases chance of seeing more fire arrows -- maybe I'm wrong to suggest that.
+
+Maybe it's more gear mediated thing like you did.
+
+think with me before making further changes.
+
+---
+
+super cool -- lets invent a few near gear items that make use of those new features
+
+---
+
+I don't see those items when I search for them yet -- I wonder if we need a version bump again.
+
+---
+
+nope, none of those items exist in the catalog, sorry, we did something wrong, also, we should think about what happens when fire meets water (bomb arrow hitting water)
+
+---
+
+dummy -- bomb arrows plays the sound for every single tick! second: the fire pulses, I think so does meteor -- but we made that pulsing fire mistake a long long long time ago.
+
+---
+
+right -- re-reading you, those are one in the same, a hazard spawns, and should be persistent until expiration, not repeatedly applied -- this opens the door to a wide open design space around instant damage, damage over time inside the area of effect, and .. makes for VFX way way way way cleaner than is presently implemented.
+
+it looks like the fire just starts and goes out every single turn (with the bomb playing) every single turn.
+
+NOTE: this applies to all sorts of hazard areas -- but I'm particularly focused on fire this very moment.
