@@ -22,6 +22,9 @@ import {
   TILE_FLOOR,
   TILE_GRASS,
   TILE_TREE,
+  TILE_PINE_FOREST,
+  TILE_PALM_FOREST,
+  TILE_MANGROVE,
   TILE_WALL,
 } from "../environment/dungeon/constants.js";
 import { getTile, isRoofed, setTile } from "../environment/dungeon/tileMap.js";
@@ -62,7 +65,7 @@ function isOverworld(world) {
 }
 
 function getBurnedTileReplacement(tile, overworld) {
-  if (tile === TILE_TREE) return TILE_GRASS;
+  if (tile === TILE_TREE || tile === TILE_PINE_FOREST || tile === TILE_PALM_FOREST || tile === TILE_MANGROVE) return TILE_GRASS;
   if (!overworld) return null;
   if (tile === TILE_FENCE) return TILE_GRASS;
   if (tile === TILE_DOOR) return TILE_FLOOR;
@@ -71,7 +74,7 @@ function getBurnedTileReplacement(tile, overworld) {
 }
 
 function burnedTileKind(tile) {
-  if (tile === TILE_TREE) return "tree";
+  if (tile === TILE_TREE || tile === TILE_PINE_FOREST || tile === TILE_PALM_FOREST || tile === TILE_MANGROVE) return "tree";
   if (tile === TILE_FENCE) return "fence";
   if (tile === TILE_DOOR) return "door";
   if (tile === TILE_WALL) return "wall";
@@ -90,7 +93,7 @@ function isRoofFuelTile(world, x, y, tile, overworld) {
 }
 
 function isFlammableFireSpreadTile(world, x, y, tile, overworld) {
-  if (tile === TILE_TREE) return true;
+  if (tile === TILE_TREE || tile === TILE_PINE_FOREST || tile === TILE_PALM_FOREST || tile === TILE_MANGROVE) return true;
   if (!overworld) return false;
   if (isRoofFuelTile(world, x, y, tile, overworld)) return true;
   return tile === TILE_FENCE || tile === TILE_DOOR || tile === TILE_WALL;

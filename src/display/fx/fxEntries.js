@@ -155,7 +155,7 @@ export class ArrowSparkFx extends FxEntry {
 // Stuck arrow — lodged in a target entity, tracks position + fades out.
 // ---------------------------------------------------------------------------
 export class StuckArrowFx extends FxEntry {
-  constructor({ targetId, ox, oy, dx, dy, style, ttl }) {
+  constructor({ targetId, x = 0, y = 0, ox, oy, dx, dy, style, ttl }) {
     super(ttl);
     this.targetId = targetId;
     this.ox = ox;            // jitter offset from entity center
@@ -163,8 +163,8 @@ export class StuckArrowFx extends FxEntry {
     this.dx = dx;            // arrow direction (normalized)
     this.dy = dy;
     this.style = style;
-    this.x = 0;              // updated each tick from getPosition
-    this.y = 0;
+    this.x = x;              // updated each tick from getPosition for actor arrows
+    this.y = y;
   }
 }
 

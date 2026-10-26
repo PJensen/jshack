@@ -17,6 +17,9 @@ import {
   TILE_FLOOR,
   TILE_GRASS,
   TILE_TREE,
+  TILE_PINE_FOREST,
+  TILE_PALM_FOREST,
+  TILE_MANGROVE,
   TILE_WALL,
 } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, getTile, loadChunk, setRoofed } from "../src/rules/environment/dungeon/tileMap.js";
@@ -259,6 +262,34 @@ Deno.test("fire floor hazards can spread to adjacent trees", () => {
   } finally {
     clearAll();
   }
+});
+
+Deno.test("fire spreads through all overworld forest tile variants", () => {
+  const forestTiles = [TILE_PINE_FOREST, TILE_PALM_FOREST, TILE_MANGROVE];
+  for (const forestTile of forestTiles) {
+    clearAll();
+    const tiles = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_GRASS);
+    tiles[5 * CHUNK_SIZE + 5] = forestTile;
+    tiles[5 * CHUNK_SIZE + 6] = forestTile;
+    loadChunk(0, 0, tiles);
+    const world = new World({ seed: 9211 });
+    spawnHazard(world, {
+      x: 5,
+      y: 5,
+      kind: "fire",
+      medium: "floor",
+      turnsLeft: 3,
+      radius: 0,
+      meta: { fireSpreadChance: 1, fireSpreadTurns: 2 },
+    });
+    hazardSystem(world);
+    assertEquals(getTile(5, 5), TILE_GRASS, "forest origin should burn");
+    assert(
+      [...world.query(Position, HazardArea)].some(([, pos]) => pos.x === 6 && pos.y === 5),
+      "fire should spread to adjacent forest variants",
+    );
+  }
+  clearAll();
 });
 
 Deno.test("overworld fire hazards burn wooden structure tiles into ruin tiles", () => {

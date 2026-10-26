@@ -130,11 +130,18 @@ Deno.test("ranged: hit with bow, ammo, LOS clear, in range", () => {
 });
 
 Deno.test("ranged: coordinate shot resolves empty endpoint as ground impact", () => {
+  const events = [];
   const { world, archer, ammoId } = setup({ ammoIdentity: "ammo_chalk_arrows", ammoName: "Chalk Arrows" });
+  trackEvents(world, events);
   world.add(archer, RangedAttackIntent, { targetId: 0, toX: 6, toY: 1 });
   rangedAttackSystem(world);
   assert(!world.has(archer, RangedAttackIntent), "intent removed");
   assertEquals(world.get(ammoId, ItemInfo)?.count, 9);
+  const shot = events.find((event) => event._event === "ranged:shot");
+  assert(shot, "ground impacts should emit ranged:shot for VFX/audio");
+  assertEquals(shot.hit, false);
+  assertEquals(shot.impact?.kind, "ground");
+  assertEquals(shot.to, { x: 6, y: 1 });
   const marks = [...world.query(Position, HazardArea)].map(([, pos]) => `${pos.x},${pos.y}`);
   assert(marks.includes("6,1"), "ground impact should author a hazard at the endpoint");
 });

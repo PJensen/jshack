@@ -126,6 +126,7 @@ export function rangedAttackSystem(world) {
     let dist = chebyshevScalar(ax, ay, tx, ty);
     const impact = resolveProjectileImpact(world, { x: ax, y: ay }, { x: tx, y: ty }, isBlocked, attacker);
     if (impact.kind === 'wall' || impact.kind === 'ground') {
+      const impactPoint = { x: impact.x | 0, y: impact.y | 0 };
       runAmmoScripts(world, ammoIdentity, impact.kind === 'wall' ? 'onProjectileWallImpact' : 'onProjectileGroundImpact', {
         phase: impact.kind === 'wall' ? 'projectile-wall-impact' : 'projectile-ground-impact',
         attacker,
@@ -136,10 +137,20 @@ export function rangedAttackSystem(world) {
         style: ammoStyle,
         distance: chebyshevScalar(ax, ay, impact.x, impact.y),
         damage: 0,
-        impact: { x: impact.x, y: impact.y },
+        impact: impactPoint,
       });
       consumeAmmo(world, attacker, ammoId, ammoInfo);
       if (impact.kind === 'wall') world.emit?.('ranged:blocked', { attacker, target: requestedTarget, impact: { x: impact.x, y: impact.y } });
+      world.emit?.('ranged:shot', {
+        attacker,
+        target: requestedTarget,
+        hit: false,
+        style: ammoStyle,
+        projectileSpeed,
+        from: { x: apos.x, y: apos.y },
+        to: impactPoint,
+        impact: { kind: impact.kind, ...impactPoint },
+      });
       world.remove(attacker, RangedAttackIntent);
       continue;
     }

@@ -193,6 +193,19 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         _stopTravelAudio(a);
         // Arrow arrived — spawn impact spark
         _arrowSparks.push(new ArrowSparkFx({ x: a.to.x, y: a.to.y, ttl: 0.18, style: a.style || 'plain' }));
+        if (a.leaveLodged) {
+          _stuckArrows.push(new StuckArrowFx({
+            targetId: 0,
+            x: a.to.x,
+            y: a.to.y,
+            ox: 0,
+            oy: 0,
+            dx: a.dx,
+            dy: a.dy,
+            style: a.style || 'plain',
+            ttl: 2.5,
+          }));
+        }
         _arrowFx.splice(i, 1);
       }
     }
@@ -205,10 +218,14 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     for (let i = _stuckArrows.length - 1; i >= 0; i--) {
       const sa = _stuckArrows[i];
       sa.tick(dt);
-      const pos = getPosition(sa.targetId);
-      if (!pos || sa.expired) { _stuckArrows.splice(i, 1); continue; }
-      sa.x = pos.x + sa.ox;
-      sa.y = pos.y + sa.oy;
+      if (sa.targetId > 0) {
+        const pos = getPosition(sa.targetId);
+        if (!pos || sa.expired) { _stuckArrows.splice(i, 1); continue; }
+        sa.x = pos.x + sa.ox;
+        sa.y = pos.y + sa.oy;
+      } else if (sa.expired) {
+        _stuckArrows.splice(i, 1);
+      }
     }
     // Flush deferred stuck arrow spawns
     if (_pendingStuck.length) {
@@ -753,7 +770,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     arcanePhase = 0,
     arcaneCycles = 1.35,
   }) {
-    if (!from || !to) return;
+    if (!from || !to) return null;
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     const len = Math.hypot(dx, dy) || 1;
@@ -800,6 +817,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     }
 
     _syncInputLock();
+    return entry;
   }
 
   /** @param {CanvasRenderingContext2D} ctx */
@@ -1406,7 +1424,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function installListeners() {
-    world.on('ranged:shot', ({ attacker, target, hit, style, projectileSpeed, from, to, missTo }) => {
+    world.on('ranged:shot', ({ attacker, target, hit, style, projectileSpeed, from, to, missTo, impact }) => {
       const apos = (from && Number.isFinite(from.x) && Number.isFinite(from.y))
         ? { x: Number(from.x), y: Number(from.y) }
         : getPosition(Number(attacker || 0));
@@ -1425,7 +1443,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
           ? { x: Number(missTo.x), y: Number(missTo.y) }
           : computeMissEndpoint(apos, dpos, missSeedFromIds(attacker, target, 0x52a9)))
         : dpos;
-      spawnTransientProjectile({
+      const projectile = spawnTransientProjectile({
         from: apos,
         to: end,
         style: s,
@@ -1433,6 +1451,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         minDuration: 0.06,
         maxDuration: 0.4,
       });
+      if (!hit && impact?.kind === 'ground' && projectile) projectile.leaveLodged = true;
       startShake(
         cam,
         s === 'fire'
