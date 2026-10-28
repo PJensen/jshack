@@ -1,9 +1,0 @@
-he we need persistent targeting between ranged shots I don't know  how we missed that
-
----
-
-maybe it's just not rendered?
-
----
-
-that's the issue, anyway, clean this up, commit, push when done -- this thing auto deploys for us.
