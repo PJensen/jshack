@@ -327,6 +327,20 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
         const { targetId = 0, toX = 0, toY = 0 } = payload;
         const hasCoordinates = Number.isFinite(payload.toX) && Number.isFinite(payload.toY);
         if ((!Number.isInteger(targetId) || targetId <= 0) && !hasCoordinates) break;
+        const aimedTargetId = Number(targetId || 0) | 0;
+        const aimedTargetPos = aimedTargetId > 0 ? world?.get?.(aimedTargetId, Position) : null;
+        const aimedTargetFaction = aimedTargetId > 0 ? world?.get?.(aimedTargetId, Faction)?.key : "";
+        const aimedTargetVitality = aimedTargetId > 0 ? world?.get?.(aimedTargetId, Vitality) : null;
+        if (
+          aimedTargetId > 0
+          && world?.isAlive?.(aimedTargetId)
+          && aimedTargetPos
+          && aimedTargetFaction === "enemy"
+          && aimedTargetVitality
+          && (aimedTargetVitality.hp | 0) > 0
+        ) {
+          world?.add?.(actorId, TargetLock, { targetId: aimedTargetId });
+        }
         world?.add?.(actorId, RangedAttackIntent, { targetId, toX, toY });
         world?.tick?.(1);
         break;

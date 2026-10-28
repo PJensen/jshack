@@ -103,3 +103,24 @@ Deno.test("rulesDispatch: shootRanged without a target opens point targeting wit
   assertEquals(world.has(actor, UseIntent), false);
   assertEquals(tickCount, 0);
 }));
+
+Deno.test("rulesDispatch: aimed ranged shots preserve the hostile target lock", () => withVisibilityDisabled(() => {
+  const world = new World({ seed: 94 });
+  const actor = world.create();
+  world.add(actor, Position, { x: 2, y: 2 });
+
+  const bowId = world.create();
+  world.add(bowId, ItemInfo, { type: "equip", subtype: "bow", range: 6, count: 1 });
+  world.add(actor, Equipment, { ranged: bowId });
+
+  const enemy = world.create();
+  world.add(enemy, Position, { x: 5, y: 2 });
+  world.add(enemy, Faction, { key: "enemy" });
+  world.add(enemy, Vitality, { hp: 9, maxHp: 9 });
+
+  world.tick = () => {};
+  const dispatch = makeRulesDispatcher(world, () => actor);
+  dispatch({ type: "rules.rangedAttack", payload: { targetId: enemy, toX: 5, toY: 2 } });
+
+  assertEquals(world.get(actor, TargetLock)?.targetId, enemy);
+}));

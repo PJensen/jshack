@@ -3960,6 +3960,31 @@ function drawMonsterLabels(ctx, labels, fxTime) {
   ctx.restore();
 }
 
+function drawPersistentTargetLock(ctx, entities, fxTime) {
+  if (!Array.isArray(entities)) return;
+  for (let i = 0; i < entities.length; i++) {
+    const entity = entities[i];
+    if (!entity?.targetLocked) continue;
+    const x = Number(entity.pos?.x);
+    const y = Number(entity.pos?.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+    const pulse = 0.55 + 0.45 * Math.sin(fxTime * 6.5 + (entity.id | 0));
+    const w = 0.42;
+    const h = 0.48;
+    const len = 0.14;
+    ctx.save();
+    ctx.strokeStyle = `rgba(80,220,255,${(0.42 + pulse * 0.22).toFixed(3)})`;
+    ctx.lineWidth = 0.035;
+    ctx.beginPath();
+    ctx.moveTo(x - w, y - h + len); ctx.lineTo(x - w, y - h); ctx.lineTo(x - w + len, y - h);
+    ctx.moveTo(x + w - len, y - h); ctx.lineTo(x + w, y - h); ctx.lineTo(x + w, y - h + len);
+    ctx.moveTo(x - w, y + h - len); ctx.lineTo(x - w, y + h); ctx.lineTo(x - w + len, y + h);
+    ctx.moveTo(x + w - len, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - len);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
 function drawEntityGlyph(atlas, ctx, entity, scale = 1, rotation = 0) {
   if (hasTag(entity, 'thermal_sensed')) return;
 
@@ -5806,6 +5831,8 @@ function render(worldView) {
       }
     }
   }
+
+  drawPersistentTargetLock(bctx, worldView?.entities, _fxTime);
 
   drawTargetingReticle({
     bctx,

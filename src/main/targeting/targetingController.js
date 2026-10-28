@@ -548,12 +548,16 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       if (!pe) { cancelAll(); return true; }
       const pending = _ranged;
       const clamped = clampTargetToRange(pe.pos.x, pe.pos.y, rawTx, rawTy, pending.range);
+      const aimedEnemy = pending.isBow
+        ? scanVisibleEnemies(world, pe.pos.x | 0, pe.pos.y | 0, pending.range, { playerId: pe.id })
+          .find((enemy) => enemy.x === (clamped.x | 0) && enemy.y === (clamped.y | 0))
+        : null;
       _ranged = null;
       _cursor = null;
       dispatchRules({
         type: pending.isBow ? 'rules.rangedAttack' : 'rules.useItem',
         payload: pending.isBow
-          ? { toX: clamped.x | 0, toY: clamped.y | 0 }
+          ? { targetId: aimedEnemy?.id || 0, toX: clamped.x | 0, toY: clamped.y | 0 }
           : { itemId: pending.itemId, targetId: pe.id, x: clamped.x | 0, y: clamped.y | 0 },
       });
       return true;
