@@ -10,6 +10,8 @@ import { Vitality } from "../src/rules/components/Vitality.js";
 import { RangedAttackIntent } from "../src/rules/components/Intents/RangedAttackIntent.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { TargetLock } from "../src/rules/components/TargetLock.js";
+import { buildWorldView } from "../src/bridge/schema/worldView.js";
+import { Player } from "../src/rules/components/Player.js";
 import { setFovDisabled } from "../src/rules/environment/dungeon/exploredMap.js";
 
 function withVisibilityDisabled(fn) {
@@ -123,4 +125,23 @@ Deno.test("rulesDispatch: aimed ranged shots preserve the hostile target lock", 
   dispatch({ type: "rules.rangedAttack", payload: { targetId: enemy, toX: 5, toY: 2 } });
 
   assertEquals(world.get(actor, TargetLock)?.targetId, enemy);
+}));
+
+Deno.test("rulesDispatch: selecting a hostile target updates the view without spending a turn", () => withVisibilityDisabled(() => {
+  const world = new World({ seed: 95 });
+  const actor = world.create();
+  world.add(actor, Position, { x: 2, y: 2 });
+  world.add(actor, Player, {});
+
+  const enemy = world.create();
+  world.add(enemy, Position, { x: 5, y: 2 });
+  world.add(enemy, Faction, { key: "enemy" });
+  world.add(enemy, Vitality, { hp: 9, maxHp: 9 });
+
+  const stepBefore = world.step;
+  const dispatch = makeRulesDispatcher(world, () => actor);
+  dispatch({ type: "rules.setHostileTarget", payload: { targetId: enemy } });
+
+  assertEquals(world.step, stepBefore);
+  assertEquals(buildWorldView(world).entities.find((entity) => entity.id === enemy)?.targetLocked, true);
 }));

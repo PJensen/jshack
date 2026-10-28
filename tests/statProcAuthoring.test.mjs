@@ -167,6 +167,6 @@ Deno.test("proc nodes support explicit script escape hatches without bypassing t
     { source: procNodeId, min: 2, max: 4, type: "void" },
   ]);
   assertEquals(out.messages, [
-    { source: procNodeId, text: "odd moon alignment" },
+    { source: procNodeId, text: "odd moon alignment", type: "system" },
   ]);
 });

@@ -21,19 +21,12 @@ import { WeatherState } from "../src/rules/components/WeatherState.js";
 import { clearAll, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR, TILE_MARSH, TILE_WATER, TILE_WATER_DEEP } from "../src/rules/environment/dungeon/constants.js";
 import { inventoryItems } from "../src/rules/utils/inventoryFacade.js";
-import { installContentAbilityHandler } from "../src/content/abilityHandler.js";
 import "../src/content/items/fishingRod.js";
 import { installContent } from "../src/content/install.js";
 installContent();
 
-function installFishingAbilityRuntime(world, actor) {
+function installFishingAbilityRuntime(world) {
   installFishingAction(world);
-  installContentAbilityHandler({
-    world,
-    targeting: { openEnemyTargeting() {} },
-    playerEntity: () => ({ id: actor, pos: world.get(actor, Position) }),
-    scanVisibleEnemies: () => [],
-  });
 }
 
 Deno.test("use runtime resolves wand payload object and consumes one charge", () => {
@@ -94,7 +87,7 @@ Deno.test("equipped fishing rod use channels and rolls normal-water fishing loot
   const world = new World({ seed: 3310 });
   world.rand = () => 0.1;
   const actor = createPlayer(world, { x: 0, y: 0, name: "Angler" });
-  installFishingAbilityRuntime(world, actor);
+  installFishingAbilityRuntime(world);
   if (!world.has(actor, Inventory)) world.add(actor, Inventory, { capacity: 20 });
   if (!world.has(actor, Equipment)) world.add(actor, Equipment, {});
 

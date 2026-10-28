@@ -731,7 +731,12 @@ const TARGETED_SPELL_CONFIG = Object.freeze({
 // _messageMoreRef is populated later; the closure captures the mutable binding.
 let _messageMoreRef = null;
 const _sharedRulesDispatcher = makeRulesDispatcher(world, () => (playerEntity(world)?.id || 0), {
-  onAction: () => { _messageMoreRef?.beginBatch(); },
+  onAction: (_turn, type) => {
+    _messageMoreRef?.beginBatch();
+    if (type === "rules.setHostileTarget" || type === "rules.clearHostileTarget") {
+      invalidateCachedView();
+    }
+  },
 });
 
 window.addEventListener('ui:confirmActionAccepted', (ev) => {
@@ -6032,6 +6037,11 @@ if (_savegameLoaded) {
 
 // Cache WorldView per rules step; if the sim hasn't advanced, reuse the view
 let _cachedView = null; let _cachedStep = -1;
+function invalidateCachedView() {
+  _cachedView = null;
+  _cachedStep = -1;
+}
+
 function getCachedView() {
   const step = world.step | 0;
   if (!_cachedView || step !== _cachedStep) {
