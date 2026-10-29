@@ -1,0 +1,9 @@
+hey, certain tests are failing, fix tests, not break features ;-)
+
+---
+
+reset master to origin please, then do the fixes to the failing CI
+
+---
+
+second issue, render persistent target lock has issue, render only happens next turn, selecting should not consum turn, I'd be commiting as you go with all this work -- I'll push by hand at the end.
