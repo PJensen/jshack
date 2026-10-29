@@ -710,6 +710,46 @@ function normalizeBeatitude(value) {
 }
 
 /**
+ * Cursed health potions still mend the body, but their shadow keeps moving
+ * after the drinker stops. The brief confusion makes the curse noticeable
+ * without turning a basic healing potion into a hard punishment.
+ */
+export function createCursedHealthPotionHook() {
+  return (ctx, state) => {
+    const actorId = Number(state?.actor || ctx.actor || 0) | 0;
+    const itemId = Number(state?.itemId || ctx.primary || 0) | 0;
+    const targetId = ctx.rules.resolveTarget(actorId);
+    const beatitude = normalizeBeatitude(ctx.query.get(itemId, Beatitude)?.state);
+    if (beatitude !== "cursed") return { cursed: false };
+
+    const turns = 4;
+    ctx.helpers.addEffect(targetId, {
+      key: "confused",
+      potency: 1,
+      turnsLeft: turns,
+      onsetLeft: 0,
+      peakLeft: 0,
+      stack: "refresh",
+      maxStacks: 1,
+      sourceId: itemId,
+      meta: { source: "potion_health", curse: "lagging_shadow", masked: !state.identified },
+    });
+    ctx.io.emit("status", createStatusEvent({
+      id: targetId,
+      kind: "debuff",
+      effect: "confused",
+      source: actorId,
+      masked: !state.identified,
+    }));
+    ctx.io.emit("message", {
+      text: "Your shadow keeps moving after you stop.",
+      type: "warning",
+    });
+    return { cursed: true, effect: "lagging_shadow", turns };
+  };
+}
+
+/**
  * @param {"blessed"|"uncursed"|"cursed"} beatitude
  */
 function waterTypeFromBeatitude(beatitude) {

@@ -4,6 +4,7 @@ import { ItemInfo }          from "../components/ItemInfo.js";
 import { Potion } from "../components/Potion.js";
 import { Consumable } from "../components/Consumable.js";
 import { Material } from "../components/Material.js";
+import { Beatitude } from "../components/Beatitude.js";
 
 // Simple Health Potion archetype using Potion component
 export const HealthPotion = defineArchetype(
@@ -29,6 +30,7 @@ export const HealthPotion = defineArchetype(
     }],
     [NamedIdentity, /** @param {any} p */ (p) => ({ name: (p && p.name) ?? "Health Potion", identity: 'potion_health' })],
     [Material, { kind: "glass" }],
+    [Beatitude, { state: "uncursed" }],
 );
 
 // Currency stack (Gold) — zero weight, stackable via ItemInfo.count

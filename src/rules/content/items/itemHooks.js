@@ -1,4 +1,5 @@
 import { getCatalogItem, getGemItemHooks } from "../../data/itemCatalog.js";
+import { createCursedHealthPotionHook } from "../../data/itemCatalogHooks.js";
 
 /**
  * Frozen item-hook contract.
@@ -96,6 +97,7 @@ export function getItemHooksByIdentity(identity) {
   const key = String(identity || "").toLowerCase();
   const def = getCatalogItem(key);
   if (def) return resolveItemHooksFromDef(def);
+  if (key === "potion_health") return { onDrink: createCursedHealthPotionHook() };
   const gemHooks = getGemItemHooks(key);
   if (gemHooks) return normalizeItemHooks(gemHooks);
   return {};
