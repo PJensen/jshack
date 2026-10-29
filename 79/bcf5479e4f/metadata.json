@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "src/rules/archetypes/Items.js",
     "src/rules/content/items/itemHooks.js",
     "src/rules/data/itemCatalogHooks.js",
@@ -18,5 +19,12 @@
       "content_hash": "/79/bcf5479e4f/0/content_hash.txt",
       "prompt": ""
     }
-  ]
+  ],
+  "token_usage": {
+    "input_tokens": 471,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 97280,
+    "output_tokens": 280,
+    "api_call_count": 1
+  }
 }
