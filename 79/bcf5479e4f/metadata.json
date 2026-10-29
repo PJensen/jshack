@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "79bcf5479e4f",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/archetypes/Items.js",
+    "src/rules/content/items/itemHooks.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "tests/cursedHealthPotion.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/79/bcf5479e4f/0/metadata.json",
+      "transcript": "/79/bcf5479e4f/0/full.jsonl",
+      "compact_transcript": "/79/bcf5479e4f/0/transcript.jsonl",
+      "content_hash": "/79/bcf5479e4f/0/content_hash.txt",
+      "prompt": "/79/bcf5479e4f/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 92418,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1856512,
+    "output_tokens": 7782,
+    "api_call_count": 29
+  }
+}
