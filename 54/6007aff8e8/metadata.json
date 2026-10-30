@@ -4,9 +4,7 @@
   "strategy": "manual-commit",
   "branch": "master",
   "checkpoints_count": 1,
-  "files_touched": [
-    "AGENTS.md"
-  ],
+  "files_touched": null,
   "sessions": [
     {
       "metadata": "/54/6007aff8e8/0/metadata.json",
@@ -17,10 +15,10 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 1709,
+    "input_tokens": 128695,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 378880,
-    "output_tokens": 1553,
-    "api_call_count": 4
+    "cache_read_tokens": 5685760,
+    "output_tokens": 24811,
+    "api_call_count": 75
   }
 }
