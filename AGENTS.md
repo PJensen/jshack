@@ -57,6 +57,9 @@ Deeper docs:
 - **Authoring discipline.** Do not touch unrelated code. Do not make changes
   that do nothing. Always match the formatting preferences that already exist;
   be a chameleon.
+- **Commit messages.** Every commit message must be lowercase and use a
+  conventional type prefix such as `feat:`, `docs:`, `fix:`, `arch:`,
+  `refactor:`, `test:`, `perf:`, `ci:`, or `chore:`.
 - **Do not format code unless explicitly requested.** Do not run `deno fmt` or
   any other formatter as part of implementation or verification. Preserve the
   existing formatting and keep diffs limited to the requested functional edits.
