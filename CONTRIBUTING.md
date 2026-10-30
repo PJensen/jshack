@@ -60,6 +60,12 @@ deno test --allow-read tests/
 
 If your change touches game logic, it needs a test.
 
+## Commit Messages
+
+Commit messages must be lowercase and use a conventional type prefix, such as
+`feat:`, `docs:`, `fix:`, `arch:`, `refactor:`, `test:`, `perf:`, `ci:`, or
+`chore:`.
+
 ## Submitting a PR
 
 1. Fork the repo and create a branch
