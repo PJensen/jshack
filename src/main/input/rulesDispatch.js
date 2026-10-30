@@ -253,6 +253,31 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           break;
         }
 
+        if (isBow && !lockValid) {
+          let closestId = 0;
+          let closestDistance = Infinity;
+          forEachInRadius(world, px, py, maxRange, (id, pos) => {
+            if (id === actorId) return;
+            const faction = world.get(id, Faction);
+            if (!faction || faction.key !== "enemy") return;
+            const vitality = world.get(id, Vitality);
+            if (!vitality || (vitality.hp | 0) <= 0) return;
+            const tx = pos.x | 0;
+            const ty = pos.y | 0;
+            if (!hasLOS(px, py, tx, ty, isBlocked)) return;
+            if (!isTileVisible(tx, ty)) return;
+            const distance = chebyshevScalar(tx, ty, px, py);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestId = id;
+            }
+          });
+          if (closestId > 0) {
+            world?.add?.(actorId, TargetLock, { targetId: closestId });
+            break;
+          }
+        }
+
         if (isBow && lockValid) {
           world?.add?.(actorId, RangedAttackIntent, {
             targetId: lockedId,

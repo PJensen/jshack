@@ -86,6 +86,32 @@ Deno.test("rulesDispatch: shootRanged fires a wand at the persistent target", ()
   assertEquals(tickCount, 1);
 }));
 
+Deno.test("rulesDispatch: shootRanged does not auto-target a wand", () => withVisibilityDisabled(() => {
+  const world = new World({ seed: 97 });
+  const actor = world.create();
+  world.add(actor, Position, { x: 10, y: 10 });
+
+  const wandId = world.create();
+  world.add(wandId, ItemInfo, { type: "wand", range: 6, count: 1 });
+  world.add(wandId, NamedIdentity, { name: "Wand of Frost", identity: "wand_frost" });
+  world.add(actor, Equipment, { ranged: wandId });
+
+  const enemy = world.create();
+  world.add(enemy, Position, { x: 12, y: 10 });
+  world.add(enemy, Faction, { key: "enemy" });
+  world.add(enemy, Vitality, { hp: 12, maxHp: 12 });
+
+  let tickCount = 0;
+  world.tick = () => { tickCount += 1; };
+
+  const dispatch = makeRulesDispatcher(world, () => actor);
+  dispatch({ type: "rules.shootRanged" });
+
+  assertEquals(world.has(actor, TargetLock), false);
+  assertEquals(world.has(actor, UseIntent), false);
+  assertEquals(tickCount, 0);
+}));
+
 Deno.test("rulesDispatch: shootRanged without a target opens point targeting without a turn", () => withVisibilityDisabled(() => {
   const world = new World({ seed: 93 });
   const actor = world.create();
@@ -103,6 +129,36 @@ Deno.test("rulesDispatch: shootRanged without a target opens point targeting wit
 
   assertEquals(world.has(actor, RangedAttackIntent), false);
   assertEquals(world.has(actor, UseIntent), false);
+  assertEquals(tickCount, 0);
+}));
+
+Deno.test("rulesDispatch: shootRanged targets the closest hostile before firing a bow", () => withVisibilityDisabled(() => {
+  const world = new World({ seed: 96 });
+  const actor = world.create();
+  world.add(actor, Position, { x: 2, y: 2 });
+
+  const bowId = world.create();
+  world.add(bowId, ItemInfo, { type: "equip", subtype: "bow", range: 6, count: 1 });
+  world.add(actor, Equipment, { ranged: bowId });
+
+  const nearEnemy = world.create();
+  world.add(nearEnemy, Position, { x: 4, y: 2 });
+  world.add(nearEnemy, Faction, { key: "enemy" });
+  world.add(nearEnemy, Vitality, { hp: 9, maxHp: 9 });
+
+  const farEnemy = world.create();
+  world.add(farEnemy, Position, { x: 6, y: 2 });
+  world.add(farEnemy, Faction, { key: "enemy" });
+  world.add(farEnemy, Vitality, { hp: 9, maxHp: 9 });
+
+  let tickCount = 0;
+  world.tick = () => { tickCount += 1; };
+
+  const dispatch = makeRulesDispatcher(world, () => actor);
+  dispatch({ type: "rules.shootRanged" });
+
+  assertEquals(world.get(actor, TargetLock)?.targetId, nearEnemy);
+  assertEquals(world.has(actor, RangedAttackIntent), false);
   assertEquals(tickCount, 0);
 }));
 
