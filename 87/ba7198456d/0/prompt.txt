@@ -1,0 +1,79 @@
+can you see GH issues?
+
+---
+
+amazing I want to make a CRON job that kicks off once per day at 9PM and takes one properly tagged issue, works on it, commits and publishes, and ensures all tests pass -- via `codex exec`
+
+---
+
+several things
+
+
+
+1. tests must pass
+2. commit push only once test pass
+3. what else?
+
+---
+
+nope -- working right on master
+
+---
+
+what tags apply --- what tags should apply?
+
+---
+
+I'll make a dedicated tag, lets do some tag that's unhinged.
+
+---
+
+lol
+
+---
+
+need a better name
+
+---
+
+greenlight
+
+---
+
+excellent
+
+---
+
+GREENLIGHT
+
+---
+
+gitignore both -- this is our little secret
+
+---
+
+you know what -- we should move it to a `tools/greenlight/launch.sh` -- I would bang on it a bit more before we run it
+
+---
+
+I would let the md ride along so we can ignore the whole subtree
+
+---
+
+there are no GREENLIGHT issues -- run it manually then I'll mark on issue as GREENLIGHT we need to make sure the issue is closed when done.
+
+---
+
+run it -- there are no GREENLIGH issues at present
+
+---
+
+how do I run it?
+
+---
+
+run failed
+
+---
+
+you run it
