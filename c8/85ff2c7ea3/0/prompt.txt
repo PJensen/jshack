@@ -1,21 +1,5 @@
-[https://github.com/PJensen/jshack/issues/150](https://github.com/PJensen/jshack/issues/150)
+no other potions had this issue right?
 
 ---
 
-I feel like there has to be more potions that suffer this exact same issue
-
----
-
-I would -- thank you!
-
----
-
-fine -- but I still cannot drink a lethargy or paralysis potion -- lol
-
----
-
-how do we proceed? honoring all potions essentiallly.
-
----
-
-you're missing the broader point -- these potions dont even have a "Drink" UX affordance in the quick chip.
+holy SHIT 1. KILL THE OLD AUDIO CRON TAB 2. truncate back to 5a82e1e0e264d1b2eab7bd699945f2be4549c698 and  force push away those audio commits -- jesus!
