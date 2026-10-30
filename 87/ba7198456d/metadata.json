@@ -5,7 +5,8 @@
   "branch": "master",
   "checkpoints_count": 5,
   "files_touched": [
-    "README.md"
+    "README.md",
+    "VERSION"
   ],
   "sessions": [
     {
@@ -24,11 +25,11 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 86969,
+    "input_tokens": 82861,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 944000,
-    "output_tokens": 3903,
-    "api_call_count": 16
+    "cache_read_tokens": 826624,
+    "output_tokens": 3850,
+    "api_call_count": 15
   },
   "combined_attribution": {
     "calculated_at": "2026-10-30T15:11:35.582620427Z",
