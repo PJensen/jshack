@@ -376,6 +376,46 @@ Events keep the scheduler in control and execution order predictable.
 * **Score system** — your performance is quantified
 * **Fire spread** — flames propagate and can be extinguished by rain
 
+### Emergent simulation mechanics
+
+The rules layer is designed so systems interact instead of resolving as isolated
+set pieces. A single turn can move an item through several material states,
+change the shape of a creature, alter a town's food supply, and change how a
+deity treats the player. Every outcome still comes from the seeded ECS
+simulation, so surprising events are reproducible.
+
+* **Water changes what you carry** — Dipping a metal item can rust it; paper and
+  scrolls waterlog and can be ruined; potions dilute and fizzle; food becomes
+  soggy and loses nutrition; and a swollen wooden wand can misfire instead of
+  discharging.
+* **Fire, gas, and weather form a connected hazard system** — A torch or flame
+  can ignite nearby gas. Fire then spreads stochastically across webs, trees,
+  fences, doors, and roof-bearing structures. Rain extinguishes active flames,
+  and can restore burned roof structures from the destruction ledger while also
+  watering crops.
+* **Monsters can change topology** — Killing any segment of a giant centipede
+  unlinks the body and promotes the tail-side segment into a new hunting head,
+  complete with its own chain and AI state. A creature encounter can therefore
+  become two independent threats.
+* **The battlefield remembers blood** — Blood pools heal living creatures in
+  their radius, but deal holy damage to undead. Hazard tiles are simulation
+  participants, not just visual effects.
+* **Bargains have teeth** — Ratatoskr is a roaming messenger who can offer a
+  legendary item, but accepting the bargain makes the item cursed and applies a
+  long-lived curse to the buyer.
+* **Deities respond to how and where you act** — Standing reacts to kill streaks
+  and spell schools as well as offerings, worship, and creature tags. Near a
+  shrine, that standing scales combat damage with distance: favor strengthens
+  you closest to the shrine, while wrath becomes a liability.
+* **The town is a supply chain** — Wheat is milled into flour, townfolk haul
+  supplies between work sites, and the tavern turns flour + firewood + water +
+  a kitchen knife into stew. Those stores feed villagers, shortages affect town
+  pressure, and weather changes the pace of production.
+* **Smart monsters use trained policies** — High-INT mobs can replace basic
+  chase behavior with a tiny neural policy that chooses movement, spells, or
+  ranged attacks from local state. Its weights are trained in deterministic,
+  headless arena mini-simulations and then run inside the ECS rules phase.
+
 ### Developer tools
 
 * **Deterministic replay** — seeded RNG for reproducibility
