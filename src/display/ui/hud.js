@@ -24,6 +24,17 @@ export function peekStackTop(stack) {
 }
 
 /**
+ * @param {any} it
+ * @returns {boolean}
+ */
+export function isQuickChipPotion(it) {
+  const type = String(it?.type || it?.details?.type || '').toLowerCase();
+  if (type === 'potion') return true;
+  const identity = String(it?.identity || it?.details?.identity || '').toLowerCase();
+  return identity.startsWith('potion_');
+}
+
+/**
  * @template T
  * @param {T[]} stack
  * @param {(entry: T) => boolean} isActionable
@@ -45,7 +56,7 @@ export function getQuickChipPrimaryAction(it) {
   const identity = String(it?.identity || it?.details?.identity || '');
   if (identity === 'scroll_identify') return 'apply';
   const t = String(it?.type || '');
-  if (t === 'potion') return 'drink';
+  if (isQuickChipPotion(it)) return 'drink';
   if (it?.canApply) return 'apply';
   if (it?.canUse && !!it?.equipped) return 'use';
   if (t === 'gem') return 'apply';
@@ -107,7 +118,7 @@ export function isQuickChipActionable(it) {
   const t = String(it?.type || '');
   if (t === 'equip' || t === 'ammo' || t === 'wand') return true;
   if (t === 'tool') return true;
-  if (t === 'potion' || t === 'scroll' || t === 'learn' || t === 'book' || t === 'food' || t === 'gem') return (it?.count || 0) > 0;
+  if (isQuickChipPotion(it) || t === 'scroll' || t === 'learn' || t === 'book' || t === 'food' || t === 'gem') return (it?.count || 0) > 0;
   return false;
 }
 

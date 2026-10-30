@@ -11,6 +11,8 @@ import { DrinkIntent } from '../src/rules/components/Intents/DrinkIntent.js';
 import { drinkSystem } from '../src/rules/systems/drinkSystem.js';
 import { addToInventory, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
 import { shopDebtRecords } from "../src/rules/utils/shopDebt.js";
+import { getCatalogItem } from "../src/rules/data/itemCatalog.js";
+import { createItemById, listAllItemIds } from "../src/rules/utils/itemFactory.js";
 
 Deno.test("drinking a single-dose potion applies effect and destroys it", () => {
   const world = new World({ seed: 1 });
@@ -148,4 +150,26 @@ Deno.test("toxic potion schedules hangover effect", () => {
   const hangover = ae.effects.find(e => e.key === 'hangover');
   assert(hangover, 'should schedule a hangover effect');
   assert(hangover.potency === 3, `hangover potency should be 3, got ${hangover.potency}`);
+});
+
+Deno.test("every catalog potion remains drinkable through the canonical path", () => {
+  for (const itemId of listAllItemIds().filter((id) => getCatalogItem(id)?.type === "potion")) {
+    const world = new World({ seed: 150 });
+    const actor = world.create();
+    world.add(actor, Vitality, { maxHp: 100, hp: 100 });
+    world.add(actor, Inventory, { items: [], maxWeight: 100 });
+
+    const potion = createItemById(world, itemId);
+    assert(potion > 0, `${itemId} should be creatable`);
+    addToInventory(world, actor, potion);
+
+    const results = [];
+    world.on("interaction:result", (event) => results.push(event));
+    world.add(actor, DrinkIntent, { itemId: potion, targetId: actor });
+    drinkSystem(world);
+
+    assertEquals(results.length, 1, `${itemId} should produce one interaction result`);
+    assertEquals(results[0].ok, true, `${itemId} should be drinkable`);
+    assert(!world.isAlive(potion), `${itemId} should be consumed after drinking`);
+  }
 });

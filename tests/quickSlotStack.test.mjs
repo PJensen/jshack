@@ -5,6 +5,7 @@ import {
   popUntilActionableTop,
   getQuickChipPrimaryAction,
   getQuickChipPrimaryActionLabel,
+  isQuickChipPotion,
   getQuickChipDetailLine,
   isQuickChipActionable,
 } from "../src/display/ui/hud.js";
@@ -52,6 +53,16 @@ Deno.test("quick-chip primary action uses apply for scroll of identify", () => {
   const item = { id: 31, type: "scroll", identity: "scroll_identify", details: { identified: true } };
   assertEquals(getQuickChipPrimaryAction(item), "apply");
   assertEquals(getQuickChipPrimaryActionLabel(item), "Apply");
+});
+
+Deno.test("quick-chip gives every potion identity a Drink affordance", () => {
+  for (const identity of ["potion_paralysis", "potion_lethargy"]) {
+    const item = { id: 32, identity, type: "item", count: 1 };
+    assertEquals(isQuickChipPotion(item), true);
+    assertEquals(getQuickChipPrimaryAction(item), "drink");
+    assertEquals(getQuickChipPrimaryActionLabel(item), "Drink");
+    assertEquals(isQuickChipActionable(item), true);
+  }
 });
 
 Deno.test("quick-chip treats gems as actionable stack items", () => {

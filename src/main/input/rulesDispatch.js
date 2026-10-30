@@ -10,6 +10,7 @@ import { Vitality } from "../../rules/components/Vitality.js";
 import { UseIntent } from "../../rules/components/Intents/UseIntent.js";
 import { ApplyIntent } from "../../rules/components/Intents/ApplyIntent.js";
 import { ThrowIntent } from "../../rules/components/Intents/ThrowIntent.js";
+import { Potion } from "../../rules/components/Potion.js";
 import { InteractIntent } from "../../rules/components/Intents/InteractIntent.js";
 import { SearchIntent } from "../../rules/components/Intents/SearchIntent.js";
 import { Interactable } from "../../rules/components/Interactable.js";
@@ -147,7 +148,16 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
         break;
       }
       case "rules.drinkPotion": {
-        const { itemId = 0, targetId = actorId } = action.payload || {};
+        const { itemId: requestedItemId = 0, targetId = actorId } = action.payload || {};
+        let itemId = Number(requestedItemId) | 0;
+        if (!(itemId > 0)) {
+          for (const candidateId of inventoryItems(world, actorId)) {
+            if (world.isAlive?.(candidateId) !== false && world.has(candidateId, Potion)) {
+              itemId = candidateId;
+              break;
+            }
+          }
+        }
         world?.add?.(actorId, DrinkIntent, { itemId, targetId });
         world?.tick?.(1);
         break;
