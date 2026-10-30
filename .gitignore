@@ -55,6 +55,7 @@ src/main/wiring/shopWiring.js
 .codex
 .codex
 coverage.lcov
+tools/greenlight/
 .aider*
 .signal-control-tower/work-items.json
 .signal-control-tower/logs/events.jsonl
