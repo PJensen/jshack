@@ -5,7 +5,8 @@
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
-    "CONTRIBUTING.md"
+    "CONTRIBUTING.md",
+    "VERSION"
   ],
   "sessions": [
     {
