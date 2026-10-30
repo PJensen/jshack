@@ -19,10 +19,15 @@ export function buildEffectRows(world, actor) {
     const key = canonicalStatusKey(rawKey);
     const turns = Number(entry.turnsLeft ?? entry.duration ?? 0);
     if (!key || turns <= 0) continue;
-    const row = { key, turns, stacks: Math.max(1, Number(entry.stacks || 1)), potency: Number(entry.potency || 0), masked: entry.meta?.masked === true };
+    const sourceKey = String(
+      entry.sourceKey
+      || ((key === "stun" || key === "stunned") ? entry.meta?.source : "")
+      || "",
+    );
+    const row = { key, turns, stacks: Math.max(1, Number(entry.stacks || 1)), potency: Number(entry.potency || 0), masked: entry.meta?.masked === true, sourceKey };
     const prev = byKey.get(key);
     if (!prev) byKey.set(key, row);
-    else byKey.set(key, { ...row, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, row.stacks), potency: Math.max(prev.potency, row.potency), masked: prev.masked && row.masked });
+    else byKey.set(key, { ...row, turns: Math.max(prev.turns, turns), stacks: Math.max(prev.stacks, row.stacks), potency: Math.max(prev.potency, row.potency), masked: prev.masked && row.masked, sourceKey: row.sourceKey || prev.sourceKey });
   }
   return [...byKey.values(), ...instances].map(enrichStatusRowDisplay);
 }

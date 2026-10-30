@@ -14,6 +14,7 @@ import { ThrowIntent } from "../src/rules/components/Intents/ThrowIntent.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { executeInteraction } from "../src/rules/interaction/runtime/actionRuntime.js";
 import { applyPipeline } from "../src/rules/interaction/verbs/applyPipeline.js";
+import { buildEffectRows } from "../src/main/ui/effectRows.js";
 import { applyWeaponCoatingOnHit } from "../src/rules/data/weaponCoatings.js";
 import { throwSystem } from "../src/rules/systems/throwSystem.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
@@ -82,7 +83,7 @@ Deno.test("keen edge dip permanently stacks crit chance on weapon", () => {
 });
 
 Deno.test("selected potion coatings proc on hit", () => {
-  const world = new World({ seed: 9103 });
+  const world = new World({ seed: 1 });
   const attacker = makeActor(world, {
     hp: 10,
     stamina: { stamina: 1, maxStamina: 10, staminaRegen: 1, regenCooldown: 0 },
@@ -107,6 +108,30 @@ Deno.test("selected potion coatings proc on hit", () => {
   const slowed = world.get(defender, ActiveEffects)?.effects?.find((e) => e.key === "slowed");
   assert(slowed, "lethargy coating should slow defender");
   assertEquals(slowed.turnsLeft, 4);
+
+  const paralysis = buildCatalogItem(world, "dagger_quick");
+  world.get(paralysis, ItemInfo).coating = { kind: "paralysis", charges: 20 };
+  applyWeaponCoatingOnHit(world, { attacker, defender, weaponId: paralysis, didHit: true });
+  const paralysisRow = buildEffectRows(world, defender).find((row) => row.key === "stunned");
+  assertEquals([paralysisRow?.name, paralysisRow?.glyph], ["Paralyzed", "🔒"]);
+});
+
+Deno.test("potion status badges preserve distinct sources and generic stun", () => {
+  const world = new World({ seed: 9110 });
+  const actor = makeActor(world, { stamina: { stamina: 5, maxStamina: 10, staminaRegen: 1 } });
+
+  world.add(actor, ActiveEffects, { effects: [{ key: "lethargic", turnsLeft: 30, potency: 1, stacks: 1, meta: { source: "potion_lethargy" } }] });
+  const lethargicRow = buildEffectRows(world, actor).find((row) => row.key === "lethargic");
+  assertEquals([lethargicRow?.name, lethargicRow?.glyph, lethargicRow?.turns], ["Lethargic", "🦥", 30]);
+
+  world.get(actor, ActiveEffects).effects.push({ key: "stun", turnsLeft: 10, potency: 1, stacks: 1, meta: { source: "potion_paralysis" } });
+  const paralyzedRow = buildEffectRows(world, actor).find((row) => row.key === "stunned");
+  assertEquals([paralyzedRow?.name, paralyzedRow?.glyph, paralyzedRow?.turns], ["Paralyzed", "🔒", 10]);
+
+  const generic = makeActor(world);
+  world.add(generic, ActiveEffects, { effects: [{ key: "stun", turnsLeft: 3, potency: 1, stacks: 1 }] });
+  const stunnedRow = buildEffectRows(world, generic).find((row) => row.key === "stunned");
+  assertEquals([stunnedRow?.key, stunnedRow?.sourceKey], ["stunned", ""]);
 });
 
 Deno.test("vigor throw creates blood pool that heals living and hurts undead", () => {
@@ -151,4 +176,6 @@ Deno.test("adrenaline and lethargy throws apply splash effects", () => {
   const slowed = world.get(slowTarget, ActiveEffects)?.effects?.find((e) => e.key === "slowed");
   assert(slowed, "lethargy throw should slow target");
   assert([...world.query(HazardArea)].some(([, h]) => h.kind === "sticky_syrup"), "lethargy throw should leave sticky syrup");
+  const slowedRow = buildEffectRows(world, slowTarget).find((row) => row.key === "slowed");
+  assertEquals([slowedRow?.name, slowedRow?.glyph], ["Slowed", "🐌"]);
 });

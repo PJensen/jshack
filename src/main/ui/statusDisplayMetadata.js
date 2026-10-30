@@ -46,6 +46,16 @@ function humanizeKey(value) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+const STATUS_DISPLAY_META = Object.freeze({
+  lethargic: Object.freeze({ name: "Lethargic", glyph: "\u{1F9A5}", hue: 210 }),
+  slowed: Object.freeze({ name: "Slowed", glyph: "\u{1F40C}", hue: 195 }),
+});
+
+const SOURCE_DISPLAY_META = Object.freeze({
+  "stun:potion_paralysis": Object.freeze({ name: "Paralyzed", glyph: "\u{1F512}", hue: 45 }),
+  "stunned:potion_paralysis": Object.freeze({ name: "Paralyzed", glyph: "\u{1F512}", hue: 45 }),
+});
+
 function operationLine(operation, potency) {
   const amount = Math.max(0, Number(potency || 0));
   const suffix = amount > 0 ? ` ${amount}/turn` : "";
@@ -92,6 +102,10 @@ function effectDetailData(row) {
 }
 
 export function statusDisplayMetadata(key, sourceKey = "") {
+  const sourceMeta = SOURCE_DISPLAY_META[`${String(key || "").toLowerCase()}:${String(sourceKey || "").toLowerCase()}`];
+  if (sourceMeta) return sourceMeta;
+  const statusMeta = STATUS_DISPLAY_META[String(key || "").toLowerCase()];
+  if (statusMeta) return statusMeta;
   const definition = getEffectDefinition(key);
   if (!definition) return null;
   const identity = definition.visualIdentity || sourceKey;

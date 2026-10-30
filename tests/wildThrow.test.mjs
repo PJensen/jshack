@@ -15,6 +15,7 @@ import { ThrowIntent } from "../src/rules/components/Intents/ThrowIntent.js";
 import { throwSystem } from "../src/rules/systems/throwSystem.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { addToInventory, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
+import { buildEffectRows } from "../src/main/ui/effectRows.js";
 
 // ── Wand Shatter Tests ─────────────────────────────────────────────────
 
@@ -159,6 +160,7 @@ Deno.test("thrown potion_paralysis stuns target on landing tile", () => {
   assertEquals(splashEvents[0].effectKey, "stun");
   assert(splashEvents[0].hitCount >= 1, "should hit mob on landing tile");
   assert(!inventoryContains(world, actor, pot), "potion should be consumed");
+  assertEquals(buildEffectRows(world, mob).find((row) => row.key === "stunned")?.glyph, "🔒");
 });
 
 Deno.test("thrown potion_hallucination splashes confused effect", () => {

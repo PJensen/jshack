@@ -24,7 +24,7 @@ export const WEAPON_COATING_DEFS = Object.freeze({
     seedSalt: 0xc0470002,
     emitEvent: 'proc:paralyzed',
     elementTint: null,
-    effect: Object.freeze({ key: 'stun', turnsLeft: 4, potency: 1, stacks: 1 }),
+    effect: Object.freeze({ key: 'stun', turnsLeft: 4, potency: 1, stacks: 1, sourceKey: 'potion_paralysis' }),
   }),
   blindness: Object.freeze({
     chancePct: 50,

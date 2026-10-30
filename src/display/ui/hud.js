@@ -1744,6 +1744,8 @@ function ensureEffectsStack(container) {
     poisoned:     { name: 'Poison',    glyph: '\u2620\uFE0F',    hue: 120 },
     regen:        { name: 'Regen',     glyph: '\u{1F49A}',       hue: 140 },
     stunned:      { name: 'Stunned',   glyph: '\u{1F4AB}',       hue: 45  },
+    paralyzed:    { name: 'Paralyzed', glyph: '\u{1F512}',       hue: 45  },
+    lethargic:    { name: 'Lethargic', glyph: '\u{1F9A5}',       hue: 210 },
     rooted:       { name: 'Rooted',    glyph: '\u{1FAB4}',       hue: 130 },
     thorns:       { name: 'Thorns',    glyph: '\u{1F339}',       hue: 110 },
     disease:      { name: 'Disease',   glyph: '\u{1F9A0}',       hue: 55  },
