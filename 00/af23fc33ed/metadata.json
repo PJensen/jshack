@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "00af23fc33ed",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/hud.js",
+    "src/main/ui/effectRows.js",
+    "src/main/ui/statusDisplayMetadata.js",
+    "src/rules/data/weaponCoatings.js",
+    "tests/selectedPotionHandlers.test.mjs",
+    "tests/wildThrow.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/00/af23fc33ed/0/metadata.json",
+      "transcript": "/00/af23fc33ed/0/full.jsonl",
+      "compact_transcript": "/00/af23fc33ed/0/transcript.jsonl",
+      "content_hash": "/00/af23fc33ed/0/content_hash.txt",
+      "prompt": "/00/af23fc33ed/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 102538,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3243136,
+    "output_tokens": 14181,
+    "api_call_count": 41
+  }
+}
