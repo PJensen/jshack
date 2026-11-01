@@ -175,6 +175,12 @@ test references by ID.
 For the complete routing workflow, use
 [`.agents/skills/agent-tools/SKILL.md`](.agents/skills/agent-tools/SKILL.md).
 
+### Runtime Proving and Performance
+
+Use [`.agents/skills/runtime-tools/SKILL.md`](.agents/skills/runtime-tools/SKILL.md)
+when static inspection must be followed by a seeded headless run, agent-bridge
+trace, scheduler profile, or performance baseline.
+
 ### Focused Tests
 
 ```bash
