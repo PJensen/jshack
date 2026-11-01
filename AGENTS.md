@@ -65,6 +65,11 @@ Deeper docs:
   existing formatting and keep diffs limited to the requested functional edits.
 - **Search before writing.** Extend existing patterns. Do exactly what was
   asked; no opportunistic content wiring or unrelated cleanup.
+- **Capture skills incrementally.** When a task reveals a reusable tool,
+  process, authoring path, verification command, or failure mode, record the
+  proven practice in the smallest relevant `.agents/skills/` guide as part of
+  the task or its immediate follow-up. Do not make broad skills coverage a
+  prerequisite for feature work, and do not document speculative patterns.
 - **Verify in proportion to the change.** Run focused tests and guardrails that
   cover the touched behavior. Do not run the full runtime suite by default; it
   is allowed only when explicitly requested or when the change genuinely needs
@@ -276,6 +281,19 @@ numbers inside English descriptions or display formats.
 
 The standard is not "least code today." The standard is whether the next weird
 rule becomes small, explicit, composable, deterministic, and inspectable.
+
+### Incremental Skill Capture
+
+Treat each completed issue as an opportunity to improve the next agent's
+starting position. During implementation, note the canonical files and paths,
+required tools or commands, architectural invariants, useful fixtures, and
+failure modes that were discovered. After the behavior is proven, update the
+smallest relevant skill—or create one only when a repeated workflow justifies
+it—with those verified details and a focused validation recipe.
+
+Skill capture is evidence-based documentation, not a parallel architecture
+project. Keep feature delivery moving when a skill does not yet exist, and
+avoid turning one issue into a repository-wide skills rewrite.
 
 ### Listener Installers
 
