@@ -25,7 +25,7 @@ export function parseArgs(argv) {
 
 export function usage() {
   return `Usage:
-  deno run --allow-read tools/system-map.mjs [options]
+  deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs [options]
 
 Options:
   --format summary|csv       Output format. Default: summary

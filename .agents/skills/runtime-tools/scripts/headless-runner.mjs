@@ -1,8 +1,8 @@
-import "../src/content/items/index.js";
-import "../src/content/monsters/index.js";
-import "../src/content/interactables/index.js";
-import { installContent } from "../src/content/install.js";
-import { createGameRuntime } from "../src/main/runtime/gameRuntime.js";
+import "../../../../src/content/items/index.js";
+import "../../../../src/content/monsters/index.js";
+import "../../../../src/content/interactables/index.js";
+import { installContent } from "../../../../src/content/install.js";
+import { createGameRuntime } from "../../../../src/main/runtime/gameRuntime.js";
 
 installContent();
 

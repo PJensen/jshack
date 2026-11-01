@@ -1,4 +1,4 @@
-import { World } from "../src/lib/ecs-js/index.js";
+import { World } from "../../../../src/lib/ecs-js/index.js";
 
 function parseArgs(argv) {
   const out = {

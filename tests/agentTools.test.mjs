@@ -5,24 +5,24 @@ import {
   filterRows,
   scanText,
   toCsv,
-} from "../tools/event-bus-explorer.mjs";
-import { parseImports, parseRegistrations } from "../tools/system-map.mjs";
+} from "../.agents/skills/agent-tools/scripts/event-bus-explorer.mjs";
+import { parseImports, parseRegistrations } from "../.agents/skills/agent-tools/scripts/system-map.mjs";
 import {
   classify as classifyImportBoundary,
   layerOf,
   normalizeImport,
-} from "../tools/import-boundary-report.mjs";
+} from "../.agents/skills/agent-tools/scripts/import-boundary-report.mjs";
 import {
   classify as classifyTarget,
   scoreMatch,
-} from "../tools/agent-target.mjs";
-import { classify as classifyContentId } from "../tools/content-id-audit.mjs";
+} from "../.agents/skills/agent-tools/scripts/agent-target.mjs";
+import { classify as classifyContentId } from "../.agents/skills/agent-tools/scripts/content-id-audit.mjs";
 import {
   classifyNondeterminism,
   classifySystemCall,
   formatHealthReport,
   normalizeImport as normalizeHealthImport,
-} from "../tools/agent-health.mjs";
+} from "../.agents/skills/agent-tools/scripts/agent-health.mjs";
 
 Deno.test("event-bus explorer extracts literal producers, consumers, payload keys, and dynamic calls", () => {
   const rows = scanText(

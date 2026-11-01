@@ -1,12 +1,12 @@
 // JSONL bridge for a game-playing agent.
-// Start it with: deno run --allow-read --allow-write tools/agent-player.mjs
+// Start it with: deno run --allow-read --allow-write .agents/skills/runtime-tools/scripts/agent-player.mjs
 
-import "../src/content/items/index.js";
-import "../src/content/monsters/index.js";
-import "../src/content/interactables/index.js";
-import { installContent } from "../src/content/install.js";
-import { createGameRuntime } from "../src/main/runtime/gameRuntime.js";
-import { AGENT_ACTION_CATALOG } from "../src/main/runtime/agentView.js";
+import "../../../../src/content/items/index.js";
+import "../../../../src/content/monsters/index.js";
+import "../../../../src/content/interactables/index.js";
+import { installContent } from "../../../../src/content/install.js";
+import { createGameRuntime } from "../../../../src/main/runtime/gameRuntime.js";
+import { AGENT_ACTION_CATALOG } from "../../../../src/main/runtime/agentView.js";
 
 installContent();
 

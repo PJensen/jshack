@@ -1,22 +1,28 @@
-import { getOrderedSystems } from "../src/lib/ecs-js/index.js";
-import { createGameRuntime } from "../src/main/runtime/gameRuntime.js";
-import { configureWorld } from "../src/main/scheduler.js";
-import { World } from "../src/lib/ecs-js/index.js";
+import "../../../../src/content/items/index.js";
+import "../../../../src/content/monsters/index.js";
+import "../../../../src/content/interactables/index.js";
+import { installContent } from "../../../../src/content/install.js";
+import { getOrderedSystems } from "../../../../src/lib/ecs-js/index.js";
+import { createGameRuntime } from "../../../../src/main/runtime/gameRuntime.js";
+import { configureWorld } from "../../../../src/main/scheduler.js";
+import { World } from "../../../../src/lib/ecs-js/index.js";
 
-import { Player } from "../src/rules/components/Player.js";
-import { Position } from "../src/rules/components/Position.js";
-import { Vitality } from "../src/rules/components/Vitality.js";
-import { Equipment } from "../src/rules/components/Equipment.js";
-import { Faction } from "../src/rules/components/Faction.js";
-import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
-import { DungeonState } from "../src/rules/components/DungeonState.js";
-import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
-import { AttackIntent } from "../src/rules/components/Intents/AttackIntent.js";
-import { WaitIntent } from "../src/rules/components/Intents/WaitIntent.js";
-import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
-import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
+import { Player } from "../../../../src/rules/components/Player.js";
+import { Position } from "../../../../src/rules/components/Position.js";
+import { Vitality } from "../../../../src/rules/components/Vitality.js";
+import { Equipment } from "../../../../src/rules/components/Equipment.js";
+import { Faction } from "../../../../src/rules/components/Faction.js";
+import { NamedIdentity } from "../../../../src/rules/components/NamedIdentity.js";
+import { DungeonState } from "../../../../src/rules/components/DungeonState.js";
+import { MoveIntent } from "../../../../src/rules/components/Intents/MoveIntent.js";
+import { AttackIntent } from "../../../../src/rules/components/Intents/AttackIntent.js";
+import { WaitIntent } from "../../../../src/rules/components/Intents/WaitIntent.js";
+import { CHUNK_SIZE, TILE_FLOOR } from "../../../../src/rules/environment/dungeon/constants.js";
+import { clearAll, loadChunk } from "../../../../src/rules/environment/dungeon/tileMap.js";
 
 const PHASES = ["ai", "intents", "effects", "scripts", "cleanup"];
+
+installContent();
 
 function parseArgs(argv) {
   const out = {

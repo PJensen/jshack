@@ -19,7 +19,7 @@ export function parseArgs(argv) {
 
 export function usage() {
   return `Usage:
-  deno run --allow-read tools/content-id-audit.mjs ID
+  deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs ID
 
 Shows where a monster/item/spell/material id is defined, referenced, tested, rendered, or emitted.`;
 }

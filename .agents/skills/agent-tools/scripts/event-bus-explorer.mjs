@@ -42,7 +42,7 @@ export function parseArgs(argv) {
 
 export function usage() {
   return `Usage:
-  deno run --allow-read tools/event-bus-explorer.mjs [options]
+  deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs [options]
 
 Options:
   --format summary|csv|mermaid   Output format. Default: summary
@@ -57,10 +57,10 @@ Options:
   --orphans                      Restrict to producer-only and consumer-only events
 
 Examples:
-  deno run --allow-read tools/event-bus-explorer.mjs --format summary
-  deno run --allow-read tools/event-bus-explorer.mjs --format csv --out /tmp/events.csv
-  deno run --allow-read tools/event-bus-explorer.mjs --format mermaid --event damaged
-  deno run --allow-read tools/event-bus-explorer.mjs --producer-only --format csv
+  deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary
+  deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --out /tmp/events.csv
+  deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format mermaid --event damaged
+  deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --producer-only --format csv
 `;
 }
 

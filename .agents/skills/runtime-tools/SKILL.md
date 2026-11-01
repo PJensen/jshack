@@ -4,7 +4,9 @@ description: Use JSHack's deterministic headless runtime, agent bridge, profilin
 argument-hint: <scenario-or-measurement>
 ---
 
-Use this skill when static inspection is not enough and a task needs a seeded
+This skill owns the executable proof tools in `scripts/`. Run them from the
+repository root; game imports resolve relative to those scripts, while trace
+and action paths remain relative to the invoking directory. Use this skill when static inspection is not enough and a task needs a seeded
 simulation, agent-observable gameplay, scheduler profiling, or a performance
 regression check.
 
@@ -16,8 +18,8 @@ regression check.
 | Replay a deterministic action schedule | `headless-runner` | `deno task headless --actions-file path/to/actions.json` |
 | Play through the JSONL agent contract | `agent-player` | `deno task agent:play --seed 12648430 --class outlaw` |
 | Resume or inspect an agent trace | `agent-player` | `deno task agent:play --resume traces/agent-last-run.json` |
-| Find hot scheduler phases/systems | `profile-hot-systems` | `deno run --no-check --allow-read tools/profile-hot-systems.mjs --scenario live_wait --ticks 120` |
-| Measure deferred-command growth | `tick-lifetime-benchmark` | `deno run --allow-read tools/tick-lifetime-benchmark.mjs --ticks 3000` |
+| Find hot scheduler phases/systems | `profile-hot-systems` | `deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/profile-hot-systems.mjs --scenario live_wait --ticks 120` |
+| Measure deferred-command growth | `tick-lifetime-benchmark` | `deno run --allow-read .agents/skills/runtime-tools/scripts/tick-lifetime-benchmark.mjs --ticks 3000` |
 | Run stable performance baselines | Deno benchmarks | `deno task bench` |
 
 ## Evidence workflow
@@ -47,7 +49,7 @@ regression check.
 ## Related references
 
 - `docs/headless-runtime.md` — headless options and action schedules.
-- `tools/AGENT_PLAY.md` — JSONL bridge protocol and trace replay.
+- `.agents/skills/runtime-tools/AGENT_PLAY.md` — JSONL bridge protocol and trace replay.
 - `tests/perf/` — benchmark scenarios.
 - `deno task test:fast` — focused broad runtime coverage.
 

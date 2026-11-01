@@ -15,7 +15,7 @@ export function parseArgs(argv) {
 
 export function usage() {
   return `Usage:
-  deno run --allow-read tools/import-boundary-report.mjs [--format summary|csv]
+  deno run --allow-read .agents/skills/agent-tools/scripts/import-boundary-report.mjs [--format summary|csv]
 
 Reports layer import violations and suspicious cross-layer imports.`;
 }

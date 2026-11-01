@@ -13,7 +13,7 @@ Policy layer for high-intelligence monsters (intel ≥ 7). A tiny feedforward ne
 | `src/rules/ai/policyAction.js` | Maps net output index → MoveIntent / CastSpellIntent |
 | `src/rules/systems/aiPolicySystem.js` | ECS system: runs after aiChaseSystem in `ai` phase |
 | `src/rules/data/aiWeights.js` | Trained weights for `tier_tactical` and `tier_caster` |
-| `tools/trainAI.js` | Headless (1+λ)-ES trainer — pure JS mini-sim, no ECS |
+| `.agents/skills/monster-ai-training/scripts/trainAI.js` | Headless (1+λ)-ES trainer — pure JS mini-sim, no ECS |
 
 ---
 
@@ -81,14 +81,14 @@ aiPolicySystem   ← intel ≥ 7, hunting, canActThisTurn only
 
 ```bash
 # Quick smoke-test (~5 seconds)
-deno run --allow-read --allow-write tools/trainAI.js --tier caster --gens 50
+deno run --allow-read --allow-write .agents/skills/monster-ai-training/scripts/trainAI.js --tier caster --gens 50
 
 # Full retrain and auto-patch aiWeights.js
-deno run --allow-read --allow-write tools/trainAI.js \
+deno run --allow-read --allow-write .agents/skills/monster-ai-training/scripts/trainAI.js \
   --tier caster   --gens 2000 --lambda 20 --trials 50 \
   --out src/rules/data/aiWeights.js
 
-deno run --allow-read --allow-write tools/trainAI.js \
+deno run --allow-read --allow-write .agents/skills/monster-ai-training/scripts/trainAI.js \
   --tier tactical --gens 2000 --lambda 20 --trials 50 \
   --out src/rules/data/aiWeights.js
 ```

@@ -16,7 +16,7 @@ export function parseArgs(argv) {
 
 export function usage() {
   return `Usage:
-  deno run --allow-read tools/agent-target.mjs TERM [--scope src,tests] [--limit 120]
+  deno run --allow-read .agents/skills/agent-tools/scripts/agent-target.mjs TERM [--scope src,tests] [--limit 120]
 
 Searches files, event names, imports, function names, and ordinary text for TERM.`;
 }

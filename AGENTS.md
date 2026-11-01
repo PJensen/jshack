@@ -122,9 +122,9 @@ deno task audit:died
 ### Project Health
 
 ```bash
-deno run --allow-read tools/agent-health.mjs
-deno run --allow-read tools/import-boundary-report.mjs
-deno run --allow-read tools/system-map.mjs
+deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs
+deno run --allow-read .agents/skills/agent-tools/scripts/import-boundary-report.mjs
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs
 ```
 
 `agent-health` summarizes boundary violations, remaining `emitSafe` refs,
@@ -135,11 +135,11 @@ headline hazards are the things to investigate first.
 ### Event Bus
 
 ```bash
-deno run --allow-read tools/event-bus-explorer.mjs --format summary --top 40
-deno run --allow-read tools/event-bus-explorer.mjs --format csv --event damaged
-deno run --allow-read tools/event-bus-explorer.mjs --format mermaid --event damaged
-deno run --allow-read tools/event-bus-explorer.mjs --producer-only --format summary --top 40
-deno run --allow-read tools/event-bus-explorer.mjs --consumer-only --format summary --top 40
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary --top 40
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event damaged
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format mermaid --event damaged
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --producer-only --format summary --top 40
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --consumer-only --format summary --top 40
 ```
 
 Use producer-only events to find emitted behavior with no consumer. Use
@@ -149,11 +149,11 @@ producers.
 ### System Map
 
 ```bash
-deno run --allow-read tools/system-map.mjs --format summary
-deno run --allow-read tools/system-map.mjs --format csv
-deno run --allow-read tools/system-map.mjs --phase effects
-deno run --allow-read tools/system-map.mjs --unregistered
-deno run --allow-read tools/system-map.mjs --missing-tests
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format csv
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --phase effects
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --unregistered
+deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --missing-tests
 ```
 
 Scheduler truth lives in [src/main/scheduler.js](src/main/scheduler.js). Some
@@ -163,14 +163,26 @@ before deleting.
 ### Target Lookup
 
 ```bash
-deno run --allow-read tools/agent-target.mjs damaged --limit 80
-deno run --allow-read tools/content-id-audit.mjs goblin --limit 80
-deno run --allow-read tools/content-id-audit.mjs potion_water --limit 80
+deno run --allow-read .agents/skills/agent-tools/scripts/agent-target.mjs damaged --limit 80
+deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs goblin --limit 80
+deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs potion_water --limit 80
 ```
 
 `agent-target` is a ranked code search for events/functions/files/tests.
 `content-id-audit` follows item, monster, spell, material, loot, visual, and
 test references by ID.
+
+### Agent tool ownership
+
+Every current `tools/` entry is classified in
+[docs/architecture/AGENT_TOOL_OWNERSHIP.md](docs/architecture/AGENT_TOOL_OWNERSHIP.md).
+Agent-facing deterministic inspection, runtime-proof, and monster-training
+implementations are colocated with their owning skill under
+`.agents/skills/<owner>/scripts/`. General repository/CI/developer tooling,
+browser authoring tools, audio asset tooling, and other independent-lifecycle
+utilities remain in `tools/` with their rationale recorded in that matrix.
+There is one canonical implementation per moved tool; stable `deno task`
+interfaces remain the compatibility boundary.
 
 For the complete routing workflow, use
 [`.agents/skills/agent-tools/SKILL.md`](.agents/skills/agent-tools/SKILL.md).
@@ -363,7 +375,7 @@ If an event should be visible to display/audio/messages, verify the complete
 producer/consumer wiring with:
 
 ```bash
-deno run --allow-read tools/event-bus-explorer.mjs --format csv --event event:name
+deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event event:name
 ```
 
 ---
@@ -397,6 +409,6 @@ bounds, parity, layer boundaries, canonical paths.
       `world.install(...)`.
 - [ ] New systems are registered and tested.
 - [ ] Spawn paths use canonical constructors/materializers.
-- [ ] Event wiring checked with `tools/event-bus-explorer.mjs`.
-- [ ] Agent health checked with `tools/agent-health.mjs`.
+- [ ] Event wiring checked with `.agents/skills/agent-tools/scripts/event-bus-explorer.mjs`.
+- [ ] Agent health checked with `.agents/skills/agent-tools/scripts/agent-health.mjs`.
 - [ ] Focused tests and relevant guardrails were run and reported.

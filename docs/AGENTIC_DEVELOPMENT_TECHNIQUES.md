@@ -24,9 +24,8 @@ Evidence:
   separation boundaries.
 - `AGENTS.md` gives exact command recipes for `deno task check`,
   `deno task guard:architecture`, `deno task guard:events`,
-  `deno task guard:tools`, `deno task ratchet:world-state`, `tools/agent-target.mjs`,
-  `tools/content-id-audit.mjs`, `tools/event-bus-explorer.mjs`, and
-  `tools/system-map.mjs`.
+  `deno task guard:tools`, `deno task ratchet:world-state`, and the
+  `.agents/skills/agent-tools/scripts/` inspection tools.
 
 Technique: the project does not rely on agents discovering local norms from
 scratch. It publishes the intended workflow as an executable-oriented manual.
@@ -62,19 +61,19 @@ behavioral surface area.
 
 Evidence:
 
-- `tools/agent-health.mjs` scans for `emitSafe`, rules nondeterminism hazards,
+- `.agents/skills/agent-tools/scripts/agent-health.mjs` scans for `emitSafe`, rules nondeterminism hazards,
   generation async allowances, layer boundary violations, possible
   system-to-system calls, and registered-vs-file system counts.
-- `tools/event-bus-explorer.mjs` scans literal and dynamic `world.emit`,
+- `.agents/skills/agent-tools/scripts/event-bus-explorer.mjs` scans literal and dynamic `world.emit`,
   `world.on`, `ctx.io.emit`, and `ctx.on` usage. It can report producers,
   consumers, payload keys, orphaned producers, orphaned consumers, CSV, and
   Mermaid output.
-- `tools/system-map.mjs` parses scheduler imports and `registerSystem(...)`
+- `.agents/skills/agent-tools/scripts/system-map.mjs` parses scheduler imports and `registerSystem(...)`
   calls, reports phases, unregistered system files, and registered systems
   without obvious tests.
-- `tools/agent-target.mjs` ranks search results by event, symbol, file, import,
+- `.agents/skills/agent-tools/scripts/agent-target.mjs` ranks search results by event, symbol, file, import,
   and text.
-- `tools/content-id-audit.mjs` follows content IDs through definitions, tests,
+- `.agents/skills/agent-tools/scripts/content-id-audit.mjs` follows content IDs through definitions, tests,
   visuals, spawn/loot references, events, and ordinary references.
 
 Technique: agents are given measuring instruments, not just documentation. The
@@ -152,7 +151,7 @@ Evidence:
   intended flow: rules -> bridge -> display.
 - `tests/separationBoundaries.test.mjs` scans imports to reject rules importing
   display and display importing rules.
-- `tools/import-boundary-report.mjs` and `tools/agent-health.mjs` provide
+- `.agents/skills/agent-tools/scripts/import-boundary-report.mjs` and `agent-health.mjs` provide
   CLI-level import boundary reporting.
 
 Technique: agents can work locally because boundaries constrain blast radius.
@@ -184,7 +183,7 @@ Evidence:
 
 - `AGENTS.md` requires systems to communicate with `world.emit` / `world.on`,
   not direct system-to-system calls.
-- `tools/event-bus-explorer.mjs` exists specifically because event contracts are
+- `.agents/skills/agent-tools/scripts/event-bus-explorer.mjs` exists specifically because event contracts are
   important enough to inspect.
 - `AGENTS.md` requires new event contracts to use concrete `EcsEvent` classes.
 - `src/events/Died.js` is an example concrete event class.
@@ -359,18 +358,18 @@ Repository CLIs and Deno tasks:
   `audit:health` expose project state without modifying code.
 - `deno task coverage` and `deno task bench` provide coverage and performance
   hooks.
-- `tools/agent-health.mjs`, `tools/import-boundary-report.mjs`,
-  `tools/event-bus-explorer.mjs`, `tools/system-map.mjs`,
-  `tools/agent-target.mjs`, and `tools/content-id-audit.mjs` are the main
+- `.agents/skills/agent-tools/scripts/agent-health.mjs`, `import-boundary-report.mjs`,
+  `event-bus-explorer.mjs`, `system-map.mjs`, `agent-target.mjs`, and
+  `content-id-audit.mjs` are the main
   agent-facing inspection tools.
 
 Simulation and performance tools:
 
-- `tools/headless-runner.mjs` runs the real rules scheduler and WorldView path
+- `.agents/skills/runtime-tools/scripts/headless-runner.mjs` runs the real rules scheduler and WorldView path
   without browser display code.
 - `docs/headless-runtime.md` documents action schedules, seed/class/depth
   options, and reporting.
-- `tools/profile-hot-systems.mjs` profiles scheduler phases and individual
+- `.agents/skills/runtime-tools/scripts/profile-hot-systems.mjs` profiles scheduler phases and individual
   systems under controlled scenarios.
 - `tests/perf/*.bench.mjs` gives Deno benchmark entry points.
 
@@ -414,7 +413,7 @@ Distribution and packaging tools:
 
 AI/gameplay training tools:
 
-- `tools/trainAI.js` trains a tiny neural policy using a deterministic
+- `.agents/skills/monster-ai-training/scripts/trainAI.js` trains a tiny neural policy using a deterministic
   `(1 + lambda)` evolution strategy mini-sim.
 - `docs/systems/NEURAL_AI.md` documents the neural AI system and training
   direction.
@@ -631,7 +630,8 @@ The project supports running simulation without the browser display.
 
 Evidence:
 
-- `deno.json` defines a `headless` task that runs `tools/headless-runner.mjs`.
+- `deno.json` defines a `headless` task that runs the skill-owned
+  `runtime-tools/scripts/headless-runner.mjs`.
 - `docs/headless-runtime.md` documents the headless runtime.
 - The separation manifest says headless tests run against rules with
   deterministic seeds and intent sequences.

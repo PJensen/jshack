@@ -1,9 +1,9 @@
 #!/usr/bin/env -S deno run --allow-read --allow-write
-// tools/trainAI.js
+// .agents/skills/monster-ai-training/scripts/trainAI.js
 // Neural AI policy trainer using (1+λ)-Evolution Strategy.
 //
 // Usage:
-//   deno run --allow-read --allow-write tools/trainAI.js [options]
+//   deno run --allow-read --allow-write .agents/skills/monster-ai-training/scripts/trainAI.js [options]
 //
 // Options:
 //   --tier tactical        Train for intelligence 7-8 monsters (melee-dominant)
@@ -24,8 +24,8 @@
 //   Fitness = damageDealt*2 + spellCastCount*5 + positionScore - damageTaken*0.5
 //     positionScore: turns monster spends at ideal range (2-6 for casters, ≤1 for melee)
 
-import { createMLP, forward, getWeights, setWeights, serializeNet, totalWeightCount, FEATURE_DIM, OUT_SIZE } from '../src/rules/ai/tinyMLP.js';
-import { MOVE_DIRS, ACTION_WAIT, ACTION_SPELL_0, ACTION_SPELL_MAX, ACTION_RANGED, ACTION_COUNT } from '../src/rules/ai/policyAction.js';
+import { createMLP, forward, getWeights, setWeights, serializeNet, totalWeightCount, FEATURE_DIM, OUT_SIZE } from '../../../../src/rules/ai/tinyMLP.js';
+import { MOVE_DIRS, ACTION_WAIT, ACTION_SPELL_0, ACTION_SPELL_MAX, ACTION_RANGED, ACTION_COUNT } from '../../../../src/rules/ai/policyAction.js';
 
 // ── CLI args ──────────────────────────────────────────────────────────────────
 

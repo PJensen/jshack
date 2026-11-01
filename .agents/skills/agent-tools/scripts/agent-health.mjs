@@ -127,7 +127,7 @@ export async function buildHealthReport() {
     await collectFiles("tools"),
     await collectFiles("docs"),
   )
-    .filter((file) => !file.endsWith("tools/agent-health.mjs"));
+    .filter((file) => !file.endsWith(".agents/skills/agent-tools/scripts/agent-health.mjs"));
   const emitSafe = await grep(all, /\bemitSafe\b/);
   const rulesNondeterminism = await grep(
     rules,

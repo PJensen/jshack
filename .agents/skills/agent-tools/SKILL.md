@@ -6,8 +6,10 @@ argument-hint: <question-or-target>
 
 Use this skill when a task needs repository-wide discovery, architecture evidence,
 event wiring analysis, scheduler mapping, content-ID tracing, or a health check.
-These tools are read-only unless a command explicitly says otherwise. Prefer the
-smallest tool and output mode that answers the question.
+These tools are read-only unless a command explicitly says otherwise. Their
+canonical implementations live beside this guide in `scripts/`; invoke them
+from the repository root and prefer the smallest output mode that answers the
+question.
 
 ## Start with the question
 
@@ -15,14 +17,14 @@ Choose the route before searching broadly:
 
 | Need | Tool | First command |
 | --- | --- | --- |
-| Find a symbol, event, file, or test | `agent-target` | `deno run --allow-read tools/agent-target.mjs TERM --limit 80` |
-| Trace an item, monster, spell, material, loot, or visual ID | `content-id-audit` | `deno run --allow-read tools/content-id-audit.mjs ID --limit 80` |
-| Understand event producers and consumers | `event-bus-explorer` | `deno run --allow-read tools/event-bus-explorer.mjs --format summary --top 40` |
-| Inspect one event contract | `event-bus-explorer` | `deno run --allow-read tools/event-bus-explorer.mjs --format csv --event EVENT` |
-| Map scheduler registration and phases | `system-map` | `deno run --allow-read tools/system-map.mjs --format summary` |
-| Find unregistered or untested systems | `system-map` | `deno run --allow-read tools/system-map.mjs --unregistered` or `--missing-tests` |
-| Check architecture hazards | `agent-health` | `deno run --allow-read tools/agent-health.mjs` |
-| Inspect import-layer violations | `import-boundary-report` | `deno run --allow-read tools/import-boundary-report.mjs` |
+| Find a symbol, event, file, or test | `agent-target` | `deno run --allow-read .agents/skills/agent-tools/scripts/agent-target.mjs TERM --limit 80` |
+| Trace an item, monster, spell, material, loot, or visual ID | `content-id-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs ID --limit 80` |
+| Understand event producers and consumers | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary --top 40` |
+| Inspect one event contract | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event EVENT` |
+| Map scheduler registration and phases | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary` |
+| Find unregistered or untested systems | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --unregistered` or `--missing-tests` |
+| Check architecture hazards | `agent-health` | `deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs` |
+| Inspect import-layer violations | `import-boundary-report` | `deno run --allow-read .agents/skills/agent-tools/scripts/import-boundary-report.mjs` |
 
 ## Evidence workflow
 
@@ -54,6 +56,11 @@ Choose the route before searching broadly:
   for a query they can already answer.
 - When a new recurring workflow is proven, update this skill with the route and
   validation command rather than creating duplicate guidance elsewhere.
+
+Use this skill to discover canonical code and event/scheduler ownership, then
+hand off seeded behavior proof to `runtime-tools`. Producer-only and
+consumer-only reports require manual classification; imported-but-unregistered
+systems may be listener installers. Do not delete from reports alone.
 
 ## Related project tasks
 
