@@ -172,6 +172,9 @@ deno run --allow-read tools/content-id-audit.mjs potion_water --limit 80
 `content-id-audit` follows item, monster, spell, material, loot, visual, and
 test references by ID.
 
+For the complete routing workflow, use
+[`.agents/skills/agent-tools/SKILL.md`](.agents/skills/agent-tools/SKILL.md).
+
 ### Focused Tests
 
 ```bash

@@ -1,7 +1,6 @@
 # Node, Python, and OS junk
 node_modules/
 /.entire/
-/.agents/
 skills-lock.json
 *.log
 *.tmp
