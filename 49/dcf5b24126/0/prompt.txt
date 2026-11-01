@@ -1,0 +1,23 @@
+I'd also commit an push the agents.md change as it sits.
+
+---
+
+funny also -- GREENLIGHT is all about maintaining my GH streak ;-)
+
+---
+
+should we mention skills + deterministic tools?
+
+NOTE: I'm building all kinds of wild skills + deterministic tools at work.
+
+---
+
+I would --- in fact, I'd start organizing the existing tooling along these lines, my mental model is cloudflare wrangler skills -- they're fantastic.
+
+---
+
+approved -- scan the project, lets find these orphaned tools without adjoining skills, and lets start making moves.
+
+---
+
+take it off .gitignore lets make this happen
