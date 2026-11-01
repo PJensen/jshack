@@ -1,0 +1,58 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "df682c0ff3d5",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".agents/skills/agent-tools/SKILL.md",
+    ".agents/skills/agent-tools/scripts/agent-health.mjs",
+    ".agents/skills/agent-tools/scripts/agent-target.mjs",
+    ".agents/skills/agent-tools/scripts/content-id-audit.mjs",
+    ".agents/skills/agent-tools/scripts/event-bus-explorer.mjs",
+    ".agents/skills/agent-tools/scripts/import-boundary-report.mjs",
+    ".agents/skills/agent-tools/scripts/system-map.mjs",
+    ".agents/skills/monster-ai-training/SKILL.md",
+    ".agents/skills/monster-ai-training/scripts/trainAI.js",
+    ".agents/skills/runtime-tools/AGENT_PLAY.md",
+    ".agents/skills/runtime-tools/SKILL.md",
+    ".agents/skills/runtime-tools/scripts/agent-player.mjs",
+    ".agents/skills/runtime-tools/scripts/headless-runner.mjs",
+    ".agents/skills/runtime-tools/scripts/profile-hot-systems.mjs",
+    ".agents/skills/runtime-tools/scripts/tick-lifetime-benchmark.mjs",
+    "AGENTS.md",
+    "deno.json",
+    "docs/AGENTIC_DEVELOPMENT_TECHNIQUES.md",
+    "docs/architecture/AGENT_TOOL_OWNERSHIP.md",
+    "docs/systems/NEURAL_AI.md",
+    "tests/agentTools.test.mjs",
+    "tools/AGENT_PLAY.md",
+    "tools/agent-health.mjs",
+    "tools/agent-player.mjs",
+    "tools/agent-target.mjs",
+    "tools/content-id-audit.mjs",
+    "tools/event-bus-explorer.mjs",
+    "tools/headless-runner.mjs",
+    "tools/import-boundary-report.mjs",
+    "tools/profile-hot-systems.mjs",
+    "tools/system-map.mjs",
+    "tools/tick-lifetime-benchmark.mjs",
+    "tools/trainAI.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/df/682c0ff3d5/0/metadata.json",
+      "transcript": "/df/682c0ff3d5/0/full.jsonl",
+      "compact_transcript": "/df/682c0ff3d5/0/transcript.jsonl",
+      "content_hash": "/df/682c0ff3d5/0/content_hash.txt",
+      "prompt": "/df/682c0ff3d5/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 157075,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5522432,
+    "output_tokens": 27229,
+    "api_call_count": 58
+  }
+}
