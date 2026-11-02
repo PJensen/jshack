@@ -2,7 +2,7 @@
  * Spell casting, channeling, and ability message wiring.
  * Lines ~377-918 from the original installMessageWiring.
  */
-import { ResurrectionCast } from "../../../events/ResurrectionCast.js";
+import { ResurrectionCast } from "../../../../events/ResurrectionCast.js";
 
 export function installSpellMessages(ctx) {
   const { world, log, nameOfEntity, bracketizeName, getSpell, compGet, richSpell, NamedIdentity, playerEntity, Status } = ctx;
