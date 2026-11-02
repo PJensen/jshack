@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "bcae7d098f32",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "src/display/palette/base.js",
+    "src/rules/data/classes.js",
+    "tests/agentRuntime.test.mjs",
+    "tests/classes.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/bc/ae7d098f32/0/metadata.json",
+      "transcript": "/bc/ae7d098f32/0/full.jsonl",
+      "compact_transcript": "/bc/ae7d098f32/0/transcript.jsonl",
+      "content_hash": "/bc/ae7d098f32/0/content_hash.txt",
+      "prompt": "/bc/ae7d098f32/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 82194,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1640960,
+    "output_tokens": 6654,
+    "api_call_count": 34
+  }
+}
