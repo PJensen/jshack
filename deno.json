@@ -20,6 +20,7 @@
     "audit:died": "deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event died",
     "audit:systems": "deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary",
     "audit:item-rarity": "deno run --allow-read .agents/skills/agent-tools/scripts/item-rarity-audit.mjs",
+    "audit:item-strength": "deno run --allow-read .agents/skills/agent-tools/scripts/item-strength-audit.mjs",
     "audit:health": "deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs",
     "coverage": "deno test --no-check --allow-read --coverage=coverage/ && deno coverage coverage/ --lcov --output=coverage.lcov",
     "bench": "deno bench --no-check --allow-read tests/perf/*.bench.mjs",

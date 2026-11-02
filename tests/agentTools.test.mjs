@@ -23,6 +23,11 @@ import {
   formatReport,
 } from "../.agents/skills/agent-tools/scripts/item-rarity-audit.mjs";
 import {
+  auditStrength,
+  filterItems as filterStrengthItems,
+  scoreItem,
+} from "../.agents/skills/agent-tools/scripts/item-strength-audit.mjs";
+import {
   classifyNondeterminism,
   classifySystemCall,
   formatHealthReport,
@@ -198,6 +203,32 @@ Deno.test("item-rarity audit sorts, filters, and flags legacy slots deterministi
   assertEquals(filterItems(items, { kind: "", rarity: "", gearOnly: false, issues: true }).map((item) => item.id), ["zeta"]);
   assert(formatReport(items, "csv").startsWith("id,name,catalogKind,type,slot,rarity,rarityName"));
   assert(formatReport(items, "csv").includes("unique"));
+});
+
+Deno.test("item-strength audit is deterministic and explains its score", () => {
+  const item = {
+    id: "test_blade",
+    name: "Test Blade",
+    catalogKind: "equipment",
+    slot: "weapon",
+    rarity: 2,
+    rarityName: "uncommon",
+    bonuses: { attack: 2 },
+    damageDice: "1d8",
+    staminaCost: 4,
+    maxSockets: 1,
+    affixes: ["test_affix"],
+    procPackages: ["test_proc"],
+  };
+  const first = scoreItem(item);
+  const second = scoreItem(item);
+  assertEquals(first, second);
+  assert(first.score > 0);
+  assert(first.contributions.some((entry) => entry.label === "weapon:average-damage"));
+  const cursed = scoreItem({ bonuses: { defense: -2 }, slot: "ring" });
+  assert(cursed.contributions.some((entry) => entry.points < 0));
+  assertEquals(cursed.score, 0);
+  assertEquals(filterStrengthItems(auditStrength([item]), { slot: "weapon", rarity: "uncommon", outliers: false }).length, 1);
 });
 
 Deno.test("agent-health formatting and path normalization are import-safe", () => {
