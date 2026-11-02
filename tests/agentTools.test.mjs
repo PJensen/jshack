@@ -225,6 +225,9 @@ Deno.test("item-strength audit is deterministic and explains its score", () => {
   assertEquals(first, second);
   assert(first.score > 0);
   assert(first.contributions.some((entry) => entry.label === "weapon:average-damage"));
+  const ammo = scoreItem({ ammoAffinities: { arrows: { damageBonus: 1, fireSpreadChanceBonus: 0.15 } } });
+  assert(ammo.contributions.some((entry) => entry.label === "ammo-affinities"));
+  assertEquals(ammo.manualReview, ["ammo-affinity-context"]);
   const cursed = scoreItem({ bonuses: { defense: -2 }, slot: "ring" });
   assert(cursed.contributions.some((entry) => entry.points < 0));
   assertEquals(cursed.score, 0);

@@ -7,6 +7,7 @@
 import "../../../../src/content/items/index.js";
 import { installContent } from "../../../../src/content/install.js";
 import { listCatalogItems } from "../../../../src/rules/data/itemCatalog.js";
+import { allContentAbilities } from "../../../../src/content/registry.js";
 import { RARITY_SLOTS } from "./item-rarity-audit.mjs";
 
 installContent();
@@ -49,6 +50,7 @@ function addContribution(contributions, label, amount) {
 
 export function scoreItem(item) {
   const contributions = [];
+  const manualReview = [];
   const bonuses = item.bonuses && typeof item.bonuses === "object" ? item.bonuses : {};
   for (const [key, value] of Object.entries(bonuses)) {
     const weight = BONUS_WEIGHTS[key];
@@ -65,10 +67,40 @@ export function scoreItem(item) {
   if (Number(item.maxSockets) > 0) addContribution(contributions, "topology:sockets", Number(item.maxSockets) * 2);
   if (Array.isArray(item.affixes)) addContribution(contributions, "topology:authored-affixes", item.affixes.length * 3);
   if (Array.isArray(item.procPackages)) addContribution(contributions, "topology:proc-packages", item.procPackages.length * 6);
+  if (Number(item.range) > 0) addContribution(contributions, "combat:range", Math.max(0, Number(item.range) - 4) * 0.5);
+  if (Number(item.charges) > 0) addContribution(contributions, "resource:charges", Math.min(8, Number(item.charges)) * 0.5);
+  if (item.chargePool && Number(item.chargePool.max) > 0) {
+    addContribution(contributions, "resource:charge-pool", Math.min(8, Number(item.chargePool.max)) * 0.5);
+  }
+
+  if (item.ammoAffinities && typeof item.ammoAffinities === "object") {
+    let affinityPoints = 0;
+    for (const affinity of Object.values(item.ammoAffinities)) {
+      for (const [key, value] of Object.entries(affinity || {})) {
+        const amount = Number(value);
+        if (!Number.isFinite(amount)) continue;
+        if (key === "damageBonus") affinityPoints += amount * 4;
+        else if (key.endsWith("ChanceBonus")) affinityPoints += amount * 20;
+        else if (key.endsWith("RadiusBonus")) affinityPoints += amount * 2;
+        else affinityPoints += Math.max(0, amount);
+      }
+    }
+    addContribution(contributions, "ammo-affinities", affinityPoints);
+    manualReview.push("ammo-affinity-context");
+  }
+  if (item.lootBiases && typeof item.lootBiases === "object") {
+    const biasPoints = Object.values(item.lootBiases).reduce((sum, value) => sum + Math.max(0, Number(value) - 1) * 2, 0);
+    addContribution(contributions, "loot-biases", biasPoints);
+    manualReview.push("loot-bias-context");
+  }
+  if (item.dropRequirement) manualReview.push("drop-requirement");
+  if (Array.isArray(item.tags) && item.tags.length > 0) {
+    for (const tag of item.tags) manualReview.push(`tag:${tag}`);
+  }
 
   const score = Math.max(0, contributions.reduce((sum, entry) => sum + entry.points, 0));
   contributions.sort((a, b) => b.points - a.points || a.label.localeCompare(b.label));
-  return { score: Number(score.toFixed(2)), contributions };
+  return { score: Number(score.toFixed(2)), contributions, manualReview: [...new Set(manualReview)].sort() };
 }
 
 function median(values) {
@@ -82,7 +114,21 @@ export function auditStrength(items = listCatalogItems()) {
   const scored = items
     .filter((item) => String(item.catalogKind) === "equipment")
     .map((item) => {
-      const { score, contributions } = scoreItem(item);
+      const abilityMap = allContentAbilities().get(String(item.id || ""));
+      const abilitySpecs = abilityMap ? [...abilityMap.values()] : [];
+      const abilityPoints = abilitySpecs.reduce((sum, ability) => {
+        const range = Math.max(1, Number(ability.range || 1));
+        const cooldown = Math.max(0, Number(ability.cooldown || 0));
+        const effects = Array.isArray(ability.effects) ? ability.effects.length : 0;
+        return sum + 4 + range * 0.5 + effects - cooldown * 0.05;
+      }, 0);
+      const enriched = abilitySpecs.length > 0
+        ? { ...item, abilities: abilitySpecs, abilityPoints }
+        : item;
+      const { score: baseScore, contributions, manualReview } = scoreItem(enriched);
+      if (abilityPoints > 0) contributions.push({ label: "active-abilities", points: Number(abilityPoints.toFixed(2)) });
+      const score = baseScore + abilityPoints;
+      if (abilitySpecs.length > 0) manualReview.push("active-ability-context");
       const rarityName = String(item.rarityName || "common").toLowerCase();
       return {
         id: String(item.id || ""),
@@ -92,6 +138,7 @@ export function auditStrength(items = listCatalogItems()) {
         rarityNumber: Number(RARITY_SLOTS[rarityName] || item.rarity || 1),
         score,
         topContributions: contributions.slice(0, 5),
+        manualReview: [...new Set(manualReview)].sort(),
         outliers: [],
       };
     })
@@ -126,11 +173,12 @@ export function filterItems(items, opts) {
 
 function formatCsv(items) {
   const quote = (value) => `"${String(value).replaceAll('"', '""')}"`;
-  const rows = ["id,name,slot,rarity,rarityNumber,score,topContributions,outliers"];
+  const rows = ["id,name,slot,rarity,rarityNumber,score,topContributions,manualReview,outliers"];
   for (const item of items) {
     rows.push([
       item.id, item.name, item.slot, item.rarity, item.rarityNumber, item.score,
       item.topContributions.map((entry) => `${entry.label}:${entry.points}`).join("|"),
+      item.manualReview.join("|"),
       item.outliers.join("|"),
     ].map(quote).join(","));
   }
