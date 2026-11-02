@@ -2,6 +2,8 @@
  * Spell casting, channeling, and ability message wiring.
  * Lines ~377-918 from the original installMessageWiring.
  */
+import { ResurrectionCast } from "../../../events/ResurrectionCast.js";
+
 export function installSpellMessages(ctx) {
   const { world, log, nameOfEntity, bracketizeName, getSpell, compGet, richSpell, NamedIdentity, playerEntity, Status } = ctx;
 
@@ -103,6 +105,22 @@ export function installSpellMessages(ctx) {
     if (reason === 'stunned') { _log(`Your head rings. ${sp.text} fizzles before you can focus.`, `Your head rings. ${sp.html} fizzles before you can focus.`, 'system'); return; }
     if (reason === 'mindlocked') { _log(`Something grips your mind like a vice. ${sp.text} won't come.`, `Something grips your mind like a vice. ${sp.html} won't come.`, 'system'); return; }
     _log(`${sp.text} fizzles. The magic dissipates.`, `${sp.html} fizzles. The magic dissipates.`, 'system');
+  });
+
+  world.on(ResurrectionCast, (event) => {
+    if (nameOfEntity(event.actor) !== 'You') return;
+    if (event.fizzle) {
+      const reason = event.reason === 'no_corpse'
+          ? 'There is no suitable corpse there.'
+          : event.reason === 'no_los'
+            ? 'You cannot see the corpse clearly enough.'
+            : event.reason === 'out_of_range'
+              ? 'That corpse is beyond your reach.'
+            : 'The resurrection fails.';
+      log(reason, 'system');
+      return;
+    }
+    log(`The corpse rises as a temporary undead servant (${event.durationTurns} turns).`, 'legendary');
   });
 
   world.on('spell:miscast', ({ actor, fromSpellId, toSpellId, confused }) => {

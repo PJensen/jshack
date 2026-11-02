@@ -380,6 +380,7 @@ export const LOOT_TABLES = {
       { type: "item", weight: 14, itemId: "book_mark_of_death" },
       { type: "item", weight: 14, itemId: "book_drain_life" },
       { type: "item", weight: 14, itemId: "book_summon_skeleton" },
+      { type: "item", weight: 10, itemId: "book_resurrection" },
       // Holy / cleric
       { type: "item", weight: 22, itemId: "book_flash_heal" },
       { type: "item", weight: 22, itemId: "book_smite" },

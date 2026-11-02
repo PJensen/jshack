@@ -723,6 +723,14 @@ const TARGETED_SPELL_CONFIG = Object.freeze({
       return `Choose Phase Strike destination (up to ${range} tiles). Tap a tile or use arrow keys + Enter. Esc to cancel.`;
     },
   }),
+  resurrection: Object.freeze({
+    fallbackRange: 8,
+    requiresLOS: true,
+    requiresVisible: true,
+    describePrompt(range) {
+      return `Choose a corpse to resurrect (visible, up to ${range} tiles). Tap a tile or use arrow keys + Enter. Esc to cancel.`;
+    },
+  }),
 });
 
 // Targeting controller — created early, keyboard handlers installed below.

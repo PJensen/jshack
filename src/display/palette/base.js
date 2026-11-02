@@ -163,6 +163,7 @@ export const basePalette = {
   book_flash_heal:      { glyph: "?", fg: "#ffffff", glow: "#cceecc", baseScale: 0.7 },
   book_smite:           { glyph: "?", fg: "#ffe080", glow: "#ccaa40", baseScale: 0.7 },
   book_summon_skeleton: { glyph: "?", fg: "#c8c8ff", glow: "#8888cc", baseScale: 0.7 },
+  book_resurrection: { glyph: "?", fg: "#d8b4ff", glow: "#8b5fbf", baseScale: 0.7 },
   book_shadow_bolt:     { glyph: "?", fg: "#cc66ff", glow: "#8833cc", baseScale: 0.7 },
   book_agony:           { glyph: "?", fg: "#aa33cc", glow: "#660088", baseScale: 0.7 },
   book_drain_life:      { glyph: "?", fg: "#e05a76", glow: "#8b2538", baseScale: 0.7 },

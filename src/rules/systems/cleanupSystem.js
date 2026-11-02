@@ -23,6 +23,7 @@ import {
 import { DungeonState } from "../components/DungeonState.js";
 import { Pet } from "../components/Pet.js";
 import { Owner } from "../components/Owner.js";
+import { Reanimated } from "../components/Reanimated.js";
 import { createRng } from "../../lib/ecs-js/rng.js";
 import {
   getMonster,
@@ -149,6 +150,7 @@ export function cleanupSystem(world) {
     if ((vit.hp | 0) <= 0 && world.isAlive(id)) {
       const ident = world.get(id, NamedIdentity);
       const wasPet = world.has(id, Pet);
+      const wasReanimated = world.has(id, Reanimated);
       const petOwnerId = wasPet
         ? (Number(world.get(id, Owner)?.ownerId || 0) | 0)
         : 0;
@@ -249,7 +251,10 @@ export function cleanupSystem(world) {
 
           if (shouldCreateCorpse) {
             let droppedId;
-            if (burnedToDeath) {
+            if (wasReanimated) {
+              droppedId = createFrom(world, Bone, {});
+              world.add(droppedId, Position, { x: pos.x, y: pos.y });
+            } else if (burnedToDeath) {
               droppedId = createFrom(world, Ashes, {});
               world.add(droppedId, Position, { x: pos.x, y: pos.y });
             } else {

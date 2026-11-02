@@ -674,6 +674,22 @@ export const SPELL_DEFS = {
       { kind: 'utility', note: 'Skeleton is always aggressive toward enemies' },
     ],
   },
+  resurrection: {
+    id: 'resurrection',
+    name: 'Resurrection',
+    symbol: '\u2620',
+    manaCost: 18,
+    minIntelligence: 10,
+    castTime: 4,
+    range: 8,
+    script: 'resurrection',
+    targeting: 'target',
+    description: 'Call a fallen creature back into the world as a temporary undead ally. Powerful corpses burn out quickly.',
+    effects: [
+      { kind: 'utility', note: 'Raises a nearby corpse as a temporary friendly undead' },
+      { kind: 'utility', note: 'Powerful corpses rise briefly before burning out' },
+    ],
+  },
   shadow_bolt: {
     id: 'shadow_bolt',
     name: 'Shadow Bolt',

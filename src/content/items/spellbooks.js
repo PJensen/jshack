@@ -27,6 +27,7 @@ _book('book_shadow_veil',   'Spellbook of Shadow Veil',   'rare',   'Grants the 
 _book('book_flash_heal',    'Spellbook of Flash Heal',    'rare',   'Grants the ability to cast Flash Heal.');
 _book('book_smite',         'Spellbook of Smite',         'magic',  'Grants the ability to call down holy judgment on enemies.');
 _book('book_summon_skeleton','Spellbook of Summon Skeleton','epic', 'Grants the ability to rip a skeleton from the earth to fight at your side.');
+_book('book_resurrection',  'Spellbook of Resurrection',  'epic', 'Grants the ability to raise an eligible corpse as a temporary undead ally.');
 _book('book_shadow_bolt',   'Spellbook of Shadow Bolt',   'epic',   'Grants the ability to hurl a devastating bolt of pure shadow.');
 _book('book_agony',         'Spellbook of Agony',         'rare',   'Grants the ability to weave shadow into a curse that gnaws at life force.');
 _book('book_rampage',       'Spellbook of Rampage',       'rare',   'Grants the ability to spend mana for a long, savage battle fury.');

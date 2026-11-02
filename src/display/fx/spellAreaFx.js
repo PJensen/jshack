@@ -8,6 +8,7 @@ import { RadialFx, BlinkFx, PhaseStrikeFx, SearchPulseFx, ArcSweepFx, SmokeFx } 
 import { isGoreDisabled } from "../ui/wiring/goreEngine.js";
 import { VoidHoleCast } from "../../events/VoidHoleCast.js";
 import { FrostNovaCast } from "../../events/FrostNovaCast.js";
+import { ResurrectionCast } from "../../events/ResurrectionCast.js";
 
 /**
  * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)) }} deps
@@ -1849,6 +1850,31 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
           }));
         }
       }
+    });
+
+    world.on(ResurrectionCast, (event) => {
+      if (event.fizzle || !event.at) return;
+      const { x, y } = event.at;
+      _searchPulseFx.push(new RadialFx({ x, y, radius: 0.7, ttl: 0.85 }));
+      for (let i = 0; i < 18; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 0.35 + Math.random() * 0.8;
+        fx.pool.spawn(new Particle({
+          x: x + (Math.random() - 0.5) * 0.18,
+          y: y + (Math.random() - 0.5) * 0.18,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 0.45,
+          ay: 0.18,
+          life: 0.45 + Math.random() * 0.35,
+          size0: 0.08 + Math.random() * 0.06,
+          size1: 0.01,
+          r: 185 + ((Math.random() * 45) | 0),
+          g: 110 + ((Math.random() * 45) | 0),
+          b: 235,
+          a0: 0.9,
+        }));
+      }
+      startShake(cam, 3, 0.12);
     });
 
     world.on(VoidHoleCast, (event) => {

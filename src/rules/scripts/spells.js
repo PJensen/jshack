@@ -73,6 +73,12 @@ import { attachEntityToCurrentFloor } from "../utils/floorEntities.js";
 import { ArcaneBarrageCast, MagicMissileCast } from "../../events/ArcaneProjectileCast.js";
 import { FearSpellCast } from "../../events/FearSpellCast.js";
 import { FrostNovaCast } from "../../events/FrostNovaCast.js";
+import { ResurrectionCast } from "../../events/ResurrectionCast.js";
+import { getMonster } from "../data/monsters.js";
+import { toMonsterSpawnParams } from "../utils/monsterSpawnParams.js";
+import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
+import { Owner } from "../components/Owner.js";
+import { Reanimated } from "../components/Reanimated.js";
 
 /** @returns {any|null} */
 function _getWeather(world) {
@@ -2424,6 +2430,111 @@ REGISTRY['summon_skeleton'] = function summonSkeletonScript(world, actor, spell,
     faction: summonFaction,
     at: { x: spawnTile.x, y: spawnTile.y },
   });
+};
+
+// Resurrection — turn an eligible corpse on a targeted tile into a temporary ally.
+REGISTRY['resurrection'] = function resurrectionScript(world, actor, spell, intent) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  const tx = Number(intent?.x);
+  const ty = Number(intent?.y);
+  const maxRange = Math.max(1, Number(spell?.range || 8) | 0);
+  const emitFizzle = (reason, at = { x: Number.isFinite(tx) ? tx | 0 : 0, y: Number.isFinite(ty) ? ty | 0 : 0 }, corpseId = 0) => {
+    world.emit(new ResurrectionCast({ actor, at, corpseId, fizzle: true, reason }));
+  };
+
+  if (!apos || !Number.isFinite(tx) || !Number.isFinite(ty)) {
+    emitFizzle("no_target");
+    return;
+  }
+
+  const at = { x: tx | 0, y: ty | 0 };
+  if (chebyshev(apos, at) > maxRange) {
+    emitFizzle("out_of_range", at);
+    return;
+  }
+  const blocked = blockedCallback(buildBlocksVisionMap(world));
+  if (!hasLOS(apos.x | 0, apos.y | 0, at.x, at.y, blocked)) {
+    emitFizzle("no_los", at);
+    return;
+  }
+
+  let corpseId = 0;
+  let corpseIdentity = "";
+  for (const [id, pos] of world.query(Position, ItemInfo)) {
+    if ((pos.x | 0) !== at.x || (pos.y | 0) !== at.y) continue;
+    const item = world.get(id, ItemInfo);
+    const identity = String(world.get(id, NamedIdentity)?.identity || "");
+    if (item?.type !== "food" || !identity.startsWith("corpse_")) continue;
+    corpseId = id | 0;
+    corpseIdentity = identity.slice("corpse_".length);
+    break;
+  }
+  if (!(corpseId > 0) || !corpseIdentity) {
+    emitFizzle("no_corpse", at);
+    return;
+  }
+
+  const def = getMonster(corpseIdentity);
+  const tier = Number(def?.tier ?? 99) | 0;
+  if (!def || def.disabled) {
+    emitFizzle("unknown_corpse", at, corpseId);
+    return;
+  }
+
+  const dungeon = [...world.query(DungeonState)][0]?.[1];
+  const depth = Math.max(1, Number(dungeon?.currentDepth || 1) | 0);
+  const spawnParams = toMonsterSpawnParams(def, depth);
+  const durationTurns = def.rare === true || tier >= 99
+    ? 5
+    : tier >= 3
+      ? 10
+      : tier === 2
+        ? 24
+        : tier === 1
+          ? 50
+          : 80;
+  const reanimatedId = spawnMonsterEntity(world, {
+    x: at.x,
+    y: at.y,
+    ...spawnParams,
+    faction: "summoned",
+    name: `Risen ${def.name}`,
+  });
+  if (!(reanimatedId > 0)) {
+    emitFizzle("spawn_failed", at, corpseId);
+    return;
+  }
+
+  world.add(reanimatedId, Owner, { ownerId: actor });
+  world.add(reanimatedId, Reanimated, { sourceIdentity: corpseIdentity });
+  world.add(reanimatedId, Lifespan, {
+    turnsLeft: durationTurns,
+    onExpiry: "remove",
+    expiryEvent: "",
+  });
+  try {
+    world.add(reanimatedId, PetState, {
+      state: "aggressive",
+      targetX: null,
+      targetY: null,
+      targetItemId: 0,
+      stateEnteredTurn: world.step,
+      lastPlayerX: apos.x | 0,
+      lastPlayerY: apos.y | 0,
+      commandCooldown: 0,
+      rangedCooldown: 0,
+    });
+  } catch {}
+  attachEntityToCurrentFloor(world, reanimatedId);
+  world.destroy(corpseId);
+  world.emit(new ResurrectionCast({
+    actor,
+    at,
+    corpseId,
+    reanimatedId,
+    identity: corpseIdentity,
+    durationTurns,
+  }));
 };
 
 // Shadow Bolt — high-damage shadow projectile, no status effect.

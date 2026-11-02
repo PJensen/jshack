@@ -120,6 +120,7 @@ export { HealingApplied } from './HealingApplied.js';
 export { HealingModifiers } from './HealingModifiers.js';
 export { Flying } from './Flying.js';
 export { Traits } from './Traits.js';
+export { Reanimated } from './Reanimated.js';
 export { TownState } from './TownState.js';
 export { ThreatMemory, THREAT_MEMORY_LEVELS } from './ThreatMemory.js';
 export { EntranceProfile } from './EntranceProfile.js';

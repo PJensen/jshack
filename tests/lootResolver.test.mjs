@@ -35,7 +35,7 @@ Deno.test("all spells known suppresses entire spellbook sub-table", () => {
     "harmony_ward", "poison_blade", "plague_swarm",
     "quicken", "blind", "fear", "shadow_veil", "smoke_bomb", "phase_strike",
     "blink", "ignite_weapons",
-    "shadow_bolt", "agony", "mark_of_death", "drain_life", "summon_skeleton",
+    "shadow_bolt", "agony", "mark_of_death", "drain_life", "summon_skeleton", "resurrection",
     "flash_heal", "smite", "divine_shield", "purify", "consecrate",
     "evocation", "homecoming", "hearthstone",
   ]);
