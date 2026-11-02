@@ -1,0 +1,5 @@
+added a prayer sound, I didn't label it as such, just holy something or rather, but my intetion was to use it for prayer
+
+---
+
+I would wire it into the prayer pathway, maybe we dont need to rename, maybe we do need to run it through audio tools to keep it small.
