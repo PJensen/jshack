@@ -268,3 +268,14 @@ defineItem('ring_mana_drain', {
   weight: 0.09,
   description: 'A dull leaden band that devours arcane energy. Your spells wither on your tongue.',
 });
+
+defineItem('deadeye_loop', {
+  name: 'Deadeye Loop', type: 'ring',
+  glyph: '◌', color: '#e0b75a', glow: '#92732f', scale: 0.45,
+  material: 'gold', rarity: 3,
+  bonuses: { accuracy: 1, critChance: 0.03 },
+  procPackages: ['deadeyeLoop'],
+  value: 280,
+  weight: 0.05,
+  description: 'A sighting ring cut from a single piece of golden wire. Every third arrow remembers that it was meant for more than one target.',
+});

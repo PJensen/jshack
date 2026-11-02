@@ -42,7 +42,7 @@ export function applyPendingDamageProcPhase(world, actorId, ctx, rng, options = 
     const out = evaluateEquippedAffixProcs(world, actorId, ctx, options);
     const bonusDamage = out.cancelled ? 0 : rollBonusDamage(world, out.bonusDamage, rng);
     applyProcAccumulator(world, out, { applyDamage: dealDamage });
-    return Math.max(0, Math.floor(Number(ctx?.damage?.amount || 0) + bonusDamage));
+    return Math.max(0, Math.floor((Number(ctx?.damage?.amount || 0) + bonusDamage) * Math.max(0, Number(out.damageMultiplier || 1))));
 }
 
 export function applyReactionProcPhase(world, actorId, ctx, options = {}) {

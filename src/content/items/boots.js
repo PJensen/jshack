@@ -273,3 +273,14 @@ defineItem('breadcrumb_boots', {
     ] },
   },
 });
+
+defineItem('cinderwake_boots', {
+  name: 'Cinderwake Boots', type: 'boots',
+  glyph: 'u', color: '#e47b45', glow: '#8f3f26', scale: 0.65,
+  material: 'leather', rarity: 4,
+  bonuses: { defense: 1, fireResist: 0.15, maxStamina: 8 },
+  procPackages: ['cinderwake'],
+  value: 520,
+  weight: 1.0,
+  description: 'The soles smolder wherever they touch stone. Every retreat becomes a warning written in flame.',
+});

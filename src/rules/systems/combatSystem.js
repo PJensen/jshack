@@ -369,6 +369,10 @@ function resolveHitRoll(world, {
                 source, target, item: weaponId || 0, damage: 0,
                 damageType: 'physical', crit: false, tags: [...actionTags, 'dodged'], scratch: {}, offhand,
             }), () => r());
+            applyReactionProcPhase(world, target, buildProcContext('onDodge', {
+                source: target, target: source, item: 0, damage: 0,
+                damageType: 'physical', crit: false, tags: ['dodged'], scratch: {}, offhand: false,
+            }), { excludeSlots: ['weapon'] });
             return true;
         }
     }

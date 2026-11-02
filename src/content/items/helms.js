@@ -137,3 +137,30 @@ defineItem('eternal_hunger_crown', {
   description: 'Each kill adds a hunger stack (max 10, fades over 12 turns). While hungry, every swing deals floor(stacks÷2) extra flat damage. The crown never lets the hunger fully cool.',
   procPackages: ['hungerSurge'],
 });
+
+defineItem('witch_king_circlet', {
+  name: "Witch-King's Circlet", type: 'helm',
+  glyph: '^', color: '#b366ff', glow: '#5a278c', scale: 0.7,
+  material: 'obsidian', rarity: 5,
+  bonuses: { defense: 1, maxMana: 15, spellHit: 2 },
+  procPackages: ['witchKing'],
+  value: 1100,
+  weight: 0.3,
+  description: 'Spells leave a black crown on their victims. Steel is the key that turns it.',
+  abilities: {
+    call_the_brood: {
+      name: 'Call the Brood', icon: '🕷', targeting: 'none', requiresEquipped: true,
+      cooldown: 200,
+      spiderCount: 3,
+      description: 'Summon {spiderCount} spiders loyal to you.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        for (let i = 0; i < 3; i++) {
+          ctx.spawnMonster('spider', null, { name: 'Bound Spider', faction: 'pet' });
+        }
+        ctx.message('Three spiders crawl from the circlet and bow to your will.', 'good');
+        ctx.present('call_the_brood', { target: ctx.user });
+      },
+    },
+  },
+});

@@ -153,3 +153,14 @@ defineItem('echo_ringmail', {
   description: 'Hundreds of small rings, each one carved with a resonance rune. The mail stores the weight of the last hit landed. The next swing releases that stored force as spectral damage alongside the blow.',
   procPackages: ['shadowParry'],
 });
+
+defineItem('gamblers_mantle', {
+  name: "Gambler's Mantle", type: 'armor',
+  glyph: '[', color: '#d6a45d', glow: '#825b2b', scale: 0.85,
+  material: 'cloth', rarity: 4,
+  bonuses: { defense: 1, critChance: 0.05, luck: 2 },
+  procPackages: ['gamblerMantle'],
+  value: 650,
+  weight: 0.5,
+  description: 'A velvet mantle stitched with loaded dice. Ordinary blows disappoint it; critical blows make it laugh.',
+});

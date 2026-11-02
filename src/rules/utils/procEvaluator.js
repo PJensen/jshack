@@ -70,6 +70,7 @@ function chancePasses(world, value) {
 export function createProcAccumulator() {
   return {
     bonusDamage: [],
+    damageMultiplier: 1,
     bonusCritChance: 0,
     statusesToApply: [],
     buffsToAttach: [],
@@ -94,6 +95,10 @@ function createProcScriptApi(world, out, procNodeId, ctx) {
         max: Number(max || min || 0),
         type: String(type || "physical"),
       });
+    },
+    multiplyDamage(factor) {
+      const value = Number(factor);
+      if (Number.isFinite(value) && value >= 0) out.damageMultiplier *= value;
     },
     addCritChance(amount) {
       out.bonusCritChance += Number(amount || 0);

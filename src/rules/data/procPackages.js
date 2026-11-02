@@ -20,6 +20,7 @@ import { areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshevScalar } from "../utils/distance.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { leaveBreadcrumb } from "../utils/breadcrumbs.js";
+import { spawnHazard } from "../utils/hazardSpawn.js";
 import { getCatalogItem } from "./itemCatalog.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import {
@@ -57,6 +58,11 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   Dawnbreaker: "procPackage:dawnbreaker",
   SunVessel: "procPackage:sunVessel",
   PatientThunder: "procPackage:patientThunder",
+  BracersReversal: "procPackage:bracersReversal",
+  DeadeyeLoop: "procPackage:deadeyeLoop",
+  Cinderwake: "procPackage:cinderwake",
+  WitchKing: "procPackage:witchKing",
+  GamblerMantle: "procPackage:gamblerMantle",
 });
 
 function getEffect(world, entityId, key) {
@@ -97,6 +103,118 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
     if (charges && charges.current < charges.max) {
       world.set(item, Charges, { ...charges, current: charges.current + 1 });
     }
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.BracersReversal, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    const source = Number(ctx?.source || 0) | 0;
+    const kind = String(ctx?.kind || "");
+    if (!(source > 0)) return;
+    if (kind === "onDodge") {
+      const ae = ensureActiveEffects(world, source);
+      if (!ae) return;
+      upsertTimedEffect(ae.effects, { key: "reversal_ready", turnsLeft: 4, stacks: 1, potency: 1 });
+      ctx.proc.message("Your bracers turn the dodge into an opening.", "good");
+      return;
+    }
+    if (kind !== "onBeforeHit" || !getEffect(world, source, "reversal_ready")) return;
+    const amount = Math.max(1, Math.floor(Number(ctx?.damage?.amount || 0)));
+    ctx.proc.multiplyDamage(2);
+    removeEffect(world, source, "reversal_ready");
+    ctx.proc.message("The reversal lands with twice the force.", "good");
+    if (amount <= 0) ctx.proc.cancel();
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.DeadeyeLoop, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    const source = Number(ctx?.source || 0) | 0;
+    const target = Number(ctx?.target || 0) | 0;
+    const kind = String(ctx?.kind || "");
+    if (!(source > 0) || !(target > 0) || !ctx?.tags?.has?.("ranged")) return;
+    if (kind !== "onHit") return;
+    const ae = ensureActiveEffects(world, source);
+    if (!ae) return;
+    const next = Number(getEffect(world, source, "deadeye_count")?.stacks || 0) + 1;
+    if (next < 3) {
+      upsertTimedEffect(ae.effects, { key: "deadeye_count", turnsLeft: 8, stacks: next, potency: next });
+      return;
+    }
+    removeEffect(world, source, "deadeye_count");
+    const sourceFaction = world.get(source, Faction)?.key;
+    const targetFaction = world.get(target, Faction)?.key;
+    const candidates = ctx.proc.entitiesInRadius(target, 1);
+    for (let i = 0; i < candidates.length; i++) {
+      const candidate = candidates[i];
+      if (candidate === source || candidate === target) continue;
+      if (!areFactionsHostile(sourceFaction, world.get(candidate, Faction)?.key)) continue;
+      ctx.proc.dealDamage(candidate, Math.max(1, Math.floor(Number(ctx?.damage?.amount || 0) * 0.5)), "pierce", {
+        source,
+        cause: "procPackage:deadeyeLoop",
+        noTrigger: true,
+      });
+      ctx.proc.message("The shot punches through its target.", "good");
+      return;
+    }
+    if (targetFaction && sourceFaction && areFactionsHostile(sourceFaction, targetFaction)) {
+      ctx.proc.addBonusDamage(2, 2, "pierce");
+    }
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.Cinderwake, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    if (String(ctx?.kind || "") !== "onStep") return;
+    const source = Number(ctx?.source || 0) | 0;
+    const from = ctx?.from;
+    if (!(source > 0) || !from) return;
+    spawnHazard(world, {
+      x: from.x | 0,
+      y: from.y | 0,
+      kind: "fire",
+      medium: "floor",
+      turnsLeft: 3,
+      radius: 0,
+      tickDamage: 2,
+      damageType: "fire",
+      cause: "procPackage:cinderwake",
+      sourceId: source,
+      sourceKind: "cinderwake_boots",
+      identity: "cinderwake_fire",
+      name: "Cinderwake Fire",
+    });
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.WitchKing, {
+  [ScriptVerb.ProcEvaluate]: (world, ctx) => {
+    const source = Number(ctx?.source || 0) | 0;
+    const target = Number(ctx?.target || 0) | 0;
+    const kind = String(ctx?.kind || "");
+    if (!(source > 0) || !(target > 0)) return;
+    if (kind === "onSpellHit") {
+      const ae = ensureActiveEffects(world, target);
+      if (!ae) return;
+      upsertTimedEffect(ae.effects, { key: "witch_king_mark", turnsLeft: 5, stacks: 1, potency: 1 });
+      return;
+    }
+    if (kind !== "onBeforeHit" || !getEffect(world, target, "witch_king_mark")) return;
+    ctx.proc.dealDamage(target, 5, "shadow", { source, cause: "procPackage:witchKing", noTrigger: true });
+    ctx.proc.applyStatus(target, "weaken", 3, 1);
+    removeEffect(world, target, "witch_king_mark");
+    ctx.proc.message("The Witch-King's mark erupts.", "danger");
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.GamblerMantle, {
+  [ScriptVerb.ProcEvaluate]: (_world, ctx) => {
+    if (String(ctx?.kind || "") !== "onBeforeHit") return;
+    if (ctx?.damage?.crit) {
+      ctx.proc.multiplyDamage(1.5);
+      return;
+    }
+    ctx.proc.multiplyDamage(0.85);
   },
 });
 
@@ -2012,6 +2130,63 @@ const PROC_PACKAGE_SPECS = Object.freeze([
     passiveExpressions: Object.freeze([]),
     procTrees: Object.freeze([
       Object.freeze({ trigger: "onSpellCast", script: "procPackage:echoGrimoire", priority: 10 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "bracersReversal",
+    name: "Bracers of Reversal",
+    summary: "Dodging an attack primes the next strike to land twice as hard.",
+    stateKeys: Object.freeze(["reversal_ready"]),
+    hostIdeas: Object.freeze(["duelist bracers", "evasive gloves"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onDodge", script: PROC_PACKAGE_KEYS.BracersReversal, priority: 10 }),
+      Object.freeze({ trigger: "onBeforeHit", script: PROC_PACKAGE_KEYS.BracersReversal, priority: 20 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "deadeyeLoop",
+    name: "Deadeye Loop",
+    summary: "Every third ranged hit punches through its target into another nearby foe.",
+    stateKeys: Object.freeze(["deadeye_count"]),
+    hostIdeas: Object.freeze(["archer rings", "piercing marks"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onHit", script: PROC_PACKAGE_KEYS.DeadeyeLoop, priority: 10, gates: Object.freeze([gateHasActionTag("ranged")]) }),
+    ]),
+  }),
+  Object.freeze({
+    id: "cinderwake",
+    name: "Cinderwake",
+    summary: "Every genuine step leaves a short-lived patch of fire behind.",
+    stateKeys: Object.freeze([]),
+    hostIdeas: Object.freeze(["firewalker boots", "ash pilgrim gear"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onStep", script: PROC_PACKAGE_KEYS.Cinderwake, priority: 10 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "witchKing",
+    name: "Witch-King's Circlet",
+    summary: "Spells mark their victims; the next weapon hit detonates the mark for shadow damage and weakness.",
+    stateKeys: Object.freeze(["witch_king_mark"]),
+    hostIdeas: Object.freeze(["warlock circlets", "spellblade crowns"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onSpellHit", script: PROC_PACKAGE_KEYS.WitchKing, priority: 10 }),
+      Object.freeze({ trigger: "onBeforeHit", script: PROC_PACKAGE_KEYS.WitchKing, priority: 20 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "gamblerMantle",
+    name: "Gambler's Mantle",
+    summary: "Normal hits deal 15% less damage, but critical hits deal 50% more.",
+    stateKeys: Object.freeze([]),
+    hostIdeas: Object.freeze(["risk-reward cloaks", "duelist mantles"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({ trigger: "onBeforeHit", script: PROC_PACKAGE_KEYS.GamblerMantle, priority: 10 }),
     ]),
   }),
 ]);

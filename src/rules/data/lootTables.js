@@ -269,6 +269,7 @@ export const LOOT_TABLES = {
         "eclipse_gauntlets", "plagueweaver_legwraps", "hungering_chainskirt", "cataclysm_greaves_war",
         "soul_mortgage_treads", "warboots_of_cataclysm", "hollow_tide_boots", "portent_focus", "cataclysm_aegis",
         "bloodpact_orb", "glacier_sigil", "conduction_lens", "echo_grimoire", "lodbrok_serpent_bound_breeches",
+        "bracers_reversal", "deadeye_loop", "cinderwake_boots", "witch_king_circlet", "gamblers_mantle",
       ], affixChance: 0 },
     ],
   },

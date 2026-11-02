@@ -245,3 +245,14 @@ defineItem('eclipse_gauntlets', {
   description: 'One gauntlet runs warm, the other cold. Hits alternate: sun phase scatters 2 fire damage and burning to all adjacent enemies; moon phase scatters 2 cold damage and frost to the same radius. The palms decide which half of the sky speaks.',
   procPackages: ['moonfireCycle'],
 });
+
+defineItem('bracers_reversal', {
+  name: 'Bracers of Reversal', type: 'gloves',
+  glyph: '"', color: '#79c7d9', glow: '#3d7e91', scale: 0.6,
+  material: 'steel', rarity: 3,
+  bonuses: { defense: 1, evade: 1 },
+  procPackages: ['bracersReversal'],
+  value: 240,
+  weight: 0.8,
+  description: 'When you dodge, the world seems to pause just long enough for your next blow to land twice as hard.',
+});
