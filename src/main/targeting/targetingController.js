@@ -7,7 +7,9 @@ import { forEachInRadius } from "../../rules/utils/spatialIndex.js";
 import { hasLOS } from "../../shared/math/gridLOS.js";
 import { buildBlocksVisionMap, blockedCallback } from "../../rules/utils/vision.js";
 import { Position } from "../../rules/components/Position.js";
+import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { Faction } from "../../rules/components/Faction.js";
+import { ItemInfo } from "../../rules/components/ItemInfo.js";
 import { Vitality } from "../../rules/components/Vitality.js";
 import { TargetLock } from "../../rules/components/TargetLock.js";
 import { isVisible as isTileVisible } from "../../rules/environment/dungeon/exploredMap.js";
@@ -51,6 +53,35 @@ export function scanVisibleEnemies(world, px, py, range, opts = {}) {
     return da - db;
   });
   return enemies;
+}
+
+/**
+ * Scan visible corpse entities in range, nearest first.
+ * @param {object} world
+ * @param {number} px
+ * @param {number} py
+ * @param {number} range
+ * @returns {Array<{id:number,x:number,y:number}>}
+ */
+export function scanVisibleCorpses(world, px, py, range) {
+  const blocked = buildBlocksVisionMap(world);
+  const isBlocked = blockedCallback(blocked);
+  /** @type {Array<{id:number,x:number,y:number}>} */
+  const corpses = [];
+  forEachInRadius(world, px, py, range, (id, pos) => {
+    const item = world.get(id, ItemInfo);
+    const identity = String(world.get(id, NamedIdentity)?.identity || "");
+    if (item?.type !== "food" || !identity.startsWith("corpse_")) return;
+    if (!hasLOS(px, py, pos.x | 0, pos.y | 0, isBlocked)) return;
+    if (!isTileVisible(pos.x | 0, pos.y | 0)) return;
+    corpses.push({ id, x: pos.x | 0, y: pos.y | 0 });
+  });
+  corpses.sort((a, b) => {
+    const da = chebyshevScalar(a.x, a.y, px, py);
+    const db = chebyshevScalar(b.x, b.y, px, py);
+    return da - db || a.id - b.id;
+  });
+  return corpses;
 }
 
 /**
@@ -102,6 +133,7 @@ export function bracketizeName(s) {
  *   radius?: number,
  *   requiresLOS: boolean,
  *   requiresVisible?: boolean,
+ *   candidateTargets?: Array<{id:number,x:number,y:number}>,
  *   validateTarget?: (x:number, y:number, ctx:{ player:{id:number,pos:{x:number,y:number}} }) => string | null | undefined | false,
  * }} SpellTargeting
  *
@@ -226,7 +258,9 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     _throw = null;
     _enemy = null;
     const pe = playerEntity();
-    if (pe) _cursor = { x: pe.pos.x | 0, y: pe.pos.y | 0 };
+    if (opts.candidateTargets?.length) {
+      _cursor = { x: opts.candidateTargets[0].x | 0, y: opts.candidateTargets[0].y | 0 };
+    } else if (pe) _cursor = { x: pe.pos.x | 0, y: pe.pos.y | 0 };
     log(prompt);
   }
 
@@ -396,6 +430,16 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     if (!_spell && !_throw) return false;
     if (!_cursor) return false;
 
+    if (_spell?.candidateTargets?.length && ev.key === 'Tab') {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const targets = _spell.candidateTargets;
+      const current = targets.findIndex((target) => target.x === _cursor.x && target.y === _cursor.y);
+      const next = (current + (ev.shiftKey ? -1 : 1) + targets.length) % targets.length;
+      _cursor = { x: targets[next].x | 0, y: targets[next].y | 0 };
+      return true;
+    }
+
     /** @type {Record<string, number[]>} */
     const KEY_DIR = {
       ArrowLeft:  [-1,  0], ArrowRight: [1,  0],
@@ -405,6 +449,16 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     };
     const dir = KEY_DIR[ev.key];
     if (dir) {
+      if (_spell?.candidateTargets?.length) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const targets = _spell.candidateTargets;
+        const current = targets.findIndex((target) => target.x === _cursor.x && target.y === _cursor.y);
+        const forward = dir[0] > 0 || dir[1] > 0;
+        const next = (current + (forward ? 1 : -1) + targets.length) % targets.length;
+        _cursor = { x: targets[next].x | 0, y: targets[next].y | 0 };
+        return true;
+      }
       const pe = playerEntity();
       if (!pe) return false;
       ev.preventDefault();
@@ -433,6 +487,11 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
         const clamped = clampTargetToRange(px, py, tx, ty, pending.range);
         const finalTx = clamped.x | 0;
         const finalTy = clamped.y | 0;
+        if (pending.candidateTargets?.length
+          && !pending.candidateTargets.some((target) => target.x === finalTx && target.y === finalTy)) {
+          log(`${pending.spellName} must target one of the visible corpses.`);
+          return true;
+        }
         const dist = chebyshevScalar(finalTx, finalTy, px, py);
         if (!(dist > 0)) {
           log(`${pending.spellName} needs another tile.`);
@@ -573,6 +632,21 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       const clamped = clampTargetToRange(px, py, rawTx, rawTy, pending.range);
       const tx = clamped.x | 0;
       const ty = clamped.y | 0;
+      if (pending.candidateTargets?.length) {
+        const selected = pending.candidateTargets.find((target) => target.x === (rawTx | 0) && target.y === (rawTy | 0));
+        if (!selected) {
+          log(`${pending.spellName} must target one of the visible corpses.`);
+          return true;
+        }
+        if (_cursor.x === selected.x && _cursor.y === selected.y) {
+          _spell = null;
+          _cursor = null;
+          dispatchRules({ type: 'rules.castActiveSpell', payload: { spellId: pending.spellId, targetId: pe.id, x: selected.x, y: selected.y } });
+          return true;
+        }
+        _cursor = { x: selected.x | 0, y: selected.y | 0 };
+        return true;
+      }
       const dist = chebyshevScalar(tx, ty, px, py);
       if (!(dist > 0)) {
         log(`${pending.spellName} needs another tile.`);

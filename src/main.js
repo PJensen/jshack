@@ -185,7 +185,7 @@ import { effectiveMaxHp, effectiveMaxMana, effectiveMaxStamina } from "./rules/u
 import { pickMonster } from "./rules/environment/dungeon/tables.js";
 import { isApplyTool, listApplyTargetsForTool } from "./rules/content/items/applyPayloads.js";
 import { installLodbrokSpawnWiring } from "./rules/data/procPackages.js";
-import { createTargetingController, scanVisibleEnemies, clampTargetToRange, worldToTile, bracketizeName } from "./main/targeting/targetingController.js";
+import { createTargetingController, scanVisibleEnemies, scanVisibleCorpses, clampTargetToRange, worldToTile, bracketizeName } from "./main/targeting/targetingController.js";
 import { installScrollWandWiring } from "./main/wiring/scrollWandWiring.js";
 import { createContentAbilityController } from "./main/targeting/itemAbilityController.js";
 import { installPetWiring } from "./main/wiring/petWiring.js";
@@ -1471,6 +1471,13 @@ addEventListener('ui:castActiveSpell', () => {
     );
     const range = targetedCfg.useVisionRange === true ? getPlayerVisionRange() : configuredRange;
     if (targeting.toggleSpellOff(id)) return;
+    const candidateTargets = id === 'resurrection'
+      ? scanVisibleCorpses(world, playerEntity(world)?.pos?.x | 0, playerEntity(world)?.pos?.y | 0, range)
+      : null;
+    if (id === 'resurrection' && (!candidateTargets || candidateTargets.length === 0)) {
+      messageLog?.log?.({ text: 'No visible corpses are in range to resurrect.', type: 'system' });
+      return;
+    }
     targeting.openSpellTargeting({
       spellId: id,
       spellName,
@@ -1478,6 +1485,7 @@ addEventListener('ui:castActiveSpell', () => {
       radius: Math.max(0, Number(spell?.radius || targetedCfg.radius || 0) | 0),
       requiresLOS: targetedCfg.requiresLOS === true,
       requiresVisible: targetedCfg.requiresVisible === true,
+      candidateTargets,
     }, targetedCfg.describePrompt(range));
     return;
   }
