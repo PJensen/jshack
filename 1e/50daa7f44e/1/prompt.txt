@@ -1,0 +1,5 @@
+feline trait, + dmg % against rodents
+
+---
+
+plus hit against rodents
