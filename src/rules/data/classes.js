@@ -186,6 +186,42 @@ export const CLASS_DEFS = {
     ],
   },
 
+  necromancer: {
+    id: 'necromancer',
+    name: 'Necromancer',
+    icon: '💀',
+    description: 'A gravebinder who turns fallen enemies into temporary allies. Every corpse is a choice.',
+    deityId: 'molkhar',
+    stats: {
+      maxHp: 21,
+      maxMana: 60,
+      manaRegen: 0.14,
+      maxStamina: 80,
+      staminaRegen: 2.0,
+      intelligence: 14,
+      dexterity: 12,
+      visionRange: 6,
+    },
+    equipment: {
+      weapon: 'staff_oak',
+      armor: null,
+      offhand: null,
+      gloves: 'gloves_arcane',
+      feet: 'shoes_cloth',
+    },
+    inventoryItems: [
+      { itemId: 'hearthstone', count: 1 },
+      { itemId: 'potion_health', count: 2 },
+      { itemId: 'potion_mana', count: 3 },
+      { itemId: 'lockpick', count: 5 },
+      { itemId: 'scroll_identify', count: 4 },
+    ],
+    startingSpells: [
+      'agony',
+      'summon_skeleton',
+    ],
+  },
+
   mage: {
     id: 'mage',
     name: 'Mage',

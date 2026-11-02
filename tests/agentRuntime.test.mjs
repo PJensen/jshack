@@ -1,6 +1,10 @@
 import "./helpers/installContentCatalog.mjs";
 import { assert, assertEquals, assertExists } from "jsr:@std/assert";
 import { createGameRuntime } from "../src/main/runtime/gameRuntime.js";
+import { Brain } from "../src/rules/components/Brain.js";
+import { Devotion } from "../src/rules/components/Devotion.js";
+import { Mana } from "../src/rules/components/Mana.js";
+import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 
 Deno.test("agent runtime exposes a bounded JSON-safe observation and advances actions", async () => {
   const runtime = await createGameRuntime({ seed: 0xA61E17, classId: "outlaw", startDepth: 1 });
@@ -25,4 +29,22 @@ Deno.test("agent runtime exposes a bounded JSON-safe observation and advances ac
   const after = runtime.snapshot().step;
   assert(after > before, "wait should advance the simulation");
   assertEquals(runtime.observe({ mapRadius: 4 }).turn, after);
+});
+
+Deno.test("necromancer runtime starts with its class loadout", async () => {
+  const runtime = await createGameRuntime({ seed: 0xC0FFEE, classId: "necromancer", startDepth: 1 });
+  const player = runtime.getPlayer();
+  assertExists(player);
+
+  const brain = runtime.world.get(player.id, Brain);
+  const mana = runtime.world.get(player.id, Mana);
+  const devotion = runtime.world.get(player.id, Devotion);
+  const identity = runtime.world.get(player.id, NamedIdentity);
+
+  assertEquals(identity.identity, "player_necromancer");
+  assertEquals(mana.maxMana, 60);
+  assertEquals(devotion.pantheon, true);
+  assert(typeof devotion.deityId === "string" && devotion.deityId.length > 0);
+  assert(brain.learnedSpellIds.includes("agony"));
+  assert(brain.learnedSpellIds.includes("summon_skeleton"));
 });

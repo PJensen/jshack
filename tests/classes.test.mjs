@@ -5,10 +5,10 @@ import { DEITY_DEFS } from '../src/rules/data/deities.js';
 import { getCatalogItem } from '../src/rules/data/itemCatalog.js';
 import { getSpell } from "../src/rules/data/spells.js";
 
-Deno.test("CLASS_DEFS has exactly 10 classes", () => {
+Deno.test("CLASS_DEFS has exactly 11 classes", () => {
   const ids = listClassIds();
-  assertEquals(ids.length, 10);
-  for (const id of ['druid', 'warden', 'outlaw', 'cleric', 'archeologist', 'warlock', 'mage', 'mireborn', 'pilgrim', 'valkyrie']) {
+  assertEquals(ids.length, 11);
+  for (const id of ['druid', 'warden', 'outlaw', 'cleric', 'archeologist', 'warlock', 'necromancer', 'mage', 'mireborn', 'pilgrim', 'valkyrie']) {
     assert(ids.includes(id), `missing class: ${id}`);
   }
 });
@@ -113,6 +113,19 @@ Deno.test("warlock starts with shadow_bolt and lifetap", () => {
   assert(warlock.startingSpells.includes('shadow_bolt'), 'warlock should start with shadow_bolt');
   assert(warlock.startingSpells.includes('agony'), 'warlock should start with agony');
   assertEquals(warlock.startingSpells.length, 2, "warlock should start with exactly 2 spells");
+});
+
+Deno.test("necromancer is a Molkhar caster with grave-themed starter spells", () => {
+  const necromancer = getClass('necromancer');
+  assert(necromancer, 'necromancer should be a class');
+  assertEquals(necromancer.deityId, 'molkhar');
+  assertEquals(necromancer.icon, '💀');
+  assert(necromancer.description.includes('temporary allies'));
+  assertEquals(necromancer.startingSpells.length, 2);
+  assert(necromancer.startingSpells.includes('agony'));
+  assert(necromancer.startingSpells.includes('summon_skeleton'));
+  assertEquals(necromancer.equipment.weapon, 'staff_oak');
+  assertEquals(necromancer.equipment.gloves, 'gloves_arcane');
 });
 
 Deno.test("outlaw starts with cheap_shot and poison_blade", () => {

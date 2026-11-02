@@ -35,6 +35,7 @@ export const basePalette = {
   player_cleric:  { glyph: "@", fg: "#ffe066", glow: "#cca830" },
   player_archeologist: { glyph: "@", fg: "#d2a064", glow: "#8a6030" },
   player_warlock:  { glyph: "@", fg: "#b366ff", glow: "#8833cc" },
+  player_necromancer: { glyph: "@", fg: "#b8a0d8", glow: "#705090" },
   player_mireborn: { glyph: "@", fg: "#40c8a0", glow: "#208060" },
   player_mage:     { glyph: "@", fg: "#ff8833", glow: "#cc5500" },
   player_pilgrim:  { glyph: "@", fg: "#f0f0ff", glow: "#aaaadd" },
