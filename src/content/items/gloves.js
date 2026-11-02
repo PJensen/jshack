@@ -20,6 +20,46 @@ defineItem('tanner_bracers', {
   description: "Workman's bracers with reinforced stitching along the wrist.",
 });
 
+defineItem('workmans_gloves', {
+  name: "Workman's Gloves", type: 'gloves',
+  glyph: '"', color: '#a98258', glow: '#705234', scale: 0.6,
+  material: 'leather', rarity: 1,
+  bonuses: { defense: 1, maxStamina: 3 },
+  value: 24,
+  description: 'Sturdy gloves made for hauling, climbing, and getting through a long day without complaint.',
+  weight: 0.2,
+});
+
+defineItem('gripwraps', {
+  name: 'Gripwraps', type: 'gloves',
+  glyph: '"', color: '#8c7968', glow: '#5f5146', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { attack: 1, maxStamina: 4 },
+  value: 55,
+  description: 'Wrapped palms and reinforced fingers that make weapons, tools, and rough ground easier to handle.',
+  weight: 0.2,
+});
+
+defineItem('scribe_gloves', {
+  name: 'Scribe Gloves', type: 'gloves',
+  glyph: '"', color: '#a9a4c5', glow: '#716d92', scale: 0.6,
+  material: 'cloth', rarity: 1,
+  bonuses: { defense: 1, maxMana: 4 },
+  value: 38,
+  description: 'Thin gloves with ink-dark fingertips, made for careful work and steadier concentration.',
+  weight: 0.1,
+});
+
+defineItem('focus_wraps', {
+  name: 'Focus Wraps', type: 'gloves',
+  glyph: '"', color: '#7897a8', glow: '#4f6d7d', scale: 0.6,
+  material: 'cloth', rarity: 1,
+  bonuses: { defense: 1, manaRegen: 0.15, maxStamina: 2 },
+  value: 40,
+  description: 'Simple cloth wraps tied tightly around the wrists to keep the hands steady through long work and longer concentration.',
+  weight: 0.1,
+});
+
 defineItem('gauntlets_iron', {
   name: 'Iron Gauntlets', type: 'gloves',
   glyph: '"', color: '#a8b8c8', glow: '#768797', scale: 0.6,

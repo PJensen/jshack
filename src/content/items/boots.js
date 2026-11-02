@@ -28,6 +28,26 @@ defineItem('trail_boots', {
   weight: 1.0,
 });
 
+defineItem('sturdy_boots', {
+  name: 'Sturdy Boots', type: 'boots',
+  glyph: 'u', color: '#80684e', glow: '#574533', scale: 0.65,
+  material: 'leather', rarity: 1,
+  bonuses: { defense: 1, maxStamina: 5 },
+  value: 36,
+  description: 'Solid leather boots with thick soles, suitable for roads, ruins, and everything between.',
+  weight: 1.5,
+});
+
+defineItem('softstep_boots', {
+  name: 'Softstep Boots', type: 'boots',
+  glyph: 'u', color: '#9b896e', glow: '#685a47', scale: 0.65,
+  material: 'leather', rarity: 1,
+  bonuses: { maxStamina: 4, visionRange: 1 },
+  value: 34,
+  description: 'Flexible boots with quiet soles and enough support for a long day away from the road.',
+  weight: 0.8,
+});
+
 defineItem('sandals_hemp', {
   name: 'Hemp Sandals', type: 'boots',
   glyph: 'u', color: '#c6b28a', glow: '#8f7c57', scale: 0.65,

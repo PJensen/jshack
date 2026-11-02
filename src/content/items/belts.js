@@ -19,6 +19,46 @@ defineItem('belt_girded', {
   weight: 0.4,
 });
 
+defineItem('travelers_belt', {
+  name: "Traveler's Belt", type: 'belt',
+  glyph: '=', color: '#8f704c', glow: '#61482f', scale: 0.6,
+  material: 'leather', rarity: 1,
+  bonuses: { maxStamina: 6, staminaRegen: 0.2 },
+  value: 32,
+  description: 'A dependable belt with room for a knife, a pouch, and whatever the road demands next.',
+  weight: 0.4,
+});
+
+defineItem('utility_belt', {
+  name: 'Utility Belt', type: 'belt',
+  glyph: '=', color: '#737b68', glow: '#4e5547', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { defense: 1, maxStamina: 5, luck: 1 },
+  value: 65,
+  description: 'A practical belt of loops and pouches. It is never optimized for one job, which is why it is useful for all of them.',
+  weight: 0.6,
+});
+
+defineItem('balanced_belt', {
+  name: 'Balanced Belt', type: 'belt',
+  glyph: '=', color: '#a18a68', glow: '#6e5b40', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { maxHp: 3, maxStamina: 4, defense: 1 },
+  value: 60,
+  description: 'A broad, well-fitted belt that spreads its modest protection across the whole body.',
+  weight: 0.5,
+});
+
+defineItem('pouch_belt', {
+  name: 'Pouch Belt', type: 'belt',
+  glyph: '=', color: '#92704d', glow: '#61472f', scale: 0.6,
+  material: 'leather', rarity: 1,
+  bonuses: { maxMana: 2, maxStamina: 3, luck: 1 },
+  value: 42,
+  description: 'A row of small pouches for chalk, charms, rations, and anything else worth keeping close.',
+  weight: 0.5,
+});
+
 defineItem('belt_chain', {
   name: 'Chain Belt', type: 'belt',
   glyph: '=', color: '#9ea8b3', glow: '#6e7782', scale: 0.6,
