@@ -17,6 +17,7 @@ import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { cleanupSystem } from "../src/rules/systems/cleanupSystem.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
+import { buildWorldView } from "../src/bridge/schema/worldView.js";
 
 function loadFlatFloor() {
   clearAll();
@@ -50,6 +51,7 @@ Deno.test("resurrection raises an eligible corpse as a temporary allied monster"
     assertEquals(world.get(risen, Faction).key, "summoned");
     assertEquals(world.get(risen, CreatureType).type, CREATURE_TYPES.undead);
     assertEquals(world.get(risen, NamedIdentity).name, "Reanimated Goblin");
+    assert(buildWorldView(world).entities.find((entry) => entry.id === risen)?.tags.includes("reanimated_glow"));
     assertEquals(world.get(risen, Owner).ownerId, caster);
     assertEquals(world.get(risen, Lifespan).turnsLeft, 80);
     assertEquals(events.length, 1);

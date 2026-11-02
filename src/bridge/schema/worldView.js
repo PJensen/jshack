@@ -70,6 +70,7 @@ import { Physiology } from "../../rules/components/Physiology.js";
 import { resolveEquippedWeaponVfx } from "./weaponVfxResolver.js";
 import { getMaterialIntrinsic } from '../../rules/data/materials.js';
 import { Material } from '../../rules/components/Material.js';
+import { Reanimated } from '../../rules/components/Reanimated.js';
 import { getGem } from '../../rules/data/gems.js';
 import {
 	clearPerceptionMemory,
@@ -447,6 +448,9 @@ function normalizeDisplayStatusType(rawType) {
  * @param {EntityView} rec
  */
 function projectDisplayTags(world, id, rec) {
+	if (world.has(id, Reanimated) && !rec.tags.includes('reanimated_glow')) {
+		rec.tags.push('reanimated_glow');
+	}
 	/** @type {any} */ const stat = /** @type any */ (world.get(id, Status));
 	if (stat && Array.isArray(stat.statuses)) {
 		for (let i = 0; i < stat.statuses.length; i++) {

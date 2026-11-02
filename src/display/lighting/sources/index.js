@@ -40,6 +40,7 @@ const LANTERN_GOLD = [255, 210, 140];   // lantern — slightly brighter, warmer
 const FIRE_RED     = [255, 120, 40];    // burning entities / fire hazards
 const STORM_WHITE  = [200, 210, 255];   // lightning / storm effects
 const SOUL_GREEN   = [80, 255, 120];    // soul / nature magic
+const REANIMATED_VIOLET = [150, 110, 220]; // reanimation aura
 const BLOOD_RED    = [255, 50, 50];     // blood magic
 const VENOM_GREEN  = [120, 255, 80];    // venom / poison glow
 const HOLY_GOLD    = [255, 240, 180];   // invulnerable / divine
@@ -456,6 +457,8 @@ export function collectLightSources(view, opts = {}) {
         );
       } else if (tags.includes('stasis')) {
         emitPatterned(out, 'breathe', t, e.id, ex, ey, 3.5, [136, 221, 255], 4);
+      } else if (tags.includes('reanimated_glow')) {
+        emitPatterned(out, 'breathe', t, e.id, ex, ey, 2.4, REANIMATED_VIOLET, 3);
       } else if (tags.includes('invulnerable')) {
         emitPatterned(out, 'holy', t, e.id, ex, ey, 5, HOLY_GOLD, 5);
       } else if (tags.includes('storm_glowing')) {
