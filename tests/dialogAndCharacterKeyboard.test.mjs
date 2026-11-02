@@ -186,3 +186,16 @@ Deno.test("character menu remembers its active tab and Escape closes visible pan
   assertStringIncludes(overlay, "for (const p of document.querySelectorAll('.ui-panel'))");
   assertStringIncludes(main, "detail: { restoreLastTab: true }");
 });
+
+Deno.test("crafting benches handle Escape before the message-more capture listener", async () => {
+  const overlay = await Deno.readTextFile("src/display/ui/overlay.js");
+
+  assertEquals(
+    (overlay.match(/window\.addEventListener\('keydown', escKey, \{ capture: true \}\);/g) || []).length,
+    2,
+  );
+  assertEquals(
+    (overlay.match(/ke\.stopImmediatePropagation\(\);/g) || []).length >= 2,
+    true,
+  );
+});

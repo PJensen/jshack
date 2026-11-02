@@ -996,12 +996,13 @@ export function initOverlays() {
       if (ke.key === 'Escape') {
         window.dispatchEvent(new CustomEvent('ui:closeAlchemyBench'));
         ke.preventDefault();
+        ke.stopImmediatePropagation();
       }
     };
-    window.addEventListener('keydown', escKey);
+    window.addEventListener('keydown', escKey, { capture: true });
     const obs = new MutationObserver(() => {
       if (alchemy.style.display === 'none') {
-        window.removeEventListener('keydown', escKey);
+        window.removeEventListener('keydown', escKey, { capture: true });
         obs.disconnect();
       }
     });
@@ -1050,12 +1051,13 @@ export function initOverlays() {
       if (ke.key === 'Escape') {
         window.dispatchEvent(new CustomEvent('ui:closeEnchantingBench'));
         ke.preventDefault();
+        ke.stopImmediatePropagation();
       }
     };
-    window.addEventListener('keydown', escKey);
+    window.addEventListener('keydown', escKey, { capture: true });
     const obs = new MutationObserver(() => {
       if (alchemy.style.display === 'none') {
-        window.removeEventListener('keydown', escKey);
+        window.removeEventListener('keydown', escKey, { capture: true });
         obs.disconnect();
       }
     });
