@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "eab7d9b84896",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "VERSION",
+    "src/display/passes/vfx/glyph/effects/bleedPulse.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/ea/b7d9b84896/0/metadata.json",
+      "transcript": "/ea/b7d9b84896/0/full.jsonl",
+      "compact_transcript": "/ea/b7d9b84896/0/transcript.jsonl",
+      "content_hash": "/ea/b7d9b84896/0/content_hash.txt",
+      "prompt": "/ea/b7d9b84896/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 31580,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1564416,
+    "output_tokens": 2899,
+    "api_call_count": 13
+  }
+}
