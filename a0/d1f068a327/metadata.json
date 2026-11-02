@@ -1,0 +1,32 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "a0d1f068a327",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/items/index.js",
+    "src/content/items/uncommonGear.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main.js",
+    "src/rules/data/lootTables.js",
+    "tests/lootResolver.test.mjs",
+    "tests/quickSlotStack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/a0/d1f068a327/0/metadata.json",
+      "transcript": "/a0/d1f068a327/0/full.jsonl",
+      "compact_transcript": "/a0/d1f068a327/0/transcript.jsonl",
+      "content_hash": "/a0/d1f068a327/0/content_hash.txt",
+      "prompt": "/a0/d1f068a327/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 112903,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1719168,
+    "output_tokens": 10007,
+    "api_call_count": 25
+  }
+}
