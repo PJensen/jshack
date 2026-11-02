@@ -207,6 +207,7 @@ export const CLASS_DEFS = {
       armor: null,
       offhand: null,
       gloves: 'gloves_arcane',
+      ring1: 'ring_bone',
       feet: 'shoes_cloth',
     },
     inventoryItems: [
