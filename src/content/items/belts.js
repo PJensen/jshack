@@ -73,7 +73,7 @@ defineItem('spellcord_belt', {
   name: 'Spellcord Belt', type: 'belt',
   glyph: '=', color: '#827ba9', glow: '#554e7b', scale: 0.6,
   material: 'cloth', rarity: 2,
-  bonuses: { maxMana: 6, manaRegen: 0.15 },
+  bonuses: { maxMana: 8, manaRegen: 0.25 },
   value: 84,
   description: 'A braided cord marked with tiny knots that help a spell find its way from thought to hand.',
   weight: 0.2,

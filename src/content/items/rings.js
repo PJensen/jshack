@@ -25,7 +25,7 @@ defineItem('ring_health', {
   name: 'Ring of Health', type: 'ring',
   glyph: '◌', color: '#ffb347', glow: '#ffb347', scale: 0.45,
   material: 'gold', rarity: 2,
-  bonuses: { maxHp: 5 },
+  bonuses: { maxHp: 8 },
   weight: 0.06,
 });
 
