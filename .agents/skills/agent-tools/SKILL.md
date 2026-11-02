@@ -38,6 +38,27 @@ Choose the route before searching broadly:
 6. Run `deno test --allow-read tests/agentTools.test.mjs` if tool behavior or
    parsing assumptions change.
 
+## Class identity/display verification
+
+When adding or changing a player class, treat its identity as a cross-layer
+contract. Verify all of these independently:
+
+- `CLASS_DEFS` registration, valid deity, starter equipment, inventory, and spells.
+- A fresh runtime applies `player_<classId>` to `NamedIdentity` and projects the
+  same value through `WorldView`.
+- `applyPlayerClassLoadout()` repairs the identity when the player entity
+  already exists; this covers the live new-game path after entity creation.
+- `buildPalette()` contains `player_<classId>` and the glyph atlas can resolve it.
+
+The smallest useful regression set is:
+
+```bash
+deno test --allow-read tests/classes.test.mjs tests/agentRuntime.test.mjs tests/displayGlyphCoverage.test.mjs
+```
+
+Do not validate only the palette row: a correct palette cannot fix a stale or
+generic `NamedIdentity` reaching the bridge.
+
 ## Useful output modes
 
 - `summary` is for a fast human scan.
