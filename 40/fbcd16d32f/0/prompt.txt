@@ -1,0 +1,9 @@
+I feel like we need much cleaner corpse targeting
+
+---
+
+right now I'm just picking tiles, but that aint working as good as it should
+
+---
+
+lets fix
