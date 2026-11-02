@@ -48,6 +48,46 @@ defineItem('softstep_boots', {
   weight: 0.8,
 });
 
+defineItem('gravewalker_boots', {
+  name: 'Gravewalker Boots', type: 'boots',
+  glyph: 'u', color: '#77746d', glow: '#4e4c48', scale: 0.65,
+  material: 'leather', rarity: 1,
+  bonuses: { defense: 1, maxMana: 2, visionRange: 1 },
+  value: 44,
+  description: 'Soft-soled boots that leave shallow prints, even in dust that remembers every other visitor.',
+  weight: 0.8,
+});
+
+defineItem('ashen_boots', {
+  name: 'Ashen Boots', type: 'boots',
+  glyph: 'u', color: '#766c70', glow: '#4b4147', scale: 0.65,
+  material: 'leather', rarity: 2,
+  bonuses: { defense: 1, maxMana: 3, fireResist: 0.1 },
+  value: 68,
+  description: 'Charred leather boots that never quite stop smoking around the soles.',
+  weight: 0.9,
+});
+
+defineItem('mosswalker_boots', {
+  name: 'Mosswalker Boots', type: 'boots',
+  glyph: 'u', color: '#718c63', glow: '#465d3d', scale: 0.65,
+  material: 'leather', rarity: 1,
+  bonuses: { defense: 1, maxStamina: 3, poisonResist: 0.05 },
+  value: 42,
+  description: 'Damp green boots that grip wet stone and smell faintly of rain.',
+  weight: 1.0,
+});
+
+defineItem('marching_boots', {
+  name: 'Marching Boots', type: 'boots',
+  glyph: 'u', color: '#81776b', glow: '#574c42', scale: 0.65,
+  material: 'leather', rarity: 2,
+  bonuses: { defense: 1, maxStamina: 8, staminaRegen: 0.2 },
+  value: 78,
+  description: 'Reliable boots with reinforced heels, made for arriving tired instead of arriving late.',
+  weight: 1.6,
+});
+
 defineItem('sandals_hemp', {
   name: 'Hemp Sandals', type: 'boots',
   glyph: 'u', color: '#c6b28a', glow: '#8f7c57', scale: 0.65,

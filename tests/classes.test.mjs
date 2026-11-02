@@ -125,7 +125,7 @@ Deno.test("necromancer is a Molkhar caster with grave-themed starter spells", ()
   assert(necromancer.startingSpells.includes('agony'));
   assert(necromancer.startingSpells.includes('summon_skeleton'));
   assertEquals(necromancer.equipment.weapon, 'bone_staff');
-  assertEquals(necromancer.equipment.gloves, 'gloves_leather');
+  assertEquals(necromancer.equipment.gloves, 'gloves_arcane');
   assertEquals(necromancer.equipment.ring1, 'ring_bone');
 });
 
@@ -145,12 +145,12 @@ Deno.test("druid starts with natures_touch and barkskin", () => {
   assertEquals(druid.startingSpells.length, 2, "druid should start with exactly 2 spells");
 });
 
-Deno.test("warlock starts with steady focus wraps", () => {
+Deno.test("warlock starts with arcane handwraps for spell hit", () => {
   const warlock = getClass("warlock");
-  assertEquals(warlock.equipment.gloves, "focus_wraps");
-  const gloves = getCatalogItem("focus_wraps");
-  assert(gloves, "focus_wraps should exist");
-  assertEquals(Number(gloves.bonuses?.manaRegen || 0), 0.15);
+  assertEquals(warlock.equipment.gloves, "gloves_arcane");
+  const gloves = getCatalogItem("gloves_arcane");
+  assert(gloves, "gloves_arcane should exist");
+  assertEquals(Number(gloves.bonuses?.spellHit || 0), 2);
 });
 
 Deno.test("caster jewelry exposes spell hit bonuses", () => {

@@ -59,6 +59,56 @@ defineItem('pouch_belt', {
   weight: 0.5,
 });
 
+defineItem('ossuary_belt', {
+  name: 'Ossuary Belt', type: 'belt',
+  glyph: '=', color: '#c6b99b', glow: '#81755c', scale: 0.6,
+  material: 'bone', rarity: 1,
+  bonuses: { maxHp: 2, maxMana: 2 },
+  value: 38,
+  description: 'Small polished bones hang from its cord, clicking softly whenever the wearer walks.',
+  weight: 0.4,
+});
+
+defineItem('spellcord_belt', {
+  name: 'Spellcord Belt', type: 'belt',
+  glyph: '=', color: '#827ba9', glow: '#554e7b', scale: 0.6,
+  material: 'cloth', rarity: 2,
+  bonuses: { maxMana: 6, manaRegen: 0.15 },
+  value: 84,
+  description: 'A braided cord marked with tiny knots that help a spell find its way from thought to hand.',
+  weight: 0.2,
+});
+
+defineItem('pactbinder_belt', {
+  name: 'Pactbinder Belt', type: 'belt',
+  glyph: '=', color: '#684b72', glow: '#422d4d', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { maxMana: 4, maxHp: 3, spellHit: 1 },
+  value: 86,
+  description: 'A dark belt clasped with a ring that has witnessed too many promises to trust any of them.',
+  weight: 0.5,
+});
+
+defineItem('vinebound_belt', {
+  name: 'Vinebound Belt', type: 'belt',
+  glyph: '=', color: '#668957', glow: '#3e5d34', scale: 0.6,
+  material: 'leather', rarity: 1,
+  bonuses: { maxStamina: 5, poisonResist: 0.05 },
+  value: 40,
+  description: 'A supple belt reinforced with vines that grow back whenever they are cut.',
+  weight: 0.4,
+});
+
+defineItem('warbelt', {
+  name: 'Warbelt', type: 'belt',
+  glyph: '=', color: '#8b6d52', glow: '#5b4331', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { defense: 1, maxStamina: 8 },
+  value: 82,
+  description: 'A broad campaign belt built to keep its buckles shut through a charge, a retreat, and the night after.',
+  weight: 0.8,
+});
+
 defineItem('belt_chain', {
   name: 'Chain Belt', type: 'belt',
   glyph: '=', color: '#9ea8b3', glow: '#6e7782', scale: 0.6,

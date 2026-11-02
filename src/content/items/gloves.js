@@ -50,6 +50,66 @@ defineItem('scribe_gloves', {
   weight: 0.1,
 });
 
+defineItem('bonewraps', {
+  name: 'Bonewraps', type: 'gloves',
+  glyph: '"', color: '#d2c8ae', glow: '#8d836d', scale: 0.6,
+  material: 'bone', rarity: 1,
+  bonuses: { defense: 1, maxMana: 2 },
+  value: 30,
+  description: 'Strips of leather threaded with small finger bones. Unsettling, but surprisingly practical.',
+  weight: 0.2,
+});
+
+defineItem('apprentice_handwraps', {
+  name: 'Apprentice Handwraps', type: 'gloves',
+  glyph: '"', color: '#8f9fbd', glow: '#5d6f92', scale: 0.6,
+  material: 'cloth', rarity: 1,
+  bonuses: { defense: 1, maxMana: 3 },
+  value: 34,
+  description: 'Plain blue wraps worn by anyone still learning which end of a spell is dangerous.',
+  weight: 0.1,
+});
+
+defineItem('hexweave_gloves', {
+  name: 'Hexweave Gloves', type: 'gloves',
+  glyph: '"', color: '#786b9e', glow: '#4d416f', scale: 0.6,
+  material: 'cloth', rarity: 2,
+  bonuses: { defense: 1, maxMana: 4, spellHit: 1 },
+  value: 72,
+  description: 'Dark thread knots itself into new patterns whenever an incantation goes wrong.',
+  weight: 0.1,
+});
+
+defineItem('rootweave_gloves', {
+  name: 'Rootweave Gloves', type: 'gloves',
+  glyph: '"', color: '#75945f', glow: '#49653b', scale: 0.6,
+  material: 'leather', rarity: 1,
+  bonuses: { defense: 1, maxStamina: 2, poisonResist: 0.05 },
+  value: 36,
+  description: 'Flexible gloves braided with living fibers that keep a firm grip in rain, mud, and thorn.',
+  weight: 0.2,
+});
+
+defineItem('ironhide_bracers', {
+  name: 'Ironhide Bracers', type: 'gloves',
+  glyph: '"', color: '#89939c', glow: '#59636b', scale: 0.6,
+  material: 'iron', rarity: 2,
+  bonuses: { defense: 2, maxHp: 3 },
+  value: 78,
+  description: 'Broad iron bracers that turn a hard day’s work into a harder day for anything that strikes you.',
+  weight: 0.8,
+});
+
+defineItem('quickfinger_gloves', {
+  name: 'Quickfinger Gloves', type: 'gloves',
+  glyph: '"', color: '#687994', glow: '#414e68', scale: 0.6,
+  material: 'leather', rarity: 2,
+  bonuses: { attack: 1, dexterity: 1, critChance: 0.02 },
+  value: 74,
+  description: 'Close-fitting gloves with worn fingertips and just enough padding to survive a bad shortcut.',
+  weight: 0.2,
+});
+
 defineItem('focus_wraps', {
   name: 'Focus Wraps', type: 'gloves',
   glyph: '"', color: '#7897a8', glow: '#4f6d7d', scale: 0.6,
