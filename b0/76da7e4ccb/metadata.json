@@ -3,9 +3,24 @@
   "checkpoint_id": "b076da7e4ccb",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 2,
+  "checkpoints_count": 18,
   "files_touched": [
-    "src/rules/data/classes.js"
+    "src/content/items/spellbooks.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/display/palette/base.js",
+    "src/display/ui/wiring/messages/spellMessages.js",
+    "src/events/ResurrectionCast.js",
+    "src/main.js",
+    "src/rules/components/Reanimated.js",
+    "src/rules/components/index.js",
+    "src/rules/data/classes.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/cleanupSystem.js",
+    "tests/classes.test.mjs",
+    "tests/lootResolver.test.mjs",
+    "tests/resurrection.test.mjs"
   ],
   "sessions": [
     {
@@ -14,13 +29,20 @@
       "compact_transcript": "/b0/76da7e4ccb/0/transcript.jsonl",
       "content_hash": "/b0/76da7e4ccb/0/content_hash.txt",
       "prompt": "/b0/76da7e4ccb/0/prompt.txt"
+    },
+    {
+      "metadata": "/b0/76da7e4ccb/1/metadata.json",
+      "transcript": "/b0/76da7e4ccb/1/full.jsonl",
+      "compact_transcript": "/b0/76da7e4ccb/1/transcript.jsonl",
+      "content_hash": "/b0/76da7e4ccb/1/content_hash.txt",
+      "prompt": "/b0/76da7e4ccb/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 157636,
+    "input_tokens": 417225,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 9441024,
-    "output_tokens": 41674,
-    "api_call_count": 94
+    "cache_read_tokens": 20037760,
+    "output_tokens": 73652,
+    "api_call_count": 171
   }
 }
