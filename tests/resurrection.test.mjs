@@ -62,6 +62,26 @@ Deno.test("resurrection raises an eligible corpse as a temporary allied monster"
   }
 });
 
+Deno.test("resurrection raises a rat corpse", () => {
+  loadFlatFloor();
+  try {
+    const world = new World({ seed: 0xA77A });
+    const caster = makeCaster(world);
+    const corpse = createCorpse(world, { id: "rat", name: "Rat", sizeClass: "S", massKg: 2, tier: 0 }, { x: 6, y: 4 });
+    const events = [];
+    world.on(ResurrectionCast, (event) => events.push(event));
+
+    runSpellScript(world, caster, getSpell("resurrection"), { x: 6, y: 4 });
+
+    assert(!world.isAlive(corpse), "the rat corpse should be consumed");
+    assertEquals(events.length, 1);
+    assertEquals(events[0].fizzle, false);
+    assertEquals(events[0].identity, "rat");
+  } finally {
+    clearAll();
+  }
+});
+
 Deno.test("resurrection raises powerful corpses briefly", () => {
   loadFlatFloor();
   try {

@@ -229,7 +229,6 @@ export const CLASS_DEFS = {
     ],
     startingSpells: [
       'agony',
-      'summon_skeleton',
       'resurrection',
     ],
   },
