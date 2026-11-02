@@ -231,3 +231,30 @@ defineItem('echo_duelist_cord', {
   description: 'A braided cord with a resonance crystal at the clasp. Each hit stores the impact. The next swing releases all that stored force as spectral damage alongside the blow. Memory made weapon.',
   procPackages: ['missMomentum'],
 });
+
+defineItem('the_red_button', {
+  name: 'The Red Button', type: 'belt',
+  glyph: '=', color: '#ff6655', glow: '#9f2e2e', scale: 0.6,
+  material: 'leather', rarity: 3,
+  bonuses: { maxHp: 8, attack: 1 },
+  procPackages: ['hollowTide'],
+  value: 420,
+  weight: 0.6,
+  description: 'The closer you are to death, the harder you hit. Use: lose 10 health and enter berserk fury for 6 turns. 30-turn cooldown.',
+  abilities: {
+    press_the_button: {
+      name: 'Press the Button', icon: '●', targeting: 'none', requiresEquipped: true,
+      cooldown: 30,
+      healthCost: 10,
+      duration: 6,
+      description: 'Lose {healthCost} health and gain berserk for {duration} turns.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        ctx.damage(ctx.user, 10, 'blood_price');
+        ctx.apply(ctx.user, 'berserk', 6, { potency: 1 });
+        ctx.message('You press the button. The belt clicks, and something in you comes loose.', 'danger');
+        ctx.present('press_the_button', { target: ctx.user });
+      },
+    },
+  },
+});

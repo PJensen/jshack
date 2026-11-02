@@ -270,6 +270,7 @@ export const LOOT_TABLES = {
         "soul_mortgage_treads", "warboots_of_cataclysm", "hollow_tide_boots", "portent_focus", "cataclysm_aegis",
         "bloodpact_orb", "glacier_sigil", "conduction_lens", "echo_grimoire", "lodbrok_serpent_bound_breeches",
         "bracers_reversal", "deadeye_loop", "cinderwake_boots", "witch_king_circlet", "gamblers_mantle",
+        "widowmakers_brooch", "lantern_of_the_lost_hunt", "gravemarch_greaves", "the_red_button", "crown_of_borrowed_faces",
       ], affixChance: 0 },
     ],
   },

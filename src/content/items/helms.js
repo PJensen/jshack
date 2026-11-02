@@ -164,3 +164,28 @@ defineItem('witch_king_circlet', {
     },
   },
 });
+
+defineItem('crown_of_borrowed_faces', {
+  name: 'Crown of Borrowed Faces', type: 'helm',
+  glyph: '^', color: '#d59cff', glow: '#75439a', scale: 0.7,
+  material: 'ivory', rarity: 5,
+  bonuses: { defense: 1, maxMana: 10, luck: 2 },
+  procPackages: ['witchKing'],
+  value: 1250,
+  weight: 0.4,
+  description: 'Spells mark your enemies for the crown. Use: borrow the shape of shadow for 30 turns. Attacking breaks the disguise. 80-turn cooldown.',
+  abilities: {
+    borrowed_face: {
+      name: 'Borrowed Face', icon: '◉', targeting: 'none', requiresEquipped: true,
+      cooldown: 80,
+      duration: 30,
+      description: 'Become invisible for {duration} turns. Attacking breaks the disguise.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        ctx.apply(ctx.user, 'invisible', 30, { potency: 1 });
+        ctx.message('Your face slips sideways. For a while, the dungeon remembers someone else.', 'good');
+        ctx.present('borrowed_face', { target: ctx.user });
+      },
+    },
+  },
+});

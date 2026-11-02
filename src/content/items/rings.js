@@ -279,3 +279,28 @@ defineItem('deadeye_loop', {
   weight: 0.05,
   description: 'A sighting ring cut from a single piece of golden wire. Every third arrow remembers that it was meant for more than one target.',
 });
+
+defineItem('widowmakers_brooch', {
+  name: "Widowmaker's Brooch", type: 'ring',
+  glyph: '◌', color: '#b4e77b', glow: '#628e43', scale: 0.45,
+  material: 'bone', rarity: 3,
+  bonuses: { attack: 1, poisonResist: 0.1 },
+  procPackages: ['predatorMark'],
+  value: 360,
+  weight: 0.05,
+  description: 'Your attacks mark prey for the brood. Use: summon three loyal cave spiders. 200-turn cooldown.',
+  abilities: {
+    call_the_brood: {
+      name: 'Call the Brood', icon: '🕷', targeting: 'none', requiresEquipped: true,
+      cooldown: 200,
+      spiderCount: 3,
+      description: 'Summon {spiderCount} loyal cave spiders.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        for (let i = 0; i < 3; i++) ctx.spawnMonster('cave_spider', null, { name: 'Bound Cave Spider', faction: 'pet' });
+        ctx.message('Three cave spiders crawl from the brooch and wait for your command.', 'good');
+        ctx.present('call_the_brood', { target: ctx.user });
+      },
+    },
+  },
+});

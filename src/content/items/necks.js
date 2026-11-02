@@ -142,6 +142,30 @@ defineItem('eclipse_torc', {
   procPackages: ['moonfireCycle'],
 });
 
+defineItem('lantern_of_the_lost_hunt', {
+  name: 'Lantern of the Lost Hunt', type: 'neck',
+  glyph: '"', color: '#ffe066', glow: '#ccaa33', scale: 0.55,
+  material: 'brass', rarity: 2,
+  bonuses: { visionRange: 2, luck: 1 },
+  weight: 0.4,
+  value: 190,
+  description: 'Its flame leans toward hidden danger. Use: illuminate the hunter’s senses for 20 turns. 40-turn cooldown.',
+  abilities: {
+    light_the_hunt: {
+      name: 'Light the Hunt', icon: '☼', targeting: 'none', requiresEquipped: true,
+      cooldown: 40,
+      duration: 20,
+      description: 'Sharpen your senses and reveal hidden danger for {duration} turns.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        ctx.apply(ctx.user, 'spider_sense', 20, { potency: 1 });
+        ctx.message('The lantern flares. Every hidden thing suddenly feels close.', 'good');
+        ctx.present('light_the_hunt', { target: ctx.user });
+      },
+    },
+  },
+});
+
 // ── Cursed amulets ────────────────────────────────────────────────────
 
 defineItem('amulet_strangulation', {

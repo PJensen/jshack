@@ -284,3 +284,28 @@ defineItem('cinderwake_boots', {
   weight: 1.0,
   description: 'The soles smolder wherever they touch stone. Every retreat becomes a warning written in flame.',
 });
+
+defineItem('gravemarch_greaves', {
+  name: 'Gravemarch Greaves', type: 'boots',
+  glyph: 'u', color: '#8c91c7', glow: '#4f5488', scale: 0.65,
+  material: 'iron', rarity: 4,
+  bonuses: { defense: 2, maxHp: 8, bluntResist: 0.1 },
+  procPackages: ['cinderwake'],
+  value: 570,
+  weight: 2.5,
+  description: 'Every step leaves a coal-black footprint. Use: enter a gravewind stride for 6 turns, becoming faster and difficult to pin down. 60-turn cooldown.',
+  abilities: {
+    gravewind_stride: {
+      name: 'Gravewind Stride', icon: '☠', targeting: 'none', requiresEquipped: true,
+      cooldown: 60,
+      duration: 6,
+      description: 'Gain haste and leave burning footprints for {duration} turns.',
+      displayFormat: '{description} Cooldown: {cooldown} turns.',
+      onActivate(ctx) {
+        ctx.apply(ctx.user, 'haste', 6, { potency: 1 });
+        ctx.message('The greaves drag a cold wind from the grave behind you.', 'good');
+        ctx.present('gravewind_stride', { target: ctx.user });
+      },
+    },
+  },
+});
