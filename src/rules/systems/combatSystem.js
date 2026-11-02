@@ -273,7 +273,7 @@ function resolveHitRoll(world, {
         }
     }
 
-    const atkSnapshot = resolveCombatSnapshot(world, source, { mode: 'melee' });
+    const atkSnapshot = resolveCombatSnapshot(world, source, { mode: 'melee', targetId: target });
     const defSnapshot = resolveCombatSnapshot(world, target, { mode: 'melee' });
     const blindExposure = Math.max(0, Number(defSnapshot?.status?.blinded || 0));
 

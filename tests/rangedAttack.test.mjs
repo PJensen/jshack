@@ -23,6 +23,7 @@ import { loadChunk, clearAll } from '../src/rules/environment/dungeon/tileMap.js
 import { CHUNK_SIZE, TILE_FLOOR, TILE_WALL } from '../src/rules/environment/dungeon/constants.js';
 import { STAMINA_REGEN_COOLDOWN } from '../src/rules/data/regenConstants.js';
 import { buildCatalogItem } from '../src/rules/data/itemCatalogLoader.js';
+import { entitiesAtPoint } from '../src/rules/utils/spatialIndex.js';
 
 function makeBow(world) {
   const id = world.create();
@@ -462,6 +463,37 @@ Deno.test("ranged: physical projectile collision stops at an intervening actor",
   assertEquals(world.get(target, Vitality).hp, 20, "locked target behind an actor should not be hit");
   assertEquals(world.get(bystanderA, Vitality).hp, 20, "actors beyond the first collision should be ignored");
   assertEquals(world.get(bystanderB, Vitality).hp, 20, "actors beyond the first collision should be ignored");
+});
+
+Deno.test("ranged: projectile collision sees a target that moved across a spatial cell", () => {
+  clearAll();
+  const world = new World({ seed: 14 });
+  world.step = 1;
+
+  const bowId = makeBow(world);
+  const ammoId = makeAmmo(world, 10);
+  const archer = world.create();
+  world.add(archer, Position, { x: 10, y: 4 });
+  world.add(archer, Vitality, { maxHp: 20, hp: 20 });
+  world.add(archer, Equipment, { ranged: bowId, ammo: ammoId, accuracyDerived: 20, damagePowerDerived: 20 });
+  world.add(archer, Inventory, { capacity: 20 });
+  world.add(archer, Faction, { key: 'player' });
+  addToInventory(world, archer, bowId);
+  addToInventory(world, archer, ammoId);
+
+  const target = world.create();
+  world.add(target, Position, { x: 15, y: 4 });
+  world.add(target, Vitality, { maxHp: 20, hp: 20 });
+  world.add(target, Equipment, { evadeDerived: 0 });
+  world.add(target, Faction, { key: 'enemy' });
+
+  // Seed the old cell, then model same-tick movement across x=16.
+  entitiesAtPoint(world, 15, 4);
+  world.set(target, Position, { x: 16, y: 4 });
+  world.add(archer, RangedAttackIntent, { targetId: target, toX: 16, toY: 4 });
+  rangedAttackSystem(world);
+
+  assert(world.get(target, Vitality).hp < 20, 'moved target should be hit at its current tile');
 });
 
 Deno.test("combat: mirror bow proc does not fire on melee hits", () => {

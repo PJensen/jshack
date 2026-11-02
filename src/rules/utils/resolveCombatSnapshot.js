@@ -4,6 +4,9 @@ import { resolveCanonicalStats } from "./canonicalStats.js";
 import { statusStrength } from "./statusFacade.js";
 import { getBlindedDefensePenalty, getBlindedAttackPenalty } from "./blindnessExposure.js";
 import { COMBAT_POSTURES, CombatPosture } from "../components/CombatPosture.js";
+import { Traits } from "../components/Traits.js";
+import { NamedIdentity } from "../components/NamedIdentity.js";
+import { getMonster } from "../data/monsters.js";
 
 const MODE_RULES = Object.freeze({
   melee: Object.freeze({
@@ -54,6 +57,11 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
   const id = Number(entityId || 0) | 0;
   const mode = String(context.mode || "melee").toLowerCase();
   const rules = getModeRules(mode);
+  const targetId = Number(context.targetId || 0) | 0;
+  const feline = world.get(id, Traits)?.feline === true;
+  const targetIdentity = targetId > 0 ? world.get(targetId, NamedIdentity)?.identity : "";
+  const targetIsRodent = targetIdentity && getMonster(String(targetIdentity))?.tags?.includes("rodent");
+  const felineRodentBonus = feline && targetIsRodent;
 
   const resolvedStats = resolveCanonicalStats(world, id);
 
@@ -112,6 +120,10 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
   let attackBonus = 1 + accuracy;
   pushModifier(modifiers, "attack", "base", 1, "base-to-hit");
   pushModifier(modifiers, "attack", "resolved:accuracy", accuracy, "resolved-accuracy");
+  if (felineRodentBonus) {
+    pushModifier(modifiers, "attack", "trait:feline", 2, "rodent-hunter-to-hit");
+    attackBonus += 2;
+  }
 
   if (rules.includeAttackStatuses) {
     pushModifier(modifiers, "attack", "status:disease", -statusTotals.disease, "disease-penalty");
@@ -233,7 +245,9 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     damageMult: (statusTotals.berserk > 0 ? 1.5 : 1)
       * (statusTotals.blood_rage > 0 ? 1.25 : 1)
       * shadowAmbushDamageMult
+      * (felineRodentBonus ? 1.25 : 1)
       * (stance === COMBAT_POSTURES.aggressive ? 1.2 : (stance === COMBAT_POSTURES.guarded ? 0.9 : 1)),
+    targetDamageMult: felineRodentBonus ? 1.25 : 1,
     accuracy,
     damagePower,
     physicalPenetration,

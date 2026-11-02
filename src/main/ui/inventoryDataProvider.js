@@ -59,6 +59,7 @@ import { defineExtension } from "../../lib/ecs-js/index.js";
 import { buildEffectRows } from "./effectRows.js";
 
 const TRAIT_DISPLAY = Object.freeze({
+  feline:         { label: "Feline",        description: "+25% damage and +2 hit against rodents." },
   iron_stomach:  { label: "Iron Stomach",  description: "Halves sickness chance from spoiled food." },
   ambidextrous:  { label: "Ambidextrous",  description: "No off-hand penalties when dual-wielding." },
   gluttonous:    { label: "Gluttonous",    description: "Increased deity reaction to food events." },

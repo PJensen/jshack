@@ -3,6 +3,9 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { Equipment } from "../src/rules/components/Equipment.js";
 import { BaseStats } from "../src/rules/components/BaseStats.js";
 import { Status } from "../src/rules/components/Status.js";
+import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
+import { Traits } from "../src/rules/components/Traits.js";
+import "../src/content/monsters/animals.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 
 /**
@@ -61,6 +64,24 @@ Deno.test("resolveCombatSnapshot(melee): preserves status parity with stoneskin"
 
   assertEquals(def.armorClass, 11, "melee armor class should include stoneskin and status penalties");
   assert(def.modifiers.some((m) => m.source === "status:stoneskin" && m.value === 2), "stoneskin modifier expected");
+});
+
+Deno.test("resolveCombatSnapshot: feline trait grants bonuses against rodents only", () => {
+  const world = new World({ seed: 17 });
+  const feline = makeActor(world, { accuracyDerived: 1, damagePowerDerived: 2 });
+  world.add(feline, Traits, { feline: true });
+  const rat = world.create();
+  world.add(rat, NamedIdentity, { name: "Rat", identity: "rat" });
+  const humanoid = world.create();
+  world.add(humanoid, NamedIdentity, { name: "Goblin", identity: "goblin" });
+
+  const againstRat = resolveCombatSnapshot(world, feline, { mode: "melee", targetId: rat });
+  const againstHumanoid = resolveCombatSnapshot(world, feline, { mode: "melee", targetId: humanoid });
+
+  assertEquals(againstRat.attackBonus, againstHumanoid.attackBonus + 2);
+  assertEquals(againstRat.targetDamageMult, 1.25);
+  assertEquals(againstHumanoid.targetDamageMult, 1);
+  assert(againstRat.modifiers.some((m) => m.source === "trait:feline"));
 });
 
 Deno.test("resolveCombatSnapshot(ranged): ignores non-stoneskin status modifiers", () => {

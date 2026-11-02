@@ -43,6 +43,7 @@ import { computeImpactVectorXY, computeMissEndpoint, computeProjectileDelay } fr
 import { bresenhamLine } from '../../shared/math/bresenham.js';
 import { resolveProjectileImpact } from '../utils/projectileImpact.js';
 import { getAmmoAffinity } from '../utils/ammoAffinities.js';
+import { updateSpatialIndex } from '../utils/spatialIndex.js';
 
 const RANGED_PROJECTILE_SPEED = 18;
 const RANGED_PROJECTILE_MIN_DURATION = 0.06;
@@ -55,6 +56,11 @@ const PIERCING_ARROW_SPEED_MULT = 1.1;
 export function rangedAttackSystem(world) {
   const intents = world.query(RangedAttackIntent);
   if (intents.count({ cheap: true }) === 0) return;
+
+  // Movement resolves immediately before ranged attacks, while the normal
+  // spatial-index maintenance pass runs in cleanup. Sync once here so a
+  // target that crossed a chunk boundary is discoverable by the projectile ray.
+  updateSpatialIndex(world);
 
   // Build blocking map once per tick when needed
   const blocked = buildBlocksVisionMap(world);
@@ -237,7 +243,7 @@ export function rangedAttackSystem(world) {
     setCombatPosture(world, attacker, COMBAT_POSTURES.aggressive, { reason: 'attack:ranged' });
 
     // d20 roll
-    const atkSnapshot = resolveCombatSnapshot(world, attacker, { mode: 'ranged' });
+    const atkSnapshot = resolveCombatSnapshot(world, attacker, { mode: 'ranged', targetId: defender });
     const defSnapshot = resolveCombatSnapshot(world, defender, { mode: 'ranged' });
     const positional = getPositionalAttackBonus(world, attacker, defender);
     const blindExposure = Math.max(0, Number(defSnapshot?.status?.blinded || 0));
@@ -321,7 +327,7 @@ export function rangedAttackSystem(world) {
           const sx = strayPos.x | 0;
           const sy = strayPos.y | 0;
           const strayDist = chebyshevScalar(ax, ay, sx, sy);
-          const strayAtkSnapshot = resolveCombatSnapshot(world, attacker, { mode: 'ranged' });
+          const strayAtkSnapshot = resolveCombatSnapshot(world, attacker, { mode: 'ranged', targetId: strayId });
           const strayDefSnapshot = resolveCombatSnapshot(world, strayId, { mode: 'ranged' });
           const strayPositional = getPositionalAttackBonus(world, attacker, strayId);
           const strayBlindExposure = Math.max(0, Number(strayDefSnapshot?.status?.blinded || 0));
@@ -339,6 +345,7 @@ export function rangedAttackSystem(world) {
           strayDamage += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
           strayDamage = Math.max(1, Math.floor(strayDamage * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
           strayDamage = Math.max(1, Math.floor(strayDamage * strayPositional.damageMult));
+          strayDamage = Math.max(1, Math.floor(strayDamage * Math.max(0, Number(strayAtkSnapshot.targetDamageMult || 1))));
           if ((Number(strayAtkSnapshot?.posture?.lastMoveStep ?? -1) | 0) === (Number(world.step || 0) | 0)) {
             strayDamage += 1;
           }
@@ -480,6 +487,7 @@ export function rangedAttackSystem(world) {
     dmg += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
     dmg = Math.max(1, Math.floor(dmg * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
     dmg = Math.max(1, Math.floor(dmg * positional.damageMult));
+    dmg = Math.max(1, Math.floor(dmg * Math.max(0, Number(atkSnapshot.targetDamageMult || 1))));
     if ((Number(atkSnapshot?.posture?.lastMoveStep ?? -1) | 0) === (Number(world.step || 0) | 0)) {
       dmg += 1; // movement commitment momentum
     }
