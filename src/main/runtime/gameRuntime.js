@@ -177,6 +177,15 @@ export function applyPlayerClassLoadout(world, playerId, classDef, opts = {}) {
   const identifyStarterItems = opts?.identifyStarterItems === true;
   const onStarterItem = typeof opts?.onStarterItem === "function" ? opts.onStarterItem : null;
 
+  const classId = String(classDef?.id || "").trim();
+  if (classId) {
+    const identity = world.get(playerId, NamedIdentity) || {};
+    upsert(world, playerId, NamedIdentity, {
+      ...identity,
+      identity: `player_${classId}`,
+    });
+  }
+
   upsert(world, playerId, Mana, {
     mana: stats.maxMana ?? 50,
     maxMana: stats.maxMana ?? 50,

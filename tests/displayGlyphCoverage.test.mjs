@@ -53,6 +53,25 @@ Deno.test("palette includes in-game player glyphs for every class identity", () 
   }
 });
 
+Deno.test("world-view preserves every class identity for player glyph lookup", () => {
+  const world = new World({ seed: 0xC0FFEE });
+  const players = listClassIds().map((classId, index) => ({
+    classId,
+    id: createPlayer(world, {
+      x: index % 4,
+      y: Math.floor(index / 4),
+      identity: `player_${classId}`,
+    }),
+  }));
+  const view = buildWorldView(world);
+
+  for (const { classId, id } of players) {
+    const entity = view.entities.find((record) => record.id === id);
+    assert(entity, `missing player entity for ${classId}`);
+    assertEquals(entity.kind, `player_${classId}`);
+  }
+});
+
 Deno.test("town chest identities survive world-view projection", () => {
   const world = new World({ seed: 0xC0FFEE });
   createPlayer(world, { x: 10, y: 10 });
