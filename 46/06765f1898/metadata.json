@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "4606765f1898",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "src/rules/systems/rangedAttackSystem.js",
+    "tests/rangedAttack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/46/06765f1898/0/metadata.json",
+      "transcript": "/46/06765f1898/0/full.jsonl",
+      "compact_transcript": "/46/06765f1898/0/transcript.jsonl",
+      "content_hash": "/46/06765f1898/0/content_hash.txt",
+      "prompt": "/46/06765f1898/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 73890,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5284864,
+    "output_tokens": 8256,
+    "api_call_count": 37
+  }
+}

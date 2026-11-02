@@ -1,0 +1,17 @@
+ranged attack still off by like, (-3, -2) something -- something odd, maybe a (x,y) rel flip?
+
+---
+
+where do you expect this to hit?
+
+---
+
+nope, it hits behind the left wall, is it an accuracy thing?
+
+---
+
+hmmm -- interesting, we're not hallucinating, we're not under the influence, I feel like we should be a fair bit closer to the mark when shooting at tiles.
+
+---
+
+what do I know ;-)
