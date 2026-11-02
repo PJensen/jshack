@@ -18,6 +18,11 @@ import {
 } from "../.agents/skills/agent-tools/scripts/agent-target.mjs";
 import { classify as classifyContentId } from "../.agents/skills/agent-tools/scripts/content-id-audit.mjs";
 import {
+  auditItems,
+  filterItems,
+  formatReport,
+} from "../.agents/skills/agent-tools/scripts/item-rarity-audit.mjs";
+import {
   classifyNondeterminism,
   classifySystemCall,
   formatHealthReport,
@@ -181,6 +186,18 @@ Deno.test("content-id audit classifies definitions, tests, visuals, and referenc
     ),
     "spawn-loot",
   );
+});
+
+Deno.test("item-rarity audit sorts, filters, and flags legacy slots deterministically", () => {
+  const items = auditItems([
+    { id: "zeta", name: "Zeta", catalogKind: "magic", type: "potion", rarity: 2, rarityName: "magic", tags: ["artifact"] },
+    { id: "alpha", name: "Alpha", catalogKind: "equipment", type: "equip", slot: "weapon", rarity: 2, rarityName: "uncommon", tags: ["unique"] },
+  ]);
+  assertEquals(items.map((item) => item.id), ["alpha", "zeta"]);
+  assertEquals(filterItems(items, { kind: "equipment", rarity: "", gearOnly: true, issues: false }).length, 1);
+  assertEquals(filterItems(items, { kind: "", rarity: "", gearOnly: false, issues: true }).map((item) => item.id), ["zeta"]);
+  assert(formatReport(items, "csv").startsWith("id,name,catalogKind,type,slot,rarity,rarityName"));
+  assert(formatReport(items, "csv").includes("unique"));
 });
 
 Deno.test("agent-health formatting and path normalization are import-safe", () => {

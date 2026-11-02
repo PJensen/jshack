@@ -131,12 +131,13 @@ export const SHELF_LIFE = Object.freeze({
 export const RARITY = Object.freeze({
   common:    { rarity: 1, rarityName: 'common' },
   uncommon:  { rarity: 2, rarityName: 'uncommon' },
-  magic:     { rarity: 2, rarityName: 'magic' },
+  // `magic` is the one legacy rarity spelling still accepted for old authored
+  // content. It normalizes into the green uncommon slot; unique/artifact are
+  // semantic tags, not visible rarity tiers.
+  magic:     { rarity: 2, rarityName: 'uncommon' },
   rare:      { rarity: 3, rarityName: 'rare' },
-  unique:    { rarity: 3, rarityName: 'unique' },
   epic:      { rarity: 4, rarityName: 'epic' },
   legendary: { rarity: 5, rarityName: 'legendary' },
-  artifact:  { rarity: 5, rarityName: 'artifact' },
 });
 
 /**

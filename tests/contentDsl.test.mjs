@@ -87,6 +87,9 @@ Deno.test("inferItemCategory: potion", () => {
 Deno.test("resolveRarity: string input", () => {
   assertEquals(resolveRarity("rare"), { rarity: 3, rarityName: "rare" });
   assertEquals(resolveRarity("common"), { rarity: 1, rarityName: "common" });
+  assertEquals(resolveRarity("magic"), { rarity: 2, rarityName: "uncommon" });
+  assertEquals(resolveRarity("unique"), { rarity: 1, rarityName: "common" });
+  assertEquals(resolveRarity("artifact"), { rarity: 1, rarityName: "common" });
 });
 
 Deno.test("resolveRarity: number input", () => {

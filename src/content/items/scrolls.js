@@ -330,7 +330,7 @@ defineItem('scroll_decay', {
 
 // ── Hearthstone (tool) ────────────────────────────────────────────────
 defineItem('hearthstone', {
-  name: 'Hearthstone', type: 'tool', material: 'mineral', rarity: 'unique', value: 88, weight: 0.5,
+  name: 'Hearthstone', type: 'tool', material: 'mineral', rarity: 'rare', tags: ['unique'], value: 88, weight: 0.5,
   description: 'A warm stone that remembers the way home. Channel your will to return to the surface.',
   hooks: (() => {
     const _castHook = createCastSpellFromIdentityHook({ identityPrefix: '', targetMode: 'self', consumeOnSuccess: false });

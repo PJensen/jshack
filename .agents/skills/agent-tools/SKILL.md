@@ -19,6 +19,7 @@ Choose the route before searching broadly:
 | --- | --- | --- |
 | Find a symbol, event, file, or test | `agent-target` | `deno run --allow-read .agents/skills/agent-tools/scripts/agent-target.mjs TERM --limit 80` |
 | Trace an item, monster, spell, material, loot, or visual ID | `content-id-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs ID --limit 80` |
+| Inventory item rarity slots and find legacy/mismatched labels | `item-rarity-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/item-rarity-audit.mjs --gear-only --format csv` |
 | Understand event producers and consumers | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary --top 40` |
 | Inspect one event contract | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event EVENT` |
 | Map scheduler registration and phases | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary` |

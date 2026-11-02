@@ -31,22 +31,22 @@ defineItem('lockpick', {
 });
 
 defineItem('relic_ember_censer', {
-  name: 'Ember Censer', type: 'tool', material: 'metal', rarity: 'artifact', value: 420, weight: 6,
+  name: 'Ember Censer', type: 'tool', material: 'metal', rarity: 'legendary', tags: ['artifact'], value: 420, weight: 6,
   description: 'A soot-black censer that never stops breathing warm ash. Town elders want it back, intact.',
 });
 
 defineItem('relic_glass_heart', {
-  name: 'Glass Heart', type: 'tool', material: 'glass', rarity: 'artifact', value: 440, weight: 2,
+  name: 'Glass Heart', type: 'tool', material: 'glass', rarity: 'legendary', tags: ['artifact'], value: 440, weight: 2,
   description: 'A clear heart-shot crystal that pulses with trapped heat. It feels important in the worst way.',
 });
 
 defineItem('relic_pale_idol', {
-  name: 'Pale Idol', type: 'tool', material: 'bone', rarity: 'artifact', value: 400, weight: 4,
+  name: 'Pale Idol', type: 'tool', material: 'bone', rarity: 'legendary', tags: ['artifact'], value: 400, weight: 4,
   description: 'A chalk-white idol worn smooth by terrified hands. It should not have been left below.',
 });
 
 defineItem('relic_stone_tongue', {
-  name: 'Stone Tongue', type: 'tool', material: 'mineral', rarity: 'artifact', value: 430, weight: 5,
+  name: 'Stone Tongue', type: 'tool', material: 'mineral', rarity: 'legendary', tags: ['artifact'], value: 430, weight: 5,
   description: 'A carved shard shaped like a speaking tongue. It tastes of old rain and sealed crypts.',
 });
 
