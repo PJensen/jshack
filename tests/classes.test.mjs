@@ -124,7 +124,7 @@ Deno.test("necromancer is a Molkhar caster with grave-themed starter spells", ()
   assertEquals(necromancer.startingSpells.length, 2);
   assert(necromancer.startingSpells.includes('agony'));
   assert(necromancer.startingSpells.includes('summon_skeleton'));
-  assertEquals(necromancer.equipment.weapon, 'staff_oak');
+  assertEquals(necromancer.equipment.weapon, 'bone_staff');
   assertEquals(necromancer.equipment.gloves, 'gloves_arcane');
   assertEquals(necromancer.equipment.ring1, 'ring_bone');
 });

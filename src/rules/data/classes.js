@@ -203,7 +203,7 @@ export const CLASS_DEFS = {
       visionRange: 6,
     },
     equipment: {
-      weapon: 'staff_oak',
+      weapon: 'bone_staff',
       armor: null,
       offhand: null,
       gloves: 'gloves_arcane',

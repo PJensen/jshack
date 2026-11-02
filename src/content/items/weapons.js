@@ -22,6 +22,74 @@ defineItem('staff_oak', {
   weight: 2.5,
 });
 
+defineItem('ashwood_staff', {
+  name: 'Ashwood Staff',
+  type: 'weapon',
+  glyph: '/', color: '#b79a78', glow: '#80684f', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 1,
+  twoHanded: true,
+  bonuses: { attack: 1, manaRegen: 0.1 },
+  damageDice: '1d6',
+  damageType: 'blunt',
+  staminaCost: 7,
+  value: 35,
+  description: 'A plain ashwood staff, smooth from years of dependable use.',
+  weight: 2.0,
+});
+
+defineItem('ironbark_staff', {
+  name: 'Ironbark Staff',
+  type: 'weapon',
+  glyph: '/', color: '#817b68', glow: '#575343', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 1,
+  twoHanded: true,
+  bonuses: { attack: 1, defense: 1 },
+  damageDice: '1d8',
+  damageType: 'blunt',
+  staminaCost: 9,
+  value: 48,
+  description: 'Dense bark makes this staff almost as tough as iron, if less forgiving in the hands.',
+  weight: 3.0,
+});
+
+defineItem('walking_staff', {
+  name: 'Walking Staff',
+  type: 'weapon',
+  glyph: '/', color: '#a88762', glow: '#72573a', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 1,
+  twoHanded: true,
+  bonuses: { staminaRegen: 0.15, visionRange: 1 },
+  damageDice: '1d4',
+  damageType: 'blunt',
+  staminaCost: 5,
+  value: 28,
+  description: 'A traveler’s staff that makes long roads and longer dungeon floors easier to bear.',
+  weight: 1.2,
+});
+
+defineItem('bone_staff', {
+  name: 'Bone Staff',
+  type: 'weapon',
+  glyph: '/', color: '#d8d0b8', glow: '#91886d', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'bone',
+  rarity: 1,
+  twoHanded: true,
+  bonuses: { attack: 1, maxMana: 3, manaRegen: 0.1 },
+  damageDice: '1d6',
+  damageType: 'blunt',
+  staminaCost: 7,
+  value: 42,
+  description: 'A polished femur crowned with a small skull. It remembers the hands that held it last.',
+  weight: 1.8,
+});
+
 defineItem('longsword', {
   name: 'Longsword',
   type: 'weapon',
@@ -231,6 +299,74 @@ defineItem('moonroot_staff', {
   maxSockets: 2,
   description: 'Pale roots curl around a moonstone core, drinking in the night and returning it as quiet power.',
   weight: 2.2,
+});
+
+defineItem('frostbranch', {
+  name: 'Frostbranch',
+  type: 'weapon',
+  glyph: '/', color: '#9bc8df', glow: '#5d9bb7', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 3,
+  twoHanded: true,
+  bonuses: { attack: 1, maxMana: 6, spellAvoid: 1, poisonResist: 0.1 },
+  damageDice: '1d6',
+  damageType: 'blunt',
+  staminaCost: 8,
+  maxSockets: 1,
+  description: 'A branch preserved in blue ice. Its chill steadies the mind against hostile magic.',
+  weight: 1.8,
+});
+
+defineItem('stormglass_staff', {
+  name: 'Stormglass Staff',
+  type: 'weapon',
+  glyph: '/', color: '#8db9ee', glow: '#4a7fc7', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'crystal',
+  rarity: 4,
+  twoHanded: true,
+  bonuses: { attack: 2, maxMana: 12, manaRegen: 0.5, spellHit: 2, electricOhms: 50 },
+  damageDice: '1d8',
+  damageType: 'blunt',
+  staminaCost: 9,
+  maxSockets: 2,
+  description: 'Lightning crawls through the glass veins of this staff, waiting for a worthy spell to call it down.',
+  weight: 2.5,
+});
+
+defineItem('sunken_crown_staff', {
+  name: 'Sunken Crown Staff',
+  type: 'weapon',
+  glyph: '/', color: '#d4b77b', glow: '#9d7b3d', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 4,
+  twoHanded: true,
+  bonuses: { attack: 2, maxMana: 10, manaRegen: 0.4, spellRadius: 1 },
+  damageDice: '1d10',
+  damageType: 'blunt',
+  staminaCost: 11,
+  maxSockets: 2,
+  description: 'A drowned relic crowned with gold and coral. Its spells reach outward like ripples across dark water.',
+  weight: 3.5,
+});
+
+defineItem('bloodwood_staff', {
+  name: 'Bloodwood Staff',
+  type: 'weapon',
+  glyph: '/', color: '#a84e5b', glow: '#6d2735', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 4,
+  twoHanded: true,
+  bonuses: { attack: 2, maxHp: -8, maxMana: 16, spellHit: 3, damagePower: 2 },
+  damageDice: '1d8',
+  damageType: 'blunt',
+  staminaCost: 10,
+  maxSockets: 2,
+  description: 'Dark sap pulses beneath the grain. The staff offers immense power, but never for free.',
+  weight: 2.8,
 });
 
 // ── Monster-drop weapons ──────────────────────────────────────────────────────
