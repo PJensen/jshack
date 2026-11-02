@@ -1,6 +1,6 @@
 // Bleed Pulse overlay FX (envelope-aware). Does not render the base glyph.
 // Signature: (ctx, glyph, x, y, size, t, dt, seed, baselineY, env)
-import { isGoreDisabled } from "../../../ui/wiring/goreEngine.js";
+import { isGoreDisabled } from "../../../../ui/wiring/goreEngine.js";
 
 export function bleedPulse(ctx, glyph, x, y, size, t, dt, seed, baselineY, env) {
   if (isGoreDisabled()) return;
