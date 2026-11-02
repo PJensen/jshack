@@ -22,6 +22,7 @@ import {
   SECRET_FOUND_SOUND_ID,
   HARVEST_PLANT_SOUND_ID,
   GENOCIDE_SUCCESS_SOUND_ID,
+  PRAYER_SOUND_ID,
   TAMING_SUCCESS_SOUND_ID,
   THROW_SOUND_ID,
   SPELL_CAST_SOUND_EVENTS,
@@ -89,6 +90,10 @@ Deno.test("audio wiring exposes crafting menu ambience and result sound contract
 Deno.test("audio wiring exposes familiar fire ready and cast sound aliases", () => {
   assert(FAMILIAR_FIRE_READY_SOUND_ID === "torch:ignite");
   assert(FAMILIAR_FIRE_CAST_SOUND_ID === "spell:fireball");
+});
+
+Deno.test("audio wiring exposes the prayer sound alias", () => {
+  assert(PRAYER_SOUND_ID === "holy_chime");
 });
 
 Deno.test("audio wiring exposes food and stone push sound aliases", () => {

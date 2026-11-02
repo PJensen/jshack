@@ -92,6 +92,7 @@ export const BONE_CHIME_SOUND_ID = "ambient:bone_chime";
 export const TAMING_SUCCESS_SOUND_ID = "magic:taming";
 export const GENOCIDE_SUCCESS_SOUND_ID = "item:scroll:genocide";
 export const THROW_SOUND_ID = "action:throw";
+export const PRAYER_SOUND_ID = "holy_chime";
 
 let sfxDebugEnabled = false;
 let sfxDebugLogger = null;
@@ -1152,6 +1153,11 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
 
   world.on('shrine:communion', () => {
     sfx("deity:omen");
+  });
+
+  world.on('prayer', ({ actor }) => {
+    const pos = actor != null ? getPosition(actor) : null;
+    sfxAt(PRAYER_SOUND_ID, pos, pp(), { priority: 1 }, zg());
   });
 
   // deity:omen is intentionally silent for now. Wrath/anger can emit
