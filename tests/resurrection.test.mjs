@@ -3,6 +3,7 @@ import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { createCorpse } from "../src/rules/archetypes/Food.js";
 import { Faction } from "../src/rules/components/Faction.js";
+import { CreatureType, CREATURE_TYPES } from "../src/rules/components/CreatureType.js";
 import { Lifespan } from "../src/rules/components/Lifespan.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Owner } from "../src/rules/components/Owner.js";
@@ -47,6 +48,8 @@ Deno.test("resurrection raises an eligible corpse as a temporary allied monster"
       .find((id) => id !== caster);
     assert(risen, "a risen creature should exist");
     assertEquals(world.get(risen, Faction).key, "summoned");
+    assertEquals(world.get(risen, CreatureType).type, CREATURE_TYPES.undead);
+    assertEquals(world.get(risen, NamedIdentity).name, "Reanimated Goblin");
     assertEquals(world.get(risen, Owner).ownerId, caster);
     assertEquals(world.get(risen, Lifespan).turnsLeft, 80);
     assertEquals(events.length, 1);

@@ -2498,7 +2498,8 @@ REGISTRY['resurrection'] = function resurrectionScript(world, actor, spell, inte
     y: at.y,
     ...spawnParams,
     faction: "summoned",
-    name: `Risen ${def.name}`,
+    creatureType: CREATURE_TYPES.undead,
+    name: `Reanimated ${def.name}`,
   });
   if (!(reanimatedId > 0)) {
     emitFizzle("spawn_failed", at, corpseId);
