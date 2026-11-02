@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "83caa907be3d",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/content/items/index.js",
+    "src/content/items/specialGear.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/data/validate.js",
+    "src/rules/systems/combatSystem.js",
+    "src/rules/utils/procEvaluator.js",
+    "src/rules/utils/procPhases.js",
+    "tests/specialGear.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/83/caa907be3d/0/metadata.json",
+      "transcript": "/83/caa907be3d/0/full.jsonl",
+      "compact_transcript": "/83/caa907be3d/0/transcript.jsonl",
+      "content_hash": "/83/caa907be3d/0/content_hash.txt",
+      "prompt": "/83/caa907be3d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 136001,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3736576,
+    "output_tokens": 15823,
+    "api_call_count": 40
+  }
+}
