@@ -1,9 +1,0 @@
-I want to lean into gear today -- certain really cool gear, it seems like we're missing a rarity rung.
-
-common (white)
-uncommon (green)
-rare (blue)
-epic (purple)
-legendary (organg-ish)
-
-it's the green one that we're missing!
