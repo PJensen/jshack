@@ -165,6 +165,74 @@ defineItem('flail', {
   affixes: ['stunning1'],
 });
 
+defineItem('great_axe', {
+  name: 'Great Axe',
+  type: 'weapon',
+  glyph: ')', color: '#d09a58', glow: '#8d5d2f', scale: 0.9,
+  weaponFamily: 'axe_large',
+  material: 'steel',
+  rarity: 2,
+  twoHanded: true,
+  bonuses: { accuracy: 1, damagePower: 4, slashPenetration: 2 },
+  damageDice: '1d10',
+  damageType: 'slash',
+  staminaCost: 14,
+  maxSockets: 1,
+  description: 'A broad steel axe that rewards a full-bodied swing.',
+  weight: 4.5,
+});
+
+defineItem('glaive', {
+  name: 'Glaive',
+  type: 'weapon',
+  glyph: '/', color: '#b8c8d8', glow: '#71869a', scale: 0.9,
+  weaponFamily: 'spear',
+  material: 'steel',
+  rarity: 2,
+  twoHanded: true,
+  bonuses: { accuracy: 2, damagePower: 2, piercePenetration: 2 },
+  damageDice: '1d10',
+  damageType: 'pierce',
+  staminaCost: 13,
+  maxSockets: 1,
+  description: 'A long-shafted blade that keeps danger at the edge of reach.',
+  weight: 3.5,
+});
+
+defineItem('emberstaff', {
+  name: 'Emberstaff',
+  type: 'weapon',
+  glyph: '/', color: '#e38b56', glow: '#b84c2d', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 2,
+  twoHanded: true,
+  bonuses: { attack: 1, maxMana: 5, manaRegen: 0.2, fireResist: 0.1 },
+  damageDice: '1d6',
+  damageType: 'blunt',
+  staminaCost: 8,
+  maxSockets: 1,
+  description: 'A charred staff with a living ember in its crown. It warms the hand and the spellbook alike.',
+  weight: 2.0,
+});
+
+defineItem('moonroot_staff', {
+  name: 'Moonroot Staff',
+  type: 'weapon',
+  glyph: '/', color: '#a9b9e8', glow: '#697ebd', scale: 0.9,
+  weaponFamily: 'wooden_staff',
+  material: 'wood',
+  rarity: 3,
+  twoHanded: true,
+  bonuses: { attack: 1, maxMana: 10, manaRegen: 0.3, spellHit: 1, visionRange: 1 },
+  damageDice: '1d8',
+  damageType: 'blunt',
+  staminaCost: 9,
+  maxSockets: 2,
+  description: 'Pale roots curl around a moonstone core, drinking in the night and returning it as quiet power.',
+  weight: 2.2,
+});
+
 // ── Monster-drop weapons ──────────────────────────────────────────────────────
 
 defineItem('goblin_shiv', {
