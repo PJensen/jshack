@@ -375,6 +375,10 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           && (aimedTargetVitality.hp | 0) > 0
         ) {
           world?.add?.(actorId, TargetLock, { targetId: aimedTargetId });
+        } else {
+          // A ground-targeted shot must not leave the previous hostile lock
+          // visible as if it were still the shot destination.
+          world?.remove?.(actorId, TargetLock);
         }
         world?.add?.(actorId, RangedAttackIntent, { targetId, toX, toY });
         world?.tick?.(1);

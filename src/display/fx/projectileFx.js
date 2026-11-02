@@ -1438,11 +1438,15 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const s = (baseStyle === "plain" && profileStyle) ? profileStyle : baseStyle;
       _lastShotStyle.set(Number(target || 0), s);
       const speed = Number(projectileSpeed || 18);
-      const end = !hit
-        ? ((missTo && Number.isFinite(missTo.x) && Number.isFinite(missTo.y))
+      // Ground and wall impacts are non-actor hits, not combat misses. Their
+      // `hit: false` flag must not send the visual projectile through the
+      // miss-spread path; `to` is already the canonical impact point.
+      const physicalImpact = impact?.kind === 'ground' || impact?.kind === 'wall';
+      const end = physicalImpact || hit
+        ? dpos
+        : ((missTo && Number.isFinite(missTo.x) && Number.isFinite(missTo.y))
           ? { x: Number(missTo.x), y: Number(missTo.y) }
-          : computeMissEndpoint(apos, dpos, missSeedFromIds(attacker, target, 0x52a9)))
-        : dpos;
+          : computeMissEndpoint(apos, dpos, missSeedFromIds(attacker, target, 0x52a9)));
       const projectile = spawnTransientProjectile({
         from: apos,
         to: end,

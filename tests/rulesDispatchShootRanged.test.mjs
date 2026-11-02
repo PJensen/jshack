@@ -183,6 +183,30 @@ Deno.test("rulesDispatch: aimed ranged shots preserve the hostile target lock", 
   assertEquals(world.get(actor, TargetLock)?.targetId, enemy);
 }));
 
+Deno.test("rulesDispatch: ground ranged shots clear the previous hostile target lock", () => withVisibilityDisabled(() => {
+  const world = new World({ seed: 98 });
+  const actor = world.create();
+  world.add(actor, Position, { x: 2, y: 2 });
+
+  const bowId = world.create();
+  world.add(bowId, ItemInfo, { type: "equip", subtype: "bow", range: 6, count: 1 });
+  world.add(actor, Equipment, { ranged: bowId });
+
+  const enemy = world.create();
+  world.add(enemy, Position, { x: 5, y: 2 });
+  world.add(enemy, Faction, { key: "enemy" });
+  world.add(enemy, Vitality, { hp: 9, maxHp: 9 });
+  world.add(actor, TargetLock, { targetId: enemy });
+
+  world.tick = () => {};
+  const dispatch = makeRulesDispatcher(world, () => actor);
+  dispatch({ type: "rules.rangedAttack", payload: { targetId: 0, toX: 4, toY: 4 } });
+
+  assertEquals(world.has(actor, TargetLock), false);
+  assertEquals(world.get(actor, RangedAttackIntent)?.toX, 4);
+  assertEquals(world.get(actor, RangedAttackIntent)?.toY, 4);
+}));
+
 Deno.test("rulesDispatch: selecting a hostile target updates the view without spending a turn", () => withVisibilityDisabled(() => {
   const world = new World({ seed: 95 });
   const actor = world.create();
