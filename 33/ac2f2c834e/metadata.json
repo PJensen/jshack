@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "33ac2f2c834e",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/items/weapons.js",
+    "src/rules/data/classes.js",
+    "src/rules/data/lootTables.js",
+    "tests/classes.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/33/ac2f2c834e/0/metadata.json",
+      "transcript": "/33/ac2f2c834e/0/full.jsonl",
+      "compact_transcript": "/33/ac2f2c834e/0/transcript.jsonl",
+      "content_hash": "/33/ac2f2c834e/0/content_hash.txt",
+      "prompt": "/33/ac2f2c834e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 11779,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 755328,
+    "output_tokens": 1911,
+    "api_call_count": 9
+  }
+}
