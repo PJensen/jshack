@@ -1922,6 +1922,7 @@ function lootRarityColorHex(itemInfo) {
   if (rarity === "legendary") return "#ff8a3d";
   if (rarity === "epic") return "#c77dff";
   if (rarity === "rare") return "#ffd54f";
+  if (rarity === "uncommon") return "#1eff00";
   if (rarity === "magic") return "#63b3ff";
   return "#c2c2c2";
 }

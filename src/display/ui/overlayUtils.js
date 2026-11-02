@@ -1720,6 +1720,7 @@ export function getMessageColor(type) {
 /** @param {string} rarityName */
 export function rarityStyle(rarityName) {
   const rn = String(rarityName || 'common').toLowerCase();
+  if (rn === 'uncommon') return { color: '#1eff00', fontWeight: 'bold' };
   if (rn === 'rare' || rn === 'magic') return { color: '#55aaff', fontWeight: 'bold' };
   if (rn === 'epic') return { color: '#c47bff', fontWeight: 'bold' };
   if (rn === 'legendary') return { color: '#ff9f3b', fontWeight: 'bold' };

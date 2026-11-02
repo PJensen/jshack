@@ -2,6 +2,7 @@ import "./helpers/installContentCatalog.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { createRng } from "../src/lib/ecs-js/rng.js";
 import { resolveLootTable } from "../src/rules/data/lootResolver.js";
+import { getCatalogItem } from "../src/rules/data/itemCatalog.js";
 
 Deno.test("known spells are suppressed from spellbook drops", () => {
   // Run many seeds — sub:spellbooks should never produce a known spell
@@ -104,6 +105,21 @@ Deno.test("sub:equip_common can naturally drop helm_iron", () => {
     }
   }
   assert(seen > 0, "expected to see helm_iron in common equipment drops");
+});
+
+Deno.test("sub:equip_uncommon exposes the authored green gear band", () => {
+  const ids = new Set();
+  for (let seed = 1; seed <= 500; seed++) {
+    const drops = resolveLootTable("sub:equip_uncommon", createRng(seed), 3);
+    for (const drop of drops) {
+      if (drop.kind === "equip") ids.add(drop.params?.equipId);
+    }
+  }
+
+  assertEquals(ids.size, 8, "all uncommon gear should be reachable");
+  for (const id of ids) {
+    assertEquals(getCatalogItem(id)?.rarityName, "uncommon", `${id} should be green-tier gear`);
+  }
 });
 
 Deno.test("sub:potions can naturally drop potion_water", () => {

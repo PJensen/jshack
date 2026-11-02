@@ -58,6 +58,20 @@ export const LOOT_TABLES = {
     ],
   },
 
+  "sub:equip_uncommon": {
+    rolls: { min: 1, max: 1 },
+    entries: [
+      { type: "equip", weight: 14, pool: ["briarbound_blade"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 14, pool: ["mossguard_mail"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["greenwarden_hood"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["thornwall_buckler"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["suregrip_gauntlets"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["swiftroot_boots"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["trailblazer_belt"], affixChance: 0.10, affixCountMax: 1 },
+      { type: "equip", weight: 12, pool: ["emerald_oath_ring"], affixChance: 0.10, affixCountMax: 1 },
+    ],
+  },
+
   "sub:equip_magic": {
     rolls: { min: 1, max: 1 },
     entries: [
@@ -1099,6 +1113,7 @@ export const LOOT_TABLES = {
       { type: "equip",     weight: 16, pool: ["sword_plain", "dagger_quick", "bow_short", "bow_recurve"], affixChance: 0.25, affixCountMax: 1 },
       { type: "equip",     weight: 14, pool: ["leather_armor", "scavenger_jerkin", "helm_iron", "scout_hood", "amulet_guarded", "amulet_hearthwire", "belt_leather", "gloves_leather", "tanner_bracers", "leggings_leather", "boots_leather", "trail_boots", "sandals_hemp", "shoes_cloth", "shield_wood", "ring_copper", "ring_bone"], affixChance: 0 },
       { type: "table",     weight: 12, tableId: "sub:equip_early_proc" },
+      { type: "table",     weight: 8,  tableId: "sub:equip_uncommon" },
       { type: "table",     weight: 12, tableId: "sub:equip_magic" },
       { type: "table",     weight: 6,  tableId: "sub:equip_rare" },
       { type: "table",     weight: 2,  tableId: "sub:equip_epic" },
@@ -1187,6 +1202,7 @@ export const LOOT_TABLES = {
       { type: "item",   weight: 45, itemId: "stone_flint" },
       { type: "equip",  weight: 12, pool: ["ashwood_staff"], affixChance: 0 },
       { type: "table",  weight: 40, tableId: "sub:equip_common" },
+      { type: "table",  weight: 18, tableId: "sub:equip_uncommon" },
       { type: "table",  weight: 30, tableId: "sub:equip_magic" },
       { type: "table",  weight: 8,  tableId: "sub:equip_catalog_backfill" },
       { type: "table",  weight: 15, tableId: "sub:scrolls" },
@@ -1205,6 +1221,7 @@ export const LOOT_TABLES = {
       { type: "table",     weight: 14, tableId: "sub:potions" },
       { type: "item",      weight: 6, itemId: "potion_mana" },
       { type: "table",     weight: 22, tableId: "sub:equip_common" },
+      { type: "table",     weight: 8,  tableId: "sub:equip_uncommon" },
       { type: "table",     weight: 15, tableId: "sub:equip_early_proc" },
       { type: "table",     weight: 13, tableId: "sub:equip_magic" },
       { type: "table",     weight: 6,  tableId: "sub:equip_rare" },

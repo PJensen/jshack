@@ -74,6 +74,10 @@ Deno.test("quick-chip rarity style maps epic to purple", () => {
   assertEquals(rarityStyle("epic"), { color: "#c47bff", fontWeight: "bold" });
 });
 
+Deno.test("quick-chip rarity style maps uncommon to green", () => {
+  assertEquals(rarityStyle("uncommon"), { color: "#1eff00", fontWeight: "bold" });
+});
+
 Deno.test("quick-chip detail line highlights immediate pickup and pin affordance", () => {
   const item = { type: "potion", count: 2, justPickedUp: true };
   assertEquals(getQuickChipDetailLine(item), "x2 • just picked up • tap for details/pin");

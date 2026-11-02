@@ -10,6 +10,7 @@ import "./sunsword.js";
 import "./fishingRod.js";
 import "./lodbrokSerpentBoundBreeches.js";
 import "./weapons.js";
+import "./uncommonGear.js";
 import "./rangedWeapons.js";
 import "./armors.js";
 import "./helms.js";
