@@ -1,0 +1,32 @@
+okay -- now:
+
+
+
+these items are sick:
+
+
+
+Yes—that’s the right next pass. I’d replace the generic starter gear with class-flavored common items:
+
+- Necromancer: Bonewraps, Ossuary Belt, Gravewalker Boots
+- Mage: Apprentice Handwraps, Spellcord Belt, Conduit Slippers
+- Warlock: Hexweave Gloves, Pactbinder Belt, Ashen Boots
+- Druid: Rootweave Gloves, Vinebound Belt, Mosswalker Boots
+- Warden: Ironhide Bracers, Warbelt, Marching Boots
+- Outlaw: Quickfinger Gloves, Ranger’s Belt, Trail Boots
+
+I’ll preserve existing items where they already fit—like Ranger’s Belt, Trail Boots, and Conduit Slippers—and only add replacements where the current starter gear is generic or mismatched.
+
+
+
+
+
+\-- I think we should make them and fold them into loot tables.
+
+
+
+I cannot remember if we had any class bias for drops -- seems unlikely.
+
+---
+
+ehhhhh -- why are you changing the starting items? I'm just adding the class centered items as available, not setting new loadouts.
