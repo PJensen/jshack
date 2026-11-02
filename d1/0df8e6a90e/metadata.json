@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "d10df8e6a90e",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/items/armors.js",
+    "src/content/items/boots.js",
+    "src/content/items/gloves.js",
+    "src/content/items/helms.js",
+    "src/content/items/rings.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d1/0df8e6a90e/0/metadata.json",
+      "transcript": "/d1/0df8e6a90e/0/full.jsonl",
+      "compact_transcript": "/d1/0df8e6a90e/0/transcript.jsonl",
+      "content_hash": "/d1/0df8e6a90e/0/content_hash.txt",
+      "prompt": "/d1/0df8e6a90e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 34960,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2798208,
+    "output_tokens": 6549,
+    "api_call_count": 18
+  }
+}

@@ -1,0 +1,5 @@
+and dont forget we also have the ability to do:
+
+"Use: spawn three spiders loyal to you, 200 turn cooldown"
+
+WARNING: special gear is no beuno -- I'd split them off into their requsite files.
