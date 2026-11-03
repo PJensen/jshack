@@ -1,5 +1,25 @@
-feline trait, + dmg % against rodents
+it's still WAY WAY off.
 
 ---
 
-plus hit against rodents
+I don't thin 6 deg is causing a two tile delta, maybe I'm wrong -- are we really missing this many aimed shots -- seems mental to me.
+
+---
+
+FYI: these are ground attacks only
+
+---
+
+what was I saying lol
+
+---
+
+??? right, I would reset soft that accuracy tweak
+
+---
+
+I said reset soft ---and I still see the commit floating out there
+
+---
+
+nope, tighten spread commit -- plainly there -- tell me I'm wrong

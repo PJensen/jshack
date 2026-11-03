@@ -3,16 +3,10 @@
   "checkpoint_id": "1e50daa7f44e",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 2,
+  "checkpoints_count": 8,
   "files_touched": [
-    "src/content/monsters/animals.js",
-    "src/main/ui/inventoryDataProvider.js",
-    "src/rules/components/Traits.js",
-    "src/rules/systems/combatSystem.js",
     "src/rules/systems/rangedAttackSystem.js",
-    "src/rules/utils/resolveCombatSnapshot.js",
-    "tests/rangedAttack.test.mjs",
-    "tests/statPipeline.test.mjs"
+    "tests/rangedAttack.test.mjs"
   ],
   "sessions": [
     {
@@ -31,11 +25,11 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 179685,
+    "input_tokens": 123467,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 3276800,
-    "output_tokens": 13923,
-    "api_call_count": 47
+    "cache_read_tokens": 5218048,
+    "output_tokens": 13377,
+    "api_call_count": 41
   },
   "combined_attribution": {
     "calculated_at": "2026-11-02T21:44:50.60766973Z",
