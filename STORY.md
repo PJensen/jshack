@@ -580,8 +580,138 @@ grown large enough to need a map, but the map is there.
 The work continues — after a pause, with newer models, and with the useful
 kind of uncertainty that comes from having more possibilities than time.
 
+---
+
+## The Autumn Return
+
+The repository did not so much resume in September as twitch.
+
+On September 11th, auras arrived in several increasingly confident passes:
+*"feat: more auras," "vfx: draw aura,"* and *"feat: aura cont."* These were
+not merely decorative halos. Monster aura fields, hazard interaction, spell
+definitions, and tests appeared together, which is the JSHack version of
+putting a little candle on the table and discovering that the candle has a
+registry, a scheduler contract, and a test file of its own.
+
+Then came *"feat: agent view (experimental)."* It added a read-only runtime
+view and a player tool for observing the game. Two days later, *"feat: replay
+checkpoint"* taught that tool to save and replay an action trace. A subsequent
+commit called *"data: an interesting capture"* checked in a 733-line trace.
+This was not autonomy. It was something more useful and less cinematic: a
+machine-readable way to ask what happened, then do it again. The distinction
+matters. The agent could observe and replay a bounded run; it could not be
+credited with wanting anything.
+
+September also produced encounters and a stasis rewrite, complete with a
+design handoff large enough to prove that “temporary pause” is a dangerous
+phrase in a simulation. The season's first lesson was that experimentation
+had become easier to preserve. The second was that preserved experiments still
+needed somebody to decide whether they were the game.
+
+## The Machinery Wakes Up
+
+By October 25th, the project had found its old pulse. *"feat: experimental
+effect arch"* moved item abilities toward explicit effect instances, periodic
+effects, and a lifecycle document. The next day was less a feature than a
+small civil war among interfaces: *"arch: targeting, overhaul," "arch:
+projectiles impact," "arch: onHit and re-usable proc for dawnBreaker,"* and
+*"arch: proc evals continued."*
+
+The results are concrete. Ranged attacks now distinguish a persistent target
+lock from temporary point targeting. A shot follows a physical ray and can
+end at an actor, a wall, or the ground. Ammo receives the resolved impact
+instead of being told only whether some abstract defender was hit. Proc
+packages moved out of one-off weapon hooks into reusable data and evaluator
+paths. The architecture acquired the ability to say what a projectile hit,
+which is a surprisingly high bar for a game that has been firing arrows for
+months.
+
+It also acquired the ability to be wrong in more interesting ways. The final
+commit of the period is *"fixed: ground shots are not misses."* That is not a
+metaphor. A ground shot had been falling through the semantic gap between
+“not an actor” and “not a miss.” The fix and its regression test are a neat
+summary of October: the game is no longer short of systems; it is short of
+places where those systems agree about what a thing means.
+
+## The Agent Gets an Operating Manual for Its Operating Manuals
+
+The most consequential October work did not add a monster or a spell. On
+October 30th, GREENLIGHT support appeared in a commit that changed two files.
+That is the verified fact. The grander workflow around it was then assembled
+in November: *"docs: organize agent skills and tools," "docs: route runtime
+proving tools,"* and *"docs: capture skills incrementally."*
+
+Issue #156 had diagnosed the broad problem: the skills described content
+authoring, but some of their instructions still pointed agents toward old
+catalogs and old paths. The follow-up did not pretend that a giant manual was
+the answer. It created routes for searching, reviewing, replaying, explaining,
+and handing off work, while keeping real deterministic tools beside the skills
+that own them.
+
+Then issue #173 made the arrangement physical. Inspection scripts moved into
+`agent-tools`; headless runs, replay, and profiling moved into `runtime-tools`;
+the seeded monster trainer received its own skill. The repository now says,
+with a straight face, that tools establish facts, skills encode judgment, and
+agents compose capabilities. This is a reasonable operating principle. It is
+also machinery for building the machinery that builds the game.
+
+The old Ten Commandments warned against building an engine instead of a game.
+The new response is to build diagnostic instruments, ownership matrices,
+checkpoint transcripts, health reports, and a routing doctrine so the engine
+building can be inspected properly. The author may have tamed the machinery.
+He may instead have made it sophisticated enough to indulge him with better
+instruments. The evidence supports both readings, which is inconveniently
+appropriate.
+
+## The Dead Become Useful
+
+On November 2nd, the necromancer arrived in a sequence of commits whose
+spelling occasionally looked as though it had been resurrected from a draft:
+*"added: new class `necromancer`," "feat: necromancer starts with bone ring,"
+"added: resurection spell,"* and *"feat: re-animated label and unead tag."*
+The class is real: bone staff, bone ring, Molkhar, Agony, and Resurrection.
+
+Resurrection consumes an eligible corpse and creates a temporary allied undead
+with ownership, a visible reanimated glow, and a lifespan. A goblin can rise
+for eighty turns; a powerful corpse burns out sooner. If the ally dies, it
+leaves bones rather than producing an edible corpse, closing the most obvious
+corpse-to-minion-to-corpse exploit. The tests demonstrate all of this. The
+dead are not flavor text anymore. They are a resource with a lifecycle.
+
+But open issue #169 asks for more than the shipped slice: an explicit Grave
+Claim action, active-minion limits, failure-safe corpse consumption, command
+semantics, floor transitions, and corpse provenance. Those ambitions should
+not be smuggled into the historical record as completed features. The
+necromancer has been born. The necromancer's full profession has not.
+
+## The Player Needs a Reason
+
+This is where the autumn became uncomfortable. Issues #170, #171, and #172 do
+not complain that JSHack lacks simulation. They complain that simulation is
+not automatically a reason to care. The town has memory, the land has
+biomes, the dungeons have traps, and the player can now shoot a precise arrow
+into the ground. None of that guarantees that a player wants to leave town,
+knows where to go, recognizes a place as a place, or feels a meaningful arc
+when a run improves.
+
+The repository's `PROGRESSION_RESONANCE_PLAN.md` says the diagnosis plainly:
+the weak point is not feature count but the reward contract. A quest can have
+a strong setup and still collapse into gold at the end. A world can have
+landmarks and still feel like a map asking to be admired. These are plans and
+design diagnoses, not shipped fixes. The game has gained a reason to ask the
+question. It has not yet answered it.
+
+That is the latest shape of JSHack. The autumn return made the experiments
+repeatable, the combat machinery more semantically honest, and the agent
+workflow increasingly inspectable. It also produced a necromancer who can
+raise a corpse while the development process raises old tools into new skills.
+Underneath the checkpoints, flight plans, target locks, corpse lifespans, and
+the machinery for checking the machinery, there is still allegedly a
+roguelike. On November 2nd, at least, it fired at the ground and admitted that
+the ground was not a miss.
+
 *The repository is at https://github.com/PJensen/JSHack.*
 *The Ten Commandments are in [TEN_COMMANDMENTS.md](docs/architecture/TEN_COMMANDMENTS.md).*
 *The first commit was October 15, 2025.*
-*The latest recorded work is August 31, 2026.*
+*The latest verified work is November 2, 2026.*
 *The work continues.*
