@@ -158,7 +158,19 @@ Deno.test("combat audio adapter plans every flail playback path through flail as
 });
 
 Deno.test("materialized melee weapons carry raw ItemInfo weapon families, including all staffs", () => {
-  const expectedStaffs = new Set(["staff_oak", "resonant_quarterstaff"]);
+  const expectedStaffs = new Set([
+    "ashwood_staff",
+    "bloodwood_staff",
+    "bone_staff",
+    "emberstaff",
+    "ironbark_staff",
+    "moonroot_staff",
+    "resonant_quarterstaff",
+    "staff_oak",
+    "stormglass_staff",
+    "sunken_crown_staff",
+    "walking_staff",
+  ]);
   const seenStaffs = new Set();
   const supported = new Set(Object.values(WEAPON_FAMILIES));
 

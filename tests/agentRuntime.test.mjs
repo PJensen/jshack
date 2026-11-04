@@ -53,7 +53,7 @@ Deno.test("necromancer runtime starts with its class loadout", async () => {
   assertEquals(devotion.pantheon, true);
   assert(typeof devotion.deityId === "string" && devotion.deityId.length > 0);
   assert(brain.learnedSpellIds.includes("agony"));
-  assert(brain.learnedSpellIds.includes("summon_skeleton"));
+  assert(brain.learnedSpellIds.includes("resurrection"));
 });
 
 Deno.test("class loadout repairs an existing player's class identity", () => {
