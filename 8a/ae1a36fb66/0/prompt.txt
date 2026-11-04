@@ -31,3 +31,7 @@ and PUSH!
 NOPE -- not the ask -- it's FIX THE LAUNCHER -- DO NOT COMMIT -- LEAVE IT ON IGNORE
 
 SHIP EVERYTHING BUT -- JESUS CHRIST
+
+---
+
+riiiiiight, now greenlight issues (all types) will ship e2e right?!
