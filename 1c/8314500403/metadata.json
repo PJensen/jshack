@@ -3,7 +3,7 @@
   "checkpoint_id": "1c8314500403",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 6,
+  "checkpoints_count": 7,
   "files_touched": [
     "src/rules/systems/deitySystem.js",
     "tests/boltFxFireBreath.test.mjs",
@@ -17,13 +17,20 @@
       "compact_transcript": "/1c/8314500403/0/transcript.jsonl",
       "content_hash": "/1c/8314500403/0/content_hash.txt",
       "prompt": "/1c/8314500403/0/prompt.txt"
+    },
+    {
+      "metadata": "/1c/8314500403/1/metadata.json",
+      "transcript": "/1c/8314500403/1/full.jsonl",
+      "compact_transcript": "/1c/8314500403/1/transcript.jsonl",
+      "content_hash": "/1c/8314500403/1/content_hash.txt",
+      "prompt": "/1c/8314500403/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 748256,
+    "input_tokens": 872508,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 21327872,
-    "output_tokens": 40514,
-    "api_call_count": 173
+    "cache_read_tokens": 23878272,
+    "output_tokens": 57020,
+    "api_call_count": 202
   }
 }
