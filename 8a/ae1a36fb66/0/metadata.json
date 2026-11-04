@@ -1,0 +1,73 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "8aae1a36fb66",
+  "session_id": "01a19e37-3793-78d2-bae1-97312b0614e8",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-04T01:13:01.717285333Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "STORY.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "d69716dbfa84",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 711629,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 20079232,
+    "output_tokens": 34354,
+    "api_call_count": 146
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-11-04T01:13:01.532732862Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1,
+    "total_committed": 0,
+    "total_lines_changed": 1,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 996,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "STORY.md": 131
+      },
+      "user_removed_per_file": {
+        "STORY.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 1132,
+      "user_lines_removed": 1,
+      "agent_lines_added": 131,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        ".gitignore": 4,
+        "tools/greenlight/README.md": 69,
+        "tools/greenlight/launch.sh": 194
+      },
+      "user_removed_per_file": {
+        ".gitignore": 1
+      }
+    }
+  ]
+}

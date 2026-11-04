@@ -1,0 +1,13 @@
+what is the next GREENLIGHT issue?
+
+---
+
+think it can do it?
+
+---
+
+greenlight-fast didn't auto commit and push
+
+---
+
+still a pending story.md out there and likely an open issue to match
