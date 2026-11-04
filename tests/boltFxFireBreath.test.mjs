@@ -104,3 +104,30 @@ Deno.test("boltFx renders sunsword holy beam as non-blocking styled line light",
     restoreWindow();
   }
 });
+
+Deno.test("boltFx consumes a genuine deity wrath event as lightning", () => {
+  const restoreWindow = installTestWindow();
+
+  try {
+    const world = new World({ seed: 11 });
+    const controller = createBoltFxController({
+      world,
+      cam: {},
+      fx: { pool: { spawn() {} } },
+      getPosition: (id) => (id === 7 ? { x: 3, y: 4 } : null),
+    });
+    controller.installListeners();
+
+    world.emit("deity:wrath", {
+      playerId: 7,
+      deityId: "seraphine",
+      intensity: 1,
+      severityScale: 1,
+      wrathDebt: 0,
+    });
+
+    assertEquals(controller.hasScreenEffects(), true);
+  } finally {
+    restoreWindow();
+  }
+});

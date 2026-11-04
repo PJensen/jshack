@@ -63,6 +63,9 @@ const WRATH_DEBT_MERCY_REDUCTION = 0.02;
 const WRATH_DEBT_NO_MERCY_THRESHOLD = 1.25;
 const WRATH_DEBT_CONSUME_PER_WRATH = 0.6;
 const OFFENSE_WRATH_GRACE_TURNS = 3;
+const WRATH_RECOVERY_TURNS = 4;
+const WRATH_MIN_CHANCE = 0.01;
+const WRATH_MAX_CHANCE = 0.10;
 const SHRINE_TOUCH_COOLDOWN_TURNS = 30;
 const SHRINE_TOUCH_PROTECT_MAGNITUDE = 0.35;
 const SHRINE_TOUCH_PLEA_VALUE = 0.25;
@@ -1228,20 +1231,40 @@ function wireWorldEvents(world) {
  * @param {import('../../lib/ecs-js/index.js').World} world
  */
 function wireDeityMiracles(deity, deityId, world) {
-  const cooldowns = { wrath: 0, demand: 0, utterance: 0, omen: 0 };
+  const cooldowns = { demand: 0, utterance: 0, omen: 0 };
+  const wrathRollSteps = new Map();
+  const wrathRecoveryUntil = new Map();
   const DEITY_COOLDOWN = 30;
 
-  // Wrath inflicts damage and optional curses on the worshipper.
+  // Wrath is a rare per-turn gamble: 1% just above threshold, up to 10% at
+  // maximum wrath. A successful strike grants four committed turns of recovery;
+  // missed rolls do not change recovery.
   deity.on("wrath", ({ intensity = 0, tick = 0 }) => {
-    if ((tick - cooldowns.wrath) < DEITY_COOLDOWN) return;
-    let appliedAny = false;
-
+    const threshold = Number(
+      deity?._thresholds?.wrath ?? DEITY_DEFS[deityId]?.thresholds?.wrath ?? 0.4,
+    );
+    const wrath = Number(intensity || 0);
+    if (!(wrath > threshold)) return;
+    const normalizedWrath = Math.min(
+      1,
+      Math.max(0, (wrath - threshold) / Math.max(0.0001, 1 - threshold)),
+    );
+    const strikeChance = WRATH_MIN_CHANCE +
+      (normalizedWrath * (WRATH_MAX_CHANCE - WRATH_MIN_CHANCE));
+    const turn = Number(world.step || 0) | 0;
     for (const [playerId] of world.query(Player, Devotion)) {
       const dev = world.get(playerId, Devotion);
       if (dev?.deityId !== deityId) continue;
 
       const graceUntil = getWrathGraceUntil(world, playerId, deityId);
-      if ((Number(world.step || 0) | 0) < graceUntil) continue;
+      if (graceUntil > 0 && turn <= graceUntil) continue;
+
+      const slot = wrathDebtSlot(playerId, deityId);
+      const recoveryUntil = Number(wrathRecoveryUntil.get(slot) || 0);
+      if (recoveryUntil > 0 && turn <= recoveryUntil) continue;
+      if (wrathRollSteps.get(slot) === turn) continue;
+      wrathRollSteps.set(slot, turn);
+      if (world.rand() >= strikeChance) continue;
 
       const vit = world.get(playerId, Vitality);
       if (!vit) continue;
@@ -1263,7 +1286,6 @@ function wireDeityMiracles(deity, deityId, world) {
       const actualDamage = Math.max(0, beforeHp - newHp);
 
       if (actualDamage > 0) {
-        appliedAny = true;
         dealDamage(world, {
           target: playerId,
           amount: actualDamage,
@@ -1336,10 +1358,10 @@ function wireDeityMiracles(deity, deityId, world) {
         kind: "wrath",
         damage: actualDamage,
       });
-    }
 
-    if (appliedAny) {
-      cooldowns.wrath = tick;
+      if (actualDamage > 0) {
+        wrathRecoveryUntil.set(slot, turn + WRATH_RECOVERY_TURNS);
+      }
     }
   });
 

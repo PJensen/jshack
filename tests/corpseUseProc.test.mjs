@@ -153,5 +153,16 @@ Deno.test("eating your own pet corpse is horrifying and spikes wrath without ins
   assertEquals(offenses[0].offense, "pet_corpse_desecration");
   assert(wrathAfter > wrathBefore, "desecrating your own pet corpse should increase wrath sharply");
   assert(wrathAfter >= 0.45, "horrifying offense should push wrath into danger territory");
-  assertEquals(wrathEvents.length, 0, "wrath effects should still respect deity cooldown timing");
+  assertEquals(wrathEvents.length, 0, "wrath effects should still respect the offense grace window");
+
+  // Continue the same seeded run through committed turns. The first eligible
+  // turn is four turns after the offense; no 30-tick immunity is required.
+  world.rand = () => 0;
+  world.setScheduler(deitySystem);
+  for (let turn = 0; turn < 4; turn++) world.tick(1);
+  assertEquals(wrathEvents.length, 1, "pet desecration should eventually deliver divine lightning");
+  assert(
+    (world.get(player, Vitality)?.hp || 0) < 30,
+    "delivered divine wrath should use the canonical damage path",
+  );
 });

@@ -31,6 +31,7 @@ Deno.test("deity wrath is applied in rules and emitted on world bus", () => {
 
   const deity = initDeity("molkhar", world);
   assert(deity, "deity should initialize");
+  world.rand = () => 0;
 
   const damageEvents = [];
   const wrathEvents = [];
@@ -162,6 +163,7 @@ Deno.test("wrath damage scales from severity and can remove mercy floor", () => 
 
   const deity = initDeity("molkhar", world);
   assert(deity, "deity should initialize");
+  world.rand = () => 0;
   deitySystem(world); // install listeners
 
   const damageEvents = [];
@@ -254,6 +256,112 @@ Deno.test("fresh deity offense adds a short grace window before wrath lands", ()
     0,
     "grace window should suppress immediate wrath events",
   );
+});
+
+Deno.test("wrath rolls begin on turn four, cap at ten percent, and recover after a hit", () => {
+  const world = new World({ seed: 0x180 });
+  const playerId = createPlayer(world, { name: "Hero" });
+  if (world.has(playerId, Devotion)) world.set(playerId, Devotion, { deityId: "molkhar" });
+  else world.add(playerId, Devotion, { deityId: "molkhar" });
+  if (world.has(playerId, Vitality)) world.set(playerId, Vitality, { hp: 100, maxHp: 100 });
+  else world.add(playerId, Vitality, { hp: 100, maxHp: 100 });
+  if (world.has(playerId, Status)) world.set(playerId, Status, { statuses: [] });
+  else world.add(playerId, Status, { statuses: [] });
+  const deity = initDeity("molkhar", world);
+  assert(deity, "deity should initialize");
+  deitySystem(world);
+
+  const wrathEvents = [];
+  world.on("deity:wrath", (event) => wrathEvents.push(event));
+  let rolls = 0;
+  world.rand = () => {
+    rolls++;
+    return 0;
+  };
+
+  world.emit("deity:offense", {
+    playerId,
+    deityId: "molkhar",
+    offense: "pet_corpse_desecration",
+    severity: "horrifying",
+    desecrateStacks: 48,
+  });
+
+  for (let turn = 0; turn <= 3; turn++) {
+    world.step = turn;
+    deity._emit("wrath", { intensity: 1, tick: turn + 1 });
+  }
+  assertEquals(rolls, 0, "offense grace should cover turns zero through three");
+  assertEquals(wrathEvents.length, 0, "grace should prevent early lightning");
+
+  world.step = 4;
+  deity._emit("wrath", { intensity: 1, tick: 5 });
+  deity._emit("wrath", { intensity: 1, tick: 6 });
+  assertEquals(rolls, 1, "a committed turn should receive only one wrath roll");
+  assertEquals(wrathEvents.length, 1, "the eligible high-wrath turn should strike");
+
+  for (let turn = 5; turn <= 8; turn++) {
+    world.step = turn;
+    deity._emit("wrath", { intensity: 1, tick: turn + 1 });
+  }
+  assertEquals(rolls, 1, "successful wrath should recover for four turns");
+
+  world.step = 9;
+  deity._emit("wrath", { intensity: 1, tick: 10 });
+  assertEquals(rolls, 2, "wrath should resume rolling after recovery");
+  assertEquals(wrathEvents.length, 2, "recovered wrath should be able to strike again");
+});
+
+Deno.test("wrath odds are nonzero near threshold and capped at ten percent", () => {
+  const makeWorld = (seed) => {
+    const world = new World({ seed });
+    const playerId = createPlayer(world, { name: "Hero" });
+    if (world.has(playerId, Devotion)) world.set(playerId, Devotion, { deityId: "molkhar" });
+    else world.add(playerId, Devotion, { deityId: "molkhar" });
+    if (world.has(playerId, Vitality)) world.set(playerId, Vitality, { hp: 100, maxHp: 100 });
+    else world.add(playerId, Vitality, { hp: 100, maxHp: 100 });
+    if (world.has(playerId, Status)) world.set(playerId, Status, { statuses: [] });
+    else world.add(playerId, Status, { statuses: [] });
+    const deity = initDeity("molkhar", world);
+    deitySystem(world);
+    return { world, deity };
+  };
+
+  const near = makeWorld(0x181);
+  const nearEvents = [];
+  near.world.on("deity:wrath", (event) => nearEvents.push(event));
+  near.world.rand = () => 0.009;
+  near.world.step = 4;
+  near.deity._emit("wrath", {
+    intensity: near.deity._thresholds.wrath + 0.0001,
+    tick: 1,
+  });
+  assertEquals(nearEvents.length, 1, "wrath just above threshold should have a nonzero chance");
+
+  const capped = makeWorld(0x182);
+  const cappedEvents = [];
+  capped.world.on("deity:wrath", (event) => cappedEvents.push(event));
+  capped.world.rand = () => 0.1;
+  capped.world.step = 4;
+  capped.deity._emit("wrath", { intensity: 1, tick: 1 });
+  assertEquals(cappedEvents.length, 0, "the maximum strike chance must not exceed ten percent");
+  capped.world.rand = () => 0;
+  capped.world.step = 5;
+  capped.deity._emit("wrath", { intensity: 1, tick: 2 });
+  assertEquals(cappedEvents.length, 1, "a missed roll must not start recovery");
+
+  const below = makeWorld(0x183);
+  let belowRolls = 0;
+  below.world.rand = () => {
+    belowRolls++;
+    return 0;
+  };
+  below.world.step = 4;
+  below.deity._emit("wrath", {
+    intensity: below.deity._thresholds.wrath - 0.01,
+    tick: 1,
+  });
+  assertEquals(belowRolls, 0, "wrath below threshold must not roll");
 });
 
 Deno.test("shrine touch records deity communion on the deity ledger", () => {
