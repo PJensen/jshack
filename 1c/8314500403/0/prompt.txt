@@ -1,0 +1,70 @@
+what is the next GREENLIGHT issue?
+
+---
+
+think it can do it?
+
+---
+
+greenlight-fast didn't auto commit and push
+
+---
+
+still a pending story.md out there and likely an open issue to match
+
+---
+
+CLOSE THELOOP! lets get this DONE.
+
+this thing needs to be e2e both paths
+
+---
+
+AND COMMIT THE STORY TWEAK!
+
+---
+
+and PUSH!
+
+---
+
+NOPE -- not the ask -- it's FIX THE LAUNCHER -- DO NOT COMMIT -- LEAVE IT ON IGNORE
+
+SHIP EVERYTHING BUT -- JESUS CHRIST
+
+---
+
+riiiiiight, now greenlight issues (all types) will ship e2e right?!
+
+---
+
+done the cron job is running?
+
+---
+
+????????????????????????
+
+"docs only"
+
+issues -- explain how that is known or detected
+
+---
+
+RIP THAT SHIT OUT -- I HAVE NO IDEA WHO OR WHAT ADDED THIS
+
+I NEVER ASKED FOR IT
+
+I DONT WANT IT
+
+I WOULD MUCH RATHER RUN TESTS ALWAYS
+
+---
+
+what else does it run?
+
+git pull early on?
+commit and push?
+
+---
+
+well guess what -- it's not commiting and pushing!
