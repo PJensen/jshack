@@ -287,9 +287,12 @@ function installFloatTextListeners({ world, ftext, fx, getPosition, isVisibleAt,
 
   // ── Heal ────────────────────────────────────────────────────────────
 
-  world.on('healed', ({ id, amount }) => {
-    const pos = getPosition(Number(id || 0));
-    if (pos && canShowAt(pos.x, pos.y) && Number.isFinite(amount)) {
+  world.on('healed', (event) => {
+    const targetId = event?.target ?? event?.id;
+    const amount = Number(event?.amount);
+    if (!(amount > 0) || !Number.isFinite(amount)) return;
+    const pos = getPosition(Number(targetId || 0));
+    if (pos && canShowAt(pos.x, pos.y)) {
       ftext.addHeal(pos.x, pos.y, amount, { color: '#7BFF7B' });
     }
   });
