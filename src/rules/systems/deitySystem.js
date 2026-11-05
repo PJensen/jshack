@@ -438,13 +438,15 @@ function stripCorpseName(corpseName) {
   return noHalf.replace(/\s+corpse$/i, "").trim() || "Pet";
 }
 
-function isReasonableResurrectionStanding(deity) {
+function isDeityFavoring(deity) {
   const mood = deity?._queryPrecise?.();
   if (!mood) return false;
   const wrath = Number(mood.wrath || 0);
   const serenity = Number(mood.serenity || 0);
   return wrath < 0.34 && serenity >= wrath;
 }
+
+const isReasonableResurrectionStanding = isDeityFavoring;
 
 function resurrectPetFromOffering(world, spec) {
   const actor = Number(spec?.actor || 0) | 0;
@@ -1399,6 +1401,7 @@ function wireDeityMiracles(deity, deityId, world) {
       const dev = world.get(playerId, Devotion);
       if (!dev) continue;
       if (!devotionUsesPantheon(dev) && dev?.deityId !== deityId) continue;
+      if (!isDeityFavoring(deity)) continue;
 
       const emitMiracle = (payload) => {
         world.emit("deity:miracle", payload);
@@ -1716,3 +1719,5 @@ export function getDeityInstance(deityId) {
 export function initDeity(deityId, world = null) {
   return ensureDeity(deityId, world);
 }
+
+export { isDeityFavoring };

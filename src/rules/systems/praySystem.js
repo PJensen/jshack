@@ -9,7 +9,7 @@ import { Position } from "../components/Position.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
 import { Beatitude } from "../components/Beatitude.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
-import { resolvePlayerActiveDeity } from "./deitySystem.js";
+import { isDeityFavoring, resolvePlayerActiveDeity } from "./deitySystem.js";
 import { hasStatus, statusStrength } from "../utils/statusFacade.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { getHungerLevel } from "../data/food.js";
@@ -21,6 +21,7 @@ import { applyHealing } from "../utils/applyHealing.js";
 
 const PRAYER_STREAK_KEY = Symbol.for('jshack:prayer:boonStreak');
 const PRAYER_LAST_BOON_KEY = Symbol.for('jshack:prayer:lastBoonTurn');
+const PRAYER_BACKFIRE_CHANCE = 0.03;
 
 const HARMFUL_STATUSES = Object.freeze(new Set([
   'disease', 'poisoned', 'cursed', 'bleeding', 'weakened', 'blinded', 'deafened',
@@ -294,8 +295,53 @@ export function praySystem(world) {
             });
           }
 
+          const deityFavoring = isDeityFavoring(deity);
+
+          if (!deityFavoring) {
+            const backfireRoll = world.rand();
+            const eq = world.get(id, Equipment);
+            let cursedItem = null;
+            if (eq) {
+              for (const slot of NON_AMMO_GEAR_SLOTS) {
+                const itemId = Number(eq[slot] || 0) | 0;
+                if (!(itemId > 0)) continue;
+                const beat = world.get(itemId, Beatitude);
+                if (!beat || beat.state !== 'cursed') {
+                  cursedItem = {
+                    itemId,
+                    name: world.get(itemId, NamedIdentity)?.name || 'item',
+                  };
+                  break;
+                }
+              }
+            }
+
+            if (cursedItem && backfireRoll < PRAYER_BACKFIRE_CHANCE) {
+              world.emit('curse:equipment', {
+                actor: id,
+                itemId: cursedItem.itemId,
+                source: 'prayer_backfire',
+              });
+              world.emit('deity:intervention', {
+                playerId: id,
+                deityId,
+                deityName: deity.name,
+                kind: 'prayer_curse',
+                itemId: cursedItem.itemId,
+                itemName: cursedItem.name,
+              });
+            } else {
+              world.emit('deity:intervention', {
+                playerId: id,
+                deityId,
+                deityName: deity.name,
+                kind: 'prayer_refusal',
+              });
+            }
+          }
+
           // Prayer-based curse removal: a healthy player can focus spiritual energy
-          if (!distress.desperate && !distress.troubled) {
+          if (deityFavoring && !distress.desperate && !distress.troubled) {
             const vit = world.get(id, Vitality);
             const hpPct = vit ? (vit.hp / vit.maxHp) : 0;
             if (hpPct > 0.8) {
@@ -370,7 +416,7 @@ export function praySystem(world) {
           const chance = Math.min(0.95, baseChance + distressBonus + pityBonus + droughtBonus + deathsDoorBonus - cursedPenalty);
           const roll = deterministicRoll(world, id, streak + 17);
 
-          if (roll < chance) {
+          if (deityFavoring && roll < chance) {
             const applied = applyPrayerBoon(world, id, {
               deityId,
               deityName: deity.name,

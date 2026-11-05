@@ -443,6 +443,14 @@ Deno.test("gluttonous trait slightly boosts deity food miracle output", () => {
 
     const deity = initDeity("seraphine", world);
     deitySystem(world); // install listeners
+    deity.mood._vector = {
+      wrath: 0.05,
+      serenity: 0.8,
+      hunger: 0,
+      amusement: 0,
+      sorrow: 0,
+      chaos: 0,
+    };
     deity._emit("miracle", { serenity: 1, tick: 100 });
     return Number(world.get(playerId, Hunger)?.hunger || 0);
   }

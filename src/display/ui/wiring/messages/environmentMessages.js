@@ -53,6 +53,8 @@ export function installEnvironmentMessages(ctx) {
     if (k === 'miracle') return;
     if (k === 'shrine_blessing') { log(`${deityName || 'A presence'} stirs within the shrine and answers.`, 'deity'); return; }
     if (k === 'prayer_uncurse') { log(`${deityName || 'A deity'} reaches down and tears the curse from ${bracketizeName(String(itemName || 'your gear'))}.`, 'deity'); return; }
+    if (k === 'prayer_refusal') { log(`${deityName || 'Your deity'} turns away. Your prayer goes unanswered.`, 'danger'); return; }
+    if (k === 'prayer_curse') { log(`${deityName || 'Your deity'} answers with spite. ${bracketizeName(String(itemName || 'your gear'))} is cursed!`, 'danger'); return; }
     if (k === 'patron_shift') { log(`The divine currents shift. ${deityName || 'A new patron'} claims you.`, 'deity'); return; }
     if (k === 'boon') return;
     if (k === 'wrath') log(`${deityName || 'A deity'}'s wrath descends upon you!`, 'deity');
