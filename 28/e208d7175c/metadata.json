@@ -6,6 +6,7 @@
   "checkpoints_count": 1,
   "files_touched": [
     ".agents/skills/agent-tools/scripts/proc-gear-audit.mjs",
+    "VERSION",
     "src/content/items/helms.js",
     "src/main/wiring/itemName.js",
     "src/rules/data/procPackages.js",
@@ -20,12 +21,5 @@
       "content_hash": "/28/e208d7175c/0/content_hash.txt",
       "prompt": ""
     }
-  ],
-  "token_usage": {
-    "input_tokens": 745,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 210176,
-    "output_tokens": 309,
-    "api_call_count": 1
-  }
+  ]
 }
