@@ -1016,16 +1016,22 @@ registerScript(PROC_PACKAGE_KEYS.PredatorMark, {
 });
 
 // ── Soul Ascendant ────────────────────────────────────────────────────────
-// OnKill: burst-heal 8 HP, apply regen (4t, p2), and stoneskin (3t, p2).
+// OnKill: burst-heal and apply configured regeneration and stoneskin effects.
 // Each soul consumed leaves the wielder fuller and harder.
 registerScript(PROC_PACKAGE_KEYS.SoulAscendant, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     if (String(ctx?.kind || "") !== "onKill") return;
     const source = Number(ctx?.source || 0) | 0;
+    const params = ctx?.params || {};
+    const healAmount = Math.max(0, Number(params.healAmount || 8) | 0);
+    const regenTurns = Math.max(1, Number(params.regenTurns || 4) | 0);
+    const regenPotency = Math.max(1, Number(params.regenPotency || 2) | 0);
+    const stoneskinTurns = Math.max(1, Number(params.stoneskinTurns || 3) | 0);
+    const stoneskinPotency = Math.max(1, Number(params.stoneskinPotency || 2) | 0);
     if (!(source > 0)) return;
-    ctx.proc.heal(source, 8);
-    ctx.proc.applyStatus(source, "regen", 4, 2);
-    ctx.proc.applyStatus(source, "stoneskin", 3, 2);
+    ctx.proc.heal(source, healAmount);
+    ctx.proc.applyStatus(source, "regen", regenTurns, regenPotency);
+    ctx.proc.applyStatus(source, "stoneskin", stoneskinTurns, stoneskinPotency);
     ctx.proc.message("The soul mends the wielder.");
     emit(world, "proc:soulAscendant:harvest", { actor: source, target: ctx?.target });
   },
@@ -1881,7 +1887,14 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "soulAscendant",
     name: "Soul Ascendant",
-    summary: "Each kill heals 8 HP, applies regen (4t p2), and stoneskin (3t p2). Each soul consumed leaves the wielder fuller and harder.",
+    params: Object.freeze({
+      healAmount: 8,
+      regenTurns: 4,
+      regenPotency: 2,
+      stoneskinTurns: 3,
+      stoneskinPotency: 2,
+    }),
+    summary: "Each kill heals {healAmount} HP, applies regen ({regenTurns}t p{regenPotency}), and stoneskin ({stoneskinTurns}t p{stoneskinPotency}). Each soul consumed leaves the wielder fuller and harder.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["soul-drinking scythes", "harvest staves", "reaper relics"]),
     passiveExpressions: Object.freeze([]),
