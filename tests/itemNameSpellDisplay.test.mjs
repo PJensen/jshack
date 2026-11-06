@@ -112,6 +112,12 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
     { context: "Equip", text: "Stores the last landed hit and replays part of it as spectral force on the next swing." },
   ]);
   assertEquals(blade.detailLines, []);
+
+  const tollingBlade = buildItemDisplayData(world, buildCatalogItem(world, "tolling_blade"));
+  assertEquals(tollingBlade.mechanics, [
+    { context: "Equip", text: "Repeated hits build a visible countdown that detonates into shadow punishment on the third toll." },
+  ]);
+  assertEquals(tollingBlade.detailLines, []);
 });
 
 Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {

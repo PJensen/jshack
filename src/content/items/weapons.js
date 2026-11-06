@@ -801,6 +801,11 @@ defineItem('tolling_blade', {
   staminaCost: 10,
   description: 'Three ticks. Then judgment. It counts each wound in shadow, and on the third toll, the reckoning arrives.',
   procPackages: ['doomClock'],
+  mechanicFormats: {
+    procPackages: {
+      doomClock: { context: 'Equip', format: '{summary}' },
+    },
+  },
   weight: 2.0,
 });
 
