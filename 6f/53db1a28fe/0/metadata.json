@@ -3,7 +3,7 @@
   "checkpoint_id": "6f53db1a28fe",
   "session_id": "01a1b13d-18f7-7123-8bb1-80f697d59b70",
   "strategy": "manual-commit",
-  "created_at": "2026-11-06T14:45:45.693441888Z",
+  "created_at": "2026-11-06T14:45:46.492645612Z",
   "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
@@ -14,42 +14,22 @@
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "945432c261a5",
-  "checkpoint_transcript_start": 108,
-  "transcript_lines_at_start": 108,
-  "compact_transcript_start": 17,
-  "token_usage": {
-    "input_tokens": 17496,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 693888,
-    "output_tokens": 2920,
-    "api_call_count": 10
-  },
+  "checkpoint_transcript_start": 193,
+  "transcript_lines_at_start": 193,
+  "compact_transcript_start": 31,
   "session_metrics": {
     "turn_count": 4
   },
   "initial_attribution": {
-    "calculated_at": "2026-11-06T14:45:45.644466197Z",
-    "agent_lines": 13,
+    "calculated_at": "2026-11-06T14:45:46.446840531Z",
+    "agent_lines": 0,
     "agent_removed": 0,
     "human_added": 0,
     "human_modified": 0,
     "human_removed": 0,
-    "total_committed": 13,
-    "total_lines_changed": 13,
-    "agent_percentage": 100,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
     "metric_version": 2
-  },
-  "prompt_attributions": [
-    {
-      "checkpoint_number": 1,
-      "user_lines_added": 865,
-      "user_lines_removed": 0,
-      "agent_lines_added": 0,
-      "agent_lines_removed": 0,
-      "user_added_per_file": {
-        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
-        ".github/agents/VFX Agent.agent.md": 283
-      }
-    }
-  ]
+  }
 }
