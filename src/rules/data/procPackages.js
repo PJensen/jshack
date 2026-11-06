@@ -223,6 +223,8 @@ registerScript(PROC_PACKAGE_KEYS.Dawnbreaker, {
     const kind = String(ctx?.kind || "");
     const source = Number(ctx?.source || 0) | 0;
     const item = Number(ctx?.item || 0) | 0;
+    const params = ctx?.params || {};
+    const awakenThreshold = Math.max(1, Number(params.awakenThreshold || 7) | 0);
     if (kind === "onTurnWhileEquipped") {
       if (!(source > 0) || !(item > 0)) return;
       const state = ctx.proc.getState();
@@ -265,7 +267,7 @@ registerScript(PROC_PACKAGE_KEYS.Dawnbreaker, {
     const newRadiance = Math.min(Number(state.maxRad || 10), Number(state.radiance || 0) + gain);
     ctx.proc.setState({ radiance: newRadiance });
 
-    if (!state.awakened && newRadiance >= 7) {
+    if (!state.awakened && newRadiance >= awakenThreshold) {
       ctx.proc.setState({ awakened: true });
       ctx.proc.message("Dawnbreaker flares to life — the blade blazes white!");
       ctx.proc.present("awaken", { target: source });
@@ -1639,7 +1641,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "dawnbreaker",
     name: "Dawnbreaker",
-    summary: "Stores radiance through combat, awakens at seven charges, and adds radiant force to awakened strikes.",
+    params: Object.freeze({ awakenThreshold: 7 }),
+    summary: "Stores radiance through combat, awakens at {awakenThreshold} charges, and adds radiant force to awakened strikes.",
     stateKeys: Object.freeze(["radiance", "maxRad", "awakened", "killStreak"]),
     hostIdeas: Object.freeze(["sun blades", "holy weapons", "radiant relics"]),
     passiveExpressions: Object.freeze([]),
