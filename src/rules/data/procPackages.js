@@ -983,7 +983,7 @@ registerScript(PROC_PACKAGE_KEYS.BloodCovenant, {
 });
 
 // ── Predator Mark ─────────────────────────────────────────────────────────
-// OnHit: accumulate hunt_mark stacks on the target (max 5, timer 4t). Each
+// OnHit: accumulate configured hunt_mark stacks on the target. Each
 // stack grants +1 bonus damage on every subsequent hit against that target.
 // The longer the hunt, the deadlier each strike.
 registerScript(PROC_PACKAGE_KEYS.PredatorMark, {
@@ -991,18 +991,21 @@ registerScript(PROC_PACKAGE_KEYS.PredatorMark, {
     if (String(ctx?.kind || "") !== "onHit") return;
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
+    const params = ctx?.params || {};
+    const maxStacks = Math.max(1, Number(params.maxStacks || 5) | 0);
+    const durationTurns = Math.max(1, Number(params.durationTurns || 4) | 0);
     if (!(source > 0) || !(target > 0)) return;
     const ae = ensureActiveEffects(world, target);
     if (!ae) return;
 
     const existing = getEffect(world, target, "hunt_mark");
-    const nextStacks = Math.min(5, Math.max(1, Number(existing?.stacks || 0) + 1));
+    const nextStacks = Math.min(maxStacks, Math.max(1, Number(existing?.stacks || 0) + 1));
     if (existing) {
-      existing.turnsLeft = 4;
+      existing.turnsLeft = durationTurns;
       existing.potency = nextStacks;
       existing.stacks = nextStacks;
     } else {
-      ae.effects.push({ key: "hunt_mark", turnsLeft: 4, potency: nextStacks, stacks: nextStacks });
+      ae.effects.push({ key: "hunt_mark", turnsLeft: durationTurns, potency: nextStacks, stacks: nextStacks });
     }
 
     if (nextStacks > 1) {
@@ -1866,7 +1869,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "predatorMark",
     name: "Predator Mark",
-    summary: "Each consecutive hit stacks hunt_mark on the target (max 5, 4t). Stacks add flat bonus damage. The longer the hunt, the deadlier each strike.",
+    params: Object.freeze({ maxStacks: 5, durationTurns: 4 }),
+    summary: "Each consecutive hit stacks hunt_mark on the target (max {maxStacks}, {durationTurns}t). Stacks add flat bonus damage. The longer the hunt, the deadlier each strike.",
     stateKeys: Object.freeze(["hunt_mark"]),
     hostIdeas: Object.freeze(["hunter daggers", "stalker blades", "predator rings"]),
     passiveExpressions: Object.freeze([]),
