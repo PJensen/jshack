@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "dd900338c42e",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    ".agents/skills/agent-tools/scripts/proc-gear-audit.mjs",
+    "src/content/items/boots.js",
+    "src/content/items/helms.js",
+    "src/content/items/patientThunder.js",
+    "src/content/items/rangedWeapons.js",
+    "src/content/items/weapons.js",
+    "src/main/wiring/itemName.js",
+    "src/rules/data/procPackages.js",
+    "tests/itemNameSpellDisplay.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/dd/900338c42e/0/metadata.json",
+      "transcript": "/dd/900338c42e/0/full.jsonl",
+      "compact_transcript": "/dd/900338c42e/0/transcript.jsonl",
+      "content_hash": "/dd/900338c42e/0/content_hash.txt",
+      "prompt": "/dd/900338c42e/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 28297,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4349056,
+    "output_tokens": 13989,
+    "api_call_count": 25
+  }
+}
