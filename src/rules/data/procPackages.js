@@ -829,6 +829,15 @@ registerScript(PROC_PACKAGE_KEYS.VenomClock, {
     if (String(ctx?.kind || "") !== "onHit") return;
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
+    const params = ctx?.params || {};
+    const stackLimit = Math.max(1, Number(params.stackLimit || 3) | 0);
+    const effectTurns = Math.max(1, Number(params.effectTurns || 6) | 0);
+    const damageFloor = Math.max(0, Number(params.damageFloor || 5) | 0);
+    const damageRatio = Math.max(0, Number(params.damageRatio ?? 0.6));
+    const poisonTurns = Math.max(1, Number(params.poisonTurns || 4) | 0);
+    const poisonPotency = Math.max(1, Number(params.poisonPotency || 2) | 0);
+    const diseaseTurns = Math.max(1, Number(params.diseaseTurns || 3) | 0);
+    const diseasePotency = Math.max(1, Number(params.diseasePotency || 1) | 0);
     if (!(source > 0) || !(target > 0)) return;
     const ae = ensureActiveEffects(world, target);
     if (!ae) return;
@@ -836,22 +845,22 @@ registerScript(PROC_PACKAGE_KEYS.VenomClock, {
     const existing = getEffect(world, target, "venom_clock");
     const nextStacks = Math.max(1, Number(existing?.stacks || 0) + 1);
     if (existing) {
-      existing.turnsLeft = 6;
+      existing.turnsLeft = effectTurns;
       existing.stacks = nextStacks;
       existing.potency = nextStacks;
     } else {
-      ae.effects.push({ key: "venom_clock", turnsLeft: 6, stacks: nextStacks, potency: nextStacks });
+      ae.effects.push({ key: "venom_clock", turnsLeft: effectTurns, stacks: nextStacks, potency: nextStacks });
     }
 
-    if (nextStacks >= 3) {
+    if (nextStacks >= stackLimit) {
       removeEffect(world, target, "venom_clock");
-      ctx.proc.dealDamage(target, Math.max(5, Math.floor(Number(ctx?.damage?.amount || 0) * 0.6)), "shadow", {
+      ctx.proc.dealDamage(target, Math.max(damageFloor, Math.floor(Number(ctx?.damage?.amount || 0) * damageRatio)), "shadow", {
         source,
         cause: "procPackage:venomClock",
         noTrigger: true,
       });
-      ctx.proc.applyStatus(target, "poison", 4, 2);
-      ctx.proc.applyStatus(target, "disease", 3, 1);
+      ctx.proc.applyStatus(target, "poison", poisonTurns, poisonPotency);
+      ctx.proc.applyStatus(target, "disease", diseaseTurns, diseasePotency);
       ctx.proc.message("The venom clock detonates.");
       emit(world, "proc:venomClock:detonate", { actor: source, target });
       return;
@@ -1775,7 +1784,17 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "venomClock",
     name: "Venom Clock",
-    summary: "Three consecutive hits on a target detonate a burst of shadow damage, virulent poison, and disease. The clock resets if the target goes untouched for 6 turns.",
+    params: Object.freeze({
+      stackLimit: 3,
+      effectTurns: 6,
+      damageFloor: 5,
+      damageRatio: 0.6,
+      poisonTurns: 4,
+      poisonPotency: 2,
+      diseaseTurns: 3,
+      diseasePotency: 1,
+    }),
+    summary: "{stackLimit} consecutive hits on a target detonate shadow damage (minimum {damageFloor}), poison for {poisonTurns} turns, and disease for {diseaseTurns} turns. The clock resets if the target goes untouched for {effectTurns} turns.",
     stateKeys: Object.freeze(["venom_clock"]),
     hostIdeas: Object.freeze(["plague daggers", "assassin relics", "corrupted fangs"]),
     passiveExpressions: Object.freeze([]),

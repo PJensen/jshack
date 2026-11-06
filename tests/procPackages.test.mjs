@@ -136,6 +136,16 @@ Deno.test("proc package registry structural invariants", () => {
     berserkTurns: 4,
     staminaRestore: 10,
   });
+  assertEquals(getProcPackage("venomClock")?.params, {
+    stackLimit: 3,
+    effectTurns: 6,
+    damageFloor: 5,
+    damageRatio: 0.6,
+    poisonTurns: 4,
+    poisonPotency: 2,
+    diseaseTurns: 3,
+    diseasePotency: 1,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
