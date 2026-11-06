@@ -1,0 +1,15 @@
+give me the audit please
+
+Q: does it cover `Use:` uses?
+
+---
+
+fine -- I don't think proc nodes support `Use` anyway; so I think we're good.
+
+---
+
+lets convet a small handful more please.
+
+---
+
+can you have a deeper look at the situation, make sure we're doing this as well as we can do and that we're not missing an oppertunity for templating, drawing from stat-meta, etc printf thnking etc.
