@@ -1,10 +1,14 @@
 import { assert, assertEquals } from "jsr:@std/assert";
+import "./helpers/installContentCatalog.mjs";
 import { World } from "../src/lib/ecs-js/index.js";
 import { defineEffect, defineItem } from "../src/content/define.js";
 import { getContentItem } from "../src/content/registry.js";
 import { createContentAbilityController } from "../src/main/targeting/itemAbilityController.js";
 import { registerCatalogItem } from "../src/rules/data/itemCatalog.js";
 import { Charges, Faction, Inventory, NamedIdentity, Position, Vitality } from "../src/rules/components/index.js";
+import { Equipment } from "../src/rules/components/Equipment.js";
+import { Breadcrumb } from "../src/rules/components/InvestigationSignal.js";
+import { Lifespan } from "../src/rules/components/Lifespan.js";
 import { ScriptState } from "../src/rules/components/ScriptState.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { ItemAbilityActivated } from "../src/events/ItemAbilityActivated.js";
@@ -14,6 +18,7 @@ import { getItemCooldownRemaining } from "../src/rules/utils/itemCooldowns.js";
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
 import { snapshotEffectInstances } from "../src/rules/utils/effectInstances.js";
 import { createItemById } from "../src/rules/utils/itemFactory.js";
+import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 import { clearAll, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import { Player } from "../src/rules/components/Player.js";
 import { serializeSavegameWorld } from "../src/main/wiring/savegameSerializationRegistry.js";
@@ -148,4 +153,31 @@ Deno.test("two copies retain independent charge pools instead of merging into an
   assert(world.isAlive(second));
   assertEquals(world.get(item, Charges).current, 1);
   assertEquals(world.get(second, Charges).current, 2);
+});
+
+Deno.test("breadcrumb boots spend one banked charge to drop one deliberate crumb", () => {
+  clearAll();
+  loadChunk(-1, -1, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+  const world = new World({ seed: 615 });
+  const actor = world.create();
+  world.add(actor, Player, {});
+  world.add(actor, Equipment, {});
+  world.add(actor, Vitality, { hp: 10, maxHp: 10 });
+  world.add(actor, Position, { x: -8, y: -8 });
+  const item = buildCatalogItem(world, "breadcrumb_boots");
+  world.set(actor, Equipment, { feet: item });
+  world.get(item, Charges).current = 1;
+  world.setScheduler(useItemSystem);
+
+  let result;
+  world.on("interaction:result", (event) => { result = event; });
+  world.add(actor, UseIntent, { itemId: item, targetId: actor, abilityId: "drop_breadcrumb" });
+  useItemSystem(world);
+
+  assert(result?.ok, "drop breadcrumb should activate");
+  assertEquals(world.get(item, Charges).current, 0);
+  assertEquals(getItemCooldownRemaining(world, item), 5);
+  const crumbs = [...world.query(Breadcrumb)];
+  assertEquals(crumbs.length, 1);
+  assertEquals(world.get(crumbs[0][0], Lifespan).turnsLeft, 8);
 });

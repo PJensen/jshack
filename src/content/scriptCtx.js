@@ -228,13 +228,14 @@ export class ScriptCtx {
     }
   }
 
-  /** Queue a world-owned breadcrumb scatter in the current item-use transaction. */
-  scatterBreadcrumbs(count = 4) {
+  /** Queue world-owned breadcrumb placement in the current item-use transaction. */
+  scatterBreadcrumbs(count = 4, options = {}) {
     this._ctx.mutate.queue({
       type: 'scatterBreadcrumbs',
       actorId: this.user,
       itemId: this.item,
       count: Math.max(0, Math.min(4, Number(count) | 0)),
+      lifespanTurns: Math.max(1, Number(options?.lifespanTurns || 8) | 0),
     });
   }
 

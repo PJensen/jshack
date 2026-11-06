@@ -45,7 +45,7 @@ Deno.test("movement procs evaluate equipped item packages on genuine steps", () 
 
   assertEquals(world.get(boots, ScriptState).data.stepsTowardCrumb, 0);
   assertEquals(world.get(boots, Charges).current, 1);
-  assertEquals([...world.query(Breadcrumb)].length, 1);
+  assertEquals([...world.query(Breadcrumb)].length, 0);
 });
 
 Deno.test("movement procs ignore generic displacement events", () => {

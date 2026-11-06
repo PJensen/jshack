@@ -19,7 +19,6 @@ import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshevScalar } from "../utils/distance.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
-import { leaveBreadcrumb } from "../utils/breadcrumbs.js";
 import { spawnHazard } from "../utils/hazardSpawn.js";
 import { getCatalogItem } from "./itemCatalog.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
@@ -83,7 +82,6 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
     const identity = world.get(item, NamedIdentity)?.identity || '';
     const breadcrumbConfig = getCatalogItem(identity)?._contentMeta?.breadcrumb || {};
     const stepInterval = Math.max(1, Number(breadcrumbConfig.stepInterval || 4) | 0);
-    const lifespanTurns = Math.max(1, Number(breadcrumbConfig.lifespanTurns || 8) | 0);
     const nextStep = (Number(state.data?.stepsTowardCrumb || 0) | 0) + 1;
     if (nextStep < stepInterval) {
       world.set(item, ScriptState, { data: { ...state.data, stepsTowardCrumb: nextStep } });
@@ -91,13 +89,6 @@ registerScript(PROC_PACKAGE_KEYS.BreadcrumbBoots, {
     }
 
     world.set(item, ScriptState, { data: { ...state.data, stepsTowardCrumb: 0 } });
-    leaveBreadcrumb(world, {
-      actorId: source,
-      itemId: item,
-      x: Number(ctx?.from?.x || 0) | 0,
-      y: Number(ctx?.from?.y || 0) | 0,
-      lifespanTurns,
-    });
 
     const charges = world.get(item, Charges);
     if (charges && charges.current < charges.max) {
@@ -1718,7 +1709,7 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "breadcrumbBoots",
     name: "Breadcrumb Boots",
-    summary: "Leaves an investigating trail every fourth genuine step and stores a Scatter charge.",
+    summary: "Banks breadcrumb charges while you travel; use them to drop a decoy crumb.",
     display: Object.freeze({ context: "Equip", format: "{summary}" }),
     stateKeys: Object.freeze(["stepsTowardCrumb"]),
     hostIdeas: Object.freeze(["trail boots", "investigation lures", "decoy gear"]),

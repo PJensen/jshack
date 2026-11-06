@@ -34,7 +34,7 @@ export function leaveBreadcrumb(world, { actorId, itemId, x, y, kind = "trail", 
 }
 
 /** Scatter a small trail around the wearer, skipping blocked or duplicate tiles. */
-export function scatterBreadcrumbs(world, actorId, itemId, count = 4) {
+export function scatterBreadcrumbs(world, actorId, itemId, count = 4, options = {}) {
   const origin = world.get(actorId, Position);
   if (!origin) return 0;
   const anchors = [
@@ -45,10 +45,11 @@ export function scatterBreadcrumbs(world, actorId, itemId, count = 4) {
   ];
   const placed = [];
   const total = Math.max(0, Math.min(4, Number(count) | 0));
+  const lifespanTurns = Math.max(1, Number(options?.lifespanTurns || 8) | 0);
   for (let i = 0; i < total; i++) {
     const point = findNearestValidTileAround(world, anchors[i], { maxDistance: 1, exclude: placed });
     if (!point) continue;
-    const id = leaveBreadcrumb(world, { actorId, itemId, ...point, kind: "scatter" });
+    const id = leaveBreadcrumb(world, { actorId, itemId, ...point, kind: "scatter", lifespanTurns });
     if (id > 0) placed.push(point);
   }
   return placed.length;

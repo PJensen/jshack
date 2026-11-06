@@ -185,8 +185,8 @@ Deno.test("buildItemDisplayData exposes authored mechanics for fishing rod, bree
 
   const boots = buildItemDisplayData(world, buildCatalogItem(world, "breadcrumb_boots"));
   assertEquals(boots.mechanics, [
-    { context: "Use — Scatter", text: "Every 4 steps, leave a glowing crumb that lingers for 8 turns. Scatter lays 4 decoy crumbs nearby. Cooldown: 20 turns. Cost: 4 charges." },
-    { context: "Equip", text: "Leaves an investigating trail every fourth genuine step and stores a Scatter charge." },
+    { context: "Use — Drop Breadcrumb", text: "Drop one glowing crumb nearby that lingers for 8 turns and draws curious creatures toward it. Cooldown: 5 turns. Cost: 1 charges." },
+    { context: "Equip", text: "Banks breadcrumb charges while you travel; use them to drop a decoy crumb." },
   ]);
 });
 

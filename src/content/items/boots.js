@@ -232,43 +232,40 @@ defineItem('hollow_tide_boots', {
 
 const BREADCRUMB_STEP_INTERVAL = 4;
 const BREADCRUMB_LIFESPAN_TURNS = 8;
-const BREADCRUMB_SCATTER_COUNT = 4;
+const BREADCRUMB_CHARGE_CAP = 4;
+const BREADCRUMB_DROP_COOLDOWN = 5;
 
 defineItem('breadcrumb_boots', {
   name: 'Breadcrumb Boots', type: 'boots',
   glyph: 'u', color: '#d4b36a', glow: '#9e7137', scale: 0.68,
   material: 'leather', rarity: 3, value: 175, weight: 1.0,
   bonuses: { defense: 1, maxStamina: 8 },
-  description: 'Enchanted leather boots. Every fourth step leaves a glowing crumb that lingers for 8 turns and draws curious creatures toward it. Each crumb stores one Scatter charge, up to four. Use Scatter while equipped to spend four charges and lay a decoy trail nearby. The shoemaker made them for a child who was terrible at finding her way home.',
-  chargePool: { current: 0, max: 4 },
+  description: 'Enchanted leather boots. Every fourth step banks a glowing breadcrumb charge. Use: Drop Breadcrumb while equipped to spend one charge and place a decoy crumb nearby. The shoemaker made them for a child who was terrible at finding her way home.',
+  chargePool: { current: 0, max: BREADCRUMB_CHARGE_CAP },
   procPackages: ['breadcrumbBoots'],
   state: { stepsTowardCrumb: 0 },
   meta: {
     breadcrumb: {
       stepInterval: BREADCRUMB_STEP_INTERVAL,
-      lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
-      scatterCount: BREADCRUMB_SCATTER_COUNT,
     },
   },
   abilities: {
-    scatter: {
-      name: 'Scatter', icon: '·', targeting: 'none', requiresEquipped: true,
-      cooldown: 20, chargeCost: BREADCRUMB_SCATTER_COUNT,
-      stepInterval: BREADCRUMB_STEP_INTERVAL,
+    drop_breadcrumb: {
+      name: 'Drop Breadcrumb', icon: '·', targeting: 'none', requiresEquipped: true,
+      cooldown: BREADCRUMB_DROP_COOLDOWN, chargeCost: 1,
       lifespanTurns: BREADCRUMB_LIFESPAN_TURNS,
-      scatterCount: BREADCRUMB_SCATTER_COUNT,
-      description: 'Every {stepInterval} steps, leave a glowing crumb that lingers for {lifespanTurns} turns. Scatter lays {scatterCount} decoy crumbs nearby.',
+      description: 'Drop one glowing crumb nearby that lingers for {lifespanTurns} turns and draws curious creatures toward it.',
       displayFormat: '{description} Cooldown: {cooldown} turns. Cost: {cost} charges.',
       onActivate(ctx) {
-        ctx.scatterBreadcrumbs(BREADCRUMB_SCATTER_COUNT);
-        ctx.message(`${BREADCRUMB_SCATTER_COUNT} golden crumbs leap from your heels and skip into the dark.`, 'system');
-        ctx.present('scatter', { target: ctx.user });
+        ctx.scatterBreadcrumbs(1, { lifespanTurns: BREADCRUMB_LIFESPAN_TURNS });
+        ctx.message('A golden breadcrumb skips from your heels into the dark.', 'system');
+        ctx.present('drop_breadcrumb', { target: ctx.user });
       },
     },
   },
   presentations: {
-    scatter: { vfx: [
-      { type: 'burst', color: '#f3c86a', count: 16, speed: 1.4, life: 0.8 },
+    drop_breadcrumb: { vfx: [
+      { type: 'burst', color: '#f3c86a', count: 4, speed: 0.8, life: 0.5 },
       { type: 'glow', color: '#e6aa4b', radius: 2.5, life: 1.1 },
     ] },
   },

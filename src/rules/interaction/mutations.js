@@ -684,7 +684,7 @@ export function applyMutation(world, op, resolvers = {}) {
       break;
     }
     case "scatterBreadcrumbs": {
-      scatterBreadcrumbs(world, op.actorId | 0, op.itemId | 0, op.count);
+      scatterBreadcrumbs(world, op.actorId | 0, op.itemId | 0, op.count, { lifespanTurns: op.lifespanTurns });
       break;
     }
     case "destroy": {
@@ -719,7 +719,7 @@ export function applyMutation(world, op, resolvers = {}) {
  * @typedef {{ type: 'materializeSpawn', spawn: { kind: string, x?: number, y?: number, params?: Record<string, unknown> }, emitEvent?: boolean }} MaterializeSpawnOp
  * @typedef {{ type: 'destroy', entityId: number }} DestroyOp
  * @typedef {{ type: 'setItemCooldown', entityId: number, turns: number }} SetItemCooldownOp
- * @typedef {{ type: 'scatterBreadcrumbs', actorId: number, itemId: number, count: number }} ScatterBreadcrumbsOp
+ * @typedef {{ type: 'scatterBreadcrumbs', actorId: number, itemId: number, count: number, lifespanTurns?: number }} ScatterBreadcrumbsOp
  * @typedef {{ type: 'patchComponent', entityId: number, Component: any, patch: Record<string, unknown> }} PatchComponentOp
  * @typedef {{ type: 'removeComponent', entityId: number, Component: any }} RemoveComponentOp
  * @typedef {{ type: 'ensureInventory', entityId: number, capacity: number }} EnsureInventoryOp
