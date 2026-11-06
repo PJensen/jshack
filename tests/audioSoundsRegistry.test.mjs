@@ -418,3 +418,10 @@ Deno.test("sounds registry covers content-authored sound aliases", () => {
     assertExists(resolve(id), `missing content-authored sound alias: ${id}`);
   }
 });
+
+Deno.test("sounds registry uses the dedicated holy healing prayer sound", () => {
+  const sound = resolve("spell:holy_healing");
+  assertExists(sound);
+  assertEquals(sound.file, "spell_holy_healing.mp3");
+  assertEquals(sound.bus, "spells");
+});

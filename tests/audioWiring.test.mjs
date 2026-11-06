@@ -93,7 +93,7 @@ Deno.test("audio wiring exposes familiar fire ready and cast sound aliases", () 
 });
 
 Deno.test("audio wiring exposes the prayer sound alias", () => {
-  assert(PRAYER_SOUND_ID === "holy_chime");
+  assert(PRAYER_SOUND_ID === "spell:holy_healing");
 });
 
 Deno.test("audio wiring exposes food and stone push sound aliases", () => {

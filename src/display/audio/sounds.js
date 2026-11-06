@@ -137,6 +137,8 @@ const SOUNDS = {
   "spell:blastwave":     { file: "spell_earthshatter_1.mp3", bus: "spells" },
   "spell:heal":          { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2 },
   "spell:flash_heal":    { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2 },
+  "spell:holy_healing":  { file: "spell_holy_healing.mp3",  bus: "spells", maxVoices: 2 },
+  "spell:fear":          { file: "spell_fear.mp3",           bus: "spells", maxVoices: 2 },
   "spell:smite":         { file: "spell_smite_1.mp3",         bus: "spells", maxVoices: 1 },
   "spell:death_volley":  { file: "spell_agony.mp3",         bus: "spells" },
   "spell:blink":         { file: "spell_blink.mp3",          bus: "spells" },

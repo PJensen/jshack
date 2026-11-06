@@ -92,7 +92,7 @@ export const BONE_CHIME_SOUND_ID = "ambient:bone_chime";
 export const TAMING_SUCCESS_SOUND_ID = "magic:taming";
 export const GENOCIDE_SUCCESS_SOUND_ID = "item:scroll:genocide";
 export const THROW_SOUND_ID = "action:throw";
-export const PRAYER_SOUND_ID = "holy_chime";
+export const PRAYER_SOUND_ID = "spell:holy_healing";
 
 let sfxDebugEnabled = false;
 let sfxDebugLogger = null;

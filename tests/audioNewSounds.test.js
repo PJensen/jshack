@@ -15,6 +15,7 @@ Deno.test("new audio assets are registered", async () => {
     "gelatinous_cube:alert",
     "spell:heal",
     "spell:flash_heal",
+    "spell:holy_healing",
     "insect:alert",
     "insect:attack",
     "player:near_death",
