@@ -636,6 +636,12 @@ registerScript(PROC_PACKAGE_KEYS.DoomClock, {
     if (String(ctx?.kind || "") !== "onHit") return;
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
+    const params = ctx?.params || {};
+    const stackLimit = Math.max(1, Number(params.stackLimit || 3) | 0);
+    const effectTurns = Math.max(1, Number(params.effectTurns || 9) | 0);
+    const damageFloor = Math.max(0, Number(params.damageFloor || 4) | 0);
+    const damageRatio = Math.max(0, Number(params.damageRatio ?? 0.5));
+    const stunTurns = Math.max(1, Number(params.stunTurns || 1) | 0);
     if (!(source > 0) || !(target > 0)) return;
     const activeEffects = ensureActiveEffects(world, target);
     if (!activeEffects) return;
@@ -643,26 +649,26 @@ registerScript(PROC_PACKAGE_KEYS.DoomClock, {
     const existing = getEffect(world, target, "doom_clock");
     const nextStacks = Math.max(1, Number(existing?.stacks || 0) + 1);
     if (existing) {
-      existing.turnsLeft = 9;
+      existing.turnsLeft = effectTurns;
       existing.potency = nextStacks;
       existing.stacks = nextStacks;
     } else {
       activeEffects.effects.push({
         key: "doom_clock",
-        turnsLeft: 9,
+        turnsLeft: effectTurns,
         potency: nextStacks,
         stacks: nextStacks,
       });
     }
 
-    if (nextStacks >= 3) {
+    if (nextStacks >= stackLimit) {
       removeEffect(world, target, "doom_clock");
-      ctx.proc.dealDamage(target, Math.max(4, Math.floor(Number(ctx?.damage?.amount || 0) * 0.5)), "shadow", {
+      ctx.proc.dealDamage(target, Math.max(damageFloor, Math.floor(Number(ctx?.damage?.amount || 0) * damageRatio)), "shadow", {
         source,
         cause: "procPackage:doomClock",
         noTrigger: true,
       });
-      ctx.proc.applyStatus(target, "stun", 1, 1);
+      ctx.proc.applyStatus(target, "stun", stunTurns, 1);
       ctx.proc.message("The doom clock tolls.");
       emit(world, "proc:doomClock", { actor: source, target });
       return;
@@ -906,22 +912,26 @@ registerScript(PROC_PACKAGE_KEYS.ThunderGod, {
     if (!ctx?.damage?.crit) return;
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
+    const params = ctx?.params || {};
+    const arcDamage = Math.max(0, Number(params.arcDamage || 3) | 0);
+    const radius = Math.max(1, Number(params.radius || 2) | 0);
+    const shockTurns = Math.max(1, Number(params.shockTurns || 2) | 0);
     if (!(source > 0) || !(target > 0)) return;
     const pos = world.get(target, Position);
     if (!pos) return;
     const srcFac = world.get(source, Faction)?.key || "";
     let struck = 0;
     for (const [nearId] of world.query(Position)) {
-      if (!isHostileNear(world, source, pos, nearId, 2)) continue;
+      if (!isHostileNear(world, source, pos, nearId, radius)) continue;
       const nearFac = world.get(nearId, Faction)?.key || "";
       if (!areFactionsHostile(srcFac, nearFac)) continue;
-      ctx.proc.dealDamage(nearId, 3, "electric", {
+      ctx.proc.dealDamage(nearId, arcDamage, "electric", {
         source,
         cause: "procPackage:thunderGod",
         noTrigger: true,
         nonLethal: nearId !== target,
       });
-      ctx.proc.applyStatus(nearId, "shock", 2, 1);
+      ctx.proc.applyStatus(nearId, "shock", shockTurns, 1);
       struck++;
     }
     if (struck > 0) {
@@ -1683,7 +1693,14 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "doomClock",
     name: "Doom Clock",
-    summary: "Repeated hits build a visible countdown that detonates into shadow punishment on the third toll.",
+    params: Object.freeze({
+      stackLimit: 3,
+      effectTurns: 9,
+      damageFloor: 4,
+      damageRatio: 0.5,
+      stunTurns: 1,
+    }),
+    summary: "Repeated hits build a {stackLimit}-hit countdown that resets after {effectTurns} turns and detonates for shadow damage (minimum {damageFloor}) plus a {stunTurns}-turn stun.",
     display: Object.freeze({ context: "Equip", format: "{summary}" }),
     stateKeys: Object.freeze(["doom_clock"]),
     hostIdeas: Object.freeze(["cursed rings", "oracular pendants", "judgment blades"]),
@@ -1787,7 +1804,12 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "thunderGod",
     name: "Thunder God",
-    summary: "Critical hits arc 3 electric damage + shock to every hostile within radius 2 of the target. The gods answer the critical blow.",
+    params: Object.freeze({
+      arcDamage: 3,
+      radius: 2,
+      shockTurns: 2,
+    }),
+    summary: "Critical hits arc {arcDamage} electric damage + shock to every hostile within radius {radius} of the target. Shock lasts {shockTurns} turns. The gods answer the critical blow.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["storm hammers", "lightning spears", "thunder relics"]),
     passiveExpressions: Object.freeze([]),

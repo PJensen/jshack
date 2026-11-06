@@ -119,6 +119,18 @@ Deno.test("proc package registry structural invariants", () => {
     killHeal: 2,
     minimumHealth: 3,
   });
+  assertEquals(getProcPackage("doomClock")?.params, {
+    stackLimit: 3,
+    effectTurns: 9,
+    damageFloor: 4,
+    damageRatio: 0.5,
+    stunTurns: 1,
+  });
+  assertEquals(getProcPackage("thunderGod")?.params, {
+    arcDamage: 3,
+    radius: 2,
+    shockTurns: 2,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
