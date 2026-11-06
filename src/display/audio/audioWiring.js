@@ -1310,7 +1310,7 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
 
   world.on(FearSpellCast, (event) => {
     if (event.fizzle) return;
-    sfxAt(FEAR_SOUND_ID, event.from, pp(), null, zg());
+    sfxAt(FEAR_SOUND_ID, event.at, pp(), null, zg());
   });
 
   // NOTE: this has been silenced since spell:blink has a bespoke sound
