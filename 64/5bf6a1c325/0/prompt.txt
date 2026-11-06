@@ -1,0 +1,1 @@
+lets convert one more, otherwise, these mechanics are all buried. if you want to make an agentic tool to support this conversion effort, lets do it -- I wouldn't go so far as making a ratchet, but, at least a scan tool.
