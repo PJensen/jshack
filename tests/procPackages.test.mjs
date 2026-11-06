@@ -131,6 +131,11 @@ Deno.test("proc package registry structural invariants", () => {
     radius: 2,
     shockTurns: 2,
   });
+  assertEquals(getProcPackage("deathAscendant")?.params, {
+    invulnerabilityTurns: 2,
+    berserkTurns: 4,
+    staminaRestore: 10,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {

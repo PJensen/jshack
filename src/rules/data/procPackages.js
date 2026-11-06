@@ -894,10 +894,14 @@ registerScript(PROC_PACKAGE_KEYS.DeathAscendant, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     if (String(ctx?.kind || "") !== "onKill") return;
     const source = Number(ctx?.source || 0) | 0;
+    const params = ctx?.params || {};
+    const invulnerabilityTurns = Math.max(1, Number(params.invulnerabilityTurns || 2) | 0);
+    const berserkTurns = Math.max(1, Number(params.berserkTurns || 4) | 0);
+    const staminaRestore = Math.max(0, Number(params.staminaRestore || 10) | 0);
     if (!(source > 0)) return;
-    ctx.proc.applyStatus(source, "invuln", 2, 1);
-    ctx.proc.applyStatus(source, "berserk", 4, 1);
-    ctx.proc.restoreResource(source, "stamina", 10);
+    ctx.proc.applyStatus(source, "invuln", invulnerabilityTurns, 1);
+    ctx.proc.applyStatus(source, "berserk", berserkTurns, 1);
+    ctx.proc.restoreResource(source, "stamina", staminaRestore);
     ctx.proc.message("Death feeds the ascent.");
     emit(world, "proc:deathAscendant:surge", { actor: source, target: ctx?.target });
   },
@@ -1793,7 +1797,12 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "deathAscendant",
     name: "Death Ascendant",
-    summary: "Each kill grants invulnerability (2t), berserk rage (4t), and 10 stamina. Killing fuels the ascent.",
+    params: Object.freeze({
+      invulnerabilityTurns: 2,
+      berserkTurns: 4,
+      staminaRestore: 10,
+    }),
+    summary: "Each kill grants invulnerability ({invulnerabilityTurns}t), berserk rage ({berserkTurns}t), and {staminaRestore} stamina. Killing fuels the ascent.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["death-knight swords", "executioner blades", "slaughter relics"]),
     passiveExpressions: Object.freeze([]),
