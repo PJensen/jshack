@@ -132,24 +132,30 @@ registerScript(PROC_PACKAGE_KEYS.DeadeyeLoop, {
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
     const kind = String(ctx?.kind || "");
+    const params = ctx?.params || {};
+    const hitInterval = Math.max(1, Number(params.hitInterval || 3) | 0);
+    const effectTurns = Math.max(1, Number(params.effectTurns || 8) | 0);
+    const spillRadius = Math.max(1, Number(params.spillRadius || 1) | 0);
+    const spillDamagePercent = Math.max(0, Number(params.spillDamagePercent ?? 50));
+    const fallbackBonusDamage = Math.max(0, Number(params.fallbackBonusDamage || 2) | 0);
     if (!(source > 0) || !(target > 0) || !ctx?.tags?.has?.("ranged")) return;
     if (kind !== "onHit") return;
     const ae = ensureActiveEffects(world, source);
     if (!ae) return;
     const next = Number(getEffect(world, source, "deadeye_count")?.stacks || 0) + 1;
-    if (next < 3) {
-      upsertTimedEffect(ae.effects, { key: "deadeye_count", turnsLeft: 8, stacks: next, potency: next });
+    if (next < hitInterval) {
+      upsertTimedEffect(ae.effects, { key: "deadeye_count", turnsLeft: effectTurns, stacks: next, potency: next });
       return;
     }
     removeEffect(world, source, "deadeye_count");
     const sourceFaction = world.get(source, Faction)?.key;
     const targetFaction = world.get(target, Faction)?.key;
-    const candidates = ctx.proc.entitiesInRadius(target, 1);
+    const candidates = ctx.proc.entitiesInRadius(target, spillRadius);
     for (let i = 0; i < candidates.length; i++) {
       const candidate = candidates[i];
       if (candidate === source || candidate === target) continue;
       if (!areFactionsHostile(sourceFaction, world.get(candidate, Faction)?.key)) continue;
-      ctx.proc.dealDamage(candidate, Math.max(1, Math.floor(Number(ctx?.damage?.amount || 0) * 0.5)), "pierce", {
+      ctx.proc.dealDamage(candidate, Math.max(1, Math.floor(Number(ctx?.damage?.amount || 0) * spillDamagePercent / 100)), "pierce", {
         source,
         cause: "procPackage:deadeyeLoop",
         noTrigger: true,
@@ -158,7 +164,7 @@ registerScript(PROC_PACKAGE_KEYS.DeadeyeLoop, {
       return;
     }
     if (targetFaction && sourceFaction && areFactionsHostile(sourceFaction, targetFaction)) {
-      ctx.proc.addBonusDamage(2, 2, "pierce");
+      ctx.proc.addBonusDamage(fallbackBonusDamage, fallbackBonusDamage, "pierce");
     }
   },
 });
@@ -2284,7 +2290,14 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "deadeyeLoop",
     name: "Deadeye Loop",
-    summary: "Every third ranged hit punches through its target into another nearby foe.",
+    params: Object.freeze({
+      hitInterval: 3,
+      effectTurns: 8,
+      spillRadius: 1,
+      spillDamagePercent: 50,
+      fallbackBonusDamage: 2,
+    }),
+    summary: "Every {hitInterval} ranged hit punches through its target into another nearby foe.",
     stateKeys: Object.freeze(["deadeye_count"]),
     hostIdeas: Object.freeze(["archer rings", "piercing marks"]),
     passiveExpressions: Object.freeze([]),

@@ -177,6 +177,13 @@ Deno.test("proc package registry structural invariants", () => {
     stunTurns: 1,
     stunPotency: 1,
   });
+  assertEquals(getProcPackage("deadeyeLoop")?.params, {
+    hitInterval: 3,
+    effectTurns: 8,
+    spillRadius: 1,
+    spillDamagePercent: 50,
+    fallbackBonusDamage: 2,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
