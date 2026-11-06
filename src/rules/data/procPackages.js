@@ -1227,16 +1227,22 @@ registerScript("procPackage:ritualOverdraw", {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     const source = Number(ctx?.source || 0) | 0;
     const kind = String(ctx?.kind || "");
+    const params = ctx?.params || {};
+    const healthCost = Math.max(1, Number(params.healthCost || 1) | 0);
+    const fireDamage = Math.max(0, Number(params.fireDamage || 0) | 0);
+    const manaRestore = Math.max(0, Number(params.manaRestore || 0) | 0);
+    const killHeal = Math.max(0, Number(params.killHeal || 0) | 0);
+    const minimumHealth = Math.max(1, Number(params.minimumHealth || healthCost + 1) | 0);
     if (!(source > 0)) return;
     if (kind === "onBeforeHit") {
       const vit = world.get(source, Vitality);
-      if (!vit || Number(vit.hp || 0) <= 3) return;
-      ctx.proc.dealDamage(source, 2, "physical", { source, cause: "procPackage:ritualOverdraw", nonLethal: true, noTrigger: true });
-      ctx.proc.addBonusDamage(4, 4, "fire");
-      ctx.proc.restoreResource(source, "mana", 2);
+      if (!vit || Number(vit.hp || 0) <= minimumHealth) return;
+      ctx.proc.dealDamage(source, healthCost, "physical", { source, cause: "procPackage:ritualOverdraw", nonLethal: true, noTrigger: true });
+      ctx.proc.addBonusDamage(fireDamage, fireDamage, "fire");
+      ctx.proc.restoreResource(source, "mana", manaRestore);
       return;
     }
-    if (kind === "onKill") ctx.proc.heal(source, 2);
+    if (kind === "onKill") ctx.proc.heal(source, killHeal);
   },
 });
 
@@ -1919,7 +1925,14 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "ritualOverdraw",
     name: "Ritual Overdraw",
-    summary: "Spend a small amount of life before each hit for fire damage and mana, then recover on kill.",
+    params: Object.freeze({
+      healthCost: 2,
+      fireDamage: 4,
+      manaRestore: 2,
+      killHeal: 2,
+      minimumHealth: 3,
+    }),
+    summary: "Spend {healthCost} HP before each hit for +{fireDamage} fire damage and restore {manaRestore} mana, then recover {killHeal} HP on kill.",
     display: Object.freeze({ context: "Equip", format: "{summary}" }),
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["blood rapiers", "blood orbs"]),
@@ -2198,7 +2211,13 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   }),
 ]);
 
-const PROC_PACKAGE_REGISTRY = new Map(PROC_PACKAGE_SPECS.map((spec) => [spec.id, spec]));
+const PROC_PACKAGE_REGISTRY = new Map(PROC_PACKAGE_SPECS.map((spec) => {
+  const display = spec.display || { context: "Equip", format: "{summary}" };
+  return [spec.id, Object.freeze({
+    ...spec,
+    display: Object.freeze({ ...display }),
+  })];
+}));
 
 export function getProcPackage(id) {
   return PROC_PACKAGE_REGISTRY.get(String(id || "")) || null;
@@ -2231,6 +2250,7 @@ export function attachProcPackage(world, parentId, packageId) {
       priority: Number(tree.priority || 0),
       gates: [gateEventKind(tree.trigger), ...(Array.isArray(tree.gates) ? tree.gates : [])],
       script: tree.script,
+      scriptParams: spec.params || {},
     });
   }
 

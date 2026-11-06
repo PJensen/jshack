@@ -268,13 +268,18 @@ function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
     if (formatSpec == null) continue;
     const format = typeof formatSpec === 'string' ? formatSpec : formatSpec?.format;
     if (typeof format !== 'string' || !format.trim()) continue;
-    const values = {
+    const parameterValues = {
       ...(formatSpec?.values && typeof formatSpec.values === 'object' ? formatSpec.values : {}),
+      ...(pkg?.params && typeof pkg.params === 'object' ? pkg.params : {}),
+    };
+    const interpolate = (value, values) => String(value || '').replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, key) => String(values[key] ?? ''));
+    const values = {
+      ...parameterValues,
       id: String(pkg?.id || ''),
       name: String(pkg?.name || ''),
-      summary: String(pkg?.summary || ''),
+      summary: interpolate(pkg?.summary, parameterValues),
     };
-    const text = format.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, key) => String(values[key] ?? ''));
+    const text = interpolate(format, values);
     if (!text.trim()) continue;
     mechanics.push({
       context: typeof formatSpec === 'object' && formatSpec.context
@@ -466,6 +471,7 @@ function buildProcPackageSummaries(world, itemId) {
           out.push({
             id: spec.id,
             name: spec.name,
+            params: spec.params && typeof spec.params === 'object' ? { ...spec.params } : {},
             summary: String(spec.summary || "").trim(),
             display: spec.display || null,
           });

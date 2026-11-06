@@ -100,6 +100,10 @@ Deno.test("proc package registry structural invariants", () => {
     assertEquals(typeof pkg.summary, "string", `${id}: summary must be a string`);
     assert(Array.isArray(pkg.procTrees), `${id}: procTrees must be an array`);
     assertEquals(pkg.id, id, `${id}: spec.id must match registry key`);
+    if (pkg.display) {
+      assertEquals(typeof pkg.display.context, "string", `${id}: display context must be a string`);
+      assertEquals(typeof pkg.display.format, "string", `${id}: display format must be a string`);
+    }
   }
 
   for (const key of Object.values(PROC_PACKAGE_KEYS)) {
@@ -108,6 +112,13 @@ Deno.test("proc package registry structural invariants", () => {
   }
 
   assertEquals(getProcPackage("soulMortgage")?.deferredHooks, ["onDeath", "onShrineInteract"]);
+  assertEquals(getProcPackage("ritualOverdraw")?.params, {
+    healthCost: 2,
+    fireDamage: 4,
+    manaRestore: 2,
+    killHeal: 2,
+    minimumHealth: 3,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {

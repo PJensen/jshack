@@ -15,6 +15,7 @@ import "../src/content/items/fishingRod.js";
 import "../src/content/items/lodbrokSerpentBoundBreeches.js";
 import "../src/content/items/boots.js";
 import "../src/content/items/weapons.js";
+import "../src/content/items/helms.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -119,6 +120,11 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
     { context: "Equip", text: "Repeated hits build a visible countdown that detonates into shadow punishment on the third toll." },
   ]);
   assertEquals(tollingBlade.detailLines, []);
+
+  const bloodCirclet = buildItemDisplayData(world, buildCatalogItem(world, "blood_circlet"));
+  assertEquals(bloodCirclet.mechanics, [
+    { context: "Equip", text: "Spend 2 HP before each hit for +4 fire damage and restore 2 mana, then recover 2 HP on kill." },
+  ]);
 });
 
 Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {
@@ -174,6 +180,7 @@ Deno.test("buildItemDisplayData exposes authored mechanics for fishing rod, bree
   const breeches = buildItemDisplayData(world, buildCatalogItem(world, "lodbrok_serpent_bound_breeches"));
   assertEquals(breeches.mechanics, [
     { context: "Use — Laugh at the Pit", text: "Breaks snares, roots, webs, freezing, grapples, and constriction. Summons 3 spectral serpents for 10 turns and grants serpent-hide for 8 turns. Cooldown: 100 turns." },
+    { context: "Equip", text: "On hit, chance to coat in serpent-hide and thorns. Dodges/parries prime a nature riposte that can slow. Spectral-serpent windows poison melee attackers." },
   ]);
 
   const boots = buildItemDisplayData(world, buildCatalogItem(world, "breadcrumb_boots"));

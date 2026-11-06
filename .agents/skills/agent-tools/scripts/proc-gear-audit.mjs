@@ -38,7 +38,13 @@ export function collectRows(items = allContentItems()) {
       const format = itemFormat || packageFormat;
       const formatText = typeof format === "string" ? format : String(format?.format || "");
       const tokens = [...formatText.matchAll(/\{([a-zA-Z0-9_.]+)\}/g)].map((match) => match[1]);
-      const allowedTokens = new Set(["id", "name", "summary", ...Object.keys(format?.values || {})]);
+      const allowedTokens = new Set([
+        "id",
+        "name",
+        "summary",
+        ...Object.keys(packageSpec?.params || {}),
+        ...Object.keys(format?.values || {}),
+      ]);
       rows.push({
         id,
         name: String(item?.name || id),

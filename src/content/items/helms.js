@@ -124,7 +124,7 @@ defineItem('blood_circlet', {
   material: 'iron', rarity: 5,
   bonuses: { defense: 1, maxMana: 12, manaRegen: 0.4 },
   weight: 1.0,
-  description: 'A thin iron band set with a single deep-red stone. Each attack costs 8% of your max HP (never fatal) in exchange for +5 fire damage on that swing. The circlet taps the vein automatically — you don\'t get a vote.',
+  description: 'A thin iron band set with a single deep-red stone. The circlet taps the vein automatically — you don\'t get a vote.',
   procPackages: ['ritualOverdraw'],
 });
 
