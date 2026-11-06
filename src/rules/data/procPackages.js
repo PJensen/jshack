@@ -1184,22 +1184,30 @@ registerScript("procPackage:tollwarden", {
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
     const kind = String(ctx?.kind || "");
+    const params = ctx?.params || {};
+    const meterLimit = Math.max(1, Number(params.meterLimit || 3) | 0);
+    const effectTurns = Math.max(1, Number(params.effectTurns || 10) | 0);
+    const critReadyStacks = Math.max(1, Number(params.critReadyStacks || 2) | 0);
+    const critChancePercent = Math.max(0, Number(params.critChancePercent ?? 5));
+    const detonationDamage = Math.max(0, Number(params.detonationDamage || 4) | 0);
+    const stunTurns = Math.max(1, Number(params.stunTurns || 1) | 0);
+    const stunPotency = Math.max(1, Number(params.stunPotency || 1) | 0);
     if (!(source > 0) || !(target > 0)) return;
     if (kind === "onBeforeHit") {
       const toll = getEffect(world, target, "tollwarden_count");
-      if (Number(toll?.stacks || 0) >= 2) ctx.proc.addCritChance(0.05);
+      if (Number(toll?.stacks || 0) >= critReadyStacks) ctx.proc.addCritChance(critChancePercent / 100);
       return;
     }
     if (kind !== "onHit") return;
     const ae = ensureActiveEffects(world, target);
     if (!ae) return;
     const existing = getEffect(world, target, "tollwarden_count");
-    const stacks = Math.min(3, Math.max(1, Number(existing?.stacks || 0) + 1));
-    upsertTimedEffect(ae.effects, { key: "tollwarden_count", turnsLeft: 10, stacks, potency: stacks });
-    if (stacks < 3) return;
+    const stacks = Math.min(meterLimit, Math.max(1, Number(existing?.stacks || 0) + 1));
+    upsertTimedEffect(ae.effects, { key: "tollwarden_count", turnsLeft: effectTurns, stacks, potency: stacks });
+    if (stacks < meterLimit) return;
     removeEffect(world, target, "tollwarden_count");
-    ctx.proc.dealDamage(target, 4, "shadow", { source, cause: "procPackage:tollwarden", noTrigger: true });
-    ctx.proc.applyStatus(target, "stun", 1, 1);
+    ctx.proc.dealDamage(target, detonationDamage, "shadow", { source, cause: "procPackage:tollwarden", noTrigger: true });
+    ctx.proc.applyStatus(target, "stun", stunTurns, stunPotency);
     emit(world, "proc:tollwarden:detonate", { actor: source, target });
   },
 });
@@ -1977,7 +1985,16 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "tollwarden",
     name: "Tollwarden",
-    summary: "Hits ring up a 3-count meter on the target, then discharge with shadow damage and stun.",
+    params: Object.freeze({
+      meterLimit: 3,
+      effectTurns: 10,
+      critReadyStacks: 2,
+      critChancePercent: 5,
+      detonationDamage: 4,
+      stunTurns: 1,
+      stunPotency: 1,
+    }),
+    summary: "Hits ring up a {meterLimit}-count meter on the target, then discharge with shadow damage and stun.",
     stateKeys: Object.freeze(["tollwarden_count"]),
     hostIdeas: Object.freeze(["judgment crossbows", "execution pendants"]),
     passiveExpressions: Object.freeze([]),

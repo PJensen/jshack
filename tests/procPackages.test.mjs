@@ -168,6 +168,15 @@ Deno.test("proc package registry structural invariants", () => {
     weakenPotency: 1,
   });
   assertEquals(getProcPackage("arrowInstinct")?.params, { chancePercent: 50, focusTurns: 20 });
+  assertEquals(getProcPackage("tollwarden")?.params, {
+    meterLimit: 3,
+    effectTurns: 10,
+    critReadyStacks: 2,
+    critChancePercent: 5,
+    detonationDamage: 4,
+    stunTurns: 1,
+    stunPotency: 1,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
