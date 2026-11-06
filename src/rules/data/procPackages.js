@@ -873,26 +873,34 @@ registerScript(PROC_PACKAGE_KEYS.VenomClock, {
 
 // ── Hollow Tide ───────────────────────────────────────────────────────────
 // OnBeforeHit: bonus damage scales with how low the wielder's HP is.
-// Below 75% HP: +1. Below 50%: +3. Below 25%: +6 and weakens the target.
-// The closer to death, the more dangerous.
+// The configured thresholds and tiers make the closer-to-death strike more dangerous.
 registerScript(PROC_PACKAGE_KEYS.HollowTide, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     if (String(ctx?.kind || "") !== "onBeforeHit") return;
     const source = Number(ctx?.source || 0) | 0;
     const target = Number(ctx?.target || 0) | 0;
+    const params = ctx?.params || {};
+    const highThresholdPercent = Math.max(1, Number(params.highThresholdPercent || 75));
+    const middleThresholdPercent = Math.max(1, Number(params.middleThresholdPercent || 50));
+    const lowThresholdPercent = Math.max(1, Number(params.lowThresholdPercent || 25));
+    const highBonusDamage = Math.max(0, Number(params.highBonusDamage || 1) | 0);
+    const middleBonusDamage = Math.max(0, Number(params.middleBonusDamage || 3) | 0);
+    const lowBonusDamage = Math.max(0, Number(params.lowBonusDamage || 6) | 0);
+    const weakenTurns = Math.max(1, Number(params.weakenTurns || 3) | 0);
+    const weakenPotency = Math.max(1, Number(params.weakenPotency || 1) | 0);
     if (!(source > 0) || !(target > 0)) return;
     const vit = world.get(source, Vitality);
     if (!vit || !(Number(vit.maxHp) > 0)) return;
     const hpPct = Number(vit.hp) / Number(vit.maxHp);
-    if (hpPct < 0.25) {
-      ctx.proc.addBonusDamage(6, 6, "physical");
-      ctx.proc.applyStatus(target, "weaken", 3, 1);
+    if (hpPct < lowThresholdPercent / 100) {
+      ctx.proc.addBonusDamage(lowBonusDamage, lowBonusDamage, "physical");
+      ctx.proc.applyStatus(target, "weaken", weakenTurns, weakenPotency);
       emit(world, "proc:hollowTide:surge", { actor: source, target, tier: 3 });
-    } else if (hpPct < 0.50) {
-      ctx.proc.addBonusDamage(3, 3, "physical");
+    } else if (hpPct < middleThresholdPercent / 100) {
+      ctx.proc.addBonusDamage(middleBonusDamage, middleBonusDamage, "physical");
       emit(world, "proc:hollowTide:surge", { actor: source, target, tier: 2 });
-    } else if (hpPct < 0.75) {
-      ctx.proc.addBonusDamage(1, 1, "physical");
+    } else if (hpPct < highThresholdPercent / 100) {
+      ctx.proc.addBonusDamage(highBonusDamage, highBonusDamage, "physical");
       emit(world, "proc:hollowTide:surge", { actor: source, target, tier: 1 });
     }
   },
@@ -1823,7 +1831,17 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "hollowTide",
     name: "Hollow Tide",
-    summary: "Bonus damage scales inversely with the wielder's remaining HP. Below 75% HP: +1. Below 50%: +3. Below 25%: +6 and weakens the target. The closer to death, the more dangerous.",
+    params: Object.freeze({
+      highThresholdPercent: 75,
+      middleThresholdPercent: 50,
+      lowThresholdPercent: 25,
+      highBonusDamage: 1,
+      middleBonusDamage: 3,
+      lowBonusDamage: 6,
+      weakenTurns: 3,
+      weakenPotency: 1,
+    }),
+    summary: "Bonus damage scales inversely with the wielder's remaining HP. Below {highThresholdPercent}% HP: +{highBonusDamage}. Below {middleThresholdPercent}%: +{middleBonusDamage}. Below {lowThresholdPercent}%: +{lowBonusDamage} and weakens the target. The closer to death, the more dangerous.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["berserker blades", "death-wish hammers", "last-stand relics"]),
     passiveExpressions: Object.freeze([]),

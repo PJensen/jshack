@@ -157,6 +157,16 @@ Deno.test("proc package registry structural invariants", () => {
     stoneskinPotency: 2,
   });
   assertEquals(getProcPackage("eternalHunger")?.params, { maxStacks: 10, durationTurns: 12, damageDivisor: 2 });
+  assertEquals(getProcPackage("hollowTide")?.params, {
+    highThresholdPercent: 75,
+    middleThresholdPercent: 50,
+    lowThresholdPercent: 25,
+    highBonusDamage: 1,
+    middleBonusDamage: 3,
+    lowBonusDamage: 6,
+    weakenTurns: 3,
+    weakenPotency: 1,
+  });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
