@@ -1,0 +1,28 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "f254f9e4fe4f",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/data/procPackages.js",
+    "src/rules/systems/castSpellSystem.js",
+    "tests/procPackages.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/f2/54f9e4fe4f/0/metadata.json",
+      "transcript": "/f2/54f9e4fe4f/0/full.jsonl",
+      "compact_transcript": "/f2/54f9e4fe4f/0/transcript.jsonl",
+      "content_hash": "/f2/54f9e4fe4f/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 18055,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 646272,
+    "output_tokens": 1832,
+    "api_call_count": 7
+  }
+}
