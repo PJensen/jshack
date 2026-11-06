@@ -167,6 +167,7 @@ Deno.test("proc package registry structural invariants", () => {
     weakenTurns: 3,
     weakenPotency: 1,
   });
+  assertEquals(getProcPackage("arrowInstinct")?.params, { chancePercent: 50, focusTurns: 20 });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {

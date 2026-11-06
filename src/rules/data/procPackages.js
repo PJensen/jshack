@@ -1147,14 +1147,17 @@ registerScript("procPackage:arrowInstinct", {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     const kind = String(ctx?.kind || "");
     const source = Number(ctx?.source || 0) | 0;
+    const params = ctx?.params || {};
+    const chancePercent = Math.max(0, Number(params.chancePercent ?? 50));
+    const focusTurns = Math.max(1, Number(params.focusTurns || 20) | 0);
     if (!(source > 0)) return;
     if (kind === "onDamaged") {
       if (!hasTag(ctx, "ranged") && !hasTag(ctx, "projectile")) return;
       if (getEffect(world, source, "arrow_instinct")) return;
-      if (world.rand() >= 0.5) return;
+      if (world.rand() >= chancePercent / 100) return;
       const ae = ensureActiveEffects(world, source);
       if (!ae) return;
-      ae.effects.push({ key: "arrow_instinct", turnsLeft: 20, stacks: 1, potency: 1 });
+      ae.effects.push({ key: "arrow_instinct", turnsLeft: focusTurns, stacks: 1, potency: 1 });
       emit(world, "proc:arrowInstinct:gain", { actor: source });
       return;
     }
@@ -1950,7 +1953,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "arrowInstinct",
     name: "Arrow Instinct",
-    summary: "When struck by a projectile, 50% chance to gain a 20-turn dexterity-like combat focus (non-stacking).",
+    params: Object.freeze({ chancePercent: 50, focusTurns: 20 }),
+    summary: "When struck by a projectile, {chancePercent}% chance to gain a {focusTurns}-turn dexterity-like combat focus (non-stacking).",
     stateKeys: Object.freeze(["arrow_instinct"]),
     hostIdeas: Object.freeze(["hunter bows", "ranger cowls"]),
     passiveExpressions: Object.freeze([]),
