@@ -24,6 +24,7 @@ import { FountainDipResolved } from "../../events/FountainDipResolved.js";
 import { Teleported } from "../../events/Teleported.js";
 import { UrnInteractionResolved } from "../../events/UrnInteractionResolved.js";
 import { FrostNovaCast } from "../../events/FrostNovaCast.js";
+import { FearSpellCast } from "../../events/FearSpellCast.js";
 import { RiftOpened } from "../../events/RiftOpened.js";
 import { RiftClosed } from "../../events/RiftClosed.js";
 export { resolveInteractionSoundId } from "./audioWiringExtension.js";
@@ -93,6 +94,7 @@ export const TAMING_SUCCESS_SOUND_ID = "magic:taming";
 export const GENOCIDE_SUCCESS_SOUND_ID = "item:scroll:genocide";
 export const THROW_SOUND_ID = "action:throw";
 export const PRAYER_SOUND_ID = "spell:holy_healing";
+export const FEAR_SOUND_ID = "spell:fear";
 
 let sfxDebugEnabled = false;
 let sfxDebugLogger = null;
@@ -1304,6 +1306,11 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
 
   world.on(FrostNovaCast, (event) => {
     sfxAt("spell:frost_nova", event.origin, pp(), null, zg());
+  });
+
+  world.on(FearSpellCast, (event) => {
+    if (event.fizzle) return;
+    sfxAt(FEAR_SOUND_ID, event.from, pp(), null, zg());
   });
 
   // NOTE: this has been silenced since spell:blink has a bespoke sound

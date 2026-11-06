@@ -11,6 +11,7 @@ import {
   DUNGEON_LOOP_OPTIONS,
   DUNGEON_LOOP_SOUND_ID,
   DEATH_SOUND_BY_IDENTITY,
+  FEAR_SOUND_ID,
   FAMILIAR_FIRE_CAST_SOUND_ID,
   FAMILIAR_FIRE_READY_SOUND_ID,
   FOOD_EAT_SOUND_ID,
@@ -94,6 +95,10 @@ Deno.test("audio wiring exposes familiar fire ready and cast sound aliases", () 
 
 Deno.test("audio wiring exposes the prayer sound alias", () => {
   assert(PRAYER_SOUND_ID === "spell:holy_healing");
+});
+
+Deno.test("audio wiring exposes the fear spell sound alias", () => {
+  assert(FEAR_SOUND_ID === "spell:fear");
 });
 
 Deno.test("audio wiring exposes food and stone push sound aliases", () => {
