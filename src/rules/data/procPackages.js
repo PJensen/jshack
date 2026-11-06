@@ -222,11 +222,14 @@ registerScript(PROC_PACKAGE_KEYS.WitchKing, {
 registerScript(PROC_PACKAGE_KEYS.GamblerMantle, {
   [ScriptVerb.ProcEvaluate]: (_world, ctx) => {
     if (String(ctx?.kind || "") !== "onBeforeHit") return;
+    const params = ctx?.params || {};
+    const normalPenaltyPercent = Math.max(0, Number(params.normalPenaltyPercent ?? 15));
+    const criticalBonusPercent = Math.max(0, Number(params.criticalBonusPercent ?? 50));
     if (ctx?.damage?.crit) {
-      ctx.proc.multiplyDamage(1.5);
+      ctx.proc.multiplyDamage(1 + criticalBonusPercent / 100);
       return;
     }
-    ctx.proc.multiplyDamage(0.85);
+    ctx.proc.multiplyDamage(1 - normalPenaltyPercent / 100);
   },
 });
 
@@ -2340,7 +2343,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "gamblerMantle",
     name: "Gambler's Mantle",
-    summary: "Normal hits deal 15% less damage, but critical hits deal 50% more.",
+    params: Object.freeze({ normalPenaltyPercent: 15, criticalBonusPercent: 50 }),
+    summary: "Normal hits deal {normalPenaltyPercent}% less damage, but critical hits deal {criticalBonusPercent}% more.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["risk-reward cloaks", "duelist mantles"]),
     passiveExpressions: Object.freeze([]),

@@ -187,6 +187,7 @@ Deno.test("proc package registry structural invariants", () => {
   assertEquals(getProcPackage("echoGrimoire")?.params, { repeatWindowTurns: 3, powerPercent: 80 });
   assertEquals(getProcPackage("cinderwake")?.params, { lifespanTurns: 3, tickDamage: 2 });
   assertEquals(getProcPackage("bracersReversal")?.params, { readyTurns: 4, damageMultiplier: 2 });
+  assertEquals(getProcPackage("gamblerMantle")?.params, { normalPenaltyPercent: 15, criticalBonusPercent: 50 });
   assertEquals(getProcPackage("echoGrimoire")?.params, { repeatWindowTurns: 3, powerPercent: 80 });
 });
 
