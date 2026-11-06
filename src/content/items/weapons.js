@@ -821,6 +821,11 @@ defineItem('debtbringer', {
   staminaCost: 9,
   description: 'Obscene power up front, a debt accrued in silence. The reckoning comes later — and it comes for everything.',
   procPackages: ['soulMortgage'],
+  mechanicFormats: {
+    procPackages: {
+      soulMortgage: { context: 'Equip', format: '{summary}' },
+    },
+  },
   weight: 1.5,
 });
 

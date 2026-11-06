@@ -19,6 +19,11 @@ defineItem('patient_thunder', {
   staminaCost: 9,
   maxSockets: 1,
   procPackages: ['patientThunder'],
+  mechanicFormats: {
+    procPackages: {
+      patientThunder: { context: 'Equip', format: '{summary}' },
+    },
+  },
   state: { patience: 0, maxPatience: 3 },
   presentations: {
     discharge: {
