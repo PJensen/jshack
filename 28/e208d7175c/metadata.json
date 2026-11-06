@@ -18,14 +18,14 @@
       "transcript": "/28/e208d7175c/0/full.jsonl",
       "compact_transcript": "/28/e208d7175c/0/transcript.jsonl",
       "content_hash": "/28/e208d7175c/0/content_hash.txt",
-      "prompt": "/28/e208d7175c/0/prompt.txt"
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 29924,
+    "input_tokens": 745,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 5635456,
-    "output_tokens": 10485,
-    "api_call_count": 28
+    "cache_read_tokens": 210176,
+    "output_tokens": 309,
+    "api_call_count": 1
   }
 }
