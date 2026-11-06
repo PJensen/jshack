@@ -147,6 +147,7 @@ Deno.test("proc package registry structural invariants", () => {
     diseasePotency: 1,
   });
   assertEquals(getProcPackage("dawnbreaker")?.params, { awakenThreshold: 7 });
+  assertEquals(getProcPackage("bloodCovenant")?.params, { hpCostPercent: 8, bonusFireDamage: 5 });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {

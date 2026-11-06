@@ -963,10 +963,13 @@ registerScript(PROC_PACKAGE_KEYS.BloodCovenant, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     if (String(ctx?.kind || "") !== "onBeforeHit") return;
     const source = Number(ctx?.source || 0) | 0;
+    const params = ctx?.params || {};
+    const hpCostRatio = Math.max(0, Number(params.hpCostPercent ?? 8) / 100);
+    const bonusFireDamage = Math.max(0, Number(params.bonusFireDamage || 5) | 0);
     if (!(source > 0)) return;
     const vit = world.get(source, Vitality);
     if (!vit || !(Number(vit.maxHp) > 0)) return;
-    const cost = Math.max(1, Math.floor(Number(vit.maxHp) * 0.08));
+    const cost = Math.max(1, Math.floor(Number(vit.maxHp) * hpCostRatio));
     if (Number(vit.hp) - cost < 2) return; // refuse if it would drop us to 1 HP
     ctx.proc.dealDamage(source, cost, "physical", {
       source,
@@ -974,7 +977,7 @@ registerScript(PROC_PACKAGE_KEYS.BloodCovenant, {
       noTrigger: true,
       nonLethal: true,
     });
-    ctx.proc.addBonusDamage(5, 5, "fire");
+    ctx.proc.addBonusDamage(bonusFireDamage, bonusFireDamage, "fire");
     emit(world, "proc:bloodCovenant:tithe", { actor: source, cost });
   },
 });
@@ -1851,7 +1854,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "bloodCovenant",
     name: "Blood Covenant",
-    summary: "Each attack spends 8% max HP to add +5 fire bonus damage. The blade drinks from you first.",
+    params: Object.freeze({ hpCostPercent: 8, bonusFireDamage: 5 }),
+    summary: "Each attack spends {hpCostPercent}% max HP to add +{bonusFireDamage} fire bonus damage. The blade drinks from you first.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["blood-pact swords", "sacrifice daggers", "covenant blades"]),
     passiveExpressions: Object.freeze([]),
