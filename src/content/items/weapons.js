@@ -781,11 +781,6 @@ defineItem('blade_of_echoes', {
   staminaCost: 8,
   description: 'Each strike reverberates. The blade remembers the last wound it dealt and echoes it back on the next swing.',
   procPackages: ['echoStrike'],
-  mechanicFormats: {
-    procPackages: {
-      echoStrike: { context: 'Equip', format: '{summary}' },
-    },
-  },
   weight: 1.3,
 });
 
@@ -801,11 +796,6 @@ defineItem('tolling_blade', {
   staminaCost: 10,
   description: 'Three ticks. Then judgment. It counts each wound in shadow, and on the third toll, the reckoning arrives.',
   procPackages: ['doomClock'],
-  mechanicFormats: {
-    procPackages: {
-      doomClock: { context: 'Equip', format: '{summary}' },
-    },
-  },
   weight: 2.0,
 });
 
@@ -821,11 +811,6 @@ defineItem('debtbringer', {
   staminaCost: 9,
   description: 'Obscene power up front, a debt accrued in silence. The reckoning comes later — and it comes for everything.',
   procPackages: ['soulMortgage'],
-  mechanicFormats: {
-    procPackages: {
-      soulMortgage: { context: 'Equip', format: '{summary}' },
-    },
-  },
   weight: 1.5,
 });
 

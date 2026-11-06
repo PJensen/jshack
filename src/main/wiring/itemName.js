@@ -264,11 +264,12 @@ function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
   const mechanics = [];
   const authoredIds = new Set();
   for (const pkg of procPackages) {
-    const formatSpec = formats[pkg?.id];
+    const formatSpec = formats[pkg?.id] || pkg?.display;
     if (formatSpec == null) continue;
     const format = typeof formatSpec === 'string' ? formatSpec : formatSpec?.format;
     if (typeof format !== 'string' || !format.trim()) continue;
     const values = {
+      ...(formatSpec?.values && typeof formatSpec.values === 'object' ? formatSpec.values : {}),
       id: String(pkg?.id || ''),
       name: String(pkg?.name || ''),
       summary: String(pkg?.summary || ''),
@@ -435,9 +436,13 @@ function buildProcNodeSummaries(world, itemId) {
     const affix = world.get(entityId, AffixTopologyNode);
     if (affix?.affixId) nextSource = `Affix: ${humanizeToken(affix.affixId)}`;
     const proc = world.get(entityId, ProcNode);
-    if (proc && proc.enabled !== false) out.push(summarizeProcNode(world, entityId, nextSource));
+    if (proc && proc.enabled !== false) {
+      const summary = summarizeProcNode(world, entityId, nextSource);
+      summary.packageId = current.packageId || "";
+      out.push(summary);
+    }
     for (const childId of children(world, entityId)) {
-      stack.push({ id: childId, source: nextSource });
+      stack.push({ id: childId, source: nextSource, packageId: pkg?.packageId || current.packageId || "" });
     }
   }
   return out;
@@ -458,7 +463,12 @@ function buildProcPackageSummaries(world, itemId) {
         seen.add(packageId);
         const spec = getProcPackage(packageId);
         if (spec) {
-          out.push({ id: spec.id, name: spec.name, summary: String(spec.summary || "").trim() });
+          out.push({
+            id: spec.id,
+            name: spec.name,
+            summary: String(spec.summary || "").trim(),
+            display: spec.display || null,
+          });
         } else {
           out.push({ id: packageId, name: humanizeToken(packageId), summary: "" });
         }
@@ -530,6 +540,10 @@ export function buildItemDisplayData(world, itemId) {
     : [];
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
   mechanics.push(...procPackageMechanics.mechanics);
+  const procNodes = identified ? buildProcNodeSummaries(world, itemId) : [];
+  const visibleProcNodes = catalogItem
+    ? procNodes.filter((node) => !procPackageMechanics.authoredIds.has(String(node?.packageId || "")))
+    : procNodes;
 
   return {
     id: itemId,
@@ -549,7 +563,7 @@ export function buildItemDisplayData(world, itemId) {
     coating: identified && info.coating && typeof info.coating === 'object' ? { ...info.coating } : null,
     sockets: Array.isArray(info.sockets) ? info.sockets.slice() : [],
     maxSockets: Number(info.maxSockets || 0) | 0,
-    procNodes: identified ? buildProcNodeSummaries(world, itemId) : [],
+    procNodes: visibleProcNodes,
     spellId: linkedSpell?.id || null,
     detailLines,
     targetEffects,

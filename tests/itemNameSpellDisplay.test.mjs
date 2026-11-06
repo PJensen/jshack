@@ -112,6 +112,7 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
     { context: "Equip", text: "Stores the last landed hit and replays part of it as spectral force on the next swing." },
   ]);
   assertEquals(blade.detailLines, []);
+  assertEquals(blade.procNodes, []);
 
   const tollingBlade = buildItemDisplayData(world, buildCatalogItem(world, "tolling_blade"));
   assertEquals(tollingBlade.mechanics, [

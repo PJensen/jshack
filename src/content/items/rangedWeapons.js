@@ -64,11 +64,6 @@ defineItem('bow_mirror', {
   weight: 1.8,
   description: 'A polished bow that throws wall-side impacts into nearby hostiles.',
   procPackages: ['ricochetTheology'],
-  mechanicFormats: {
-    procPackages: {
-      ricochetTheology: { context: 'Equip', format: '{summary}' },
-    },
-  },
 });
 
 defineItem('bow_long', {

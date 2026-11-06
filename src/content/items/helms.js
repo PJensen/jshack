@@ -126,11 +126,6 @@ defineItem('blood_circlet', {
   weight: 1.0,
   description: 'A thin iron band set with a single deep-red stone. Each attack costs 8% of your max HP (never fatal) in exchange for +5 fire damage on that swing. The circlet taps the vein automatically — you don\'t get a vote.',
   procPackages: ['ritualOverdraw'],
-  mechanicFormats: {
-    procPackages: {
-      ritualOverdraw: { context: 'Equip', format: '{summary}' },
-    },
-  },
 });
 
 defineItem('eternal_hunger_crown', {
