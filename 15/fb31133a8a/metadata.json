@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 3,
   "files_touched": [
+    "VERSION",
     "src/content/items/boots.js",
     "src/content/scriptCtx.js",
     "src/rules/data/procPackages.js",
