@@ -4,6 +4,7 @@ import { Mana } from "../components/Mana.js";
 import { Channeling } from "../components/Channeling.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { getSpell } from "../data/spells.js";
+import { getProcPackage } from "../data/procPackages.js";
 import { runSpellScript } from "../scripts/spells.js";
 import { MANA_REGEN_COOLDOWN } from "../data/regenConstants.js";
 import { combatSeed, hashString32, mulberry32 } from "../utils/rng.js";
@@ -77,7 +78,7 @@ function readEchoGrimoireState(world, actorId) {
   return null;
 }
 
-function upsertEchoGrimoireState(world, actorId, spellId) {
+function upsertEchoGrimoireState(world, actorId, spellId, repeatWindowTurns) {
   const ae = ensureActiveEffects(world, actorId);
   if (!ae) return;
   const effects = ae.effects;
@@ -90,7 +91,7 @@ function upsertEchoGrimoireState(world, actorId, spellId) {
     }
   }
   if (rec) {
-    rec.turnsLeft = 3;
+    rec.turnsLeft = repeatWindowTurns;
     rec.potency = 1;
     rec.stacks = 1;
     rec.startedAtTurn = world.step;
@@ -100,7 +101,7 @@ function upsertEchoGrimoireState(world, actorId, spellId) {
   }
   effects.push({
     key: "echo_grimoire_memory",
-    turnsLeft: 3,
+    turnsLeft: repeatWindowTurns,
     potency: 1,
     stacks: 1,
     startedAtTurn: world.step,
@@ -259,10 +260,13 @@ export function castSpellSystem(world) {
     const confusion = resolveConfusedCast(world, actor, spell, learned);
     const resolvedSpell = confusion.spell;
     const hasEchoGrimoire = hasEquippedProcPackageInSlot(world, actor, "offhand", "echoGrimoire");
+    const echoParams = hasEchoGrimoire ? getProcPackage("echoGrimoire")?.params || {} : {};
+    const repeatWindowTurns = Math.max(1, Number(echoParams.repeatWindowTurns || 3) | 0);
+    const powerPercent = Math.max(0, Number(echoParams.powerPercent ?? 80));
     const echoState = hasEchoGrimoire ? readEchoGrimoireState(world, actor) : null;
     const isSustainedChannel = !!resolvedSpell?.channeling;
     const echoRepeat = !!(!isSustainedChannel && echoState && echoState.turnsLeft > 0 && echoState.spellId && echoState.spellId === resolvedSpell.id);
-    let spellPowerScale = echoRepeat ? 0.8 : 1;
+    let spellPowerScale = echoRepeat ? powerPercent / 100 : 1;
     const resource = spellCostResource(resolvedSpell);
     const baseCost = isSustainedChannel
       ? spellCostPerTick(resolvedSpell)
@@ -445,7 +449,7 @@ export function castSpellSystem(world) {
       });
     }
     if (hasEchoGrimoire && resolvedSpell.id) {
-      upsertEchoGrimoireState(world, actor, resolvedSpell.id);
+      upsertEchoGrimoireState(world, actor, resolvedSpell.id, repeatWindowTurns);
       if (echoRepeat) {
         world.emit("proc:echoGrimoire:echo", { actor, spellId: resolvedSpell.id, powerScale: spellPowerScale });
       }

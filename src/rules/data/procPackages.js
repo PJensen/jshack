@@ -2267,7 +2267,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "echoGrimoire",
     name: "Echo Grimoire",
-    summary: "Repeat a spell within 3 turns to cast it free at reduced power.",
+    params: Object.freeze({ repeatWindowTurns: 3, powerPercent: 80 }),
+    summary: "Repeat a spell within {repeatWindowTurns} turns to cast it free at {powerPercent}% power.",
     stateKeys: Object.freeze(["echo_grimoire_memory"]),
     hostIdeas: Object.freeze(["cadence casting", "mana-compression loadouts"]),
     passiveExpressions: Object.freeze([]),

@@ -184,6 +184,7 @@ Deno.test("proc package registry structural invariants", () => {
     spillDamagePercent: 50,
     fallbackBonusDamage: 2,
   });
+  assertEquals(getProcPackage("echoGrimoire")?.params, { repeatWindowTurns: 3, powerPercent: 80 });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
