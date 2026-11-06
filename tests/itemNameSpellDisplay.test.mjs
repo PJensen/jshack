@@ -117,7 +117,7 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
 
   const tollingBlade = buildItemDisplayData(world, buildCatalogItem(world, "tolling_blade"));
   assertEquals(tollingBlade.mechanics, [
-    { context: "Equip", text: "Repeated hits build a visible countdown that detonates into shadow punishment on the third toll." },
+    { context: "Equip", text: "Repeated hits build a 3-hit countdown that resets after 9 turns and detonates for shadow damage (minimum 4) plus a 1-turn stun." },
   ]);
   assertEquals(tollingBlade.detailLines, []);
 
