@@ -1038,26 +1038,29 @@ registerScript(PROC_PACKAGE_KEYS.SoulAscendant, {
 });
 
 // ── Eternal Hunger ────────────────────────────────────────────────────────
-// OnKill: push eternal_hunger stacks (max 10, 12t). Stacks decay 1/turn
-// naturally via the effect timer. OnBeforeHit: spend stacks as flat bonus
-// damage (floor(stacks/2)). The hunger can never be sated.
+// OnKill: push configured eternal_hunger stacks. Stacks decay naturally via
+// the effect timer. OnBeforeHit: spend stacks as flat bonus damage.
 registerScript(PROC_PACKAGE_KEYS.EternalHunger, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     const kind = String(ctx?.kind || "");
     const source = Number(ctx?.source || 0) | 0;
+    const params = ctx?.params || {};
+    const maxStacks = Math.max(1, Number(params.maxStacks || 10) | 0);
+    const durationTurns = Math.max(1, Number(params.durationTurns || 12) | 0);
+    const damageDivisor = Math.max(1, Number(params.damageDivisor || 2) | 0);
     if (!(source > 0)) return;
 
     if (kind === "onKill") {
       const ae = ensureActiveEffects(world, source);
       if (!ae) return;
       const existing = getEffect(world, source, "eternal_hunger");
-      const nextStacks = Math.min(10, Math.max(1, Number(existing?.stacks || 0) + 1));
+      const nextStacks = Math.min(maxStacks, Math.max(1, Number(existing?.stacks || 0) + 1));
       if (existing) {
-        existing.turnsLeft = 12;
+        existing.turnsLeft = durationTurns;
         existing.stacks = nextStacks;
         existing.potency = nextStacks;
       } else {
-        ae.effects.push({ key: "eternal_hunger", turnsLeft: 12, stacks: nextStacks, potency: nextStacks });
+        ae.effects.push({ key: "eternal_hunger", turnsLeft: durationTurns, stacks: nextStacks, potency: nextStacks });
       }
       ctx.proc.message("The hunger grows.");
       emit(world, "proc:eternalHunger:feed", { actor: source, target: ctx?.target, stacks: nextStacks });
@@ -1067,7 +1070,7 @@ registerScript(PROC_PACKAGE_KEYS.EternalHunger, {
     if (kind === "onBeforeHit") {
       const stacks = Math.max(0, Number(getEffect(world, source, "eternal_hunger")?.stacks || 0));
       if (stacks > 0) {
-        ctx.proc.addBonusDamage(Math.floor(stacks / 2));
+        ctx.proc.addBonusDamage(Math.floor(stacks / damageDivisor));
       }
     }
   },
@@ -1905,7 +1908,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "eternalHunger",
     name: "Eternal Hunger",
-    summary: "Kills stack eternal_hunger (max 10, 12t decay). Stacks convert to flat bonus damage on each hit (floor(stacks/2)). The hunger can never be sated.",
+    params: Object.freeze({ maxStacks: 10, durationTurns: 12, damageDivisor: 2 }),
+    summary: "Kills stack eternal_hunger (max {maxStacks}, {durationTurns}t decay). Stacks convert to flat bonus damage on each hit (floor(stacks/{damageDivisor})). The hunger can never be sated.",
     stateKeys: Object.freeze(["eternal_hunger"]),
     hostIdeas: Object.freeze(["hunger blades", "insatiable axes", "void-touched cleavers"]),
     passiveExpressions: Object.freeze([]),
