@@ -1568,13 +1568,15 @@ registerScript("procPackage:graveCurrent", {
     const source = Number(ctx?.source || 0) | 0;
     const item = Number(ctx?.item || 0) | 0;
     const kind = String(ctx?.kind || "");
+    const params = ctx?.params || {};
+    const chargeGain = Math.max(1, Number(params.chargeGain || 1) | 0);
     if (!(source > 0) || !(item > 0) || kind !== "onKill") return;
     const info = world.get(item, ItemInfo);
     if (!info) return;
     const maxCharges = Math.max(0, Number(info.maxCharges || 0));
     const current = Math.max(0, Number(info.charges || 0));
     if (!(maxCharges > 0) || current >= maxCharges) return;
-    info.charges = Math.min(maxCharges, current + 1);
+    info.charges = Math.min(maxCharges, current + chargeGain);
     emit(world, "proc:graveCurrent:charge", { actor: source, item, charges: info.charges, maxCharges });
   },
 });
@@ -2225,7 +2227,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "graveCurrent",
     name: "Grave Current",
-    summary: "Wand-like foci recharge 1 charge on kill, up to their item cap.",
+    params: Object.freeze({ chargeGain: 1 }),
+    summary: "Wand-like foci recharge {chargeGain} charge on kill, up to their item cap.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["kill-charging wands", "grave foci"]),
     passiveExpressions: Object.freeze([]),
