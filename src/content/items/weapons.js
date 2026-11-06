@@ -781,6 +781,11 @@ defineItem('blade_of_echoes', {
   staminaCost: 8,
   description: 'Each strike reverberates. The blade remembers the last wound it dealt and echoes it back on the next swing.',
   procPackages: ['echoStrike'],
+  mechanicFormats: {
+    procPackages: {
+      echoStrike: { context: 'Equip', format: '{summary}' },
+    },
+  },
   weight: 1.3,
 });
 

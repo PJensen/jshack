@@ -257,6 +257,35 @@ function formatAmmoMechanics(info, mechanicFormats = {}) {
   return mechanics;
 }
 
+function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
+  const formats = mechanicFormats?.procPackages && typeof mechanicFormats.procPackages === 'object'
+    ? mechanicFormats.procPackages
+    : {};
+  const mechanics = [];
+  const authoredIds = new Set();
+  for (const pkg of procPackages) {
+    const formatSpec = formats[pkg?.id];
+    if (formatSpec == null) continue;
+    const format = typeof formatSpec === 'string' ? formatSpec : formatSpec?.format;
+    if (typeof format !== 'string' || !format.trim()) continue;
+    const values = {
+      id: String(pkg?.id || ''),
+      name: String(pkg?.name || ''),
+      summary: String(pkg?.summary || ''),
+    };
+    const text = format.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, key) => String(values[key] ?? ''));
+    if (!text.trim()) continue;
+    mechanics.push({
+      context: typeof formatSpec === 'object' && formatSpec.context
+        ? String(formatSpec.context)
+        : 'Equip',
+      text: text.trim(),
+    });
+    authoredIds.add(String(pkg?.id || ''));
+  }
+  return { mechanics, authoredIds };
+}
+
 function formatEventKind(value) {
   const key = String(value || "").trim();
   if (!key) return "On Trigger";
@@ -467,10 +496,13 @@ export function buildItemDisplayData(world, itemId) {
   const spellId = identified ? spellIdFromIdentity(identity) : "";
   const linkedSpell = spellId ? getSpell(spellId) : null;
   const procPackages = identified ? buildProcPackageSummaries(world, itemId) : [];
+  const catalogItem = identified ? getCatalogItem(identity) : null;
+  const procPackageMechanics = formatProcPackageMechanics(procPackages, catalogItem?.mechanicFormats);
   const procPackageDetailLines = procPackages.map((pkg) => {
+    if (procPackageMechanics.authoredIds.has(String(pkg?.id || ''))) return '';
     const summary = String(pkg?.summary || "").trim();
     return summary ? `Proc: ${pkg.name} - ${summary}` : `Proc: ${pkg.name}`;
-  });
+  }).filter(Boolean);
   const detailLines = identified
     ? [
         ...(Array.isArray(info.detailLines) ? info.detailLines.map((line) => String(line || "").trim()).filter(Boolean) : []),
@@ -484,7 +516,6 @@ export function buildItemDisplayData(world, itemId) {
         ? String(linkedSpell.description || info.details || info.description || "").trim()
         : String(info.details || info.description || "").trim())
     : "";
-  const catalogItem = identified ? getCatalogItem(identity) : null;
   const mechanics = catalogItem?._contentAbilities
     ? Object.values(catalogItem._contentAbilities).map((ability) => {
         const format = String(ability.displayFormat || ability.description || '').trim();
@@ -498,6 +529,7 @@ export function buildItemDisplayData(world, itemId) {
       }).filter((mechanic) => mechanic.text)
     : [];
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
+  mechanics.push(...procPackageMechanics.mechanics);
 
   return {
     id: itemId,

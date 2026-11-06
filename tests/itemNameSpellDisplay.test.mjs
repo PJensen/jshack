@@ -14,6 +14,7 @@ import "../src/content/items/pocketRelics.js";
 import "../src/content/items/fishingRod.js";
 import "../src/content/items/lodbrokSerpentBoundBreeches.js";
 import "../src/content/items/boots.js";
+import "../src/content/items/weapons.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -99,6 +100,18 @@ Deno.test("buildItemDisplayData exposes Sunsword mechanics separately from stats
   assertEquals(data.mechanics, [
     { context: "Use — Blinding Ray", text: "A searing ray of sunlight that blinds the target. Range: 6 tiles. Cooldown: 12 turns." },
   ]);
+});
+
+Deno.test("buildItemDisplayData formats authored proc packages as equip mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 24 });
+  const blade = buildItemDisplayData(world, buildCatalogItem(world, "blade_of_echoes"));
+
+  assertEquals(blade.mechanics, [
+    { context: "Equip", text: "Stores the last landed hit and replays part of it as spectral force on the next swing." },
+  ]);
+  assertEquals(blade.detailLines, []);
 });
 
 Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {
