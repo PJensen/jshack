@@ -110,17 +110,20 @@ registerScript(PROC_PACKAGE_KEYS.BracersReversal, {
   [ScriptVerb.ProcEvaluate]: (world, ctx) => {
     const source = Number(ctx?.source || 0) | 0;
     const kind = String(ctx?.kind || "");
+    const params = ctx?.params || {};
+    const readyTurns = Math.max(1, Number(params.readyTurns || 4) | 0);
+    const damageMultiplier = Math.max(1, Number(params.damageMultiplier || 2));
     if (!(source > 0)) return;
     if (kind === "onDodge") {
       const ae = ensureActiveEffects(world, source);
       if (!ae) return;
-      upsertTimedEffect(ae.effects, { key: "reversal_ready", turnsLeft: 4, stacks: 1, potency: 1 });
+      upsertTimedEffect(ae.effects, { key: "reversal_ready", turnsLeft: readyTurns, stacks: 1, potency: 1 });
       ctx.proc.message("Your bracers turn the dodge into an opening.", "good");
       return;
     }
     if (kind !== "onBeforeHit" || !getEffect(world, source, "reversal_ready")) return;
     const amount = Math.max(1, Math.floor(Number(ctx?.damage?.amount || 0)));
-    ctx.proc.multiplyDamage(2);
+    ctx.proc.multiplyDamage(damageMultiplier);
     removeEffect(world, source, "reversal_ready");
     ctx.proc.message("The reversal lands with twice the force.", "good");
     if (amount <= 0) ctx.proc.cancel();
@@ -2282,7 +2285,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "bracersReversal",
     name: "Bracers of Reversal",
-    summary: "Dodging an attack primes the next strike to land twice as hard.",
+    params: Object.freeze({ readyTurns: 4, damageMultiplier: 2 }),
+    summary: "Dodging an attack primes the next strike to land {damageMultiplier}x as hard.",
     stateKeys: Object.freeze(["reversal_ready"]),
     hostIdeas: Object.freeze(["duelist bracers", "evasive gloves"]),
     passiveExpressions: Object.freeze([]),
