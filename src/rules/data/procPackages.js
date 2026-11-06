@@ -174,15 +174,18 @@ registerScript(PROC_PACKAGE_KEYS.Cinderwake, {
     if (String(ctx?.kind || "") !== "onStep") return;
     const source = Number(ctx?.source || 0) | 0;
     const from = ctx?.from;
+    const params = ctx?.params || {};
+    const lifespanTurns = Math.max(1, Number(params.lifespanTurns || 3) | 0);
+    const tickDamage = Math.max(0, Number(params.tickDamage || 2) | 0);
     if (!(source > 0) || !from) return;
     spawnHazard(world, {
       x: from.x | 0,
       y: from.y | 0,
       kind: "fire",
       medium: "floor",
-      turnsLeft: 3,
+      turnsLeft: lifespanTurns,
       radius: 0,
-      tickDamage: 2,
+      tickDamage,
       damageType: "fire",
       cause: "procPackage:cinderwake",
       sourceId: source,
@@ -2309,7 +2312,8 @@ const PROC_PACKAGE_SPECS = Object.freeze([
   Object.freeze({
     id: "cinderwake",
     name: "Cinderwake",
-    summary: "Every genuine step leaves a short-lived patch of fire behind.",
+    params: Object.freeze({ lifespanTurns: 3, tickDamage: 2 }),
+    summary: "Every genuine step leaves a {lifespanTurns}-turn patch of fire behind that deals {tickDamage} damage.",
     stateKeys: Object.freeze([]),
     hostIdeas: Object.freeze(["firewalker boots", "ash pilgrim gear"]),
     passiveExpressions: Object.freeze([]),

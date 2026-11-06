@@ -185,6 +185,8 @@ Deno.test("proc package registry structural invariants", () => {
     fallbackBonusDamage: 2,
   });
   assertEquals(getProcPackage("echoGrimoire")?.params, { repeatWindowTurns: 3, powerPercent: 80 });
+  assertEquals(getProcPackage("cinderwake")?.params, { lifespanTurns: 3, tickDamage: 2 });
+  assertEquals(getProcPackage("echoGrimoire")?.params, { repeatWindowTurns: 3, powerPercent: 80 });
 });
 
 Deno.test("proc package attachment materializes detached topology under a host", () => {
