@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "d5f4013bfe89",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/linearResourceBars.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/d5/f4013bfe89/0/metadata.json",
+      "transcript": "/d5/f4013bfe89/0/full.jsonl",
+      "compact_transcript": "/d5/f4013bfe89/0/transcript.jsonl",
+      "content_hash": "/d5/f4013bfe89/0/content_hash.txt",
+      "prompt": "/d5/f4013bfe89/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 38165,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 325376,
+    "output_tokens": 2055,
+    "api_call_count": 9
+  }
+}
