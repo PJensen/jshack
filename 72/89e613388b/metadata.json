@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "7289e613388b",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/classAbilities.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/72/89e613388b/0/metadata.json",
+      "transcript": "/72/89e613388b/0/full.jsonl",
+      "compact_transcript": "/72/89e613388b/0/transcript.jsonl",
+      "content_hash": "/72/89e613388b/0/content_hash.txt",
+      "prompt": "/72/89e613388b/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 73725,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4890112,
+    "output_tokens": 13533,
+    "api_call_count": 44
+  }
+}
