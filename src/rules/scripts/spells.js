@@ -3603,16 +3603,15 @@ REGISTRY['harmony_ward'] = function harmonyWardScript(world, actor, _spell, _int
   if (!ae) return;
 
   const DURATION = 55;
-  const RESISTS = ['resist_fire', 'resist_poison', 'resist_electric', 'resist_acid'];
-  for (let i = 0; i < RESISTS.length; i++) {
-    upsertTimedEffect(ae.effects, {
-      key: RESISTS[i],
-      turnsLeft: DURATION,
-      potency: 1,
-      stacks: 1,
-      sourceId: actor,
-    });
-  }
+  // One ward identity projects the four elemental protections without four
+  // independent spell timers.
+  upsertTimedEffect(ae.effects, {
+    key: 'harmony_ward',
+    turnsLeft: DURATION,
+    potency: 1,
+    stacks: 1,
+    sourceId: actor,
+  });
 
   world.emit('spell:harmony_ward', {
     actor,

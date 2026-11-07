@@ -8,6 +8,7 @@ import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { getEffectiveVisionRange } from "../src/rules/utils/blind.js";
+import { statusStrength } from "../src/rules/utils/statusFacade.js";
 
 function makeCaster(world, x = 5, y = 5) {
   const id = world.create();
@@ -59,13 +60,13 @@ Deno.test("harmony_ward applies long multi-resistance buffs", () => {
 
   const ae = world.get(caster, ActiveEffects);
   const keys = effectKeys(world, caster);
-  assert(keys.includes("resist_fire"), "harmony_ward should apply fire resist");
-  assert(keys.includes("resist_poison"), "harmony_ward should apply poison resist");
-  assert(keys.includes("resist_electric"), "harmony_ward should apply electric resist");
-  assert(keys.includes("resist_acid"), "harmony_ward should apply acid resist");
+  assertEquals(keys, ["harmony_ward"], "harmony_ward should have one spell-owned effect");
+  assertEquals(statusStrength(world, caster, "resist_fire"), 1, "harmony_ward should project fire resist");
+  assertEquals(statusStrength(world, caster, "resist_poison"), 1, "harmony_ward should project poison resist");
+  assertEquals(statusStrength(world, caster, "resist_electric"), 1, "harmony_ward should project electric resist");
+  assertEquals(statusStrength(world, caster, "resist_acid"), 1, "harmony_ward should project acid resist");
 
-  const fire = ae.effects.find((e) => e?.key === "resist_fire");
-  assertEquals(Number(fire?.turnsLeft || 0), 55);
+  assertEquals(Number(ae.effects[0]?.turnsLeft || 0), 55);
 });
 
 Deno.test("shadow_veil applies long invisibility and stealth buffs", () => {

@@ -824,12 +824,9 @@ export const SPELL_DEFS = {
     cooldown: 14,
     script: 'harmony_ward',
     targeting: 'self',
-    description: 'A balanced seal that tempers flame, venom, shock, and acid for an extended duration.',
+    description: 'A balanced seal that tempers flame, venom, shock, and acid as one harmonious ward.',
     effects: [
-      { kind: 'status', status: 'resist_fire', duration: '55 turns' },
-      { kind: 'status', status: 'resist_poison', duration: '55 turns' },
-      { kind: 'status', status: 'resist_electric', duration: '55 turns' },
-      { kind: 'status', status: 'resist_acid', duration: '55 turns' },
+      { kind: 'status', status: 'harmony_ward', duration: '55 turns; resists fire, poison, electric, and acid' },
     ],
   },
   shadow_veil: {
