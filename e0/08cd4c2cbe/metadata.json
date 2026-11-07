@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "e008cd4c2cbe",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
+    "src/rules/ai/policyFeatures.js",
+    "src/rules/data/combatInteractions.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/interaction/facets/createFacets.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/intentValidationSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/systems/socialAggroSystem.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "src/rules/utils/speedGate.js",
+    "src/rules/utils/spellTargeting.js",
+    "src/rules/utils/statusFacade.js",
+    "src/rules/utils/stealthAmbush.js",
+    "tests/statusFacade.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/e0/08cd4c2cbe/0/metadata.json",
+      "transcript": "/e0/08cd4c2cbe/0/full.jsonl",
+      "compact_transcript": "/e0/08cd4c2cbe/0/transcript.jsonl",
+      "content_hash": "/e0/08cd4c2cbe/0/content_hash.txt",
+      "prompt": "/e0/08cd4c2cbe/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 112267,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3229056,
+    "output_tokens": 18309,
+    "api_call_count": 41
+  }
+}

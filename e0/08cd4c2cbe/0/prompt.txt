@@ -1,0 +1,31 @@
+And --- we'll do a scan of the situation broadly speaking to see what else we can turn up -- I'm sure their is a fair bit of this addiitional conversion work and conceptual compression work and canonicalization work to happen.
+
+But I think finishing the three we're targeting and commiting and pushing is the right move to start.
+
+---
+
+and you understand it's not just immobilization -- it's bigger than that -- but immobilization can be a first conceptual pass
+
+---
+
+approved the lot of them, canonicalize all of that.
+
+---
+
+otherwise, we'll be fighting concepts against bespoke identifies, I think we're pretty well aligned to make it happen :-)
+
+---
+
+If you look at that map the one that historically conveyed status effects :-) yep that's the one.
+
+---
+
+that exact facade
+
+---
+
+FYI: why wouldn't you have the spell itself contribute it's canonical status effect? curious.
+
+---
+
+CAPABILITY_SOURCES seems like indirection.
