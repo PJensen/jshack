@@ -8,6 +8,10 @@ Deno.test("HUD uses the labeled linear vitals surface and keeps the vitals event
   assertStringIncludes(hud, "window.addEventListener('ui:updateVitals'");
   assertStringIncludes(hud, "hpValue: hpVal");
   assertStringIncludes(hud, "staminaMax");
+  assertStringIncludes(hud, "vitalsBars.set");
+  assert(!hud.includes("vitalsGauge.set"), "HUD must not retain the removed circular gauge updater");
+  assertStringIncludes(hud, "width: '420px'");
+  assertStringIncludes(hud, "maxWidth: 'calc(100vw - 16px)'");
   assertStringIncludes(hud, "left: 'auto'");
   assertStringIncludes(bars, "value.textContent = '— / —'");
   assertStringIncludes(bars, "justifyContent: 'space-between'");

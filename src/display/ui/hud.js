@@ -381,8 +381,10 @@ export function initHUD() {
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '6px',
-    width: 'min(420px, calc(100vw - 16px))',
+    width: '420px',
     maxWidth: 'calc(100vw - 16px)',
+    minWidth: '0',
+    boxSizing: 'border-box',
     pointerEvents: 'none',
     left: 'auto',
     zIndex: 925,
@@ -395,6 +397,7 @@ export function initHUD() {
     gap: '6px',
     alignItems: 'center',
     width: '100%',
+    minWidth: '0',
     pointerEvents: 'auto',
   });
 
@@ -404,6 +407,7 @@ export function initHUD() {
   Object.assign(vitals.style, {
     position: 'relative',
     width: '100%',
+    minWidth: '0',
     flex: '0 0 auto',
     pointerEvents: 'none',
   });
@@ -1257,20 +1261,14 @@ export function initHUD() {
     castBtn.style.cursor = canCast ? 'pointer' : 'not-allowed';
   });
 
-  // Update vitals gauge
+  // Update linear vitals bars.
   window.addEventListener('ui:updateVitals', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     const hpVal = Number(e?.detail?.hp ?? 0), hpMax = Math.max(1, Number(e?.detail?.maxHp ?? 1));
     const mpVal = Number(e?.detail?.mana ?? 0), mpMax = Math.max(1, Number(e?.detail?.maxMana ?? 1));
     const stVal = Number(e?.detail?.stamina ?? 0), stMax = Math.max(1, Number(e?.detail?.maxStamina ?? 1));
-    const hpf = Math.max(0, Math.min(1, hpVal / hpMax));
-    const mpf = Math.max(0, Math.min(1, mpVal / mpMax));
-    const stf = Math.max(0, Math.min(1, stVal / stMax));
-    vitalsGauge.set({
-      health: hpf,
-      mana: mpf,
-      stamina: stf,
+    vitalsBars.set({
       hpValue: hpVal,
       hpMax,
       manaValue: mpVal,

@@ -88,7 +88,8 @@ export function createLinearResourceBars(root, initial = {}) {
   Object.assign(root.style, {
     width: root.style.width || 'min(420px, calc(100vw - 16px))',
     boxSizing: 'border-box',
-    padding: '11px clamp(12px, 2.5vw, 18px) 12px',
+    minWidth: '0',
+    padding: '9px clamp(9px, 2.5vw, 16px) 10px',
     borderRadius: '16px',
     background:
       'linear-gradient(135deg, rgba(45, 35, 34, 0.96) 0%, rgba(23, 24, 31, 0.97) 52%, rgba(19, 23, 32, 0.98) 100%)',
@@ -96,7 +97,7 @@ export function createLinearResourceBars(root, initial = {}) {
     boxShadow: '0 14px 30px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.035)',
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: '6px',
     fontFamily: 'monospace',
     pointerEvents: 'none',
   });
@@ -109,16 +110,16 @@ export function createLinearResourceBars(root, initial = {}) {
     row.dataset.resource = def.key;
     Object.assign(row.style, {
       display: 'grid',
-      gridTemplateColumns: '30px minmax(0, 1fr)',
-      columnGap: '9px',
+      gridTemplateColumns: '28px minmax(0, 1fr)',
+      columnGap: '7px',
       alignItems: 'center',
       minWidth: '0',
     });
 
     const iconFrame = document.createElement('div');
     Object.assign(iconFrame.style, {
-      width: '27px',
-      height: '27px',
+      width: '25px',
+      height: '25px',
       display: 'grid',
       placeItems: 'center',
       transform: 'rotate(45deg)',
@@ -146,6 +147,7 @@ export function createLinearResourceBars(root, initial = {}) {
     label.textContent = def.label;
     Object.assign(label.style, {
       minWidth: '0',
+      flex: '1 1 auto',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
@@ -160,7 +162,6 @@ export function createLinearResourceBars(root, initial = {}) {
     const value = document.createElement('span');
     Object.assign(value.style, {
       flex: '0 0 auto',
-      color: def.color,
       fontSize: def.key === 'health' ? '15px' : '13px',
       fontWeight: '800',
       letterSpacing: '0.01em',
@@ -188,7 +189,7 @@ export function createLinearResourceBars(root, initial = {}) {
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: '8px',
-      padding: '0 9px',
+      padding: '0 7px',
     });
     const fill = document.createElement('div');
     Object.assign(fill.style, {
