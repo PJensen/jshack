@@ -339,8 +339,9 @@ export function dealDamage(world, spec) {
     : resolveResistance(world, target, rawAmount, type, armorPenetration);
 
   // Mark of Death amplification: +35% damage to marked targets
-  if (finalAmount > 0 && statusStrength(world, target, "marked") > 0) {
-    finalAmount = Math.ceil(finalAmount * 1.35);
+  const markStrength = statusStrength(world, target, "marked") + effectStrength(world, target, "mark_of_death");
+  if (finalAmount > 0 && markStrength > 0) {
+    finalAmount = Math.ceil(finalAmount * (1 + 0.35 * markStrength));
   }
 
   // Desperate vulnerability: critically wounded targets take +50% damage

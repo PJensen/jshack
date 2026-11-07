@@ -4499,15 +4499,21 @@ REGISTRY['iron_flesh'] = function ironFleshScript(world, actor, spell, _intent) 
   world.emit('spell:iron_flesh', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
 };
 
-REGISTRY['ignite_weapons'] = function igniteWeaponsScript(world, actor, _spell, _intent) {
+REGISTRY['ignite_weapons'] = function igniteWeaponsScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 12;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 12) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'fire_weapon', turnsLeft: DURATION + 1, potency: 3, stacks: 1, sourceId: actor,
+    key: spell?.id || 'ignite_weapons',
+    turnsLeft: DURATION + 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
+    sourceId: actor,
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:ignite_weapons', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
@@ -4588,9 +4594,15 @@ REGISTRY['mark_of_death'] = function markOfDeathScript(world, actor, spell, inte
   const ae = ensureActiveEffectList(world, targetId);
   if (!ae) return;
 
-  const DURATION = 8;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 8) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'marked', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
+    key: spell?.id || 'mark_of_death',
+    turnsLeft: DURATION + 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
+    sourceId: actor,
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:mark_of_death', {

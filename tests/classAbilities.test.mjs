@@ -321,6 +321,18 @@ Deno.test("quicken owns its combat identity and stamina cadence", () => {
   assertEquals(world.get(caster, Stamina).stamina, 15, 'quicken should restore five stamina per tick');
 });
 
+Deno.test("ignite_weapons and mark_of_death own their spell identities", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const enemy = makeEnemy(world, 6, 5);
+
+  runSpellScript(world, caster, SPELL_DEFS.ignite_weapons, {});
+  assertEquals(effectKeys(world, caster), ['ignite_weapons']);
+
+  runSpellScript(world, caster, SPELL_DEFS.mark_of_death, { targetId: enemy });
+  assertEquals(effectKeys(world, enemy), ['mark_of_death']);
+});
+
 // ─── Consecrate ─────────────────────────────────────────────────────────────
 
 Deno.test("consecrate spawns a holy hazard and grants caster regen", () => {

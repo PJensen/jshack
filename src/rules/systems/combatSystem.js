@@ -551,7 +551,7 @@ function resolveHitRoll(world, {
             });
             // Ignite Weapons: bonus fire damage on melee hit
             const _fwAe = world.get(source, ActiveEffects);
-            const _hasFw = _fwAe && Array.isArray(_fwAe.effects) && _fwAe.effects.some(e => e && e.key === 'fire_weapon' && (e.turnsLeft | 0) > 0);
+            const _hasFw = _fwAe && Array.isArray(_fwAe.effects) && _fwAe.effects.some(e => e && (e.key === 'fire_weapon' || e.key === 'ignite_weapons') && (e.turnsLeft | 0) > 0);
             if (result.amount > 0 && _hasFw) {
                 const fireDmg = 3;
                 dealDamage(world, {

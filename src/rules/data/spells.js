@@ -1404,10 +1404,15 @@ export const SPELL_DEFS = {
     cooldown: 20,
     script: 'ignite_weapons',
     targeting: 'self',
+    activeEffect: {
+      duration: 12,
+      potency: 3,
+      stacks: 1,
+      mechanics: { bonusFireDamage: 3, burnChance: 0.2 },
+    },
     description: 'Wreathe your weapons in arcane flame. Each strike sears the target.',
     effects: [
-      { kind: 'status', status: 'fire_weapon', duration: '12 turns' },
-      { kind: 'utility', note: 'Melee hits deal +3 bonus fire damage and 20% chance to apply burn' },
+      { kind: 'effect', effect: 'ignite_weapons', note: 'Melee hits deal bonus fire damage and may apply burn' },
     ],
   },
   barkskin: {
@@ -1465,11 +1470,16 @@ export const SPELL_DEFS = {
     cooldown: 12,
     script: 'mark_of_death',
     targeting: 'enemy',
+    activeEffect: {
+      duration: 8,
+      potency: 1,
+      stacks: 1,
+      mechanics: { damageTakenMultiplier: 0.35 },
+    },
     threat: { flatThreat: 4, threatKind: "spell_control", targetField: "targetId" },
     description: 'Brand a foe with a skull sigil. All damage they receive is amplified.',
     effects: [
-      { kind: 'status', status: 'marked', duration: '8 turns' },
-      { kind: 'utility', note: 'Marked target takes 35% more damage from all sources' },
+      { kind: 'effect', effect: 'mark_of_death', note: 'Target takes 35% more damage from all sources' },
     ],
   },
   primal_roar: {
