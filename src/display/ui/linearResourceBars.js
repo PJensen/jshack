@@ -10,7 +10,7 @@ const RESOURCE_DEFS = Object.freeze([
     icon: '♥',
     color: '#ff4164',
     gradient: 'linear-gradient(90deg, #c71942 0%, #ff4164 58%, #ff6b7f 100%)',
-    height: '12px',
+    height: '28px',
     labelSize: '17px',
   }),
   Object.freeze({
@@ -21,7 +21,7 @@ const RESOURCE_DEFS = Object.freeze([
     icon: '◆',
     color: '#55aaff',
     gradient: 'linear-gradient(90deg, #1d68c5 0%, #4aa3ff 58%, #72c2ff 100%)',
-    height: '9px',
+    height: '22px',
     labelSize: '14px',
   }),
   Object.freeze({
@@ -32,7 +32,7 @@ const RESOURCE_DEFS = Object.freeze([
     icon: 'ϟ',
     color: '#ffc530',
     gradient: 'linear-gradient(90deg, #b87908 0%, #f4b52d 58%, #ffd45e 100%)',
-    height: '9px',
+    height: '22px',
     labelSize: '14px',
   }),
 ]);
@@ -140,18 +140,8 @@ export function createLinearResourceBars(root, initial = {}) {
     iconFrame.appendChild(icon);
 
     const content = document.createElement('div');
-    Object.assign(content.style, { minWidth: '0', display: 'flex', flexDirection: 'column', gap: '3px' });
+    Object.assign(content.style, { minWidth: '0' });
 
-    const heading = document.createElement('div');
-    Object.assign(heading.style, {
-      display: 'flex',
-      alignItems: 'baseline',
-      justifyContent: 'space-between',
-      gap: '8px',
-      minWidth: '0',
-      color: 'rgba(246, 240, 224, 0.96)',
-      lineHeight: '1',
-    });
     const label = document.createElement('span');
     label.textContent = def.label;
     Object.assign(label.style, {
@@ -162,7 +152,10 @@ export function createLinearResourceBars(root, initial = {}) {
       fontSize: def.labelSize,
       fontWeight: def.key === 'health' ? '800' : '700',
       letterSpacing: def.key === 'health' ? '0.01em' : '0.02em',
-      textShadow: '0 1px 2px rgba(0,0,0,0.8)',
+      color: '#fff8ea',
+      textShadow: '0 1px 2px rgba(0,0,0,0.9)',
+      position: 'relative',
+      zIndex: '1',
     });
     const value = document.createElement('span');
     Object.assign(value.style, {
@@ -172,10 +165,11 @@ export function createLinearResourceBars(root, initial = {}) {
       fontWeight: '800',
       letterSpacing: '0.01em',
       whiteSpace: 'nowrap',
-      textShadow: `0 0 7px ${def.color}55`,
+      color: '#fff8ea',
+      textShadow: '0 1px 2px rgba(0,0,0,0.9)',
+      position: 'relative',
+      zIndex: '1',
     });
-    heading.appendChild(label);
-    heading.appendChild(value);
 
     const track = document.createElement('div');
     track.setAttribute('role', 'progressbar');
@@ -190,6 +184,11 @@ export function createLinearResourceBars(root, initial = {}) {
       border: '1px solid rgba(255,255,255,0.19)',
       boxSizing: 'border-box',
       boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.50), 0 1px 0 rgba(255,255,255,0.04)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '8px',
+      padding: '0 9px',
     });
     const fill = document.createElement('div');
     Object.assign(fill.style, {
@@ -200,9 +199,11 @@ export function createLinearResourceBars(root, initial = {}) {
       background: def.gradient,
       boxShadow: `0 0 9px ${def.color}99, inset 0 1px 0 rgba(255,255,255,0.45)`,
       transition: 'width 220ms ease-out, filter 180ms ease-out, box-shadow 180ms ease-out',
+      zIndex: '0',
     });
     track.appendChild(fill);
-    content.appendChild(heading);
+    track.appendChild(label);
+    track.appendChild(value);
     content.appendChild(track);
     row.appendChild(iconFrame);
     row.appendChild(content);
@@ -211,12 +212,12 @@ export function createLinearResourceBars(root, initial = {}) {
   }
 
   const state = {
-    hpValue: Number(initial.hpValue ?? 1),
-    hpMax: Number(initial.hpMax ?? 1),
-    manaValue: Number(initial.manaValue ?? 1),
-    manaMax: Number(initial.manaMax ?? 1),
-    staminaValue: Number(initial.staminaValue ?? 1),
-    staminaMax: Number(initial.staminaMax ?? 1),
+    hpValue: Number(initial.hpValue ?? NaN),
+    hpMax: Number(initial.hpMax ?? NaN),
+    manaValue: Number(initial.manaValue ?? NaN),
+    manaMax: Number(initial.manaMax ?? NaN),
+    staminaValue: Number(initial.staminaValue ?? NaN),
+    staminaMax: Number(initial.staminaMax ?? NaN),
   };
 
   function set(next = {}) {
@@ -225,6 +226,14 @@ export function createLinearResourceBars(root, initial = {}) {
       const maxKey = def.maxKey;
       if (Object.prototype.hasOwnProperty.call(next, valueKey)) state[valueKey] = Number(next[valueKey]);
       if (Object.prototype.hasOwnProperty.call(next, maxKey)) state[maxKey] = Number(next[maxKey]);
+      const hasLiveValue = Number.isFinite(state[valueKey]) && Number.isFinite(state[maxKey]);
+      if (!hasLiveValue) {
+        value.textContent = '— / —';
+        fill.style.width = '0%';
+        row.dataset.state = 'unknown';
+        track.setAttribute('aria-valuetext', 'Waiting for vitals');
+        continue;
+      }
       const resolved = resolveResourceBarState(state[valueKey], state[maxKey]);
       const previousWidth = fill.style.width;
       const width = `${(resolved.ratio * 100).toFixed(2)}%`;

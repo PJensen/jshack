@@ -384,7 +384,8 @@ export function initHUD() {
     width: 'min(420px, calc(100vw - 16px))',
     maxWidth: 'calc(100vw - 16px)',
     pointerEvents: 'none',
-    zIndex: 905,
+    left: 'auto',
+    zIndex: 925,
   });
 
   const worldControls = document.createElement('div');
@@ -406,14 +407,7 @@ export function initHUD() {
     flex: '0 0 auto',
     pointerEvents: 'none',
   });
-  const vitalsBars = createLinearResourceBars(vitals, {
-    hpValue: 1,
-    hpMax: 1,
-    manaValue: 1,
-    manaMax: 1,
-    staminaValue: 1,
-    staminaMax: 1,
-  });
+  const vitalsBars = createLinearResourceBars(vitals);
 
   // Moon/phase/time and camera zoom share one compact world-context row.
   const moonPhaseEl = document.createElement('div');
