@@ -7,7 +7,6 @@ const RESOURCE_DEFS = Object.freeze([
     label: 'Health',
     valueKey: 'hpValue',
     maxKey: 'hpMax',
-    icon: '♥',
     color: '#ff4164',
     gradient: 'linear-gradient(90deg, #c71942 0%, #ff4164 58%, #ff6b7f 100%)',
     height: '28px',
@@ -18,7 +17,6 @@ const RESOURCE_DEFS = Object.freeze([
     label: 'Mana',
     valueKey: 'manaValue',
     maxKey: 'manaMax',
-    icon: '◆',
     color: '#55aaff',
     gradient: 'linear-gradient(90deg, #1d68c5 0%, #4aa3ff 58%, #72c2ff 100%)',
     height: '22px',
@@ -29,7 +27,6 @@ const RESOURCE_DEFS = Object.freeze([
     label: 'Stamina',
     valueKey: 'staminaValue',
     maxKey: 'staminaMax',
-    icon: 'ϟ',
     color: '#ffc530',
     gradient: 'linear-gradient(90deg, #b87908 0%, #f4b52d 58%, #ffd45e 100%)',
     height: '22px',
@@ -109,36 +106,9 @@ export function createLinearResourceBars(root, initial = {}) {
     const row = document.createElement('div');
     row.dataset.resource = def.key;
     Object.assign(row.style, {
-      display: 'grid',
-      gridTemplateColumns: '28px minmax(0, 1fr)',
-      columnGap: '7px',
-      alignItems: 'center',
+      display: 'block',
       minWidth: '0',
     });
-
-    const iconFrame = document.createElement('div');
-    Object.assign(iconFrame.style, {
-      width: '25px',
-      height: '25px',
-      display: 'grid',
-      placeItems: 'center',
-      transform: 'rotate(45deg)',
-      borderRadius: '7px',
-      border: `1px solid ${def.color}`,
-      background: 'rgba(8, 12, 22, 0.72)',
-      boxShadow: `0 0 12px ${def.color}33, inset 0 0 0 1px rgba(255,255,255,0.08)`,
-    });
-    const icon = document.createElement('span');
-    icon.textContent = def.icon;
-    Object.assign(icon.style, {
-      transform: 'rotate(-45deg)',
-      color: def.color,
-      fontSize: def.key === 'health' ? '20px' : '17px',
-      fontWeight: '900',
-      lineHeight: '1',
-      textShadow: `0 0 8px ${def.color}99`,
-    });
-    iconFrame.appendChild(icon);
 
     const content = document.createElement('div');
     Object.assign(content.style, { minWidth: '0' });
@@ -206,7 +176,6 @@ export function createLinearResourceBars(root, initial = {}) {
     track.appendChild(label);
     track.appendChild(value);
     content.appendChild(track);
-    row.appendChild(iconFrame);
     row.appendChild(content);
     root.appendChild(row);
     rows.set(def.key, { def, row, value, track, fill });
