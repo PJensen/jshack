@@ -290,6 +290,26 @@ Deno.test("iron_flesh owns its defense, drag, and recoil identity", () => {
   assertEquals(world.get(attacker, Vitality).hp, attackerHp - 2, 'iron flesh should recoil through the damage pipeline');
 });
 
+Deno.test("iron_flesh reads its active mechanics from the spell definition", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.iron_flesh,
+    activeEffect: {
+      duration: 6,
+      potency: 7,
+      stacks: 1,
+      capabilities: ["slowed"],
+      mechanics: { recoilDamage: 5 },
+    },
+  }, {});
+
+  const effect = world.get(caster, ActiveEffects).effects.find((e) => e?.key === "iron_flesh");
+  assertEquals(effect.turnsLeft, 7);
+  assertEquals(effect.potency, 7);
+  assertEquals(effect.meta.recoilDamage, 5);
+});
+
 Deno.test("quicken owns its combat identity and stamina cadence", () => {
   const world = makeWorld();
   const caster = makeCaster(world, 5, 5);

@@ -7,6 +7,7 @@ import { Status } from "../components/Status.js";
 import { StatusEffectNode } from "../components/StatusEffectNode.js";
 import { TimedEffectNode } from "../components/TimedEffectNode.js";
 import { EFFECT_DEFS } from "../data/effectDefs.js";
+import { SPELL_DEFS } from "../data/spells.js";
 import { descendantsWith } from "./topology.js";
 import { getEffectDefinition } from "../data/effectInstances.js";
 
@@ -101,6 +102,13 @@ const EFFECT_KEY_TO_CAPABILITIES = (() => {
       const key = normalizeKey(rawKey);
       if (key) out.set(key, capabilities);
     }
+  }
+  for (const spell of Object.values(SPELL_DEFS)) {
+    const key = normalizeKey(spell?.id);
+    const capabilities = Array.isArray(spell?.activeEffect?.capabilities)
+      ? spell.activeEffect.capabilities.map((value) => normalizeKey(value)).filter(Boolean)
+      : [];
+    if (key && capabilities.length > 0) out.set(key, capabilities);
   }
   return out;
 })();

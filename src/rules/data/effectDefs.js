@@ -142,21 +142,6 @@ export const EFFECT_DEFS = [
     description: "Bog Curse. Luck, defense, and footing are dragged into the mud.",
   },
   {
-    id: "iron_flesh",
-    keys: ["iron_flesh"],
-    operation: "none",
-    statuses: [],
-    capabilities: ["slowed"],
-    description: "Iron Flesh. Living metal hardens the body, slows its bearer, and punishes blows.",
-  },
-  {
-    id: "quicken",
-    keys: ["quicken"],
-    operation: "stamina_restore",
-    statuses: [],
-    description: "Quicken. Adrenaline sharpens attacks and restores stamina each turn.",
-  },
-  {
     id: "shadow_veil",
     keys: ["shadow_veil"],
     operation: "none",

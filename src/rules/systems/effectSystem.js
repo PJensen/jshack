@@ -394,8 +394,10 @@ export function effectSystem(world, dt = 1) {
                 });
             }
 
-            if (def) {
-                const operations = Array.isArray(def.operations) && def.operations.length > 0 ? def.operations : [def.operation];
+            if (def || e.meta?.operation) {
+                const operations = def
+                    ? (Array.isArray(def.operations) && def.operations.length > 0 ? def.operations : [def.operation])
+                    : [e.meta.operation];
                 for (let oi = 0; oi < operations.length; oi++) {
                     const operation = String(operations[oi] || 'none');
                     const handledBySpellDamage = (operation === 'damage') && applySpellEffectDamage(world, id, e);
@@ -403,7 +405,7 @@ export function effectSystem(world, dt = 1) {
                         applyEffectOperation(world, id, vit, operation, potency, stacks, key);
                     }
                 }
-                for (let i = 0; i < def.statuses.length; i++) {
+                for (let i = 0; i < (def?.statuses || []).length; i++) {
                     const statusType = String(def.statuses[i] || '');
                     if (!statusType) continue;
                     upsertStatus(nextStatuses, {

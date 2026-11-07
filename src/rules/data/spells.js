@@ -16,6 +16,7 @@
  * @property {number} duration
  * @property {number} [potency]
  * @property {number} [stacks]
+ * @property {string[]} [capabilities]
  * @property {Record<string, any>} [mechanics]
  */
 
@@ -1337,9 +1338,16 @@ export const SPELL_DEFS = {
     cooldown: 25,
     script: 'iron_flesh',
     targeting: 'self',
+    activeEffect: {
+      duration: 15,
+      potency: 4,
+      stacks: 1,
+      capabilities: ['slowed'],
+      mechanics: { recoilDamage: 2 },
+    },
     description: 'Harden your body into living iron. You become nearly immovable — tougher, but slower.',
     effects: [
-      { kind: 'effect', effect: 'iron_flesh', duration: '15 turns (+4 AC, recoil, movement penalty)' },
+      { kind: 'effect', effect: 'iron_flesh', note: '+4 AC, recoil, movement penalty' },
     ],
   },
   ignite_weapons: {
@@ -1391,9 +1399,15 @@ export const SPELL_DEFS = {
     cooldown: 15,
     script: 'quicken',
     targeting: 'self',
+    activeEffect: {
+      duration: 10,
+      potency: 5,
+      stacks: 1,
+      mechanics: { operation: 'stamina_restore' },
+    },
     description: 'Flood your muscles with adrenaline. Everything slows down — except you.',
     effects: [
-      { kind: 'effect', effect: 'quicken', duration: '10 turns (+15% crit chance, +2 attack, stamina cadence)' },
+      { kind: 'effect', effect: 'quicken', note: '+15% crit chance, +2 attack, stamina cadence' },
     ],
   },
   mark_of_death: {
