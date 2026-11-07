@@ -8,6 +8,7 @@ import { Faction } from "../src/rules/components/Faction.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
+import { statusStrength } from "../src/rules/utils/statusFacade.js";
 
 function makeActor(world, x, y, faction) {
   const id = world.create();
@@ -35,7 +36,7 @@ Deno.test("primal roar has one spell-owned active identity", () => {
   assert(keys(world, enemy).includes("stagger"));
 });
 
-Deno.test("primal roar projects its own combat mechanics", () => {
+Deno.test("primal roar uses its own combat mechanics", () => {
   const world = new World({ seed: 0xCAFE });
   const caster = makeActor(world, 5, 5, "player");
 
@@ -44,6 +45,7 @@ Deno.test("primal roar projects its own combat mechanics", () => {
   const after = resolveCombatSnapshot(world, caster);
 
   assertEquals(after.status.primal_roar, 1);
+  assertEquals(statusStrength(world, caster, "primal_roar"), 0);
   assertEquals(after.status.berserk, 0);
   assertEquals(after.status.battle_fury, 0);
   assertEquals(after.attackBonus - before.attackBonus, 5);

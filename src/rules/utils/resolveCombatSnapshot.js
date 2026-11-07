@@ -1,7 +1,7 @@
 import { HUNGER_COMBAT_LEVELS } from "../data/hungerCombatLevels.js";
 import { resolveResistance } from "./dealDamage.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 import { getBlindedDefensePenalty, getBlindedAttackPenalty } from "./blindnessExposure.js";
 import { COMBAT_POSTURES, CombatPosture } from "../components/CombatPosture.js";
 import { Traits } from "../components/Traits.js";
@@ -90,7 +90,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     stoneskin: statusStrength(world, id, "stoneskin"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
     berserk: statusStrength(world, id, "berserk"),
-    primal_roar: statusStrength(world, id, "primal_roar"),
+    primal_roar: effectStrength(world, id, "primal_roar"),
     // Corpse-eat timed buffs
     cunning_reflex: statusStrength(world, id, "cunning_reflex"),
     keen_eye: statusStrength(world, id, "keen_eye"),

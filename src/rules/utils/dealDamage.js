@@ -21,7 +21,7 @@ import { clamp } from "../../shared/math/math.js";
 import { getShieldArcMultiplier } from "./combatPositioning.js";
 import { consumeShieldGuardStack, refreshShieldGuard } from "./shieldGuard.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 import { Physiology } from "../components/Physiology.js";
 import { getMonster } from "../data/monsters.js";
 import { resolveWeaponFamily } from "../data/weaponFamilies.js";
@@ -140,7 +140,8 @@ export function resolveResistance(world, targetId, rawAmount, type, armorPenetra
     case 'plasma':
     case 'lightning': {
       const potionOhms = activeResistBonus(world, targetId, "resist_electric") * 1000;
-      const ohmBonus = Number(resolved?.electricOhms ?? 0) + potionOhms;
+      const wardOhms = effectStrength(world, targetId, "harmony_ward") * 1000;
+      const ohmBonus = Number(resolved?.electricOhms ?? 0) + potionOhms + wardOhms;
       const baseOhms = resist?.electric?.ohms;
       const effectiveOhms = baseOhms === Infinity ? Infinity
         : (Number.isFinite(baseOhms) ? baseOhms + ohmBonus : ohmBonus);
@@ -190,6 +191,7 @@ export function resolveResistance(world, targetId, rawAmount, type, armorPenetra
     case 'fire': {
       const bonus = Number(resolved?.fireResist ?? 0)
         + activeResistBonus(world, targetId, "resist_fire")
+        + effectStrength(world, targetId, "harmony_ward")
         + activeResistBonus(world, targetId, "fire_blood")
         + activeResistBonus(world, targetId, "frost_blood");
       const effectiveMult = Math.max(0, (resist.thermal?.burnMult ?? 1.0) - bonus);
@@ -204,12 +206,16 @@ export function resolveResistance(world, targetId, rawAmount, type, armorPenetra
       return Math.max(0, Math.floor(rawAmount * effectiveMult));
     }
     case 'poison': {
-      const bonus = Number(resolved?.poisonResist ?? 0) + activeResistBonus(world, targetId, "resist_poison");
+      const bonus = Number(resolved?.poisonResist ?? 0)
+        + activeResistBonus(world, targetId, "resist_poison")
+        + effectStrength(world, targetId, "harmony_ward");
       const effectiveMult = Math.max(0, (resist.chemical?.toxMult ?? 1.0) - bonus);
       return Math.max(0, Math.floor(rawAmount * effectiveMult));
     }
     case 'acid': {
-      const bonus = Number(resolved?.acidResist ?? 0) + activeResistBonus(world, targetId, "resist_acid");
+      const bonus = Number(resolved?.acidResist ?? 0)
+        + activeResistBonus(world, targetId, "resist_acid")
+        + effectStrength(world, targetId, "harmony_ward");
       const effectiveMult = Math.max(0, (resist.chemical?.acidMult ?? 1.0) - bonus);
       return Math.max(0, Math.floor(rawAmount * effectiveMult));
     }
@@ -538,7 +544,7 @@ export function dealDamage(world, spec) {
     // Battle fury: on-kill heal for the killer
     if (source > 0 && world.isAlive(source)) {
       const furyPot = activeResistBonus(world, source, "battle_fury");
-      const roarPot = activeResistBonus(world, source, "primal_roar");
+      const roarPot = effectStrength(world, source, "primal_roar");
       const killHealPot = Math.max(furyPot, roarPot);
       if (killHealPot > 0) {
         const sourceVit = world.get(source, Vitality);

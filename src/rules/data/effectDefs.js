@@ -490,14 +490,14 @@ export const EFFECT_DEFS = [
     id: "primal_roar",
     keys: ["primal_roar"],
     operation: "none",
-    statuses: ["primal_roar"],
+    statuses: [],
     description: "Primal roar. A predatory surge of strength that rattles nearby foes.",
   },
   {
     id: "harmony_ward",
     keys: ["harmony_ward"],
     operation: "none",
-    statuses: ["resist_fire", "resist_poison", "resist_electric", "resist_acid"],
+    statuses: [],
     description: "Harmony ward. A single balanced protection against elemental harm.",
   },
   {

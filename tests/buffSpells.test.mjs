@@ -8,7 +8,9 @@ import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { getEffectiveVisionRange } from "../src/rules/utils/blind.js";
-import { statusStrength } from "../src/rules/utils/statusFacade.js";
+import { effectStrength, statusStrength } from "../src/rules/utils/statusFacade.js";
+import { Resistances } from "../src/rules/components/Resistences.js";
+import { resolveResistance } from "../src/rules/utils/dealDamage.js";
 
 function makeCaster(world, x = 5, y = 5) {
   const id = world.create();
@@ -61,12 +63,20 @@ Deno.test("harmony_ward applies long multi-resistance buffs", () => {
   const ae = world.get(caster, ActiveEffects);
   const keys = effectKeys(world, caster);
   assertEquals(keys, ["harmony_ward"], "harmony_ward should have one spell-owned effect");
-  assertEquals(statusStrength(world, caster, "resist_fire"), 1, "harmony_ward should project fire resist");
-  assertEquals(statusStrength(world, caster, "resist_poison"), 1, "harmony_ward should project poison resist");
-  assertEquals(statusStrength(world, caster, "resist_electric"), 1, "harmony_ward should project electric resist");
-  assertEquals(statusStrength(world, caster, "resist_acid"), 1, "harmony_ward should project acid resist");
+  assertEquals(effectStrength(world, caster, "harmony_ward"), 1, "harmony_ward should own its ward strength");
+  assertEquals(statusStrength(world, caster, "resist_fire"), 0, "harmony_ward should not project a legacy fire status");
 
   assertEquals(Number(ae.effects[0]?.turnsLeft || 0), 55);
+});
+
+Deno.test("harmony_ward feeds resistance resolution without legacy statuses", () => {
+  const world = new World({ seed: 0xA77A78 });
+  const caster = makeCaster(world);
+  world.add(caster, Resistances, { thermal: { burnMult: 1 } });
+
+  runSpellScript(world, caster, SPELL_DEFS.harmony_ward, {});
+
+  assertEquals(resolveResistance(world, caster, 20, "fire"), 0);
 });
 
 Deno.test("shadow_veil applies long invisibility and stealth buffs", () => {
