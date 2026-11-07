@@ -20,6 +20,8 @@ import { stealthAmbushSystem } from "../src/rules/systems/stealthAmbushSystem.js
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
 import { configureWorld } from "../src/main/scheduler.js";
+import { SPELL_DEFS } from "../src/rules/data/spells.js";
+import { runSpellScript } from "../src/rules/scripts/spells.js";
 
 function createMeleePair(seed = 7) {
   const world = new World({ seed });
@@ -96,6 +98,22 @@ function addStealthEffects(world, entityId) {
     ],
   });
 }
+
+Deno.test("shadow veil owns concealment and ambush lifecycle", () => {
+  const { world, attacker, defender } = createMeleePair(37);
+  runSpellScript(world, attacker, SPELL_DEFS.shadow_veil, {});
+  const before = resolveCombatSnapshot(world, attacker, { mode: "melee" });
+  assertEquals(effectKeys(world, attacker), ["shadow_veil"]);
+  assert(before.damageMult >= 4, "shadow veil should prime its opener damage");
+
+  world.add(attacker, AttackIntent, { targetId: defender });
+  combatSystem(world);
+  const veil = world.get(attacker, ActiveEffects).effects[0];
+  const after = resolveCombatSnapshot(world, attacker, { mode: "melee" });
+  assertEquals(veil.key, "shadow_veil");
+  assertEquals(veil.meta.ambushReady, false);
+  assert(after.damageMult < before.damageMult, "shadow veil opener should be consumed without ending concealment");
+});
 
 function effectKeys(world, entityId) {
   const ae = world.get(entityId, ActiveEffects);

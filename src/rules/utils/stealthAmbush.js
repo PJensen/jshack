@@ -2,10 +2,22 @@ import { ActiveEffects } from "../components/ActiveEffects.js";
 import { Status } from "../components/Status.js";
 import { Position } from "../components/Position.js";
 import { canonicalStatusKey } from "./effectSemantics.js";
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 
 export const SHADOW_CLOAK_REARM_KEY = "shadow_cloak_rearm";
 export const SHADOW_CLOAK_REARM_TURNS = 7;
+
+function activeEffect(ae, key) {
+  if (!ae || !Array.isArray(ae.effects)) return null;
+  for (let i = 0; i < ae.effects.length; i++) {
+    const effect = ae.effects[i];
+    if (String(effect?.key || '').trim().toLowerCase() !== key) continue;
+    if ((Number(effect?.turnsLeft || 0) | 0) <= 0) continue;
+    if ((Number(effect?.onsetLeft || 0) | 0) > 0) continue;
+    return effect;
+  }
+  return null;
+}
 
 function normalizeStatusType(value) {
   return String(value || "").trim().toLowerCase();
@@ -66,12 +78,26 @@ export function clearStatusType(world, entityId, statusType) {
 export function breakStealthOnOffense(world, entityId, context = {}) {
   const id = Number(entityId || 0) | 0;
   if (!(id > 0)) return { hidden: false, ambushConsumed: false };
-  const hidden = statusStrength(world, id, "invisible") > 0;
+  const hidden = statusStrength(world, id, "invisible") > 0 || effectStrength(world, id, "shadow_veil") > 0;
   if (!hidden) return { hidden: false, ambushConsumed: false };
-  const ambushConsumed = clearStatusType(world, id, "shadow_cloak");
+  const ae = world.get(id, ActiveEffects);
+  const veil = activeEffect(ae, "shadow_veil");
+  let ambushConsumed = false;
+  if (veil) {
+    veil.meta = veil.meta && typeof veil.meta === "object" ? veil.meta : {};
+    if (veil.meta.ambushReady !== false) {
+      veil.meta.ambushReady = false;
+      veil.meta.rearmTurns = SHADOW_CLOAK_REARM_TURNS;
+      ambushConsumed = true;
+    }
+  } else {
+    ambushConsumed = clearStatusType(world, id, "shadow_cloak");
+  }
   if (ambushConsumed) {
-    const ae = world.get(id, ActiveEffects);
     if (ae && Array.isArray(ae.effects)) {
+      if (veil) {
+        // Shadow Veil owns rearm state in metadata; no tracker row is needed.
+      } else {
       let tracker = null;
       for (let i = 0; i < ae.effects.length; i++) {
         const e = ae.effects[i];
@@ -91,6 +117,7 @@ export function breakStealthOnOffense(world, entityId, context = {}) {
         tracker.turnsLeft = SHADOW_CLOAK_REARM_TURNS;
         tracker.potency = 1;
         tracker.stacks = 1;
+      }
       }
     }
   }

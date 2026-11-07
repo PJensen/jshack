@@ -164,6 +164,13 @@ export const EFFECT_DEFS = [
     description: "Barkskin. Living bark hardens, heals, and punishes blows.",
   },
   {
+    id: "shadow_veil",
+    keys: ["shadow_veil"],
+    operation: "none",
+    statuses: [],
+    description: "Shadow Veil. Dusk hides the bearer, bends attacks, and primes an ambush.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

@@ -49,6 +49,34 @@ export function stealthAmbushSystem(world) {
 
     const invisible = activeEffect(ae, "invisible");
     const shadowCloak = activeEffect(ae, "shadow_cloak");
+    const shadowVeil = activeEffect(ae, "shadow_veil");
+    if (shadowVeil) {
+      shadowVeil.meta = shadowVeil.meta && typeof shadowVeil.meta === "object" ? shadowVeil.meta : {};
+      if (shadowVeil.meta.ambushReady !== false) continue;
+      const selfFaction = String(world.get(id, Faction)?.key || "");
+      let hostileNearby = false;
+      forEachInRadius(world, pos.x | 0, pos.y | 0, REARM_SAFE_RADIUS, (otherId) => {
+        if (hostileNearby || otherId === id) return;
+        const otherFaction = String(world.get(otherId, Faction)?.key || "");
+        if (selfFaction && otherFaction && areFactionsHostile(selfFaction, otherFaction)) hostileNearby = true;
+      });
+      if (hostileNearby) {
+        shadowVeil.meta.rearmTurns = SHADOW_CLOAK_REARM_TURNS;
+        continue;
+      }
+      const turns = Math.max(0, Number(shadowVeil.meta.rearmTurns || 0) | 0);
+      if (turns > 1) {
+        shadowVeil.meta.rearmTurns = turns - 1;
+        continue;
+      }
+      shadowVeil.meta.rearmTurns = 0;
+      shadowVeil.meta.ambushReady = true;
+      world.emit?.("stealth:rearmed", {
+        entityId: id,
+        at: { x: pos.x | 0, y: pos.y | 0 },
+      });
+      continue;
+    }
     const trackerIdx = effectIndex(ae, SHADOW_CLOAK_REARM_KEY);
     const tracker = trackerIdx >= 0 ? ae.effects[trackerIdx] : null;
 

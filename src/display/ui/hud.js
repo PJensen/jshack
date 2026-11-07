@@ -1811,6 +1811,7 @@ function ensureEffectsStack(container) {
     iron_flesh:   { name: 'Iron Flesh', glyph: '\u{1F4AA}', hue: 210 },
     quicken:      { name: 'Quicken', glyph: '\u26A1', hue: 60 },
     barkskin:     { name: 'Barkskin', glyph: '\u{1F333}', hue: 120 },
+    shadow_veil:  { name: 'Shadow Veil', glyph: '\u2307', hue: 275 },
     blessed:      { name: 'Blessed',   glyph: '\u{1F31F}',       hue: 50  },
     stoneskin:    { name: 'Stoneskin', glyph: '\u{1FAA8}',       hue: 220 },
     taunted:      { name: 'Taunted',   glyph: '\u{1F624}',       hue: 0   },

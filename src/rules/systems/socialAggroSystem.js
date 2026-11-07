@@ -6,7 +6,7 @@ import { Position } from "../components/Position.js";
 import { Vitality } from "../components/Vitality.js";
 import { findNextCardinalStep } from "../utils/gridPathfind.js";
 import { playerEntity } from "../utils/queries.js";
-import { statusStrength } from "../utils/statusFacade.js";
+import { effectStrength, statusStrength } from "../utils/statusFacade.js";
 
 const SOCIAL_AGGRO_FACTIONS = new Set(["shopkeeper", "townfolk", "neutral"]);
 
@@ -33,7 +33,7 @@ export function socialAggroSystem(world) {
   const playerPos = player.pos;
   if (!playerPos) return;
 
-  const playerInvisible = statusStrength(world, playerId, "invisible") > 0;
+  const playerInvisible = statusStrength(world, playerId, "invisible") + effectStrength(world, playerId, "shadow_veil") > 0;
 
   for (const [id, pos, faction, aggro] of world.query(Position, Faction, AggroState)) {
     if (id === playerId) continue;

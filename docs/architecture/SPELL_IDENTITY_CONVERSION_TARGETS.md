@@ -26,7 +26,7 @@ bundle of whichever existing statuses happen to approximate the design.
 | --- | --- | --- | --- |
 | Primal Roar | `berserk` + `battle_fury` + nearby `stagger` | `primal_roar`, with a short roar response for hostiles | pilot complete |
 | Harmony Ward | four elemental resistance timers | `harmony_ward`, projecting the four resistances | pilot complete |
-| Shadow Veil | `invisible` + `phase_shift` + `shadow_cloak` + vision envelope | one veil state with explicit concealment, phase, ambush, and perception rules | next design pass |
+| Shadow Veil | `invisible` + `phase_shift` + `shadow_cloak` + vision envelope | `shadow_veil`, with concealment, phase, ambush, rearm, and perception metadata | converted |
 | Divine Shield | `stoneskin` + `shield_guard` + `blessed` | `divine_shield`, with guard stacks and broken cooldown owned as metadata | converted |
 | Iron Flesh | `stoneskin` + `slowed` + `thorns` | `iron_flesh`, with direct defense, movement, and recoil mechanics | converted |
 | Barkskin | `stoneskin` + `thorns` + `regen` | `barkskin`, with direct defense, retaliation, and recovery rules | converted |

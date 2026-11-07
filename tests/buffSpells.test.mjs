@@ -97,7 +97,7 @@ Deno.test("harmony_ward feeds resistance resolution without legacy statuses", ()
   assertEquals(resolveResistance(world, caster, 20, "fire"), 0);
 });
 
-Deno.test("shadow_veil applies long invisibility and stealth buffs", () => {
+Deno.test("shadow_veil applies one authored stealth identity", () => {
   const world = new World({ seed: 42 });
   const caster = makeCaster(world);
   const events = [];
@@ -106,14 +106,13 @@ Deno.test("shadow_veil applies long invisibility and stealth buffs", () => {
   runSpellScript(world, caster, SPELL_DEFS.shadow_veil, {});
 
   const keys = effectKeys(world, caster);
-  assert(keys.includes("invisible"), "shadow_veil should apply invisibility");
-  assert(keys.includes("phase_shift"), "shadow_veil should apply phase_shift");
-  assert(keys.includes("shadow_cloak"), "shadow_veil should apply shadow_cloak");
-  assert(keys.includes("stat_envelope"), "shadow_veil should apply stat_envelope");
+  assertEquals(keys, ["shadow_veil"], "shadow_veil should have one spell-owned effect");
 
   const ae = world.get(caster, ActiveEffects);
-  const invis = ae.effects.find((e) => e?.key === "invisible");
-  assertEquals(Number(invis?.turnsLeft || 0), 45);
+  const veil = ae.effects.find((e) => e?.key === "shadow_veil");
+  assertEquals(Number(veil?.turnsLeft || 0), 45);
+  assertEquals(veil?.meta?.ambushReady, true);
+  assertEquals(Math.round(getEffectiveVisionRange(world, caster)), 10);
   assert(events.length === 1, "shadow_veil should emit spell event");
 });
 

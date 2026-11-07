@@ -3620,21 +3620,7 @@ REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, _spell, _inten
 
   const DURATION = 45;
   upsertTimedEffect(ae.effects, {
-    key: 'invisible',
-    turnsLeft: DURATION,
-    potency: 1,
-    stacks: 1,
-    sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'phase_shift',
-    turnsLeft: DURATION,
-    potency: 1,
-    stacks: 1,
-    sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'shadow_cloak',
+    key: 'shadow_veil',
     turnsLeft: DURATION,
     potency: 1,
     stacks: 1,
@@ -3642,15 +3628,19 @@ REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, _spell, _inten
   });
 
   const startVision = getEffectiveVisionRange(world, actor);
-  upsertVisionEnvelope(ae.effects, 'spell:shadow_veil', {
-    startValue: startVision,
-    toValue: startVision + 3,
-    endValue: startVision,
-    rampIn: 2,
-    hold: 35,
-    rampOut: 8,
-    turnsLeft: DURATION,
-  });
+  const veil = ae.effects.find((e) => e?.key === 'shadow_veil');
+  if (veil) {
+    veil.meta = {
+      ambushReady: true,
+      rearmTurns: 0,
+      visionStart: startVision,
+      visionTo: startVision + 3,
+      visionEnd: startVision,
+      visionRampIn: 2,
+      visionHold: 35,
+      visionRampOut: 8,
+    };
+  }
 
   world.emit('spell:shadow_veil', {
     actor,

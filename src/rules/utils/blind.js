@@ -34,22 +34,25 @@ export function computeVisionEnvelopeModifier(world, entityId) {
 
   let total = 0;
   for (const e of ae.effects) {
-    if (!e || e.key !== 'stat_envelope' || e.stat !== 'visionRange') continue;
-    const rampIn  = Number(e.rampIn  || 0);
-    const hold    = Number(e.hold    || 0);
-    const rampOut = Number(e.rampOut || 0);
+    if (!e) continue;
+    const veilMeta = e.key === 'shadow_veil' && e.meta && typeof e.meta === 'object' ? e.meta : null;
+    if (e.key !== 'stat_envelope' && !veilMeta) continue;
+    if (e.key === 'stat_envelope' && e.stat !== 'visionRange') continue;
+    const rampIn  = Number(veilMeta?.visionRampIn ?? e.rampIn ?? 0);
+    const hold    = Number(veilMeta?.visionHold ?? e.hold ?? 0);
+    const rampOut = Number(veilMeta?.visionRampOut ?? e.rampOut ?? 0);
     const totalTicks = rampIn + hold + rampOut;
     // Use elapsed+1 so a newly applied envelope is visible immediately on read.
     // This mirrors effectSystem's processing semantics and avoids a one-turn
     // perceived delay between application and gameplay/UI impact.
     const elapsed = totalTicks - (Number.isInteger(e.turnsLeft) ? e.turnsLeft : 0) + 1;
     const envelopeValue = computeEnvelopeValue(
-      Number(e.startValue ?? 0),
-      Number(e.toValue    ?? 0),
-      Number(e.endValue   ?? e.startValue ?? 0),
+      Number(veilMeta?.visionStart ?? e.startValue ?? 0),
+      Number(veilMeta?.visionTo ?? e.toValue ?? 0),
+      Number(veilMeta?.visionEnd ?? e.endValue ?? e.startValue ?? 0),
       rampIn, hold, rampOut, elapsed
     );
-    total += envelopeValue - Number(e.startValue ?? 0);
+    total += envelopeValue - Number(veilMeta?.visionStart ?? e.startValue ?? 0);
   }
   return total;
 }

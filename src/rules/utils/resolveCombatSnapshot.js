@@ -7,6 +7,7 @@ import { COMBAT_POSTURES, CombatPosture } from "../components/CombatPosture.js";
 import { Traits } from "../components/Traits.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { getMonster } from "../data/monsters.js";
+import { ActiveEffects } from "../components/ActiveEffects.js";
 
 const MODE_RULES = Object.freeze({
   melee: Object.freeze({
@@ -24,6 +25,13 @@ const MODE_RULES = Object.freeze({
     clampDefenseAtZero: false,
   }),
 });
+
+function shadowVeilAmbushReady(world, entityId) {
+  const effects = world.get(entityId, ActiveEffects)?.effects;
+  if (!Array.isArray(effects)) return false;
+  const veil = effects.find((effect) => effect?.key === "shadow_veil" && (Number(effect.turnsLeft || 0) | 0) > 0);
+  return !!veil && veil.meta?.ambushReady !== false;
+}
 
 /**
  * @param {string} mode
@@ -101,10 +109,10 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     thermal_sense: statusStrength(world, id, "thermal_sense"),
     blood_rage: statusStrength(world, id, "blood_rage"),
     war_fed: statusStrength(world, id, "war_fed"),
-    invisible: statusStrength(world, id, "invisible"),
-    phase_shift: statusStrength(world, id, "phase_shift"),
+    invisible: statusStrength(world, id, "invisible") + effectStrength(world, id, "shadow_veil"),
+    phase_shift: statusStrength(world, id, "phase_shift") + effectStrength(world, id, "shadow_veil"),
     ogre_bulk: statusStrength(world, id, "ogre_bulk"),
-    shadow_cloak: statusStrength(world, id, "shadow_cloak"),
+    shadow_cloak: statusStrength(world, id, "shadow_cloak") + (shadowVeilAmbushReady(world, id) ? 1 : 0),
     dark_sight: statusStrength(world, id, "dark_sight"),
     battle_fury: statusStrength(world, id, "battle_fury") + (effectStrength(world, id, "quicken") > 0 ? 1 : 0),
     fey_grace: statusStrength(world, id, "fey_grace"),

@@ -841,10 +841,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'A slit of dusk wraps your outline, making you invisible and hard to pin down.',
     effects: [
-      { kind: 'status', status: 'invisible', duration: '45 turns' },
-      { kind: 'status', status: 'phase_shift', duration: '45 turns' },
-      { kind: 'status', status: 'shadow_cloak', duration: '45 turns' },
-      { kind: 'utility', note: 'Uses a vision stat envelope to sharpen perception while veiled' },
+      { kind: 'effect', effect: 'shadow_veil', duration: '45 turns (concealment, phase, ambush, perception)' },
     ],
   },
   rampage: {

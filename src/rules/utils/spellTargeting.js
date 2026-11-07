@@ -4,7 +4,7 @@ import { Vitality } from "../components/Vitality.js";
 import { Faction } from "../components/Faction.js";
 import { hasLOS } from "../../shared/math/gridLOS.js";
 import { hasOverworldAerialLOS } from "./flyingEligibility.js";
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 import { areFactionsHostile } from "./factionHostility.js";
 
 /**
@@ -113,7 +113,7 @@ export function isTargetHiddenByInvisibility(world, spec) {
     const defenderFaction = world.get(targetId, Faction)?.key || "";
     if (!areFactionsHostile(attackerFaction, defenderFaction)) return false;
   }
-  if (statusStrength(world, targetId, "invisible") <= 0) return false;
+  if (statusStrength(world, targetId, "invisible") + effectStrength(world, targetId, "shadow_veil") <= 0) return false;
   if (!spec?.allowAdjacentInvisibleTarget) return true;
 
   const sourcePos = spec?.sourcePos || world.get(sourceId, Position);

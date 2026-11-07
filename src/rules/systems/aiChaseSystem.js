@@ -52,7 +52,7 @@ import { runCallbackList }   from "../interaction/dispatch.js";
 import { playerEntity }      from "../utils/queries.js";
 import { findNextCardinalStep } from "../utils/gridPathfind.js";
 import { forEachInRadius }   from "../utils/spatialIndex.js";
-import { statusStrength }    from "../utils/statusFacade.js";
+import { effectStrength, statusStrength } from "../utils/statusFacade.js";
 import { sleepPreventsPerception } from "../utils/sleep.js";
 import { canActThisTurn as speedGateCheck } from "../utils/speedGate.js";
 import { hasLOS }            from "../../shared/math/gridLOS.js";
@@ -427,7 +427,7 @@ export function aiChaseSystem(world) {
     // Use getEffectiveVisionRange so that stat envelope effects (e.g. blindness) apply.
     const sightRange = Math.max(0, Math.trunc(getEffectiveVisionRange(world, id)));
     const withinSightRange = chebyshevScalar(pos.x, pos.y, playerPos.x, playerPos.y) <= sightRange;
-    const invisibleTarget = statusStrength(world, playerId, "invisible") > 0;
+    const invisibleTarget = statusStrength(world, playerId, "invisible") + effectStrength(world, playerId, "shadow_veil") > 0;
     const adjacentToTarget = chebyshevScalar(pos.x, pos.y, playerPos.x, playerPos.y) <= 1;
     const canSeeNormally = withinSightRange && (
       hasOverworldAerialLOS(world, {
