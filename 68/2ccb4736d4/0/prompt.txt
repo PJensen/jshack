@@ -1,5 +1,0 @@
-quest log is a bit wide, active effects overlap time of day
-
----
-
-I would make quests at least semi-transparent, or heck, text only, almost, like WOW, right now it just takes up a lot of real estate -- I would not sacrafice tapability, etc -- feel me?
