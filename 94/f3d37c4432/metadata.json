@@ -15,5 +15,12 @@
       "content_hash": "/94/f3d37c4432/0/content_hash.txt",
       "prompt": ""
     }
-  ]
+  ],
+  "token_usage": {
+    "input_tokens": 489,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 31232,
+    "output_tokens": 137,
+    "api_call_count": 1
+  }
 }
