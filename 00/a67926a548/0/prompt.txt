@@ -1,0 +1,17 @@
+certain spells, have active effects that are essentially combinations of two spells, like there is really a handful of these -- it's (a) misleading (b) not ideal (c) explodes the active spell timers, (d) explodes the identity of the spell -- confirm you understand what I mean
+
+---
+
+give me a listing of what you see and we'll confirm our suspictions
+
+---
+
+can we brew up a plan to give these self contained identities, otherwise the active effects bat gets flooded just by using primal roar for example -- lol -- also, I'd somehow make the mechanics more sophisticated in the sense that each spell should ideally be kin of unique in a way -- and less a composition of whatever is laying around that happens to conceptually align.
+
+this also gives us the oppertunity to re-apprach VFX and a handful of other things as regards identiy.
+
+lets do one at a time, starting with one or two and take lessons learned from the first couple to apply the knowledge to the rest.
+
+---
+
+approved, do one, or two and I'll test it out -- end to end, commit and push when done.
