@@ -56,6 +56,17 @@ and mutable guard stacks do not leak into the authored spell shape.
 | Frost Nova | `frost` + `rooted` plus damage | `frost_nova`, with direct freeze and rooted control semantics | converted |
 | Gaze Beam | `stun` + `mindwipe` | `gaze_beam`, with stun duration and mindwipe stacks in one channel effect | converted |
 | Consecrate | persistent hazard + caster `regen` | `consecrate` caster identity plus an independent consecrated field lifecycle | converted |
+| Ignite Weapons | generic `fire_weapon` timer | `ignite_weapons`, with authored weapon-flame mechanics | converted |
+| Mark of Death | generic `marked` timer | `mark_of_death`, with authored damage-amplification mechanics | converted |
+| Rampage | generic `berserk` timer | `rampage`, with authored battle-fury identity | converted |
+| Mass Delirium | generic `confused` rows | `mass_delirium`, projecting canonical `confused` and `spell_impaired` semantics | converted |
+
+Blizzard and Firestorm remain deliberately outside the persistent-bundle
+conversion. Their `frost` and `burn` rows are short-lived impact statuses
+created by individual channel strikes, and those statuses are shared mechanics
+with independent spell, monster, material, and item sources. The storm spell
+identity lives in the channel and impact events rather than in one additional
+long-lived timer per cast.
 
 ## Acceptance criteria for each conversion
 
