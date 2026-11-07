@@ -76,11 +76,9 @@ Deno.test("floating_eye: 8 turns in gaze applies stun and one mindwipe stack", (
 
   for (let i = 0; i < 8; i++) gazeTurn(world, eye);
 
-  const stun = getEffect(world, player, "stun");
-  const mindwipe = getEffect(world, player, "mindwipe");
-  assert(stun && stun.turnsLeft >= 4, `expected 3-turn gaze stun after 8 turns, got ${JSON.stringify(world.get(player, ActiveEffects)?.effects)}`);
-  assert(mindwipe, "expected mindwipe after 8 turns in gaze");
-  assertEquals(mindwipe.stacks, 1);
+  const gaze = getEffect(world, player, "gaze_beam");
+  assert(gaze && gaze.turnsLeft >= 4, `expected 3-turn gaze effect after 8 turns, got ${JSON.stringify(world.get(player, ActiveEffects)?.effects)}`);
+  assertEquals(gaze.stacks, 1);
 });
 
 Deno.test("floating_eye: 7 turns in gaze is not enough", () => {
@@ -90,7 +88,7 @@ Deno.test("floating_eye: 7 turns in gaze is not enough", () => {
 
   for (let i = 0; i < 7; i++) gazeTurn(world, eye);
 
-  assertEquals(getEffect(world, player, "stun"), null);
+  assertEquals(getEffect(world, player, "gaze_beam"), null);
   assertEquals(getEffect(world, player, "mindwipe"), null);
   // Eye should have an active channel
   assert(world.has(eye, Channeling), "eye should be channeling gaze_beam after 7 turns");
@@ -114,7 +112,7 @@ Deno.test("floating_eye: losing LOS resets the gaze charge", () => {
   setTile(7, 5, TILE_FLOOR);
   for (let i = 0; i < 7; i++) gazeTurn(world, eye);
 
-  assertEquals(getEffect(world, player, "stun"), null, "7 turns after LOS break should not stun");
+  assertEquals(getEffect(world, player, "gaze_beam"), null, "7 turns after LOS break should not apply gaze effect");
   assertEquals(getEffect(world, player, "mindwipe"), null);
 });
 
@@ -125,11 +123,9 @@ Deno.test("floating_eye: staying in gaze for 16 turns retriggers and adds a seco
 
   for (let i = 0; i < 16; i++) gazeTurn(world, eye);
 
-  const stun = getEffect(world, player, "stun");
-  const mindwipe = getEffect(world, player, "mindwipe");
-  assert(stun && stun.turnsLeft >= 4, `expected refreshed 3-turn stun after 16 turns, got ${JSON.stringify(world.get(player, ActiveEffects)?.effects)}`);
-  assert(mindwipe, "expected mindwipe after repeated gaze exposure");
-  assertEquals(mindwipe.stacks, 2);
+  const gaze = getEffect(world, player, "gaze_beam");
+  assert(gaze && gaze.turnsLeft >= 4, `expected refreshed gaze effect after 16 turns, got ${JSON.stringify(world.get(player, ActiveEffects)?.effects)}`);
+  assertEquals(gaze.stacks, 2);
 });
 
 Deno.test("floating_eye: stunning the eye interrupts the gaze channel", () => {
@@ -154,5 +150,5 @@ Deno.test("floating_eye: stunning the eye interrupts the gaze channel", () => {
   assert(!world.has(eye, Channeling), "stun should cancel the gaze channel");
 
   // Player should NOT be stunned by gaze (only the eye is stunned)
-  assertEquals(getEffect(world, player, "stun"), null, "player should not be stunned — gaze was interrupted");
+  assertEquals(getEffect(world, player, "gaze_beam"), null, "player should not be affected — gaze was interrupted");
 });

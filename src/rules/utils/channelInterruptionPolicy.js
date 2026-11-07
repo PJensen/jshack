@@ -1,4 +1,4 @@
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 import { Vitality } from "../components/Vitality.js";
 import { sleepPreventsAction } from "./sleep.js";
 
@@ -19,7 +19,7 @@ export const CHANNEL_INTERRUPTION_RULES = Object.freeze([
     reason: "stunned",
     detail: "Stun is a hard interrupt and blocks channel/cast start.",
     when: (world, actorId) => (
-      statusStrength(world, actorId, "stunned") > 0
+      statusStrength(world, actorId, "stunned") + effectStrength(world, actorId, "gaze_beam") > 0
       || statusStrength(world, actorId, "stun") > 0
     ),
   }),

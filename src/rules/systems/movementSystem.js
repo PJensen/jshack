@@ -188,7 +188,8 @@ export function movementSystem(world) {
         world.remove(actor, MoveIntent);
         continue;
       }
-      if (statusStrength(world, actor, "stunned") > 0 || statusStrength(world, actor, "rooted") > 0) {
+      if (statusStrength(world, actor, "stunned") + effectStrength(world, actor, "gaze_beam") > 0
+        || statusStrength(world, actor, "rooted") + effectStrength(world, actor, "frost_nova") > 0) {
         world.remove(actor, MoveIntent);
         continue;
       }

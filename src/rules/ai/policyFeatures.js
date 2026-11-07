@@ -40,7 +40,7 @@ import { isAiOnCooldown } from '../utils/aiCooldowns.js';
 import { forEachInRadius } from '../utils/spatialIndex.js';
 import { isWalkable } from '../environment/dungeon/tileMap.js';
 import { chebyshevScalar } from '../utils/distance.js';
-import { statusStrength } from '../utils/statusFacade.js';
+import { effectStrength, statusStrength } from '../utils/statusFacade.js';
 
 function spellCooldownSlot(actorId, spellId) {
   return `${actorId | 0}:${String(spellId || '')}`;
@@ -142,7 +142,7 @@ export function extractFeatures(world, actorId, actorPos, targetId, targetPos) {
   const targetHasBadStatus = (
     statusStrength(world, targetId, 'burning') > 0 ||
     statusStrength(world, targetId, 'stun')    > 0 ||
-    statusStrength(world, targetId, 'frozen')  > 0
+    statusStrength(world, targetId, 'frozen') + effectStrength(world, targetId, 'frost_nova') > 0
   ) ? 1 : 0;
 
   // ── Pack feature vector ─────────────────────────────────────────────────────

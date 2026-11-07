@@ -650,10 +650,7 @@ REGISTRY['frost_nova'] = function frostNovaScript(world, actor, spell, intent) {
     const ae = ensureActiveEffectList(world, t.id);
     if (!ae) continue;
     upsertTimedEffect(ae.effects, {
-      key: 'frost', turnsLeft: FREEZE_TURNS, potency: 1, stacks: 1, sourceId: actor,
-    });
-    upsertTimedEffect(ae.effects, {
-      key: 'rooted', turnsLeft: FREEZE_TURNS, potency: 1, stacks: 1, sourceId: actor,
+      key: 'frost_nova', turnsLeft: FREEZE_TURNS, potency: 1, stacks: 1, sourceId: actor,
     });
     frozen.push({ id: t.id, x: t.x, y: t.y });
   }
@@ -3134,27 +3131,13 @@ REGISTRY['gaze_beam'] = function gazeBeamScript(world, actor, spell, intent) {
   const ae = ensureActiveEffects(world, targetId);
   if (!ae) return;
 
-  // Apply or extend stun
-  const existingStun = ae.effects.find(e => e.key === 'stun');
-  if (existingStun) {
-    existingStun.turnsLeft = Math.max(Number(existingStun.turnsLeft) || 0, stunTurnsLeft);
-    existingStun.potency = Math.max(Number(existingStun.potency) || 1, 1);
-    existingStun.stacks = Math.max(Number(existingStun.stacks) || 1, 1);
+  const existing = ae.effects.find(e => e.key === 'gaze_beam');
+  if (existing) {
+    existing.turnsLeft = Math.max(Number(existing.turnsLeft) || 0, stunTurnsLeft);
+    existing.stacks = Math.min(stackLimit, Math.max(1, Number(existing.stacks) || 1) + 1);
+    existing.potency = 1;
   } else {
-    ae.effects.push({ key: 'stun', turnsLeft: stunTurnsLeft, potency: 1, stacks: 1 });
-  }
-
-  // Apply or increment mindwipe (up to limit)
-  const existingMW = ae.effects.find(e => e.key === 'mindwipe');
-  if (existingMW) {
-    const currentStacks = Math.max(1, Number(existingMW.stacks) || 1);
-    if (currentStacks < stackLimit) {
-      existingMW.stacks = currentStacks + 1;
-      existingMW.potency = existingMW.stacks;
-    }
-    existingMW.turnsLeft = Math.max(existingMW.turnsLeft, 3);
-  } else {
-    ae.effects.push({ key: 'mindwipe', turnsLeft: 3, potency: 1, stacks: 1 });
+    ae.effects.push({ key: 'gaze_beam', turnsLeft: stunTurnsLeft, potency: 1, stacks: 1 });
   }
   world.set(targetId, ActiveEffects, ae);
 
@@ -3162,7 +3145,7 @@ REGISTRY['gaze_beam'] = function gazeBeamScript(world, actor, spell, intent) {
   world.emit('proc:gaze:mindwipe', {
     actor,
     target: targetId,
-    stacks: ae.effects.find(e => e.key === 'mindwipe')?.stacks ?? 1,
+    stacks: ae.effects.find(e => e.key === 'gaze_beam')?.stacks ?? 1,
   });
 };
 
@@ -4387,11 +4370,13 @@ REGISTRY['consecrate'] = function consecrateScript(world, actor, spell, _intent)
     meta: { casterOnly: true },
   });
 
-  // Regen buff on caster for the duration
+  // Caster recovery is owned by the spell identity; the ground field remains
+  // an independent hazard because it has its own position and lifecycle.
   const ae = ensureActiveEffectList(world, actor);
   if (ae) {
     upsertTimedEffect(ae.effects, {
-      key: 'regen', turnsLeft: TURNS, potency: 2, stacks: 1, sourceId: actor,
+      key: 'consecrate', turnsLeft: TURNS, potency: 2, stacks: 1, sourceId: actor,
+      meta: { tickHeal: 2 },
     });
   }
 

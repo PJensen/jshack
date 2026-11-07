@@ -106,8 +106,7 @@ export const SPELL_DEFS = {
     description: 'Burst a ring of blue ice from your feet, freezing nearby enemies in place.',
     effects: [
       { kind: 'damage', element: 'cold', amount: 'distance-scaled, INT-scaled, can crit' },
-      { kind: 'status', status: 'frozen', duration: '3 turns' },
-      { kind: 'status', status: 'rooted', duration: '3 turns, prevents movement' },
+      { kind: 'effect', effect: 'frost_nova', duration: '8 turns (freeze and root)' },
     ],
   },
   mass_delirium: {
@@ -792,8 +791,7 @@ export const SPELL_DEFS = {
     breakOnMove: true,
     description: 'The floating eye channels a psychic beam that stuns and mindwipes on completion.',
     effects: [
-      { kind: 'status', status: 'stun', duration: '3 turns' },
-      { kind: 'status', status: 'mindwipe', note: '+1 stack (max 4)' },
+      { kind: 'effect', effect: 'gaze_beam', duration: '3 turns; mindwipe stacks up to 4' },
     ],
   },
   verdant_ward: {
@@ -1096,7 +1094,7 @@ export const SPELL_DEFS = {
     description: 'Sanctify the ground beneath your feet. Holy fire scorches the wicked and mends the faithful.',
     effects: [
       { kind: 'damage', element: 'holy', amount: '3 per tick to hostiles in radius; INT-scaled', duration: '20 turns' },
-      { kind: 'utility', note: 'Grants caster regen for the duration', duration: '20 turns' },
+      { kind: 'effect', effect: 'consecrate', duration: '5 turns (caster recovery; field persists independently)' },
     ],
   },
 

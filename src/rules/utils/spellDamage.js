@@ -7,7 +7,7 @@ import { areFactionsHostile } from "./factionHostility.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
 import { resolveDerivedStats } from "./derivedStats.js";
 import { resolveCombatSnapshot } from "./resolveCombatSnapshot.js";
-import { statusStrength } from "./statusFacade.js";
+import { effectStrength, statusStrength } from "./statusFacade.js";
 
 /**
  * Positive-only spell scaling. Baseline INT 10 preserves current damage;
@@ -35,7 +35,7 @@ function getSpellHitBonus(world, casterId) {
   const brainIntelligence = Math.max(0, Number(brain?.intelligence || 0));
   const brainSpellHit = Math.floor(Math.max(0, brainIntelligence - 10) / 2);
   const confusedPenalty = statusStrength(world, casterId, "confused") * 4;
-  const mindwipedPenalty = statusStrength(world, casterId, "mindwiped") * 6;
+  const mindwipedPenalty = (statusStrength(world, casterId, "mindwiped") + effectStrength(world, casterId, "gaze_beam")) * 6;
   const mindlockedPenalty = statusStrength(world, casterId, "mindlocked") * 10;
   const hallucinatingPenalty = statusStrength(world, casterId, "hallucinating") * 10;
   const impairedPenalty = confusedPenalty + mindwipedPenalty + mindlockedPenalty + hallucinatingPenalty;

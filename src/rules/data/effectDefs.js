@@ -178,6 +178,27 @@ export const EFFECT_DEFS = [
     description: "Verdant Ward. Living growth hardens the bearer, restores flesh, and heightens sight.",
   },
   {
+    id: "frost_nova",
+    keys: ["frost_nova"],
+    operation: "none",
+    statuses: [],
+    description: "Frost Nova. A freezing ring damages, slows action, and locks hostile footing.",
+  },
+  {
+    id: "gaze_beam",
+    keys: ["gaze_beam"],
+    operation: "none",
+    statuses: [],
+    description: "Gaze Beam. A psychic channel stuns its victim and accumulates mindwipe stacks.",
+  },
+  {
+    id: "consecrate",
+    keys: ["consecrate"],
+    operation: "none",
+    statuses: [],
+    description: "Consecrate. Holy ground burns the wicked while its caster is restored.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

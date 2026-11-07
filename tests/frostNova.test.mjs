@@ -5,7 +5,7 @@ import { Vitality } from "../src/rules/components/Vitality.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
-import { statusStrength } from "../src/rules/utils/statusFacade.js";
+import { effectStrength, statusStrength } from "../src/rules/utils/statusFacade.js";
 import { FrostNovaCast } from "../src/events/FrostNovaCast.js";
 
 const SPELL = { id: "frost_nova", name: "Frost Nova", manaCost: 8, script: "frost_nova", radius: 2 };
@@ -27,10 +27,8 @@ Deno.test("frost nova: freezes and roots hostile targets in radius", () => {
 
   runSpellScript(world, caster, SPELL, {});
 
-  assert(statusStrength(world, near, "frozen") > 0, "near target frozen");
-  assert(statusStrength(world, near, "rooted") > 0, "near target rooted");
-  assert(statusStrength(world, far, "frozen") > 0, "far target frozen");
-  assert(statusStrength(world, far, "rooted") > 0, "far target rooted");
+  assert(effectStrength(world, near, "frost_nova") > 0, "near target frozen");
+  assert(effectStrength(world, far, "frost_nova") > 0, "far target frozen");
   assertEquals(world.get(outside, ActiveEffects), null, "outside target unaffected");
 });
 
@@ -58,7 +56,7 @@ Deno.test("frost nova: affects hostiles only", () => {
 
   runSpellScript(world, caster, SPELL, {});
 
-  assert(statusStrength(world, enemy, "frozen") > 0, "enemy frozen");
+  assert(effectStrength(world, enemy, "frost_nova") > 0, "enemy frost nova identity");
   assertEquals(world.get(ally, ActiveEffects), null, "ally unaffected");
   assertEquals(world.get(neutral, ActiveEffects), null, "neutral unaffected");
   assertEquals(world.get(caster, ActiveEffects), null, "caster unaffected");

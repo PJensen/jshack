@@ -33,9 +33,9 @@ bundle of whichever existing statuses happen to approximate the design.
 | Verdant Ward | `regen` + `stoneskin` + vision envelope | `verdant_ward`, with authored healing/defense/perception metadata | converted |
 | Quicken | `crit_boost` + `battle_fury` + stamina restoration | `quicken`, with direct combat modifiers and a timed stamina cadence | converted |
 | Bog Curse | `cursed` + `slowed` | `bog_curse`, with authored combat penalty and footing drag | converted |
-| Frost Nova | `frost` + `rooted` plus damage | one freezing control identity; decide whether root is intrinsic or a projected response | design needed |
-| Gaze Beam | `stun` + `mindwipe` | one psychic beam identity with channel completion state | design needed |
-| Consecrate | persistent hazard + caster `regen` | one consecration field identity with caster benefit derived from the field | design needed |
+| Frost Nova | `frost` + `rooted` plus damage | `frost_nova`, with direct freeze and rooted control semantics | converted |
+| Gaze Beam | `stun` + `mindwipe` | `gaze_beam`, with stun duration and mindwipe stacks in one channel effect | converted |
+| Consecrate | persistent hazard + caster `regen` | `consecrate` caster identity plus an independent consecrated field lifecycle | converted |
 
 ## Acceptance criteria for each conversion
 
