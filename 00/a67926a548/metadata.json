@@ -2,8 +2,7 @@
   "cli_version": "0.10.2",
   "checkpoint_id": "00a67926a548",
   "strategy": "manual-commit",
-  "branch": "master",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
     "src/display/ui/wiring/messages/combatMessages.js",
     "src/rules/data/effectDefs.js",
@@ -20,6 +19,13 @@
       "compact_transcript": "/00/a67926a548/0/transcript.jsonl",
       "content_hash": "/00/a67926a548/0/content_hash.txt",
       "prompt": "/00/a67926a548/0/prompt.txt"
+    },
+    {
+      "metadata": "/00/a67926a548/1/metadata.json",
+      "transcript": "/00/a67926a548/1/full.jsonl",
+      "compact_transcript": "/00/a67926a548/1/transcript.jsonl",
+      "content_hash": "/00/a67926a548/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
