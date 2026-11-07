@@ -3,52 +3,23 @@
   "checkpoint_id": "ccb275b34316",
   "session_id": "01a1b673-fb15-7e23-849d-16e9ec42a307",
   "strategy": "manual-commit",
-  "created_at": "2026-11-07T16:42:03.58515864Z",
+  "created_at": "2026-11-07T16:43:27.989231237Z",
   "branch": "master",
   "checkpoints_count": 2,
   "save_step_count": 1,
-  "files_touched": [
-    "src/display/ui/hud.js",
-    "src/display/ui/linearResourceBars.js",
-    "tests/hudLinearBarsArchitecture.test.mjs"
-  ],
+  "files_touched": [],
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "a91c140725b6",
   "compact_transcript_start": 0,
   "token_usage": {
-    "input_tokens": 356683,
+    "input_tokens": 365457,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 22917632,
-    "output_tokens": 58229,
-    "api_call_count": 158
+    "cache_read_tokens": 24305280,
+    "output_tokens": 60270,
+    "api_call_count": 171
   },
   "session_metrics": {
     "turn_count": 4
-  },
-  "initial_attribution": {
-    "calculated_at": "2026-11-07T16:42:03.379148763Z",
-    "agent_lines": 0,
-    "agent_removed": 0,
-    "human_added": 3,
-    "human_modified": 17,
-    "human_removed": 0,
-    "total_committed": 3,
-    "total_lines_changed": 20,
-    "agent_percentage": 0,
-    "metric_version": 2
-  },
-  "prompt_attributions": [
-    {
-      "checkpoint_number": 2,
-      "user_lines_added": 865,
-      "user_lines_removed": 0,
-      "agent_lines_added": 0,
-      "agent_lines_removed": 0,
-      "user_added_per_file": {
-        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
-        ".github/agents/VFX Agent.agent.md": 283
-      }
-    }
-  ]
+  }
 }
