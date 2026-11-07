@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "8dac67058690",
+  "session_id": "01a1b673-fb15-7e23-849d-16e9ec42a307",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-07T16:49:50.170558174Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/hud.js",
+    "tests/hudLinearBarsArchitecture.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "a91c140725b6",
+  "checkpoint_transcript_start": 1111,
+  "transcript_lines_at_start": 1111,
+  "compact_transcript_start": 197,
+  "token_usage": {
+    "input_tokens": 4831,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 434816,
+    "output_tokens": 2736,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-11-07T16:49:49.921984382Z",
+    "agent_lines": 8,
+    "agent_removed": 2,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 8,
+    "total_lines_changed": 10,
+    "agent_percentage": 100,
+    "metric_version": 2
+  }
+}
