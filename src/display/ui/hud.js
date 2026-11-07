@@ -406,7 +406,11 @@ export function initHUD() {
   vitals.id = 'hud-vitals';
   Object.assign(vitals.style, {
     position: 'relative',
-    width: '100%',
+    width: '420px',
+    maxWidth: 'calc(100vw - 16px)',
+    height: 'auto',
+    alignSelf: 'flex-end',
+    boxSizing: 'border-box',
     minWidth: '0',
     flex: '0 0 auto',
     pointerEvents: 'none',
