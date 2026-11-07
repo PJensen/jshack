@@ -4601,13 +4601,20 @@ REGISTRY['primal_roar'] = function primalRoarScript(world, actor, spell, _intent
   if (!ae) return;
   const actorFaction = String(world.get(actor, Faction)?.key || 'player');
 
-  const DURATION = 12;
+  const active = spell?.activeEffect || {};
+  const mechanics = active.mechanics || {};
+  const DURATION = Math.max(1, Number(active.duration || 12) | 0);
   const RADIUS = Number(spell?.radius || 2) | 0;
 
   // One spell-owned identity; combat derives the roar's mechanics from this
   // effect instead of materializing a berserk/battle-fury bundle.
   upsertTimedEffect(ae.effects, {
-    key: 'primal_roar', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
+    key: spell?.id || 'primal_roar',
+    turnsLeft: DURATION + 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
+    sourceId: actor,
+    meta: { ...(active.mechanics || {}) },
   });
 
   // Stagger nearby enemies
@@ -4625,7 +4632,7 @@ REGISTRY['primal_roar'] = function primalRoarScript(world, actor, spell, _intent
     const tae = ensureActiveEffectList(world, id);
     if (tae) {
       upsertTimedEffect(tae.effects, {
-        key: 'stagger', turnsLeft: 4, potency: 1, stacks: 1, sourceId: actor,
+        key: 'stagger', turnsLeft: Number(mechanics.staggerDuration ?? 4), potency: 1, stacks: 1, sourceId: actor,
       });
       affected++;
     }

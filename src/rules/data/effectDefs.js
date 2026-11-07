@@ -502,13 +502,6 @@ export const EFFECT_DEFS = [
     description: "Battle fury. Combat prowess heightened.",
   },
   {
-    id: "primal_roar",
-    keys: ["primal_roar"],
-    operation: "none",
-    statuses: [],
-    description: "Primal roar. A predatory surge of strength that rattles nearby foes.",
-  },
-  {
     id: "lichdom_echo",
     keys: ["lichdom_echo"],
     operation: "none",

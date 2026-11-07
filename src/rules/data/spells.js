@@ -1477,9 +1477,15 @@ export const SPELL_DEFS = {
     script: 'primal_roar',
     targeting: 'self',
     radius: 2,
+    activeEffect: {
+      duration: 12,
+      potency: 1,
+      stacks: 1,
+      mechanics: { staggerDuration: 4, killHeal: 5 },
+    },
     description: 'Channel the fury of the wild. One predatory roar sharpens your strikes and rattles nearby enemies.',
     effects: [
-      { kind: 'status', status: 'primal_roar', duration: '12 turns (+5 attack, 1.5x melee damage, restores 5 HP on kills)' },
+      { kind: 'effect', effect: 'primal_roar', note: '+5 attack, 1.5x melee damage, restores 5 HP on kills' },
       { kind: 'utility', note: 'A short roar pulse staggers nearby hostiles' },
     ],
   },
