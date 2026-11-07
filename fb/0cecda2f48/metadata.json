@@ -3,7 +3,7 @@
   "checkpoint_id": "fb0cecda2f48",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
     "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
     "src/bridge/schema/worldView.js",
@@ -37,6 +37,13 @@
       "compact_transcript": "/fb/0cecda2f48/1/transcript.jsonl",
       "content_hash": "/fb/0cecda2f48/1/content_hash.txt",
       "prompt": "/fb/0cecda2f48/1/prompt.txt"
+    },
+    {
+      "metadata": "/fb/0cecda2f48/2/metadata.json",
+      "transcript": "/fb/0cecda2f48/2/full.jsonl",
+      "compact_transcript": "/fb/0cecda2f48/2/transcript.jsonl",
+      "content_hash": "/fb/0cecda2f48/2/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
