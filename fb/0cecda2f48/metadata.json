@@ -3,9 +3,25 @@
   "checkpoint_id": "fb0cecda2f48",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 3,
   "files_touched": [
-    "src/rules/ai/policyFeatures.js"
+    "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
+    "src/bridge/schema/worldView.js",
+    "src/display/ui/hud.js",
+    "src/rules/ai/policyFeatures.js",
+    "src/rules/data/combatInteractions.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/intentValidationSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/utils/channelInterruptionPolicy.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "src/rules/utils/speedGate.js",
+    "src/rules/utils/spellDamage.js",
+    "tests/classAbilities.test.mjs",
+    "tests/frostNova.test.mjs",
+    "tests/gazeStun.test.mjs"
   ],
   "sessions": [
     {
@@ -14,13 +30,20 @@
       "compact_transcript": "/fb/0cecda2f48/0/transcript.jsonl",
       "content_hash": "/fb/0cecda2f48/0/content_hash.txt",
       "prompt": "/fb/0cecda2f48/0/prompt.txt"
+    },
+    {
+      "metadata": "/fb/0cecda2f48/1/metadata.json",
+      "transcript": "/fb/0cecda2f48/1/full.jsonl",
+      "compact_transcript": "/fb/0cecda2f48/1/transcript.jsonl",
+      "content_hash": "/fb/0cecda2f48/1/content_hash.txt",
+      "prompt": "/fb/0cecda2f48/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 157075,
+    "input_tokens": 208916,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 5522432,
-    "output_tokens": 27229,
-    "api_call_count": 58
+    "cache_read_tokens": 13445120,
+    "output_tokens": 41553,
+    "api_call_count": 94
   }
 }

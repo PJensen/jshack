@@ -1,0 +1,42 @@
+For when you finish:
+
+
+
+I had this idea based on reading the following code:
+
+
+```swift
+      if (statusStrength(world, actor, "stunned") > 0
+        || statusStrength(world, actor, "rooted") + effectStrength(world, actor, "frost_nova") > 0) {
+        world.remove(actor, MoveIntent);
+        continue;
+      }
+```
+
+
+
+
+
+Basically that all of these are trying to communicate effectively the same thing -- namely that the target is prevented from moving.
+
+
+
+Therefore, what I wondering is if there isn't an internal representation of immmobilized, with potentially a little bit of source metadata.
+
+
+
+Anyhow -- this is a future facing idea that we can think about after we closeout the three that we're working on now.&#x20;
+
+
+
+And again -- just an idea from reading ONE piece of code -- you're free to disagree with me.
+
+
+
+\:-)
+
+---
+
+And --- we'll do a scan of the situation broadly speaking to see what else we can turn up -- I'm sure their is a fair bit of this addiitional conversion work and conceptual compression work and canonicalization work to happen.
+
+But I think finishing the three we're targeting and commiting and pushing is the right move to start.
