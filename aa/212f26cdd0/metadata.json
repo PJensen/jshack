@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 3,
   "files_touched": [
+    "VERSION",
     "src/display/ui/hud.js",
     "src/rules/data/effectDefs.js",
     "src/rules/utils/dealDamage.js",
