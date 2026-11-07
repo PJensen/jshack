@@ -2,12 +2,10 @@
   "cli_version": "0.10.2",
   "checkpoint_id": "a70886d6b644",
   "strategy": "manual-commit",
-  "branch": "codex/separate-quest-effects-hud",
+  "branch": "codex/separate-quest-effects-hud-v2",
   "checkpoints_count": 2,
   "files_touched": [
-    "VERSION",
-    "src/display/ui/hud.js",
-    "tests/hudLinearBarsArchitecture.test.mjs"
+    "VERSION"
   ],
   "sessions": [
     {
@@ -19,10 +17,10 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 9999,
+    "input_tokens": 5625,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 665856,
-    "output_tokens": 4046,
-    "api_call_count": 4
+    "cache_read_tokens": 1382528,
+    "output_tokens": 3466,
+    "api_call_count": 8
   }
 }
