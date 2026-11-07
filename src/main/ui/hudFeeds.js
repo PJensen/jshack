@@ -122,7 +122,7 @@ export function createHudFeeds(world, deps) {
     const emoji = isHalf ? CLOCK_HALVES[hour12 % 12] : CLOCK_HOURS[hour12 % 12];
 
     const label = formatClockLabel12Hour(safeTurn);
-    return { turnOfDay, emoji, label };
+    return { turnOfDay, emoji, label, phase: getCalendarDate(safeTurn, 0, 1).phase };
   }
 
   function sumPlayerGold(playerId) {
@@ -458,6 +458,7 @@ export function createHudFeeds(world, deps) {
             turnOfDay: clock.turnOfDay,
             clockEmoji: clock.emoji,
             clockLabel: clock.label,
+            phase: clock.phase,
           }
         }));
       } catch (e) { console.debug('[hudFeeds] dispatch ui:updateTurn:', e); }

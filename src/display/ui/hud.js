@@ -1,6 +1,6 @@
 // display/ui/hud.js
 // Minimal HUD with an Active Spell button.
-import { createConcentricGauge } from './concentricGauge.js';
+import { createLinearResourceBars } from './linearResourceBars.js';
 import { renderItemDetails } from './overlay.js';
 import { ensureItemTooltip, positionTooltip, rarityStyle, UX_THEME } from './overlayUtils.js';
 import { UI_ACTION_GLYPHS, UI_PET_STATE_GLYPHS } from './iconGlyphs.js';
@@ -350,6 +350,18 @@ function bracketizeLabel(text) {
   return `[${s}]`;
 }
 
+/**
+ * @param {string} phase
+ * @returns {string}
+ */
+function formatDayPhase(phase) {
+  const key = String(phase || '').toLowerCase();
+  if (key === 'breakfast') return 'Dawn';
+  if (key === 'work') return 'Day';
+  if (key === 'pub') return 'Dusk';
+  return 'Night';
+}
+
 export function initHUD() {
   const root = ensureRoot();
   const bar = document.createElement('div');
@@ -359,7 +371,7 @@ export function initHUD() {
     pointerEvents: 'auto', zIndex: 900
   });
 
-  // Top-right HUD cluster for gauge + active effects (vertical stack).
+  // Top-right HUD cluster for world context and player vitals.
   const topRightHud = document.createElement('div');
   Object.assign(topRightHud.style, {
     position: 'fixed',
@@ -367,26 +379,34 @@ export function initHUD() {
     top: 'calc(8px + env(safe-area-inset-top, 0px))',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: '8px',
+    alignItems: 'stretch',
+    gap: '6px',
+    width: 'min(420px, calc(100vw - 16px))',
+    maxWidth: 'calc(100vw - 16px)',
     pointerEvents: 'none',
     zIndex: 905,
   });
 
-  // Top-right concentric vitals gauge (HP/Mana/Stamina)
+  const worldControls = document.createElement('div');
+  Object.assign(worldControls.style, {
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 1fr) auto',
+    gap: '6px',
+    alignItems: 'center',
+    width: '100%',
+    pointerEvents: 'auto',
+  });
+
+  // Linear vitals panel: health leads, mana and stamina stay immediately readable.
   const vitals = document.createElement('div');
   vitals.id = 'hud-vitals';
   Object.assign(vitals.style, {
     position: 'relative',
-    width: 'min(188px, 22vw)',
-    height: 'min(188px, 22vw)',
+    width: '100%',
     flex: '0 0 auto',
     pointerEvents: 'none',
   });
-  const vitalsGauge = createConcentricGauge(vitals, {
-    health: 1,
-    mana: 1,
-    stamina: 1,
+  const vitalsBars = createLinearResourceBars(vitals, {
     hpValue: 1,
     hpMax: 1,
     manaValue: 1,
@@ -395,19 +415,81 @@ export function initHUD() {
     staminaMax: 1,
   });
 
-  // Camera zoom buttons (+ / −) below the gauge
+  // Moon/phase/time and camera zoom share one compact world-context row.
+  const moonPhaseEl = document.createElement('div');
+  let moonEmoji = '\uD83C\uDF11';
+  let moonLabel = 'New Moon';
+  let phaseLabel = 'Night';
+  let clockLabel = '12:00 AM';
+
+  function syncSkyChip() {
+    moonPhaseEl.textContent = `${moonEmoji} ${phaseLabel}  ${clockLabel}`;
+    moonPhaseEl.title = `${moonLabel} • ${phaseLabel} • ${clockLabel}`;
+    moonPhaseEl.setAttribute('aria-label', `${moonLabel}, ${phaseLabel}, ${clockLabel}`);
+  }
+
+  Object.assign(moonPhaseEl.style, {
+    minWidth: '0',
+    minHeight: '30px',
+    padding: '5px 11px',
+    borderRadius: '999px',
+    border: UX_THEME.surfaceBorder,
+    background: 'linear-gradient(180deg, rgba(42,47,53,0.95) 0%, rgba(24,22,20,0.96) 100%)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.10)',
+    color: UX_THEME.textStrong,
+    fontSize: '13px',
+    fontWeight: '800',
+    lineHeight: '19px',
+    letterSpacing: '0.02em',
+    textAlign: 'center',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    pointerEvents: 'none',
+    textShadow: '0 1px 0 rgba(0,0,0,0.7)',
+  });
+  syncSkyChip();
+
+  let zoomPercent = 100;
+  const zoomHud = document.createElement('div');
+  Object.assign(zoomHud.style, {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '2px',
+    minHeight: '30px',
+    padding: '2px 4px',
+    borderRadius: '999px',
+    border: UX_THEME.surfaceBorder,
+    background: 'linear-gradient(180deg, rgba(30,35,43,0.96) 0%, rgba(17,21,29,0.96) 100%)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.08)',
+    pointerEvents: 'auto',
+  });
+  const zoomValue = document.createElement('span');
+  Object.assign(zoomValue.style, {
+    minWidth: '47px',
+    color: UX_THEME.textStrong,
+    fontSize: '12px',
+    fontWeight: '800',
+    textAlign: 'center',
+    whiteSpace: 'nowrap',
+  });
+  function syncZoomLabel() {
+    zoomValue.textContent = `${zoomPercent}%`;
+    zoomHud.setAttribute('aria-label', `Map zoom ${zoomPercent}%`);
+  }
+
   function makeZoomBtn(label, factor) {
     const btn = document.createElement('button');
     btn.textContent = label;
     btn.title = factor > 1 ? 'Zoom in' : 'Zoom out';
     Object.assign(btn.style, {
-      width: '22px', height: '22px',
+      width: '25px', height: '25px',
       padding: '0', margin: '0',
-      border: '1px solid rgba(255,255,255,0.18)',
-      borderRadius: '4px',
+      border: '1px solid rgba(255,255,255,0.16)',
+      borderRadius: '50%',
       background: 'rgba(16,22,38,0.75)',
-      color: 'rgba(255,255,255,0.7)',
-      fontSize: '14px', lineHeight: '1',
+      color: 'rgba(255,255,255,0.82)',
+      fontSize: '15px', lineHeight: '1',
       cursor: 'pointer',
       pointerEvents: 'auto',
       display: 'grid', placeItems: 'center',
@@ -416,63 +498,18 @@ export function initHUD() {
     btn.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
       e.preventDefault();
+      zoomPercent = Math.max(50, Math.min(300, Math.round(zoomPercent * factor)));
+      syncZoomLabel();
       window.dispatchEvent(new CustomEvent('ui:zoom', { detail: { factor } }));
     });
     return btn;
   }
-
-  const moonPhaseEl = document.createElement('div');
-  let moonEmoji = '\uD83C\uDF11';
-  let moonLabel = 'New Moon';
-  let clockEmoji = '\uD83D\uDD5B';
-  let clockLabel = '12:00 AM';
-
-  function syncSkyChip() {
-    moonPhaseEl.textContent = `${moonEmoji} ${clockEmoji} ${clockLabel}`;
-    moonPhaseEl.title = `${moonLabel} • ${clockLabel}`;
-  }
-
-  Object.assign(moonPhaseEl.style, {
-    minWidth: '104px',
-    minHeight: '28px',
-    padding: '4px 10px',
-    borderRadius: '14px',
-    border: UX_THEME.surfaceBorder,
-    background: 'linear-gradient(180deg, rgba(42,47,53,0.92) 0%, rgba(24,22,20,0.94) 100%)',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.08)',
-    color: UX_THEME.textStrong,
-    fontSize: '16px',
-    fontWeight: '700',
-    lineHeight: '20px',
-    letterSpacing: '0.02em',
-    textAlign: 'center',
-    whiteSpace: 'nowrap',
-    pointerEvents: 'none',
-    textShadow: '0 1px 0 rgba(0,0,0,0.7)',
-  });
-  syncSkyChip();
-
-  const zoomBar = document.createElement('div');
-  Object.assign(zoomBar.style, {
-    display: 'flex',
-    gap: '4px',
-    justifyContent: 'center',
-    pointerEvents: 'auto',
-  });
-  zoomBar.appendChild(makeZoomBtn('\u2212', 1 / 1.2)); // zoom out
-  zoomBar.appendChild(makeZoomBtn('+', 1.2));           // zoom in
-
-  const zoomHud = document.createElement('div');
-  Object.assign(zoomHud.style, {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '3px',
-    marginTop: '4px',
-    pointerEvents: 'auto',
-  });
-  zoomHud.appendChild(zoomBar);
-  zoomHud.appendChild(moonPhaseEl);
+  zoomHud.appendChild(makeZoomBtn('\u2212', 1 / 1.2)); // zoom out
+  zoomHud.appendChild(zoomValue);
+  zoomHud.appendChild(makeZoomBtn('+', 1.2));           // zoom in
+  syncZoomLabel();
+  worldControls.appendChild(moonPhaseEl);
+  worldControls.appendChild(zoomHud);
 
   // Active effects HUD: vertical stack below the gauge on the right side.
   // Effects HUD — anchored top-left, horizontal flex row across the top.
@@ -510,11 +547,11 @@ export function initHUD() {
   effectsHud.appendChild(statusRow);
   effectsHud.appendChild(questRow);
   effectsHud.appendChild(affixRow);
+  topRightHud.appendChild(worldControls);
   topRightHud.appendChild(vitals);
-  topRightHud.appendChild(zoomHud);
   root.appendChild(topRightHud);
   root.appendChild(effectsHud);
-  vitalsGauge.draw();
+  vitalsBars.draw();
 
   // Help button — desktop only, top-left corner
   const helpBtn = document.createElement('button');
@@ -1254,18 +1291,20 @@ export function initHUD() {
     const e = ev;
     const nextMoonEmoji = String(e?.detail?.moonEmoji || '').trim();
     const nextMoonLabel = String(e?.detail?.moonLabel || '').trim();
+    const nextPhase = String(e?.detail?.phase || '').trim();
     if (nextMoonEmoji) moonEmoji = nextMoonEmoji;
     if (nextMoonLabel) moonLabel = nextMoonLabel;
+    if (nextPhase) phaseLabel = formatDayPhase(nextPhase);
     syncSkyChip();
   });
 
   window.addEventListener('ui:updateTurn', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
-    const nextClockEmoji = String(e?.detail?.clockEmoji || '').trim();
     const nextClockLabel = String(e?.detail?.clockLabel || '').trim();
-    if (nextClockEmoji) clockEmoji = nextClockEmoji;
     if (nextClockLabel) clockLabel = nextClockLabel;
+    const nextPhase = String(e?.detail?.phase || '').trim();
+    if (nextPhase) phaseLabel = formatDayPhase(nextPhase);
     syncSkyChip();
   });
 

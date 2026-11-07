@@ -143,7 +143,7 @@ export const GUIDANCE_TIPS = [
   // ── Combat ────────────────────────────────────────────────────────
   {
     id: "first_combat",
-    text: "An enemy! Walk into it to attack. Watch your HP in the top-right gauge.",
+    text: "An enemy! Walk into it to attack. Watch your health in the largest top-right vitals bar.",
     durationSec: 5,
     delaySec: 0.3,
     flyTo: "enemy",
