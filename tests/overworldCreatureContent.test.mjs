@@ -105,7 +105,7 @@ Deno.test("poison_spit applies poison instead of weakened acid", () => {
   assert(!effects.some((e) => e.key === "weakened"), "poison_spit should not reuse acid_spit's weakened payload");
 });
 
-Deno.test("bog_curse applies cursed and slowed", () => {
+Deno.test("bog_curse applies one authored effect identity", () => {
   setupFloorTiles();
   const world = new World({ seed: 93 });
   const witch = makeActor(world, "enemy", 4, 4);
@@ -114,6 +114,7 @@ Deno.test("bog_curse applies cursed and slowed", () => {
   runSpellScript(world, witch, SPELL_DEFS.bog_curse, { targetId: player, x: 7, y: 4 });
 
   const effects = world.get(player, ActiveEffects)?.effects || [];
-  assert(effects.some((e) => e.key === "cursed"), "bog_curse should curse its target");
-  assert(effects.some((e) => e.key === "slowed"), "bog_curse should slow its target");
+  assert(effects.some((e) => e.key === "bog_curse"), "bog_curse should apply its authored effect");
+  assert(!effects.some((e) => e.key === "cursed"), "bog_curse should not project cursed");
+  assert(!effects.some((e) => e.key === "slowed"), "bog_curse should not project slowed");
 });

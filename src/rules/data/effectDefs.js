@@ -129,6 +129,20 @@ export const EFFECT_DEFS = [
     description: "Slowed. Movement reduced.",
   },
   {
+    id: "bog_curse",
+    keys: ["bog_curse"],
+    operation: "none",
+    statuses: [],
+    description: "Bog Curse. Luck, defense, and footing are dragged into the mud.",
+  },
+  {
+    id: "divine_shield",
+    keys: ["divine_shield"],
+    operation: "none",
+    statuses: [],
+    description: "Divine Shield. A breakable holy ward hardens and guards its bearer.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

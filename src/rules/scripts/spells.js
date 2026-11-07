@@ -2923,17 +2923,9 @@ REGISTRY['bog_curse'] = function bogCurseScript(world, actor, spell, _intent) {
   const ae = ensureActiveEffects(world, targetId);
   if (ae?.effects) {
     upsertTimedEffect(ae.effects, {
-      key: 'cursed',
+      key: 'bog_curse',
       turnsLeft: curseTurns,
       potency: cursePotency,
-      stacks: 1,
-      startedAtTurn: world.step,
-      sourceId: actor,
-    });
-    upsertTimedEffect(ae.effects, {
-      key: 'slowed',
-      turnsLeft: 2,
-      potency: 1,
       stacks: 1,
       startedAtTurn: world.step,
       sourceId: actor,
@@ -4368,13 +4360,12 @@ REGISTRY['divine_shield'] = function divineShieldScript(world, actor, _spell, _i
 
   const DURATION = 20;
   upsertTimedEffect(ae.effects, {
-    key: 'stoneskin', turnsLeft: DURATION, potency: 3, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'shield_guard', turnsLeft: DURATION, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'bless', turnsLeft: DURATION, potency: 1, stacks: 1, sourceId: actor,
+    key: 'divine_shield',
+    turnsLeft: DURATION,
+    potency: 3,
+    stacks: 1,
+    sourceId: actor,
+    meta: { guardStacks: 2, maxGuardStacks: 2, blessed: true },
   });
 
   world.emit('spell:divine_shield', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });

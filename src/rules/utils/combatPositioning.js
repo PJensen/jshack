@@ -1,4 +1,5 @@
 import { Equipment } from "../components/Equipment.js";
+import { effectStrength } from "./statusFacade.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { Position } from "../components/Position.js";
 import { getNormalizedEntityFacing } from "./facing.js";
@@ -85,6 +86,6 @@ export function getShieldArcMultiplier(world, attackerId, defenderId, damageType
   if (relation !== POSITION_RELATIONS.front) return 1;
   const type = normalizeDamageType(damageType);
   if (type !== "physical" && type !== "blunt" && type !== "slash" && type !== "pierce") return 1;
-  if (!hasOffhandShield(world, defenderId)) return 1;
+  if (!hasOffhandShield(world, defenderId) && effectStrength(world, defenderId, "divine_shield") <= 0) return 1;
   return 0.8;
 }

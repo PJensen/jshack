@@ -733,8 +733,7 @@ export const SPELL_DEFS = {
     targeting: 'auto',
     description: 'A marsh hex that drags luck, defense, and footing into the mud.',
     effects: [
-      { kind: 'status', status: 'cursed', duration: '6 turns' },
-      { kind: 'status', status: 'slowed', duration: '2 turns' },
+      { kind: 'effect', effect: 'bog_curse', duration: '6-10 turns' },
     ],
   },
   lifetap: {
@@ -1085,9 +1084,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'Wrap yourself in Seraphine\'s light — a holy shell that absorbs blows before shattering.',
     effects: [
-      { kind: 'status', status: 'stoneskin', duration: '20 turns' },
-      { kind: 'status', status: 'shield_guard', duration: '20 turns' },
-      { kind: 'status', status: 'blessed', duration: '20 turns' },
+      { kind: 'effect', effect: 'divine_shield', duration: '20 turns' },
     ],
   },
   consecrate: {

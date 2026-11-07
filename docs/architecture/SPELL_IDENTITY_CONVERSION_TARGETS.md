@@ -27,12 +27,12 @@ bundle of whichever existing statuses happen to approximate the design.
 | Primal Roar | `berserk` + `battle_fury` + nearby `stagger` | `primal_roar`, with a short roar response for hostiles | pilot complete |
 | Harmony Ward | four elemental resistance timers | `harmony_ward`, projecting the four resistances | pilot complete |
 | Shadow Veil | `invisible` + `phase_shift` + `shadow_cloak` + vision envelope | one veil state with explicit concealment, phase, ambush, and perception rules | next design pass |
-| Divine Shield | `stoneskin` + `shield_guard` + `blessed` | one shield identity, with guard state treated as an independent breakable sub-state only if needed | design needed |
+| Divine Shield | `stoneskin` + `shield_guard` + `blessed` | `divine_shield`, with guard stacks and broken cooldown owned as metadata | converted |
 | Barkskin | `stoneskin` + `thorns` + `regen` | one barkskin identity with defense, retaliation, and recovery rules | design needed |
 | Verdant Ward | `regen` + `stoneskin` + vision envelope | one ward identity with authored healing/defense/perception behavior | design needed |
 | Quicken | `crit_boost` + `battle_fury` + stamina restoration | one acceleration identity with a defined resource cadence | design needed |
 | Iron Flesh | `stoneskin` + `slowed` + `thorns` | one heavy-body identity with explicit tradeoff and retaliation | design needed |
-| Bog Curse | `cursed` + `slowed` | one curse identity with authored footing/luck consequences | design needed |
+| Bog Curse | `cursed` + `slowed` | `bog_curse`, with authored combat penalty and footing drag | converted |
 | Frost Nova | `frost` + `rooted` plus damage | one freezing control identity; decide whether root is intrinsic or a projected response | design needed |
 | Gaze Beam | `stun` + `mindwipe` | one psychic beam identity with channel completion state | design needed |
 | Consecrate | persistent hazard + caster `regen` | one consecration field identity with caster benefit derived from the field | design needed |
@@ -61,6 +61,12 @@ bundle of whichever existing statuses happen to approximate the design.
 - Projection alone is not enough for a clean disposition. Healing, retaliation,
   resource cadence, resistances, and breakable shields need explicit
   spell-owned mechanics and deliberate query surfaces.
+- A breakable spell defense can remain one active effect when its guard stacks
+  and recovery window live in effect metadata; equipment shield guard remains a
+  separate mechanic because it has a different source and lifecycle.
+- A converted effect does not need to project a generic status to be useful:
+  `bog_curse` feeds combat and movement directly while unrelated `cursed` and
+  `slowed` sources continue to use their generic mechanics.
 - The active-effect row, spell event, message, VFX, and audio should converge on
   the spell-owned name. The old component statuses should disappear from the
   converted spell's implementation and presentation.

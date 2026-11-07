@@ -378,6 +378,13 @@ export function effectSystem(world, dt = 1) {
             const key = String(e.key || '').toLowerCase();
             const def = EFFECTS_BY_KEY[key];
 
+            if (key === 'divine_shield' && e.meta && typeof e.meta === 'object') {
+                e.meta.guardBrokenTurns = Math.max(0, Number(e.meta.guardBrokenTurns || 0) - 1);
+                if (e.meta.guardBrokenTurns === 0 && Number(e.meta.guardStacks || 0) <= 0) {
+                    e.meta.guardStacks = Math.max(1, Number(e.meta.maxGuardStacks || 2));
+                }
+            }
+
             if (def) {
                 const operations = Array.isArray(def.operations) && def.operations.length > 0 ? def.operations : [def.operation];
                 for (let oi = 0; oi < operations.length; oi++) {

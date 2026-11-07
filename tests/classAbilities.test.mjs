@@ -14,12 +14,14 @@ import { Vitality } from "../src/rules/components/Vitality.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Equipment } from "../src/rules/components/Equipment.js";
 import { ItemInfo } from "../src/rules/components/ItemInfo.js";
+import { Facing } from "../src/rules/components/Facing.js";
 import { AggroState, AGGRO_LEVELS } from "../src/rules/components/AggroState.js";
 import { getEffectiveVisionRange } from "../src/rules/utils/blind.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { DungeonState } from "../src/rules/components/DungeonState.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
+import { dealDamage } from "../src/rules/utils/dealDamage.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -217,21 +219,40 @@ Deno.test("purify with no negative effects removes nothing", () => {
 
 // ─── Divine Shield ──────────────────────────────────────────────────────────
 
-Deno.test("divine_shield applies stoneskin, shield_guard, and blessed", () => {
+Deno.test("divine_shield applies one authored breakable ward", () => {
   const world = makeWorld();
   const caster = makeCaster(world, 5, 5);
 
   runSpellScript(world, caster, SPELL_DEFS.divine_shield, {});
 
   const keys = effectKeys(world, caster);
-  assert(keys.includes('stoneskin'), 'should apply stoneskin');
-  assert(keys.includes('shield_guard'), 'should apply shield_guard');
-  assert(keys.includes('bless'), 'should apply blessed');
+  assert(keys.includes('divine_shield'), 'should apply divine_shield');
+  assertEquals(keys.length, 1, 'divine_shield should not fan out into status rows');
 
   const ae = world.get(caster, ActiveEffects);
-  const skin = ae.effects.find((e) => e?.key === 'stoneskin');
-  assertEquals(skin.turnsLeft, 20);
-  assertEquals(skin.potency, 3, 'divine_shield stoneskin should be potency 3');
+  const ward = ae.effects.find((e) => e?.key === 'divine_shield');
+  assertEquals(ward.turnsLeft, 20);
+  assertEquals(ward.potency, 3, 'divine_shield ward should retain its hardening potency');
+  assertEquals(ward.meta.guardStacks, 2, 'divine_shield should start with two guard stacks');
+});
+
+Deno.test("divine_shield guard is breakable without creating shield status rows", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const attacker = makeEnemy(world, 5, 4);
+  world.add(caster, Facing, { dx: 0, dy: -1 });
+  runSpellScript(world, caster, SPELL_DEFS.divine_shield, {});
+
+  const before = world.get(caster, Vitality).hp;
+  dealDamage(world, { target: caster, source: attacker, amount: 10, type: 'physical', cause: 'test' });
+  const ward = world.get(caster, ActiveEffects).effects.find((e) => e?.key === 'divine_shield');
+  assertEquals(world.get(caster, Vitality).hp, before - 8, 'front hit should be mitigated by the ward');
+  assertEquals(ward.meta.guardStacks, 1);
+
+  dealDamage(world, { target: caster, source: attacker, amount: 10, type: 'physical', cause: 'test' });
+  assertEquals(ward.meta.guardStacks, 0);
+  assertEquals(ward.meta.guardBrokenTurns, 4);
+  assertEquals(effectKeys(world, caster).filter((key) => key === 'divine_shield').length, 1);
 });
 
 // ─── Consecrate ─────────────────────────────────────────────────────────────
