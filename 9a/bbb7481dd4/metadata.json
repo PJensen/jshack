@@ -1,0 +1,19 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "9abbb7481dd4",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/9a/bbb7481dd4/0/metadata.json",
+      "transcript": "/9a/bbb7481dd4/0/full.jsonl",
+      "compact_transcript": "/9a/bbb7481dd4/0/transcript.jsonl",
+      "content_hash": "/9a/bbb7481dd4/0/content_hash.txt",
+      "prompt": ""
+    }
+  ]
+}
