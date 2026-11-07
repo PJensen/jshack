@@ -2914,16 +2914,18 @@ REGISTRY['bog_curse'] = function bogCurseScript(world, actor, spell, _intent) {
     return;
   }
 
+  const active = spell?.activeEffect || {};
   const intBonus = getSpellIntelligenceBonus(world, actor);
-  const curseTurns = Math.min(10, 6 + Math.floor(intBonus / 5));
-  const cursePotency = 1 + Math.floor(intBonus / 10);
+  const baseDuration = Math.max(1, Number(active.duration || 6) | 0);
+  const curseTurns = Math.min(10, baseDuration + Math.floor(intBonus / 5));
+  const cursePotency = Number(active.potency ?? 1) + Math.floor(intBonus / 10);
   const ae = ensureActiveEffects(world, targetId);
   if (ae?.effects) {
     upsertTimedEffect(ae.effects, {
-      key: 'bog_curse',
+      key: spell?.id || 'bog_curse',
       turnsLeft: curseTurns,
       potency: cursePotency,
-      stacks: 1,
+      stacks: Number(active.stacks ?? 1),
       startedAtTurn: world.step,
       sourceId: actor,
     });
@@ -3598,18 +3600,20 @@ REGISTRY['harmony_ward'] = function harmonyWardScript(world, actor, spell, _inte
   });
 };
 
-REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, _spell, _intent) {
+REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 45;
+  const active = spell?.activeEffect || {};
+  const mechanics = active.mechanics || {};
+  const DURATION = Math.max(1, Number(active.duration || 45) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'shadow_veil',
+    key: spell?.id || 'shadow_veil',
     turnsLeft: DURATION,
-    potency: 1,
-    stacks: 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
   });
 
@@ -3620,11 +3624,11 @@ REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, _spell, _inten
       ambushReady: true,
       rearmTurns: 0,
       visionStart: startVision,
-      visionTo: startVision + 3,
+      visionTo: startVision + Number(mechanics.visionBonus ?? 3),
       visionEnd: startVision,
-      visionRampIn: 2,
-      visionHold: 35,
-      visionRampOut: 8,
+      visionRampIn: Number(mechanics.visionRampIn ?? 2),
+      visionHold: Number(mechanics.visionHold ?? 35),
+      visionRampOut: Number(mechanics.visionRampOut ?? 8),
     };
   }
 

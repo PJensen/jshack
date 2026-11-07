@@ -172,6 +172,28 @@ Deno.test("shadow_veil applies one authored stealth identity", () => {
   assert(events.length === 1, "shadow_veil should emit spell event");
 });
 
+Deno.test("shadow_veil reads its active mechanics from the spell definition", () => {
+  const world = new World({ seed: 42 });
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.shadow_veil,
+    activeEffect: {
+      duration: 12,
+      potency: 3,
+      stacks: 2,
+      capabilities: ['concealed', 'phase_shift'],
+      mechanics: { visionBonus: 5, visionRampIn: 1, visionHold: 8, visionRampOut: 3 },
+    },
+  }, {});
+
+  const veil = world.get(caster, ActiveEffects).effects[0];
+  assertEquals(veil.turnsLeft, 12);
+  assertEquals(veil.potency, 3);
+  assertEquals(veil.stacks, 2);
+  assertEquals(veil.meta.visionTo - veil.meta.visionStart, 5);
+  assertEquals(veil.meta.visionHold, 8);
+});
+
 Deno.test("blind spell applies immediate blackout to target vision", () => {
   const world = new World({ seed: 13 });
   const caster = makeCaster(world, 5, 5);

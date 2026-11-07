@@ -118,3 +118,20 @@ Deno.test("bog_curse applies one authored effect identity", () => {
   assert(!effects.some((e) => e.key === "cursed"), "bog_curse should not project cursed");
   assert(!effects.some((e) => e.key === "slowed"), "bog_curse should not project slowed");
 });
+
+Deno.test("bog_curse reads its base mechanics from the spell definition", () => {
+  setupFloorTiles();
+  const world = new World({ seed: 94 });
+  const witch = makeActor(world, "enemy", 4, 4);
+  const player = makeActor(world, "player", 7, 4);
+
+  runSpellScript(world, witch, {
+    ...SPELL_DEFS.bog_curse,
+    activeEffect: { duration: 3, potency: 4, stacks: 2, capabilities: ['cursed', 'slowed'] },
+  }, { targetId: player, x: 7, y: 4 });
+
+  const effect = world.get(player, ActiveEffects)?.effects.find((e) => e.key === 'bog_curse');
+  assertEquals(effect.turnsLeft, 3);
+  assertEquals(effect.potency, 4);
+  assertEquals(effect.stacks, 2);
+});

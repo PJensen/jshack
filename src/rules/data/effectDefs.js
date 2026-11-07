@@ -35,6 +35,7 @@ export const EFFECT_DEFS = [
     keys: ["invisible", "invisibility"],
     operation: "none",
     statuses: ["invisible"],
+    capabilities: ["concealed"],
     description: "Invisible. Enemies cannot see you.",
   },
   {
@@ -132,22 +133,6 @@ export const EFFECT_DEFS = [
     statuses: ["slowed"],
     capabilities: ["slowed"],
     description: "Slowed. Movement reduced.",
-  },
-  {
-    id: "bog_curse",
-    keys: ["bog_curse"],
-    operation: "none",
-    statuses: [],
-    capabilities: ["cursed", "slowed"],
-    description: "Bog Curse. Luck, defense, and footing are dragged into the mud.",
-  },
-  {
-    id: "shadow_veil",
-    keys: ["shadow_veil"],
-    operation: "none",
-    statuses: [],
-    capabilities: ["concealed", "phase_shift"],
-    description: "Shadow Veil. Dusk hides the bearer, bends attacks, and primes an ambush.",
   },
   {
     id: "frost_nova",

@@ -740,9 +740,15 @@ export const SPELL_DEFS = {
     range: 6,
     script: 'bog_curse',
     targeting: 'auto',
+    activeEffect: {
+      duration: 6,
+      potency: 1,
+      stacks: 1,
+      capabilities: ['cursed', 'slowed'],
+    },
     description: 'A marsh hex that drags luck, defense, and footing into the mud.',
     effects: [
-      { kind: 'effect', effect: 'bog_curse', duration: '6-10 turns' },
+      { kind: 'effect', effect: 'bog_curse', note: 'curse, drag, and bad footing; duration scales with intelligence' },
     ],
   },
   lifetap: {
@@ -857,9 +863,16 @@ export const SPELL_DEFS = {
     cooldown: 10,
     script: 'shadow_veil',
     targeting: 'self',
+    activeEffect: {
+      duration: 45,
+      potency: 1,
+      stacks: 1,
+      capabilities: ['concealed', 'phase_shift'],
+      mechanics: { visionBonus: 3, visionRampIn: 2, visionHold: 35, visionRampOut: 8 },
+    },
     description: 'A slit of dusk wraps your outline, making you invisible and hard to pin down.',
     effects: [
-      { kind: 'effect', effect: 'shadow_veil', duration: '45 turns (concealment, phase, ambush, perception)' },
+      { kind: 'effect', effect: 'shadow_veil', note: 'concealment, phase, ambush, perception' },
     ],
   },
   rampage: {
