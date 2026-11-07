@@ -1362,9 +1362,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'Your skin hardens into gnarled bark. Thorns sprout from your flesh, punishing those who strike you.',
     effects: [
-      { kind: 'status', status: 'stoneskin', duration: '20 turns (+2 AC)' },
-      { kind: 'status', status: 'thorns', duration: '20 turns (attackers take 1-3 nature damage)' },
-      { kind: 'status', status: 'regen', duration: '20 turns (slow HP regen)' },
+      { kind: 'effect', effect: 'barkskin', duration: '20 turns (+2 AC, recovery, retaliation)' },
     ],
   },
   quicken: {

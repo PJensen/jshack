@@ -133,6 +133,7 @@ const DISPLAY_STATUS_TAGS = new Set([
 	'divine_shield',
 	'iron_flesh',
 	'quicken',
+	'barkskin',
 	'blessed',
 	'mindwiped',
 	'stoneskin',

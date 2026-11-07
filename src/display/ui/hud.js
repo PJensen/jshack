@@ -1810,6 +1810,7 @@ function ensureEffectsStack(container) {
     divine_shield:{ name: 'Divine Shield', glyph: '\u{1F6E1}\uFE0F', hue: 50 },
     iron_flesh:   { name: 'Iron Flesh', glyph: '\u{1F4AA}', hue: 210 },
     quicken:      { name: 'Quicken', glyph: '\u26A1', hue: 60 },
+    barkskin:     { name: 'Barkskin', glyph: '\u{1F333}', hue: 120 },
     blessed:      { name: 'Blessed',   glyph: '\u{1F31F}',       hue: 50  },
     stoneskin:    { name: 'Stoneskin', glyph: '\u{1FAA8}',       hue: 220 },
     taunted:      { name: 'Taunted',   glyph: '\u{1F624}',       hue: 0   },

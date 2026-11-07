@@ -4526,13 +4526,12 @@ REGISTRY['barkskin'] = function barkskinScript(world, actor, _spell, _intent) {
 
   const DURATION = 20;
   upsertTimedEffect(ae.effects, {
-    key: 'stoneskin', turnsLeft: DURATION + 1, potency: 2, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'thorns', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'regen', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
+    key: 'barkskin',
+    turnsLeft: DURATION + 1,
+    potency: 2,
+    stacks: 1,
+    sourceId: actor,
+    meta: { recoilDamage: 1, tickHeal: 1 },
   });
 
   world.emit('spell:barkskin', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });

@@ -157,6 +157,13 @@ export const EFFECT_DEFS = [
     description: "Quicken. Adrenaline sharpens attacks and restores stamina each turn.",
   },
   {
+    id: "barkskin",
+    keys: ["barkskin"],
+    operation: "none",
+    statuses: [],
+    description: "Barkskin. Living bark hardens, heals, and punishes blows.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

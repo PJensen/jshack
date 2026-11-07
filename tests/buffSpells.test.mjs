@@ -11,6 +11,7 @@ import { getEffectiveVisionRange } from "../src/rules/utils/blind.js";
 import { effectStrength, statusStrength } from "../src/rules/utils/statusFacade.js";
 import { Resistances } from "../src/rules/components/Resistences.js";
 import { resolveResistance } from "../src/rules/utils/dealDamage.js";
+import { effectSystem } from "../src/rules/systems/effectSystem.js";
 
 function makeCaster(world, x = 5, y = 5) {
   const id = world.create();
@@ -29,6 +30,23 @@ Deno.test("buff spell defs expose requested glyphs", () => {
   assertEquals(SPELL_DEFS.verdant_ward.symbol, "\u2042");
   assertEquals(SPELL_DEFS.harmony_ward.symbol, "\u262F");
   assertEquals(SPELL_DEFS.shadow_veil.symbol, "\u2307");
+});
+
+Deno.test("barkskin applies one authored defensive identity", () => {
+  const world = new World({ seed: 0xBA7 });
+  const caster = makeCaster(world);
+  world.add(caster, Vitality, { maxHp: 20, hp: 10 });
+
+  runSpellScript(world, caster, SPELL_DEFS.barkskin, {});
+
+  const keys = effectKeys(world, caster);
+  assertEquals(keys, ["barkskin"]);
+  const effect = world.get(caster, ActiveEffects).effects[0];
+  assertEquals(effect.potency, 2);
+  assertEquals(effect.meta.recoilDamage, 1);
+  assertEquals(effect.meta.tickHeal, 1);
+  effectSystem(world, 1);
+  assertEquals(world.get(caster, Vitality).hp, 11, "barkskin should recover one HP per tick");
 });
 
 Deno.test("verdant_ward applies long regen, stoneskin, and vision stat envelope", () => {

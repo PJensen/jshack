@@ -436,14 +436,16 @@ export function dealDamage(world, spec) {
   // Iron Flesh owns its recoil mechanic rather than projecting a generic
   // thorns status. Suppress the recursive trigger path on the recoil hit.
   if (!spec.noTrigger && source > 0 && world.isAlive(source) && type === 'physical') {
-    const recoil = activeEffectMetaValue(world, target, 'iron_flesh', 'recoilDamage');
+    const ironRecoil = activeEffectMetaValue(world, target, 'iron_flesh', 'recoilDamage');
+    const barkRecoil = activeEffectMetaValue(world, target, 'barkskin', 'recoilDamage');
+    const recoil = Math.max(ironRecoil, barkRecoil);
     if (recoil > 0) {
       dealDamage(world, {
         target: source,
         amount: recoil,
         source: target,
         type: 'nature',
-        cause: 'iron_flesh:recoil',
+        cause: ironRecoil >= barkRecoil ? 'iron_flesh:recoil' : 'barkskin:recoil',
         bypassResist: true,
         noTrigger: true,
       });

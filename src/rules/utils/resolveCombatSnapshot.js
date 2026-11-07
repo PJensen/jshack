@@ -89,7 +89,8 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     blessed: statusStrength(world, id, "blessed") + (effectStrength(world, id, "divine_shield") > 0 ? 1 : 0),
     stoneskin: statusStrength(world, id, "stoneskin")
       + effectStrength(world, id, "divine_shield")
-      + effectStrength(world, id, "iron_flesh"),
+      + effectStrength(world, id, "iron_flesh")
+      + effectStrength(world, id, "barkskin"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
     berserk: statusStrength(world, id, "berserk"),
     primal_roar: effectStrength(world, id, "primal_roar"),

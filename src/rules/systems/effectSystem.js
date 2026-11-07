@@ -385,6 +385,15 @@ export function effectSystem(world, dt = 1) {
                 }
             }
 
+            if (key === 'barkskin' && e.meta && Number(e.meta.tickHeal || 0) > 0) {
+                applyHealing(world, {
+                    target: id,
+                    amount: Number(e.meta.tickHeal || 0) * stacks,
+                    source: id,
+                    cause: 'barkskin:recovery',
+                });
+            }
+
             if (def) {
                 const operations = Array.isArray(def.operations) && def.operations.length > 0 ? def.operations : [def.operation];
                 for (let oi = 0; oi < operations.length; oi++) {

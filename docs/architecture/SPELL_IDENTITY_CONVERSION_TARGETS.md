@@ -29,7 +29,7 @@ bundle of whichever existing statuses happen to approximate the design.
 | Shadow Veil | `invisible` + `phase_shift` + `shadow_cloak` + vision envelope | one veil state with explicit concealment, phase, ambush, and perception rules | next design pass |
 | Divine Shield | `stoneskin` + `shield_guard` + `blessed` | `divine_shield`, with guard stacks and broken cooldown owned as metadata | converted |
 | Iron Flesh | `stoneskin` + `slowed` + `thorns` | `iron_flesh`, with direct defense, movement, and recoil mechanics | converted |
-| Barkskin | `stoneskin` + `thorns` + `regen` | one barkskin identity with defense, retaliation, and recovery rules | design needed |
+| Barkskin | `stoneskin` + `thorns` + `regen` | `barkskin`, with direct defense, retaliation, and recovery rules | converted |
 | Verdant Ward | `regen` + `stoneskin` + vision envelope | one ward identity with authored healing/defense/perception behavior | design needed |
 | Quicken | `crit_boost` + `battle_fury` + stamina restoration | `quicken`, with direct combat modifiers and a timed stamina cadence | converted |
 | Iron Flesh | `stoneskin` + `slowed` + `thorns` | one heavy-body identity with explicit tradeoff and retaliation | design needed |
