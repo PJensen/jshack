@@ -1862,12 +1862,13 @@ REGISTRY["mass_delirium"] = function massDeliriumScript(world, actor, spell, _in
     if (!(target > 0) || target === actor) return;
     const vit = world.get(target, Vitality);
     if (!vit || (vit.hp | 0) <= 0) return;
+    const active = spell?.activeEffect || {};
     applyStatusEffect(world, target, {
-      key: "confused",
+      key: spell?.id || "mass_delirium",
       turnsLeft: duration.turns,
       maxTurns: duration.turns,
-      potency: 1,
-      stacks: 1,
+      potency: Number(active.potency ?? 1),
+      stacks: Number(active.stacks ?? 1),
       startedAtTurn: world.step | 0,
       sourceId: actor,
       sourceKind: "scroll",

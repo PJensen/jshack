@@ -87,6 +87,13 @@ const EFFECT_KEY_TO_STATUSES = (() => {
       out.set(key, statuses);
     }
   }
+  for (const spell of Object.values(SPELL_DEFS)) {
+    const key = normalizeKey(spell?.id);
+    const statuses = Array.isArray(spell?.activeEffect?.statuses)
+      ? spell.activeEffect.statuses.map((value) => normalizeKey(value)).filter(Boolean)
+      : [];
+    if (key && statuses.length > 0) out.set(key, statuses);
+  }
   return out;
 })();
 

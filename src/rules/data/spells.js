@@ -17,6 +17,7 @@
  * @property {number} [potency]
  * @property {number} [stacks]
  * @property {string[]} [capabilities]
+ * @property {string[]} [statuses]
  * @property {Record<string, any>} [mechanics]
  */
 
@@ -135,10 +136,17 @@ export const SPELL_DEFS = {
     script: 'mass_delirium',
     targeting: 'self',
     radius: 32,
+    activeEffect: {
+      duration: 50,
+      potency: 1,
+      stacks: 1,
+      statuses: ['confused'],
+      capabilities: ['spell_impaired'],
+    },
     threat: { flatThreat: 3, threatKind: "spell_control", targetsField: "affectedIds" },
     description: 'Unspool a field of impossible syntax that leaves nearby minds stumbling over themselves.',
     effects: [
-      { kind: 'status', status: 'confused', duration: '50 turns; reader condition affects fumble risk, not power' },
+      { kind: 'effect', effect: 'mass_delirium', note: 'projects confused; reader condition affects duration, not power' },
       { kind: 'utility', note: 'Wide self-centered area; affects living creatures without changing faction loyalty' },
     ],
   },

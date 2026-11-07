@@ -75,7 +75,7 @@ Deno.test("scroll of mass delirium applies fixed-duration confusion in a wide ar
 
   assert(!world.isAlive(scroll), "scroll should be consumed");
   assertEquals(statusStrength(world, near, "confused"), 1);
-  assertEquals(effectDuration(world, near, "confused"), 50);
+  assertEquals(effectDuration(world, near, "mass_delirium"), 50);
   assertEquals(statusStrength(world, far, "confused"), 0);
   assertEquals(statusStrength(world, player, "confused"), 0, "successful read should not confuse reader");
   assertEquals(events[0]?.duration, 50);
