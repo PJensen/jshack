@@ -87,7 +87,9 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     weakened: statusStrength(world, id, "weakened"),
     cursed: statusStrength(world, id, "cursed") + effectStrength(world, id, "bog_curse"),
     blessed: statusStrength(world, id, "blessed") + (effectStrength(world, id, "divine_shield") > 0 ? 1 : 0),
-    stoneskin: statusStrength(world, id, "stoneskin") + effectStrength(world, id, "divine_shield"),
+    stoneskin: statusStrength(world, id, "stoneskin")
+      + effectStrength(world, id, "divine_shield")
+      + effectStrength(world, id, "iron_flesh"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
     berserk: statusStrength(world, id, "berserk"),
     primal_roar: effectStrength(world, id, "primal_roar"),
@@ -103,7 +105,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     ogre_bulk: statusStrength(world, id, "ogre_bulk"),
     shadow_cloak: statusStrength(world, id, "shadow_cloak"),
     dark_sight: statusStrength(world, id, "dark_sight"),
-    battle_fury: statusStrength(world, id, "battle_fury"),
+    battle_fury: statusStrength(world, id, "battle_fury") + (effectStrength(world, id, "quicken") > 0 ? 1 : 0),
     fey_grace: statusStrength(world, id, "fey_grace"),
     blinded: statusStrength(world, id, "blinded"),
     staggered: statusStrength(world, id, "staggered"),
@@ -263,7 +265,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     luck,
     critChance: critChance
       + (shadowAmbushActive ? 0.15 * statusTotals.shadow_cloak : 0)
-      + (statusTotals.crit_boost > 0 ? 0.15 : 0),
+      + ((statusTotals.crit_boost > 0 || effectStrength(world, id, "quicken") > 0) ? 0.15 : 0),
     critMult: critMult + (shadowAmbushActive ? 0.5 * statusTotals.shadow_cloak : 0),
     status: Object.freeze({ ...statusTotals }),
     posture: Object.freeze({

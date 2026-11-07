@@ -28,9 +28,10 @@ bundle of whichever existing statuses happen to approximate the design.
 | Harmony Ward | four elemental resistance timers | `harmony_ward`, projecting the four resistances | pilot complete |
 | Shadow Veil | `invisible` + `phase_shift` + `shadow_cloak` + vision envelope | one veil state with explicit concealment, phase, ambush, and perception rules | next design pass |
 | Divine Shield | `stoneskin` + `shield_guard` + `blessed` | `divine_shield`, with guard stacks and broken cooldown owned as metadata | converted |
+| Iron Flesh | `stoneskin` + `slowed` + `thorns` | `iron_flesh`, with direct defense, movement, and recoil mechanics | converted |
 | Barkskin | `stoneskin` + `thorns` + `regen` | one barkskin identity with defense, retaliation, and recovery rules | design needed |
 | Verdant Ward | `regen` + `stoneskin` + vision envelope | one ward identity with authored healing/defense/perception behavior | design needed |
-| Quicken | `crit_boost` + `battle_fury` + stamina restoration | one acceleration identity with a defined resource cadence | design needed |
+| Quicken | `crit_boost` + `battle_fury` + stamina restoration | `quicken`, with direct combat modifiers and a timed stamina cadence | converted |
 | Iron Flesh | `stoneskin` + `slowed` + `thorns` | one heavy-body identity with explicit tradeoff and retaliation | design needed |
 | Bog Curse | `cursed` + `slowed` | `bog_curse`, with authored combat penalty and footing drag | converted |
 | Frost Nova | `frost` + `rooted` plus damage | one freezing control identity; decide whether root is intrinsic or a projected response | design needed |

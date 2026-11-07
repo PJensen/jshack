@@ -143,6 +143,20 @@ export const EFFECT_DEFS = [
     description: "Divine Shield. A breakable holy ward hardens and guards its bearer.",
   },
   {
+    id: "iron_flesh",
+    keys: ["iron_flesh"],
+    operation: "none",
+    statuses: [],
+    description: "Iron Flesh. Living metal hardens the body, slows its bearer, and punishes blows.",
+  },
+  {
+    id: "quicken",
+    keys: ["quicken"],
+    operation: "stamina_restore",
+    statuses: [],
+    description: "Quicken. Adrenaline sharpens attacks and restores stamina each turn.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

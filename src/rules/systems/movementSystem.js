@@ -225,7 +225,9 @@ export function movementSystem(world) {
 
       // "Slowed" skips every Nth movement attempt (stacks+1 cadence).
       // 1 stack → move every 2nd attempt, 2 → every 3rd, 3 → every 4th.
-      const slowedStacks = Math.min(3, statusStrength(world, actor, "slowed") + effectStrength(world, actor, "bog_curse"));
+      const slowedStacks = Math.min(3, statusStrength(world, actor, "slowed")
+        + effectStrength(world, actor, "bog_curse")
+        + effectStrength(world, actor, "iron_flesh"));
       if (slowedStacks > 0) {
         const tick = (slowMoveTicks.get(actor) || 0) + 1;
         slowMoveTicks.set(actor, tick);

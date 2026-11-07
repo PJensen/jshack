@@ -11,6 +11,7 @@ import { Brain } from "../src/rules/components/Brain.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
+import { Stamina } from "../src/rules/components/Stamina.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Equipment } from "../src/rules/components/Equipment.js";
 import { ItemInfo } from "../src/rules/components/ItemInfo.js";
@@ -22,6 +23,7 @@ import { DungeonState } from "../src/rules/components/DungeonState.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { dealDamage } from "../src/rules/utils/dealDamage.js";
+import { effectSystem } from "../src/rules/systems/effectSystem.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -253,6 +255,29 @@ Deno.test("divine_shield guard is breakable without creating shield status rows"
   assertEquals(ward.meta.guardStacks, 0);
   assertEquals(ward.meta.guardBrokenTurns, 4);
   assertEquals(effectKeys(world, caster).filter((key) => key === 'divine_shield').length, 1);
+});
+
+Deno.test("iron_flesh owns its defense, drag, and recoil identity", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const attacker = makeEnemy(world, 5, 4);
+  runSpellScript(world, caster, SPELL_DEFS.iron_flesh, {});
+
+  assertEquals(effectKeys(world, caster), ['iron_flesh']);
+  const attackerHp = world.get(attacker, Vitality).hp;
+  dealDamage(world, { target: caster, source: attacker, amount: 3, type: 'physical', cause: 'test' });
+  assertEquals(world.get(attacker, Vitality).hp, attackerHp - 2, 'iron flesh should recoil through the damage pipeline');
+});
+
+Deno.test("quicken owns its combat identity and stamina cadence", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  world.add(caster, Stamina, { stamina: 10, maxStamina: 20, regenCooldown: 0 });
+  runSpellScript(world, caster, SPELL_DEFS.quicken, {});
+
+  assertEquals(effectKeys(world, caster), ['quicken']);
+  effectSystem(world, 1);
+  assertEquals(world.get(caster, Stamina).stamina, 15, 'quicken should restore five stamina per tick');
 });
 
 // ─── Consecrate ─────────────────────────────────────────────────────────────

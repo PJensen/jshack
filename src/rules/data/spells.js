@@ -1331,9 +1331,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'Harden your body into living iron. You become nearly immovable — tougher, but slower.',
     effects: [
-      { kind: 'status', status: 'stoneskin', duration: '15 turns (+4 AC)' },
-      { kind: 'status', status: 'slowed', duration: '15 turns (movement penalty)' },
-      { kind: 'utility', note: 'Melee attackers take 2 recoil damage' },
+      { kind: 'effect', effect: 'iron_flesh', duration: '15 turns (+4 AC, recoil, movement penalty)' },
     ],
   },
   ignite_weapons: {
@@ -1383,9 +1381,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'Flood your muscles with adrenaline. Everything slows down — except you.',
     effects: [
-      { kind: 'status', status: 'crit_boost', duration: '10 turns (+15% crit chance)' },
-      { kind: 'status', status: 'battle_fury', duration: '10 turns (+2 attack)' },
-      { kind: 'utility', note: 'Restores 5 stamina per turn for the duration' },
+      { kind: 'effect', effect: 'quicken', duration: '10 turns (+15% crit chance, +2 attack, stamina cadence)' },
     ],
   },
   mark_of_death: {

@@ -131,6 +131,8 @@ const DISPLAY_STATUS_TAGS = new Set([
 	'cursed',
 	'bog_curse',
 	'divine_shield',
+	'iron_flesh',
+	'quicken',
 	'blessed',
 	'mindwiped',
 	'stoneskin',

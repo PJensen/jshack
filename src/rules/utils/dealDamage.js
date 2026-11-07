@@ -111,6 +111,19 @@ function activeResistBonus(world, targetId, effectKey) {
   return total;
 }
 
+function activeEffectMetaValue(world, targetId, effectKey, field) {
+  const ae = world.get(targetId, ActiveEffects);
+  if (!ae || !Array.isArray(ae.effects)) return 0;
+  for (let i = 0; i < ae.effects.length; i++) {
+    const e = ae.effects[i];
+    if (!e || e.key !== effectKey) continue;
+    if (Number.isInteger(e.onsetLeft) && e.onsetLeft > 0) continue;
+    if (!((e.turnsLeft | 0) > 0)) continue;
+    return Math.max(0, Number(e.meta?.[field] || 0));
+  }
+  return 0;
+}
+
 // ── Resistance resolution ───────────────────────────────────────────
 
 /**
@@ -419,6 +432,23 @@ export function dealDamage(world, spec) {
     step: world.step | 0,
   });
   world.emit('damaged', damagedPayload);
+
+  // Iron Flesh owns its recoil mechanic rather than projecting a generic
+  // thorns status. Suppress the recursive trigger path on the recoil hit.
+  if (!spec.noTrigger && source > 0 && world.isAlive(source) && type === 'physical') {
+    const recoil = activeEffectMetaValue(world, target, 'iron_flesh', 'recoilDamage');
+    if (recoil > 0) {
+      dealDamage(world, {
+        target: source,
+        amount: recoil,
+        source: target,
+        type: 'nature',
+        cause: 'iron_flesh:recoil',
+        bypassResist: true,
+        noTrigger: true,
+      });
+    }
+  }
 
   if (!spec.noTrigger) {
     ensureEquippedAffixTopology(world, target);

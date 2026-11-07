@@ -4493,13 +4493,12 @@ REGISTRY['iron_flesh'] = function ironFleshScript(world, actor, _spell, _intent)
 
   const DURATION = 15;
   upsertTimedEffect(ae.effects, {
-    key: 'stoneskin', turnsLeft: DURATION + 1, potency: 4, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'slowed', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'thorns', turnsLeft: DURATION + 1, potency: 2, stacks: 1, sourceId: actor,
+    key: 'iron_flesh',
+    turnsLeft: DURATION + 1,
+    potency: 4,
+    stacks: 1,
+    sourceId: actor,
+    meta: { recoilDamage: 2 },
   });
 
   world.emit('spell:iron_flesh', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
@@ -4547,13 +4546,11 @@ REGISTRY['quicken'] = function quickenScript(world, actor, _spell, _intent) {
 
   const DURATION = 10;
   upsertTimedEffect(ae.effects, {
-    key: 'crit_boost', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'battle_fury', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'stamina_restore', turnsLeft: DURATION + 1, potency: 5, stacks: 1, sourceId: actor,
+    key: 'quicken',
+    turnsLeft: DURATION + 1,
+    potency: 5,
+    stacks: 1,
+    sourceId: actor,
   });
 
   world.emit('spell:quicken', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
