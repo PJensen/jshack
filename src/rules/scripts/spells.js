@@ -4300,16 +4300,22 @@ REGISTRY['cleave'] = function cleaveScript(world, actor, spell, _intent) {
   });
 };
 
-REGISTRY['bloodthirst'] = function bloodthirstScript(world, actor, _spell, _intent) {
+REGISTRY['bloodthirst'] = function bloodthirstScript(world, actor, spell, _intent) {
   const pos = world.get(actor, Position);
   if (!pos) return;
 
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 30;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 30) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'bloodthirst', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
+    key: spell?.id || 'bloodthirst',
+    turnsLeft: DURATION + 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
+    sourceId: actor,
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:bloodthirst', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });

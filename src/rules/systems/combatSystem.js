@@ -572,9 +572,12 @@ function resolveHitRoll(world, {
             }
             // Bloodthirst: heal attacker for 25% of melee damage dealt
             const _btAe = _fwAe || world.get(source, ActiveEffects);
-            const _hasBt = _btAe && Array.isArray(_btAe.effects) && _btAe.effects.some(e => e && e.key === 'bloodthirst' && (e.turnsLeft | 0) > 0);
-            if (result.amount > 0 && _hasBt) {
-                const healAmt = Math.max(1, Math.floor(result.amount * 0.25));
+            const _bt = _btAe && Array.isArray(_btAe.effects)
+                ? _btAe.effects.find(e => e && e.key === 'bloodthirst' && (e.turnsLeft | 0) > 0)
+                : null;
+            if (result.amount > 0 && _bt) {
+                const healFraction = Math.max(0, Number(_bt.meta?.healFraction ?? 0.25));
+                const healAmt = Math.max(1, Math.floor(result.amount * healFraction));
                 const healed = applyHealing(world, {
                     target: source,
                     amount: healAmt,

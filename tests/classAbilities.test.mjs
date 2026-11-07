@@ -25,6 +25,7 @@ import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constan
 import { dealDamage } from "../src/rules/utils/dealDamage.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
+import { statusStrength } from "../src/rules/utils/statusFacade.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -152,6 +153,21 @@ Deno.test("bloodthirst applies self-buff for 30 turns", () => {
   const ae = world.get(caster, ActiveEffects);
   const bt = ae.effects.find((e) => e?.key === 'bloodthirst');
   assertEquals(bt.turnsLeft, 31); // +1 for effectSystem tick
+});
+
+Deno.test("bloodthirst reads its recovery mechanics from the spell definition", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.bloodthirst,
+    activeEffect: { duration: 7, potency: 2, stacks: 3, mechanics: { healFraction: 0.5 } },
+  }, {});
+
+  const effect = world.get(caster, ActiveEffects).effects.find((e) => e?.key === 'bloodthirst');
+  assertEquals(effect.turnsLeft, 8);
+  assertEquals(effect.potency, 2);
+  assertEquals(effect.stacks, 3);
+  assertEquals(effect.meta.healFraction, 0.5);
 });
 
 Deno.test("bloodthirst emits spell event", () => {
@@ -332,6 +348,7 @@ Deno.test("ignite_weapons and mark_of_death own their spell identities", () => {
 
   runSpellScript(world, caster, SPELL_DEFS.mark_of_death, { targetId: enemy });
   assertEquals(effectKeys(world, enemy), ['mark_of_death']);
+  assertEquals(statusStrength(world, enemy, 'marked'), 0);
 });
 
 Deno.test("rampage owns its battle-fury identity", () => {

@@ -1103,9 +1103,15 @@ export const SPELL_DEFS = {
     cooldown: 18,
     script: 'bloodthirst',
     targeting: 'self',
+    activeEffect: {
+      duration: 30,
+      potency: 1,
+      stacks: 1,
+      mechanics: { healFraction: 0.25 },
+    },
     description: 'Offer your rage to Molkhar and feast on the pain you deal.',
     effects: [
-      { kind: 'status', status: 'bloodthirst', duration: '30 turns; melee hits heal for 25% of damage dealt' },
+      { kind: 'effect', effect: 'bloodthirst', note: 'melee hits heal for 25% of damage dealt' },
     ],
   },
 

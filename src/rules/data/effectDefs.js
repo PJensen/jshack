@@ -508,13 +508,6 @@ export const EFFECT_DEFS = [
     statuses: ["fey_grace"],
     description: "Fey grace. Movement enhanced, magic surging.",
   },
-  {
-    id: "bloodthirst",
-    keys: ["bloodthirst"],
-    operation: "none",
-    statuses: ["bloodthirst"],
-    description: "Bloodthirst. Healing from attacks.",
-  },
   // ── Buff / Rotation ability statuses ──────────────────────────────
   {
     id: "fire_weapon",
@@ -526,7 +519,7 @@ export const EFFECT_DEFS = [
   },
   {
     id: "marked",
-    keys: ["marked", "mark_of_death"],
+    keys: ["marked"],
     operation: "none",
     statuses: ["marked"],
     description: "Marked. Enemies track you more easily.",
