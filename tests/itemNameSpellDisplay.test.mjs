@@ -14,6 +14,7 @@ import "../src/content/items/pocketRelics.js";
 import "../src/content/items/fishingRod.js";
 import "../src/content/items/lodbrokSerpentBoundBreeches.js";
 import "../src/content/items/boots.js";
+import "../src/content/items/rangedWeapons.js";
 import "../src/content/items/weapons.js";
 import "../src/content/items/helms.js";
 import { installContent } from "../src/content/install.js";
@@ -125,6 +126,19 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
   assertEquals(bloodCirclet.mechanics, [
     { context: "Equip", text: "Spend 2 HP before each hit for +4 fire damage and restore 2 mana, then recover 2 HP on kill." },
   ]);
+});
+
+Deno.test("buildItemDisplayData does not repeat Mirror Bow package mechanics as proc nodes", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 183 });
+  const data = buildItemDisplayData(world, buildCatalogItem(world, "bow_mirror"));
+
+  assertEquals(data.mechanics, [
+    { context: "Equip", text: "Wall-adjacent hits refract into a nearby hostile as arcane backlash." },
+  ]);
+  assertEquals(data.procNodes, []);
+  assertEquals(data.detailLines, []);
 });
 
 Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {
