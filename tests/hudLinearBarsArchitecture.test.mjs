@@ -16,13 +16,13 @@ Deno.test("HUD uses the labeled linear vitals surface and keeps the vitals event
   assertStringIncludes(hud, "top: '84px'");
   assertStringIncludes(hud, "height: 'auto'");
   assertStringIncludes(hud, "top: '14px'");
-  assertStringIncludes(hud, "top: '222px'");
+  assertStringIncludes(hud, "top: '180px'");
   assertStringIncludes(hud, "questControl.textContent = '\\uD83D\\uDCDC  Quests'");
   assertStringIncludes(hud, "background: 'linear-gradient(180deg, rgba(10, 13, 18, 0.90) 0%, rgba(10, 9, 8, 0.62) 100%)'");
   assertStringIncludes(hud, "minHeight: '76px'");
   assertStringIncludes(hud, "background: 'linear-gradient(180deg, rgba(49,39,18,0.94) 0%, rgba(22,18,10,0.94) 100%)'");
   assertStringIncludes(hud, "statusHeaderLabel.textContent = 'Status Effects'");
-  assertStringIncludes(hud, "minHeight: '70px'");
+  assertStringIncludes(hud, "minHeight: '40px'");
   assertStringIncludes(bars, "label.textContent = def.label");
   assertStringIncludes(bars, "label: 'Health'");
   assertStringIncludes(bars, "label: 'Mana'");

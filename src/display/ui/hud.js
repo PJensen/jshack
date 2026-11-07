@@ -543,9 +543,9 @@ export function initHUD() {
     left: '16px',
     right: '16px',
     top: '120px',
-    display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px',
+    display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px',
     width: 'auto', maxWidth: 'none', boxSizing: 'border-box',
-    padding: '8px 10px 9px', borderRadius: UX_THEME.radius,
+    padding: '5px 8px', borderRadius: UX_THEME.radius,
     background: 'linear-gradient(180deg, rgba(10, 13, 18, 0.90) 0%, rgba(10, 9, 8, 0.62) 100%)',
     border: UX_THEME.surfaceBorderSoft,
     boxShadow: 'inset 0 0 0 1px rgba(188,206,224,0.04), 0 8px 18px rgba(0,0,0,0.28)',
@@ -562,7 +562,7 @@ export function initHUD() {
     marginBottom: '0',
     color: UX_THEME.textStrong,
     fontFamily: GAME_TEXT_FONT_FAMILY,
-    fontSize: 'clamp(18px, 3vw, 30px)',
+    fontSize: '14px',
     fontWeight: '800',
     lineHeight: '1',
     textShadow: '0 1px 2px rgba(0,0,0,0.9)',
@@ -583,7 +583,7 @@ export function initHUD() {
     flexWrap: 'nowrap',
     alignItems: 'flex-start',
     gap: '6px',
-    minHeight: '70px',
+    minHeight: '40px',
     flex: '1 1 auto',
     width: 'auto',
   });
@@ -599,7 +599,7 @@ export function initHUD() {
     position: 'fixed',
     left: '16px',
     right: '16px',
-    top: '222px',
+    top: '180px',
     maxWidth: '100%',
     boxSizing: 'border-box',
     pointerEvents: 'auto',
@@ -1937,7 +1937,7 @@ function ensureEffectsStack(container) {
 
   const hsla = (h, a = 0.2) => `hsla(${h} 80% 50% / ${a})`;
   const shadowColor = (h) => `hsl(${h} 55% 35%)`;
-  const VIS_SCALE = 1.2;
+  const VIS_SCALE = 0.66;
   const scaledPx = (px) => `${Math.max(1, Math.round(px * VIS_SCALE))}px`;
 
   function consumeBadgeInput(ev) {
