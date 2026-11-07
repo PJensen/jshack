@@ -2,13 +2,21 @@
 // Pure rules-side spell definitions. No visuals here.
 /**
  * @typedef {Object} SpellEffectDef
- * @property {'damage'|'status'|'movement'|'utility'} kind
+ * @property {'damage'|'status'|'effect'|'movement'|'utility'} kind
  * @property {string} [element]
  * @property {string} [amount]
  * @property {string} [status]
  * @property {string} [duration]
  * @property {string} [mode]
  * @property {string} [note]
+ */
+
+/**
+ * @typedef {Object} SpellActiveEffectDef
+ * @property {number} duration
+ * @property {number} [potency]
+ * @property {number} [stacks]
+ * @property {Record<string, any>} [mechanics]
  */
 
 /**
@@ -34,6 +42,7 @@
  * @property {number} [radius]
  * @property {number} [maxTargets]
  * @property {SpellEffectDef[]} [effects]
+ * @property {SpellActiveEffectDef} [activeEffect]
  * @property {string[]} [schools]           // spell schools, e.g. ['destruction'], ['destruction','trickery']
  * @property {boolean}  [clearMindedCasting] // true = resolves normally even when caster is confused
  * @property {number}   [cooldown]           // turns before the spell can be cast again (0 or omitted = no cooldown)
@@ -1075,6 +1084,12 @@ export const SPELL_DEFS = {
     cooldown: 16,
     script: 'divine_shield',
     targeting: 'self',
+    activeEffect: {
+      duration: 20,
+      potency: 3,
+      stacks: 1,
+      mechanics: { guardStacks: 2, maxGuardStacks: 2, blessed: true },
+    },
     description: 'Wrap yourself in Seraphine\'s light — a holy shell that absorbs blows before shattering.',
     effects: [
       { kind: 'effect', effect: 'divine_shield', duration: '20 turns' },
@@ -1353,6 +1368,12 @@ export const SPELL_DEFS = {
     cooldown: 18,
     script: 'barkskin',
     targeting: 'self',
+    activeEffect: {
+      duration: 20,
+      potency: 2,
+      stacks: 1,
+      mechanics: { recoilDamage: 1, tickHeal: 1 },
+    },
     description: 'Your skin hardens into gnarled bark. Thorns sprout from your flesh, punishing those who strike you.',
     effects: [
       { kind: 'effect', effect: 'barkskin', duration: '20 turns (+2 AC, recovery, retaliation)' },

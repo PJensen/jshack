@@ -142,13 +142,6 @@ export const EFFECT_DEFS = [
     description: "Bog Curse. Luck, defense, and footing are dragged into the mud.",
   },
   {
-    id: "divine_shield",
-    keys: ["divine_shield"],
-    operation: "none",
-    statuses: [],
-    description: "Divine Shield. A breakable holy ward hardens and guards its bearer.",
-  },
-  {
     id: "iron_flesh",
     keys: ["iron_flesh"],
     operation: "none",
@@ -162,13 +155,6 @@ export const EFFECT_DEFS = [
     operation: "stamina_restore",
     statuses: [],
     description: "Quicken. Adrenaline sharpens attacks and restores stamina each turn.",
-  },
-  {
-    id: "barkskin",
-    keys: ["barkskin"],
-    operation: "none",
-    statuses: [],
-    description: "Barkskin. Living bark hardens, heals, and punishes blows.",
   },
   {
     id: "shadow_veil",

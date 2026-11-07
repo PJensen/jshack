@@ -238,6 +238,27 @@ Deno.test("divine_shield applies one authored breakable ward", () => {
   assertEquals(ward.meta.guardStacks, 2, 'divine_shield should start with two guard stacks');
 });
 
+Deno.test("divine_shield reads guard mechanics from the spell definition", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.divine_shield,
+    activeEffect: {
+      duration: 9,
+      potency: 6,
+      stacks: 1,
+      mechanics: { guardStacks: 4, maxGuardStacks: 4, blessed: false },
+    },
+  }, {});
+
+  const ward = world.get(caster, ActiveEffects).effects.find((e) => e?.key === "divine_shield");
+  assertEquals(ward.turnsLeft, 9);
+  assertEquals(ward.potency, 6);
+  assertEquals(ward.meta.guardStacks, 4);
+  assertEquals(ward.meta.maxGuardStacks, 4);
+  assertEquals(ward.meta.blessed, false);
+});
+
 Deno.test("divine_shield guard is breakable without creating shield status rows", () => {
   const world = makeWorld();
   const caster = makeCaster(world, 5, 5);

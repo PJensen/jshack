@@ -49,6 +49,26 @@ Deno.test("barkskin applies one authored defensive identity", () => {
   assertEquals(world.get(caster, Vitality).hp, 11, "barkskin should recover one HP per tick");
 });
 
+Deno.test("barkskin reads its active mechanics from the spell definition", () => {
+  const world = new World({ seed: 0xBA8 });
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.barkskin,
+    activeEffect: {
+      duration: 7,
+      potency: 4,
+      stacks: 1,
+      mechanics: { recoilDamage: 3, tickHeal: 2 },
+    },
+  }, {});
+
+  const effect = world.get(caster, ActiveEffects).effects[0];
+  assertEquals(effect.turnsLeft, 8);
+  assertEquals(effect.potency, 4);
+  assertEquals(effect.meta.recoilDamage, 3);
+  assertEquals(effect.meta.tickHeal, 2);
+});
+
 Deno.test("verdant_ward applies one authored recovery and perception identity", () => {
   const world = new World({ seed: 0xC0FFEE });
   const caster = makeCaster(world);

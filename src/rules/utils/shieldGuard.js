@@ -71,10 +71,10 @@ function findEffect(effects, key) {
   return null;
 }
 
-function findActiveDivineShield(effects) {
+function findActiveBreakableGuard(effects) {
   for (let i = 0; i < effects.length; i++) {
     const effect = effects[i];
-    if (!effect || String(effect.key || "") !== DIVINE_SHIELD_KEY) continue;
+    if (!effect || !effect.meta || effect.meta.maxGuardStacks == null) continue;
     if (!isActiveTimedEffect(effect)) continue;
     const meta = effect.meta && typeof effect.meta === "object" ? effect.meta : null;
     if (toInt(meta?.guardBrokenTurns, 0) > 0) continue;
@@ -148,10 +148,10 @@ export function consumeShieldGuardStack(world, entityId, context = {}) {
   if (!(id > 0) || !world?.isAlive?.(id)) return { guarded: false, stacks: 0, broken: false };
   const ae = ensureShieldGuardState(world, id);
   if (!ae) return { guarded: false, stacks: 0, broken: false };
-  const guard = findEffect(ae.effects, SHIELD_GUARD_KEY) || findActiveDivineShield(ae.effects);
+  const guard = findEffect(ae.effects, SHIELD_GUARD_KEY) || findActiveBreakableGuard(ae.effects);
   if (!guard) return { guarded: false, stacks: 0, broken: false };
 
-  const divine = String(guard.key || "") === DIVINE_SHIELD_KEY;
+  const divine = guard.meta && guard.meta.maxGuardStacks != null;
   const currentStacks = divine
     ? toInt(guard.meta?.guardStacks, toInt(guard.meta?.maxGuardStacks, SHIELD_MAX_GUARD_STACKS))
     : toInt(guard.stacks, SHIELD_MAX_GUARD_STACKS);

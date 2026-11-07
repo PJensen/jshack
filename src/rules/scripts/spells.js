@@ -4322,20 +4322,21 @@ REGISTRY['purify'] = function purifyScript(world, actor, _spell, _intent) {
   world.emit('spell:purify', { actor, at: { x: pos.x, y: pos.y }, removed });
 };
 
-REGISTRY['divine_shield'] = function divineShieldScript(world, actor, _spell, _intent) {
+REGISTRY['divine_shield'] = function divineShieldScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 20;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 20) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'divine_shield',
+    key: spell?.id || 'divine_shield',
     turnsLeft: DURATION,
-    potency: 3,
-    stacks: 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
-    meta: { guardStacks: 2, maxGuardStacks: 2, blessed: true },
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:divine_shield', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
@@ -4490,20 +4491,21 @@ REGISTRY['ignite_weapons'] = function igniteWeaponsScript(world, actor, _spell, 
   world.emit('spell:ignite_weapons', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });
 };
 
-REGISTRY['barkskin'] = function barkskinScript(world, actor, _spell, _intent) {
+REGISTRY['barkskin'] = function barkskinScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 20;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 20) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'barkskin',
+    key: spell?.id || 'barkskin',
     turnsLeft: DURATION + 1,
-    potency: 2,
-    stacks: 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
-    meta: { recoilDamage: 1, tickHeal: 1 },
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:barkskin', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });

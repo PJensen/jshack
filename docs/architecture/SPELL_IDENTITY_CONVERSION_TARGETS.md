@@ -31,8 +31,14 @@ outcome, while retaining source-specific checks when the outcome's reason or
 mechanics differ (for example, reporting `asleep` separately from `stunned`).
 
 This keeps authored spell identities as the source of truth: a spell-owned
-effect contributes its capabilities directly through `effectDefs.js`; the
+effect contributes its capabilities through its authored definition; the
 facade does not maintain a parallel spell-to-capability alias registry.
+
+The co-location pilot extends that rule to unique persistent mechanics. A
+spell-owned effect's authored duration, potency, stack policy, and mechanics
+live under the spell's `activeEffect`; the script translates those values into
+the runtime effect instance. Runtime fields such as `meta`, remaining turns,
+and mutable guard stacks do not leak into the authored spell shape.
 
 ## Conversion targets
 
