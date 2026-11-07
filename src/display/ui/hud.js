@@ -521,9 +521,9 @@ export function initHUD() {
     top: 'calc(50px + env(safe-area-inset-top, 0px))',
     display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px',
     width: '250px', maxWidth: 'calc(100vw - 16px)', boxSizing: 'border-box',
-    padding: '6px 8px', borderRadius: UX_THEME.radius,
-    background: 'rgba(10, 9, 8, 0.58)', border: UX_THEME.surfaceBorderSoft,
-    boxShadow: 'inset 0 0 0 1px rgba(188,206,224,0.04)',
+    padding: '0', borderRadius: UX_THEME.radius,
+    background: 'transparent', border: 'none',
+    boxShadow: 'none',
     pointerEvents: 'none',
     zIndex: 905,
   });
@@ -544,7 +544,7 @@ export function initHUD() {
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '4px',
-    width: '250px',
+    width: '230px',
     maxWidth: '100%',
     boxSizing: 'border-box',
     pointerEvents: 'auto',
@@ -1408,14 +1408,14 @@ export function initHUD() {
       gridTemplateColumns: 'auto 1fr auto',
       alignItems: 'center',
       gap: '6px',
-      minHeight: '28px',
+      minHeight: '44px',
       width: '100%',
       boxSizing: 'border-box',
-      padding: '5px 7px',
+      padding: '5px 6px',
       borderRadius: '7px',
-      border: '1px solid #5d5122',
-      background: 'linear-gradient(180deg, rgba(44,34,12,0.88) 0%, rgba(22,18,10,0.88) 100%)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
+      border: '1px solid rgba(93,81,34,0.42)',
+      background: 'rgba(22,18,10,0.42)',
+      boxShadow: 'none',
       cursor: 'pointer',
       pointerEvents: 'auto',
       touchAction: 'manipulation',
@@ -1436,7 +1436,7 @@ export function initHUD() {
     const icon = document.createElement('div');
     icon.textContent = String(focused?.icon || '✦');
     Object.assign(icon.style, {
-      fontSize: '14px',
+      fontSize: '15px',
       lineHeight: '1',
       filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))',
     });
@@ -1477,7 +1477,7 @@ export function initHUD() {
     const rewardText = String(focused?.rewardPreview || '').trim();
     reward.textContent = rewardText ? `Reward: ${rewardText}` : '';
     Object.assign(reward.style, {
-      display: rewardText ? 'block' : 'none',
+      display: 'none',
       fontSize: '10px',
       lineHeight: '1.1',
       color: 'rgba(255,216,90,0.82)',
