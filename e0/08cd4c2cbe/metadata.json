@@ -3,7 +3,7 @@
   "checkpoint_id": "e008cd4c2cbe",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 2,
+  "checkpoints_count": 4,
   "files_touched": [
     "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
     "src/rules/ai/policyFeatures.js",
@@ -29,6 +29,13 @@
       "compact_transcript": "/e0/08cd4c2cbe/0/transcript.jsonl",
       "content_hash": "/e0/08cd4c2cbe/0/content_hash.txt",
       "prompt": "/e0/08cd4c2cbe/0/prompt.txt"
+    },
+    {
+      "metadata": "/e0/08cd4c2cbe/1/metadata.json",
+      "transcript": "/e0/08cd4c2cbe/1/full.jsonl",
+      "compact_transcript": "/e0/08cd4c2cbe/1/transcript.jsonl",
+      "content_hash": "/e0/08cd4c2cbe/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
