@@ -1,0 +1,22 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "75117223a07e",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/buffSpells.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/75/117223a07e/0/metadata.json",
+      "transcript": "/75/117223a07e/0/full.jsonl",
+      "compact_transcript": "/75/117223a07e/0/transcript.jsonl",
+      "content_hash": "/75/117223a07e/0/content_hash.txt",
+      "prompt": ""
+    }
+  ]
+}
