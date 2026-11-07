@@ -1423,11 +1423,10 @@ export const SPELL_DEFS = {
     script: 'primal_roar',
     targeting: 'self',
     radius: 2,
-    description: 'Channel the fury of the wild. Your strikes become savage and nearby enemies cower.',
+    description: 'Channel the fury of the wild. One predatory roar sharpens your strikes and rattles nearby enemies.',
     effects: [
-      { kind: 'status', status: 'berserk', duration: '12 turns (1.5x damage, +3 attack)' },
-      { kind: 'status', status: 'battle_fury', duration: '12 turns (+2 attack)' },
-      { kind: 'utility', note: 'Enemies in radius 2 are staggered for 3 turns' },
+      { kind: 'status', status: 'primal_roar', duration: '12 turns (+5 attack, 1.5x melee damage, restores 5 HP on kills)' },
+      { kind: 'utility', note: 'A short roar pulse staggers nearby hostiles' },
     ],
   },
 };

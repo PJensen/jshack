@@ -90,6 +90,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     stoneskin: statusStrength(world, id, "stoneskin"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
     berserk: statusStrength(world, id, "berserk"),
+    primal_roar: statusStrength(world, id, "primal_roar"),
     // Corpse-eat timed buffs
     cunning_reflex: statusStrength(world, id, "cunning_reflex"),
     keen_eye: statusStrength(world, id, "keen_eye"),
@@ -132,6 +133,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     pushModifier(modifiers, "attack", "status:cursed", -statusTotals.cursed, "cursed-penalty");
     pushModifier(modifiers, "attack", "status:blessed", statusTotals.blessed, "blessed-bonus");
     pushModifier(modifiers, "attack", "status:berserk", statusTotals.berserk > 0 ? 3 : 0, "berserk-bonus");
+    pushModifier(modifiers, "attack", "status:primal_roar", statusTotals.primal_roar * 5, "primal-roar-bonus");
     pushModifier(modifiers, "attack", "status:keen_eye", statusTotals.keen_eye * 2, "keen-eye-bonus");
     pushModifier(modifiers, "attack", "status:thermal_sense", statusTotals.thermal_sense * 2, "thermal-sense-bonus");
     pushModifier(modifiers, "attack", "status:blood_rage", statusTotals.blood_rage * 3, "blood-rage-bonus");
@@ -150,6 +152,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
       -statusTotals.cursed
       +statusTotals.blessed
       +(statusTotals.berserk > 0 ? 3 : 0)
+      +(statusTotals.primal_roar * 5)
       +(statusTotals.keen_eye * 2)
       +(statusTotals.thermal_sense * 2)
       +(statusTotals.blood_rage * 3)
@@ -243,6 +246,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     armorClass: 10 + defenseContribution,
     damageFlatBonus: Math.max(0, Math.floor(damagePower / 2)) + (statusTotals.war_fed > 0 ? statusTotals.war_fed * 2 : 0),
     damageMult: (statusTotals.berserk > 0 ? 1.5 : 1)
+      * (statusTotals.primal_roar > 0 ? 1.5 : 1)
       * (statusTotals.blood_rage > 0 ? 1.25 : 1)
       * shadowAmbushDamageMult
       * (felineRodentBonus ? 1.25 : 1)

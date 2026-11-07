@@ -699,6 +699,11 @@ export function installCombatMessages(ctx) {
     if (!pe || id !== pe.id) return;
     log(`Warchief fury surges — you recover ${amount} HP!`, 'system');
   });
+  world.on('primal_roar:heal', ({ id, amount }) => {
+    const pe = playerEntity(world);
+    if (!pe || id !== pe.id) return;
+    log(`Your roar feeds the hunt — you recover ${amount} HP!`, 'system');
+  });
 
   world.on('lichdom_echo:saved', ({ id }) => {
     const pe = playerEntity(world);

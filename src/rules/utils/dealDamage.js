@@ -538,17 +538,19 @@ export function dealDamage(world, spec) {
     // Battle fury: on-kill heal for the killer
     if (source > 0 && world.isAlive(source)) {
       const furyPot = activeResistBonus(world, source, "battle_fury");
-      if (furyPot > 0) {
+      const roarPot = activeResistBonus(world, source, "primal_roar");
+      const killHealPot = Math.max(furyPot, roarPot);
+      if (killHealPot > 0) {
         const sourceVit = world.get(source, Vitality);
         if (sourceVit && (sourceVit.hp | 0) > 0) {
-          const healAmt = 5 * furyPot;
+          const healAmt = 5 * killHealPot;
           const healed = applyHealing(world, {
             target: source,
             amount: healAmt,
             source,
-            cause: 'battle_fury',
+            cause: roarPot > 0 ? 'primal_roar' : 'battle_fury',
           }).amount;
-          world.emit('battle_fury:heal', { id: source, amount: healed });
+          world.emit(roarPot > 0 ? 'primal_roar:heal' : 'battle_fury:heal', { id: source, amount: healed });
         }
       }
     }

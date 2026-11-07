@@ -4626,12 +4626,10 @@ REGISTRY['primal_roar'] = function primalRoarScript(world, actor, spell, _intent
   const DURATION = 12;
   const RADIUS = Number(spell?.radius || 2) | 0;
 
-  // Self buffs
+  // One spell-owned identity; combat derives the roar's mechanics from this
+  // effect instead of materializing a berserk/battle-fury bundle.
   upsertTimedEffect(ae.effects, {
-    key: 'berserk', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'battle_fury', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
+    key: 'primal_roar', turnsLeft: DURATION + 1, potency: 1, stacks: 1, sourceId: actor,
   });
 
   // Stagger nearby enemies
