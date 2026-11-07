@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 4,
   "files_touched": [
+    "VERSION",
     "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
     "src/bridge/schema/worldView.js",
     "src/display/ui/hud.js",

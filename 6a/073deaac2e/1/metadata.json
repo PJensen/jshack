@@ -3,10 +3,11 @@
   "checkpoint_id": "6a073deaac2e",
   "session_id": "01a1b673-fb15-7e23-849d-16e9ec42a307",
   "strategy": "manual-commit",
-  "created_at": "2026-11-07T18:38:15.195725573Z",
+  "created_at": "2026-11-07T18:39:48.311616703Z",
   "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
     "src/bridge/schema/worldView.js",
     "src/display/ui/hud.js",
@@ -28,15 +29,15 @@
     "turn_count": 4
   },
   "initial_attribution": {
-    "calculated_at": "2026-11-07T18:38:14.891995884Z",
-    "agent_lines": 0,
-    "agent_removed": 0,
+    "calculated_at": "2026-11-07T18:39:48.018781793Z",
+    "agent_lines": 1,
+    "agent_removed": 1,
     "human_added": 0,
     "human_modified": 0,
     "human_removed": 0,
-    "total_committed": 0,
-    "total_lines_changed": 0,
-    "agent_percentage": 0,
+    "total_committed": 1,
+    "total_lines_changed": 2,
+    "agent_percentage": 100,
     "metric_version": 2
   }
 }
