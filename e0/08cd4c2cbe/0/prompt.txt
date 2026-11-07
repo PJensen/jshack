@@ -29,3 +29,7 @@ FYI: why wouldn't you have the spell itself contribute it's canonical status eff
 ---
 
 CAPABILITY_SOURCES seems like indirection.
+
+---
+
+review: am I doing the right thing? feels right, it's kind of threading the needle from the earlier identity work.
