@@ -135,22 +135,6 @@ export const EFFECT_DEFS = [
     description: "Slowed. Movement reduced.",
   },
   {
-    id: "frost_nova",
-    keys: ["frost_nova"],
-    operation: "none",
-    statuses: [],
-    capabilities: ["immobilized", "frozen"],
-    description: "Frost Nova. A freezing ring damages, slows action, and locks hostile footing.",
-  },
-  {
-    id: "gaze_beam",
-    keys: ["gaze_beam"],
-    operation: "none",
-    statuses: [],
-    capabilities: ["immobilized", "action_locked"],
-    description: "Gaze Beam. A psychic channel stuns its victim and accumulates mindwipe stacks.",
-  },
-  {
     id: "consecrate",
     keys: ["consecrate"],
     operation: "none",

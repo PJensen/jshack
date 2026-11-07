@@ -620,7 +620,10 @@ REGISTRY['frost_nova'] = function frostNovaScript(world, actor, spell, intent) {
   const actorFaction = String(world.get(actor, Faction)?.key || 'player');
   const RADIUS = Math.max(1, Number(spell?.radius || 2) | 0);
   const BASE_DMG = 4;
-  const FREEZE_TURNS = 8;
+  const active = spell?.activeEffect || {};
+  const FREEZE_TURNS = Math.max(1, Number(active.duration || 8) | 0);
+  const freezePotency = Number(active.potency ?? 1);
+  const freezeStacks = Number(active.stacks ?? 1);
 
   /** @type {Array<{id:number, dist:number, x:number, y:number}>} */
   const targets = [];
@@ -650,7 +653,7 @@ REGISTRY['frost_nova'] = function frostNovaScript(world, actor, spell, intent) {
     const ae = ensureActiveEffectList(world, t.id);
     if (!ae) continue;
     upsertTimedEffect(ae.effects, {
-      key: 'frost_nova', turnsLeft: FREEZE_TURNS, potency: 1, stacks: 1, sourceId: actor,
+      key: spell?.id || 'frost_nova', turnsLeft: FREEZE_TURNS, potency: freezePotency, stacks: freezeStacks, sourceId: actor,
     });
     frozen.push({ id: t.id, x: t.x, y: t.y });
   }
@@ -3126,8 +3129,12 @@ REGISTRY['gaze_beam'] = function gazeBeamScript(world, actor, spell, intent) {
   const tVit = /** @type any */ (world.get(targetId, Vitality));
   if (!tVit || (tVit.hp | 0) <= 0) return;
 
-  const stunDuration = Math.max(1, Number(spell?.stunTurns ?? 3) | 0);
-  const stackLimit = Math.max(1, Number(spell?.stackLimit ?? 4) | 0);
+  const active = spell?.activeEffect || {};
+  const mechanics = active.mechanics || {};
+  const stunDuration = Math.max(1, Number(active.duration ?? spell?.stunTurns ?? 3) | 0);
+  const stackLimit = Math.max(1, Number(mechanics.stackLimit ?? spell?.stackLimit ?? 4) | 0);
+  const stunPotency = Number(active.potency ?? 1);
+  const stunStacks = Number(active.stacks ?? 1);
   const stunTurnsLeft = stunDuration + 1; // effectSystem decrements on application tick
 
   const ae = ensureActiveEffects(world, targetId);
@@ -3136,10 +3143,10 @@ REGISTRY['gaze_beam'] = function gazeBeamScript(world, actor, spell, intent) {
   const existing = ae.effects.find(e => e.key === 'gaze_beam');
   if (existing) {
     existing.turnsLeft = Math.max(Number(existing.turnsLeft) || 0, stunTurnsLeft);
-    existing.stacks = Math.min(stackLimit, Math.max(1, Number(existing.stacks) || 1) + 1);
-    existing.potency = 1;
+    existing.stacks = Math.min(stackLimit, Math.max(1, Number(existing.stacks) || 1) + stunStacks);
+    existing.potency = stunPotency;
   } else {
-    ae.effects.push({ key: 'gaze_beam', turnsLeft: stunTurnsLeft, potency: 1, stacks: 1 });
+    ae.effects.push({ key: spell?.id || 'gaze_beam', turnsLeft: stunTurnsLeft, potency: stunPotency, stacks: stunStacks });
   }
   world.set(targetId, ActiveEffects, ae);
 

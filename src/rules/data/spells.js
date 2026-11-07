@@ -113,10 +113,16 @@ export const SPELL_DEFS = {
     script: 'frost_nova',
     targeting: 'self',
     radius: 2,
+    activeEffect: {
+      duration: 8,
+      potency: 1,
+      stacks: 1,
+      capabilities: ['immobilized', 'frozen'],
+    },
     description: 'Burst a ring of blue ice from your feet, freezing nearby enemies in place.',
     effects: [
       { kind: 'damage', element: 'cold', amount: 'distance-scaled, INT-scaled, can crit' },
-      { kind: 'effect', effect: 'frost_nova', duration: '8 turns (freeze and root)' },
+      { kind: 'effect', effect: 'frost_nova', note: 'freeze and root' },
     ],
   },
   mass_delirium: {
@@ -800,6 +806,13 @@ export const SPELL_DEFS = {
     castTime: 8,
     stunTurns: 3,
     stackLimit: 4,
+    activeEffect: {
+      duration: 3,
+      potency: 1,
+      stacks: 1,
+      capabilities: ['immobilized', 'action_locked'],
+      mechanics: { stackLimit: 4 },
+    },
     script: 'gaze_beam',
     targeting: 'enemy',
     monsterOnly: true,
@@ -807,7 +820,7 @@ export const SPELL_DEFS = {
     breakOnMove: true,
     description: 'The floating eye channels a psychic beam that stuns and mindwipes on completion.',
     effects: [
-      { kind: 'effect', effect: 'gaze_beam', duration: '3 turns; mindwipe stacks up to 4' },
+      { kind: 'effect', effect: 'gaze_beam', note: 'stun; mindwipe stacks up to 4' },
     ],
   },
   verdant_ward: {
