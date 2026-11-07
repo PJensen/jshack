@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "0f35d36d6afb",
+  "session_id": "01a1b673-fb15-7e23-849d-16e9ec42a307",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-07T21:14:22.146752371Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/buffSpells.test.mjs",
+    "tests/overworldCreatureContent.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "ba3409ab9480",
+  "checkpoint_transcript_start": 1422,
+  "transcript_lines_at_start": 1422,
+  "compact_transcript_start": 248,
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-11-07T21:14:21.842858977Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
