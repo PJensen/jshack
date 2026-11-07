@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "4b6cd97ffb07",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
+    "src/bridge/schema/worldView.js",
+    "src/display/ui/hud.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/socialAggroSystem.js",
+    "src/rules/systems/stealthAmbushSystem.js",
+    "src/rules/utils/blind.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "src/rules/utils/spellTargeting.js",
+    "src/rules/utils/stealthAmbush.js",
+    "tests/buffSpells.test.mjs",
+    "tests/shadowVeilAmbush.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/4b/6cd97ffb07/0/metadata.json",
+      "transcript": "/4b/6cd97ffb07/0/full.jsonl",
+      "compact_transcript": "/4b/6cd97ffb07/0/transcript.jsonl",
+      "content_hash": "/4b/6cd97ffb07/0/content_hash.txt",
+      "prompt": ""
+    }
+  ]
+}
