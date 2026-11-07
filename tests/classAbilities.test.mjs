@@ -24,6 +24,7 @@ import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { dealDamage } from "../src/rules/utils/dealDamage.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
+import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -331,6 +332,16 @@ Deno.test("ignite_weapons and mark_of_death own their spell identities", () => {
 
   runSpellScript(world, caster, SPELL_DEFS.mark_of_death, { targetId: enemy });
   assertEquals(effectKeys(world, enemy), ['mark_of_death']);
+});
+
+Deno.test("rampage owns its battle-fury identity", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  runSpellScript(world, caster, SPELL_DEFS.rampage, {});
+
+  assertEquals(effectKeys(world, caster), ['rampage']);
+  const snapshot = resolveCombatSnapshot(world, caster);
+  assertEquals(snapshot.status.berserk, 1);
 });
 
 // ─── Consecrate ─────────────────────────────────────────────────────────────

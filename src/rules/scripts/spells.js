@@ -3646,7 +3646,7 @@ REGISTRY['shadow_veil'] = function shadowVeilScript(world, actor, spell, _intent
   });
 };
 
-REGISTRY['rampage'] = function rampageScript(world, actor, _spell, _intent) {
+REGISTRY['rampage'] = function rampageScript(world, actor, spell, _intent) {
   const pos = world.get(actor, Position);
   if (!pos) return;
 
@@ -3655,11 +3655,13 @@ REGISTRY['rampage'] = function rampageScript(world, actor, _spell, _intent) {
     world.add(actor, ActiveEffects, { effects: [] });
     ae = world.get(actor, ActiveEffects);
   }
+  const active = spell?.activeEffect || {};
+  const duration = Math.max(1, Number(active.duration || 100) | 0);
   ae.effects.push({
-    key: 'berserk',
-    turnsLeft: 101,
-    potency: 1,
-    stacks: 1,
+    key: spell?.id || 'rampage',
+    turnsLeft: duration + 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
   });
 

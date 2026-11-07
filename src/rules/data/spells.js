@@ -898,9 +898,14 @@ export const SPELL_DEFS = {
     cooldown: 20,
     script: 'rampage',
     targeting: 'self',
+    activeEffect: {
+      duration: 100,
+      potency: 1,
+      stacks: 1,
+    },
     description: 'Spend every drop of mana to fuel a long, savage battle fury.',
     effects: [
-      { kind: 'status', status: 'berserk', duration: '100 turns' },
+      { kind: 'effect', effect: 'rampage', note: '+3 to-hit accuracy and 1.5x melee damage' },
       { kind: 'utility', note: '+3 to-hit accuracy and 1.5x melee damage' },
     ],
   },

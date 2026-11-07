@@ -101,7 +101,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
       + effectStrength(world, id, "barkskin")
       + effectStrength(world, id, "verdant_ward"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
-    berserk: statusStrength(world, id, "berserk"),
+    berserk: statusStrength(world, id, "berserk") + effectStrength(world, id, "rampage"),
     primal_roar: effectStrength(world, id, "primal_roar"),
     // Corpse-eat timed buffs
     cunning_reflex: statusStrength(world, id, "cunning_reflex"),
