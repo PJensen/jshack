@@ -1092,7 +1092,7 @@ export const SPELL_DEFS = {
     },
     description: 'Wrap yourself in Seraphine\'s light — a holy shell that absorbs blows before shattering.',
     effects: [
-      { kind: 'effect', effect: 'divine_shield', duration: '20 turns' },
+      { kind: 'effect', effect: 'divine_shield', note: 'A breakable holy ward with two guard charges' },
     ],
   },
   consecrate: {
@@ -1376,7 +1376,7 @@ export const SPELL_DEFS = {
     },
     description: 'Your skin hardens into gnarled bark. Thorns sprout from your flesh, punishing those who strike you.',
     effects: [
-      { kind: 'effect', effect: 'barkskin', duration: '20 turns (+2 AC, recovery, retaliation)' },
+      { kind: 'effect', effect: 'barkskin', note: '+2 AC, recovery, retaliation' },
     ],
   },
   quicken: {
@@ -1548,6 +1548,17 @@ export function describeSpellTargetEffects(spell) {
       const status = String(effect.status || 'status');
       const duration = String(effect.duration || '').trim();
       lines.push(duration ? `Applies ${status}: ${duration}` : `Applies ${status}`);
+      continue;
+    }
+    if (effect.kind === 'effect') {
+      const effectKey = String(effect.effect || 'effect');
+      const authoredDuration = spell.activeEffect?.duration;
+      const duration = Number.isFinite(authoredDuration)
+        ? `${Number(authoredDuration) | 0} turns`
+        : String(effect.duration || '').trim();
+      const note = String(effect.note || '').trim();
+      const detail = [duration, note].filter(Boolean).join(' — ');
+      lines.push(detail ? `Applies ${effectKey}: ${detail}` : `Applies ${effectKey}`);
       continue;
     }
     if (effect.kind === 'movement') {

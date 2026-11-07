@@ -25,6 +25,13 @@ Deno.test("physical spells can declare stamina costs in tooltip detail lines", (
   assert(details.some((line) => String(line).includes("Stamina 10")), "phase_strike should show stamina cost");
 });
 
+Deno.test("owned effect tooltip duration comes from authored active mechanics", () => {
+  const barkskin = getSpell("barkskin");
+  const lines = describeSpellTargetEffects(barkskin);
+  assert(lines.some((line) => line.includes("20 turns")), "barkskin duration should come from activeEffect");
+  assert(lines.some((line) => line.includes("recovery")), "barkskin mechanics should remain visible");
+});
+
 Deno.test("all spells expose tooltip-ready description and impacts", () => {
   for (const spell of listSpells()) {
     assert(typeof spell.description === "string" && spell.description.length > 0, `${spell.id} missing description`);
