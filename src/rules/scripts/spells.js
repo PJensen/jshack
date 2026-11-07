@@ -3531,27 +3531,29 @@ function upsertVisionEnvelope(effects, sourceKey, envelope) {
   else effects.push(next);
 }
 
-REGISTRY['verdant_ward'] = function verdantWardScript(world, actor, _spell, _intent) {
+REGISTRY['verdant_ward'] = function verdantWardScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 30;
+  const active = spell?.activeEffect || {};
+  const mechanics = active.mechanics || {};
+  const DURATION = Math.max(1, Number(active.duration || 30) | 0);
   upsertTimedEffect(ae.effects, {
-    key: 'verdant_ward',
+    key: spell?.id || 'verdant_ward',
     turnsLeft: DURATION,
-    potency: 2,
-    stacks: 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
     meta: {
-      tickHeal: 1,
+      tickHeal: Number(mechanics.tickHeal ?? 0),
       visionStart: 0,
       visionTo: 0,
       visionEnd: 0,
-      visionRampIn: 3,
-      visionHold: 20,
-      visionRampOut: 7,
+      visionRampIn: Number(mechanics.visionRampIn ?? 0),
+      visionHold: Number(mechanics.visionHold ?? 0),
+      visionRampOut: Number(mechanics.visionRampOut ?? 0),
     },
   });
 
@@ -3570,21 +3572,23 @@ REGISTRY['verdant_ward'] = function verdantWardScript(world, actor, _spell, _int
   });
 };
 
-REGISTRY['harmony_ward'] = function harmonyWardScript(world, actor, _spell, _intent) {
+REGISTRY['harmony_ward'] = function harmonyWardScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
   const ae = ensureActiveEffectList(world, actor);
   if (!ae) return;
 
-  const DURATION = 55;
+  const active = spell?.activeEffect || {};
+  const DURATION = Math.max(1, Number(active.duration || 55) | 0);
   // One ward identity projects the four elemental protections without four
   // independent spell timers.
   upsertTimedEffect(ae.effects, {
-    key: 'harmony_ward',
+    key: spell?.id || 'harmony_ward',
     turnsLeft: DURATION,
-    potency: 1,
-    stacks: 1,
+    potency: Number(active.potency ?? 1),
+    stacks: Number(active.stacks ?? 1),
     sourceId: actor,
+    meta: { ...(active.mechanics || {}) },
   });
 
   world.emit('spell:harmony_ward', {

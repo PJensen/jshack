@@ -150,13 +150,6 @@ export const EFFECT_DEFS = [
     description: "Shadow Veil. Dusk hides the bearer, bends attacks, and primes an ambush.",
   },
   {
-    id: "verdant_ward",
-    keys: ["verdant_ward"],
-    operation: "none",
-    statuses: [],
-    description: "Verdant Ward. Living growth hardens the bearer, restores flesh, and heightens sight.",
-  },
-  {
     id: "frost_nova",
     keys: ["frost_nova"],
     operation: "none",
@@ -545,13 +538,6 @@ export const EFFECT_DEFS = [
     operation: "none",
     statuses: [],
     description: "Primal roar. A predatory surge of strength that rattles nearby foes.",
-  },
-  {
-    id: "harmony_ward",
-    keys: ["harmony_ward"],
-    operation: "none",
-    statuses: [],
-    description: "Harmony ward. A single balanced protection against elemental harm.",
   },
   {
     id: "lichdom_echo",

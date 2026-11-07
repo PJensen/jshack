@@ -814,9 +814,15 @@ export const SPELL_DEFS = {
     cooldown: 12,
     script: 'verdant_ward',
     targeting: 'self',
+    activeEffect: {
+      duration: 30,
+      potency: 2,
+      stacks: 1,
+      mechanics: { tickHeal: 1, visionRampIn: 3, visionHold: 20, visionRampOut: 7 },
+    },
     description: 'A blooming ward of bark and sap that knits flesh while hardening skin for a long stretch.',
     effects: [
-      { kind: 'effect', effect: 'verdant_ward', duration: '30 turns (+2 AC, recovery, heightened sight)' },
+      { kind: 'effect', effect: 'verdant_ward', note: '+2 AC, recovery, heightened sight' },
     ],
   },
   harmony_ward: {
@@ -829,9 +835,15 @@ export const SPELL_DEFS = {
     cooldown: 14,
     script: 'harmony_ward',
     targeting: 'self',
+    activeEffect: {
+      duration: 55,
+      potency: 1,
+      stacks: 1,
+      mechanics: { resistances: ['fire', 'poison', 'electric', 'acid'] },
+    },
     description: 'A balanced seal that tempers flame, venom, shock, and acid as one harmonious ward.',
     effects: [
-      { kind: 'status', status: 'harmony_ward', duration: '55 turns; resists fire, poison, electric, and acid' },
+      { kind: 'effect', effect: 'harmony_ward', note: 'resists fire, poison, electric, and acid' },
     ],
   },
   shadow_veil: {

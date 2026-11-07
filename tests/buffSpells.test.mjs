@@ -88,6 +88,26 @@ Deno.test("verdant_ward applies one authored recovery and perception identity", 
   assert(events.length === 1, "verdant_ward should emit spell event");
 });
 
+Deno.test("verdant_ward reads its active mechanics from the spell definition", () => {
+  const world = new World({ seed: 0xC0FFEE });
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.verdant_ward,
+    activeEffect: {
+      duration: 8,
+      potency: 6,
+      stacks: 1,
+      mechanics: { tickHeal: 4, visionRampIn: 2, visionHold: 3, visionRampOut: 2 },
+    },
+  }, {});
+
+  const ward = world.get(caster, ActiveEffects).effects[0];
+  assertEquals(ward.turnsLeft, 8);
+  assertEquals(ward.potency, 6);
+  assertEquals(ward.meta.tickHeal, 4);
+  assertEquals(ward.meta.visionHold, 3);
+});
+
 Deno.test("harmony_ward applies long multi-resistance buffs", () => {
   const world = new World({ seed: 0xA77A77 });
   const caster = makeCaster(world);
@@ -111,6 +131,26 @@ Deno.test("harmony_ward feeds resistance resolution without legacy statuses", ()
   runSpellScript(world, caster, SPELL_DEFS.harmony_ward, {});
 
   assertEquals(resolveResistance(world, caster, 20, "fire"), 0);
+});
+
+Deno.test("harmony_ward reads its active mechanics from the spell definition", () => {
+  const world = new World({ seed: 0xA77A78 });
+  const caster = makeCaster(world);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.harmony_ward,
+    activeEffect: {
+      duration: 12,
+      potency: 3,
+      stacks: 2,
+      mechanics: { resistances: ['fire', 'acid'] },
+    },
+  }, {});
+
+  const ward = world.get(caster, ActiveEffects).effects[0];
+  assertEquals(ward.turnsLeft, 12);
+  assertEquals(ward.potency, 3);
+  assertEquals(ward.stacks, 2);
+  assertEquals(ward.meta.resistances, ['fire', 'acid']);
 });
 
 Deno.test("shadow_veil applies one authored stealth identity", () => {
