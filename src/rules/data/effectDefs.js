@@ -16,6 +16,7 @@ export const EFFECT_OPERATION_IDS = Object.freeze([
  *   operation: "none" | "damage" | "heal" | "stamina_restore" | "mana_restore",
  *   operations?: Array<"none" | "damage" | "heal" | "stamina_restore" | "mana_restore">,
  *   statuses: string[],
+ *   capabilities?: string[],
  *   description?: string,
  * }} EffectDef
  */
@@ -70,6 +71,7 @@ export const EFFECT_DEFS = [
     keys: ["stun", "stunned"],
     operation: "none",
     statuses: ["stunned"],
+    capabilities: ["immobilized", "action_locked"],
     description: "Stunned. Cannot act.",
   },
   {
@@ -77,6 +79,7 @@ export const EFFECT_DEFS = [
     keys: ["rooted", "root"],
     operation: "none",
     statuses: ["rooted"],
+    capabilities: ["immobilized"],
     description: "Unable to move.",
   },
   {
@@ -119,6 +122,7 @@ export const EFFECT_DEFS = [
     keys: ["frost", "frozen"],
     operation: "none",
     statuses: ["frozen"],
+    capabilities: ["immobilized", "frozen"],
     description: "Frozen solid. Cannot act.",
   },
   {
@@ -126,6 +130,7 @@ export const EFFECT_DEFS = [
     keys: ["slowed", "slow"],
     operation: "none",
     statuses: ["slowed"],
+    capabilities: ["slowed"],
     description: "Slowed. Movement reduced.",
   },
   {
@@ -133,6 +138,7 @@ export const EFFECT_DEFS = [
     keys: ["bog_curse"],
     operation: "none",
     statuses: [],
+    capabilities: ["cursed", "slowed"],
     description: "Bog Curse. Luck, defense, and footing are dragged into the mud.",
   },
   {
@@ -147,6 +153,7 @@ export const EFFECT_DEFS = [
     keys: ["iron_flesh"],
     operation: "none",
     statuses: [],
+    capabilities: ["slowed"],
     description: "Iron Flesh. Living metal hardens the body, slows its bearer, and punishes blows.",
   },
   {
@@ -168,6 +175,7 @@ export const EFFECT_DEFS = [
     keys: ["shadow_veil"],
     operation: "none",
     statuses: [],
+    capabilities: ["concealed", "phase_shift"],
     description: "Shadow Veil. Dusk hides the bearer, bends attacks, and primes an ambush.",
   },
   {
@@ -182,6 +190,7 @@ export const EFFECT_DEFS = [
     keys: ["frost_nova"],
     operation: "none",
     statuses: [],
+    capabilities: ["immobilized", "frozen"],
     description: "Frost Nova. A freezing ring damages, slows action, and locks hostile footing.",
   },
   {
@@ -189,6 +198,7 @@ export const EFFECT_DEFS = [
     keys: ["gaze_beam"],
     operation: "none",
     statuses: [],
+    capabilities: ["immobilized", "action_locked"],
     description: "Gaze Beam. A psychic channel stuns its victim and accumulates mindwipe stacks.",
   },
   {
@@ -210,6 +220,7 @@ export const EFFECT_DEFS = [
     keys: ["silenced", "silence"],
     operation: "none",
     statuses: ["silenced"],
+    capabilities: ["silenced"],
     description: "Silenced. Cannot cast spells.",
   },
   {
@@ -217,6 +228,7 @@ export const EFFECT_DEFS = [
     keys: ["sleep", "asleep", "sleeping"],
     operation: "none",
     statuses: ["sleep"],
+    capabilities: ["immobilized", "action_locked"],
     description: "Asleep. Cannot act or perceive.",
   },
   {
@@ -612,6 +624,7 @@ export const EFFECT_DEFS = [
     keys: ["stasis"],
     operation: "none",
     statuses: ["stasis"],
+    capabilities: ["immobilized", "action_locked"],
     description: "Stasis. Time flows differently around you.",
   },
 ];

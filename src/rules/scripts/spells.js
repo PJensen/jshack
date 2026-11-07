@@ -27,7 +27,7 @@ import { dealDamage } from "../utils/dealDamage.js";
 import { applyHealing } from "../utils/applyHealing.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { combatSeed, hashString32, mulberry32, rollDice, pct } from "../utils/rng.js";
-import { statusStrength } from "../utils/statusFacade.js";
+import { hasCapability, statusStrength } from "../utils/statusFacade.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects } from "../utils/effects.js";
 import { areFactionsAllied, areFactionsHostile } from "../utils/factionHostility.js";
@@ -4104,8 +4104,7 @@ REGISTRY['entangle'] = function entangleScript(world, actor, spell, intent) {
     const vit = /** @type any */ (world.get(bestId, Vitality));
     if (!tpos || !vit || (vit.hp | 0) <= 0) bestId = 0;
     if (bestId === actor) bestId = 0; // no self-target
-    if (bestId && statusStrength(world, bestId, "stunned") > 0) bestId = 0;
-    if (bestId && statusStrength(world, bestId, "rooted") > 0) bestId = 0;
+    if (bestId && hasCapability(world, bestId, "immobilized")) bestId = 0;
   }
 
   if (!bestId) {
@@ -4117,8 +4116,7 @@ REGISTRY['entangle'] = function entangleScript(world, actor, spell, intent) {
       if (!fac || !areFactionsHostile(actorFaction, fac.key)) continue;
       const vit = /** @type any */ (world.get(id, Vitality));
       if (!vit || (vit.hp | 0) <= 0) continue;
-      if (statusStrength(world, id, "stunned") > 0) continue;
-      if (statusStrength(world, id, "rooted") > 0) continue;
+      if (hasCapability(world, id, "immobilized")) continue;
       const dx = (pos.x | 0) - (apos.x | 0), dy = (pos.y | 0) - (apos.y | 0);
       const d2 = dx * dx + dy * dy;
       if (d2 > range * range) continue;

@@ -29,7 +29,7 @@ import { InteractIntent } from "../components/Intents/InteractIntent.js";
 import { SearchIntent } from "../components/Intents/SearchIntent.js";
 import { SetPostureIntent } from "../components/Intents/SetPostureIntent.js";
 import { Channeling } from "../components/Channeling.js";
-import { effectStrength, statusStrength } from "../utils/statusFacade.js";
+import { hasCapability, statusStrength } from "../utils/statusFacade.js";
 import { sleepPreventsAction } from "../utils/sleep.js";
 
 /** All intent components that should be stripped when an actor cannot act. */
@@ -131,8 +131,8 @@ export function intentValidationSystem(world) {
     }
 
     // Stunned actors may only wait
-    const stunned = statusStrength(world, id, "stunned") + effectStrength(world, id, "gaze_beam") > 0;
     const inStasis = statusStrength(world, id, "stasis") > 0;
+    const stunned = hasCapability(world, id, "action_locked") && !inStasis;
     if (stunned) {
       const blocked = stripIntents(world, id, STUNNED_BLOCKED);
       if (blocked) {
@@ -161,7 +161,7 @@ export function intentValidationSystem(world) {
     }
 
     // Rooted actors can act but cannot move
-    const rooted = statusStrength(world, id, "rooted") + effectStrength(world, id, "frost_nova") > 0;
+    const rooted = hasCapability(world, id, "immobilized") && !stunned;
     if (rooted) {
       const blocked = stripIntents(world, id, ROOTED_BLOCKED);
       if (blocked) {

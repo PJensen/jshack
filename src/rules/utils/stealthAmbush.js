@@ -2,7 +2,7 @@ import { ActiveEffects } from "../components/ActiveEffects.js";
 import { Status } from "../components/Status.js";
 import { Position } from "../components/Position.js";
 import { canonicalStatusKey } from "./effectSemantics.js";
-import { effectStrength, statusStrength } from "./statusFacade.js";
+import { hasCapability } from "./statusFacade.js";
 
 export const SHADOW_CLOAK_REARM_KEY = "shadow_cloak_rearm";
 export const SHADOW_CLOAK_REARM_TURNS = 7;
@@ -78,7 +78,7 @@ export function clearStatusType(world, entityId, statusType) {
 export function breakStealthOnOffense(world, entityId, context = {}) {
   const id = Number(entityId || 0) | 0;
   if (!(id > 0)) return { hidden: false, ambushConsumed: false };
-  const hidden = statusStrength(world, id, "invisible") > 0 || effectStrength(world, id, "shadow_veil") > 0;
+  const hidden = hasCapability(world, id, "concealed");
   if (!hidden) return { hidden: false, ambushConsumed: false };
   const ae = world.get(id, ActiveEffects);
   const veil = activeEffect(ae, "shadow_veil");

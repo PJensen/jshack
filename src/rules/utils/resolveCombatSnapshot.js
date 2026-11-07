@@ -1,7 +1,7 @@
 import { HUNGER_COMBAT_LEVELS } from "../data/hungerCombatLevels.js";
 import { resolveResistance } from "./dealDamage.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
-import { effectStrength, statusStrength } from "./statusFacade.js";
+import { capabilityStrength, effectStrength, statusStrength } from "./statusFacade.js";
 import { getBlindedDefensePenalty, getBlindedAttackPenalty } from "./blindnessExposure.js";
 import { COMBAT_POSTURES, CombatPosture } from "../components/CombatPosture.js";
 import { Traits } from "../components/Traits.js";
@@ -93,7 +93,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     disease: statusStrength(world, id, "disease"),
     hunger,
     weakened: statusStrength(world, id, "weakened"),
-    cursed: statusStrength(world, id, "cursed") + effectStrength(world, id, "bog_curse"),
+    cursed: capabilityStrength(world, id, "cursed"),
     blessed: statusStrength(world, id, "blessed") + (effectStrength(world, id, "divine_shield") > 0 ? 1 : 0),
     stoneskin: statusStrength(world, id, "stoneskin")
       + effectStrength(world, id, "divine_shield")
@@ -110,8 +110,8 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     thermal_sense: statusStrength(world, id, "thermal_sense"),
     blood_rage: statusStrength(world, id, "blood_rage"),
     war_fed: statusStrength(world, id, "war_fed"),
-    invisible: statusStrength(world, id, "invisible") + effectStrength(world, id, "shadow_veil"),
-    phase_shift: statusStrength(world, id, "phase_shift") + effectStrength(world, id, "shadow_veil"),
+    invisible: capabilityStrength(world, id, "concealed"),
+    phase_shift: capabilityStrength(world, id, "phase_shift"),
     ogre_bulk: statusStrength(world, id, "ogre_bulk"),
     shadow_cloak: statusStrength(world, id, "shadow_cloak") + (shadowVeilAmbushReady(world, id) ? 1 : 0),
     dark_sight: statusStrength(world, id, "dark_sight"),
@@ -119,7 +119,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     fey_grace: statusStrength(world, id, "fey_grace"),
     blinded: statusStrength(world, id, "blinded"),
     staggered: statusStrength(world, id, "staggered"),
-    frozen: statusStrength(world, id, "frozen") + effectStrength(world, id, "frost_nova"),
+    frozen: capabilityStrength(world, id, "frozen"),
   };
 
   const posture = world.get(id, CombatPosture);

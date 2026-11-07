@@ -9,6 +9,8 @@ import { StatusEffectNode } from "../src/rules/components/StatusEffectNode.js";
 import { TimedEffectNode } from "../src/rules/components/TimedEffectNode.js";
 import {
   createStatusFacade,
+  capabilitySources,
+  capabilityStrength,
   effectStrength,
   hasAnyStatus,
   hasEffect,
@@ -16,6 +18,20 @@ import {
   snapshotStatusState,
   statusStrength,
 } from "../src/rules/utils/statusFacade.js";
+
+Deno.test("status facade: capabilities derive from authored effect identities and expose sources", () => {
+  const world = new World({ seed: 6100 });
+  const actor = world.create();
+  world.add(actor, ActiveEffects, {
+    effects: [{ key: "frost_nova", turnsLeft: 4, potency: 2, stacks: 1 }],
+  });
+
+  assertEquals(capabilityStrength(world, actor, "immobilized"), 2);
+  assertEquals(capabilityStrength(world, actor, "frozen"), 2);
+  assertEquals(capabilitySources(world, actor, "immobilized"), [
+    { kind: "effect", key: "frost_nova", strength: 2 },
+  ]);
+});
 
 Deno.test("status facade: SleepState projects canonical sleep status with aliases", () => {
   const world = new World({ seed: 0x51EE9 });

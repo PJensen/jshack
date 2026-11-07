@@ -20,6 +20,20 @@ for a spell that has been given a clean identity.
 Spell-specific mechanics belong in the spell identity, not in an accidental
 bundle of whichever existing statuses happen to approximate the design.
 
+## Capability model
+
+The status facade is also the canonical semantic read model. Effect definitions
+may declare capabilities such as `immobilized`, `action_locked`, `frozen`,
+`concealed`, `slowed`, or `phase_shift`. The facade derives capability strength
+and source rows from active effect identities and genuinely shared statuses.
+Consumers should ask the facade for a capability when they care about an
+outcome, while retaining source-specific checks when the outcome's reason or
+mechanics differ (for example, reporting `asleep` separately from `stunned`).
+
+This keeps authored spell identities as the source of truth: a spell-owned
+effect contributes its capabilities directly through `effectDefs.js`; the
+facade does not maintain a parallel spell-to-capability alias registry.
+
 ## Conversion targets
 
 | Spell | Current bundle | Target identity | Status |

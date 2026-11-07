@@ -19,6 +19,25 @@ export const STATUS_ALIASES = Object.freeze(new Map([
   ["sleeping", "sleep"],
 ]));
 
+/** Shared status sources for capabilities not authored by an effect definition. */
+const STATUS_CAPABILITIES = Object.freeze({
+  invisible: ["concealed"],
+  cursed: ["cursed"],
+  phase_shift: ["phase_shift"],
+  rooted: ["immobilized"],
+  stunned: ["immobilized", "action_locked"],
+  frozen: ["immobilized", "frozen"],
+  slowed: ["slowed"],
+  confused: ["spell_impaired"],
+  mindwiped: ["spell_impaired"],
+  mindlocked: ["spell_impaired"],
+  hallucinating: ["spell_impaired"],
+  silence: ["silenced"],
+  silenced: ["silenced"],
+  sleep: ["immobilized", "action_locked"],
+  stasis: ["immobilized", "action_locked"],
+});
+
 // Stasis is topology-only. Do not let an old ActiveEffects or Status write
 // make it appear active again after its canonical migration.
 const TOPOLOGY_ONLY_KEYS = new Set(["stasis"]);
@@ -65,6 +84,22 @@ const EFFECT_KEY_TO_STATUSES = (() => {
       const key = normalizeKey(keys[k]);
       if (!key || out.has(key)) continue;
       out.set(key, statuses);
+    }
+  }
+  return out;
+})();
+
+const EFFECT_KEY_TO_CAPABILITIES = (() => {
+  const out = new Map();
+  for (let i = 0; i < EFFECT_DEFS.length; i++) {
+    const def = EFFECT_DEFS[i];
+    const capabilities = Array.isArray(def?.capabilities)
+      ? def.capabilities.map((value) => normalizeKey(value)).filter(Boolean)
+      : [];
+    if (capabilities.length <= 0) continue;
+    for (const rawKey of def.keys || []) {
+      const key = normalizeKey(rawKey);
+      if (key) out.set(key, capabilities);
     }
   }
   return out;
@@ -135,6 +170,10 @@ export function snapshotStatusState(world, entityId) {
   const effectStrengths = new Map();
   /** @type {Map<string, number>} */
   const projectedStatusStrengths = new Map();
+  /** @type {Map<string, number>} */
+  const capabilityStrengths = new Map();
+  /** @type {Map<string, Array<{kind:string, key:string, strength:number}>>} */
+  const capabilitySources = new Map();
 
   const topologyEffects = collectTopologyEffects(world, id);
   const topologyKeys = new Set(topologyEffects.map((effect) => effect.key));
@@ -157,10 +196,19 @@ export function snapshotStatusState(world, entityId) {
     effectStrengths.set(key, (effectStrengths.get(key) || 0) + strength);
 
     const statuses = getEffectDefinition(key)?.statuses || EFFECT_KEY_TO_STATUSES.get(key);
-    if (!Array.isArray(statuses) || statuses.length <= 0) continue;
-    for (let s = 0; s < statuses.length; s++) {
-      const statusType = canonicalStatusType(statuses[s]);
-      projectedStatusStrengths.set(statusType, (projectedStatusStrengths.get(statusType) || 0) + strength);
+    if (Array.isArray(statuses)) {
+      for (let s = 0; s < statuses.length; s++) {
+        const statusType = canonicalStatusType(statuses[s]);
+        projectedStatusStrengths.set(statusType, (projectedStatusStrengths.get(statusType) || 0) + strength);
+      }
+    }
+
+    const capabilities = getEffectDefinition(key)?.capabilities || EFFECT_KEY_TO_CAPABILITIES.get(key) || [];
+    for (const capability of capabilities) {
+      const rows = capabilitySources.get(capability) || [];
+      rows.push(Object.freeze({ kind: "effect", key, strength }));
+      capabilitySources.set(capability, rows);
+      capabilityStrengths.set(capability, Number(capabilityStrengths.get(capability) || 0) + strength);
     }
   }
 
@@ -214,6 +262,22 @@ export function snapshotStatusState(world, entityId) {
     .map(([type, strength]) => Object.freeze({ type, strength }))
     .sort((a, b) => a.type.localeCompare(b.type));
 
+  for (const [statusType, capabilities] of Object.entries(STATUS_CAPABILITIES)) {
+    const strength = Math.max(0,
+      Number(statusStrengths.get(statusType) || 0)
+      - Number(projectedStatusStrengths.get(statusType) || 0));
+    if (strength <= 0) continue;
+    for (const capability of capabilities) {
+      const rows = capabilitySources.get(capability) || [];
+      rows.push(Object.freeze({ kind: "status", key: statusType, strength }));
+      capabilitySources.set(capability, rows);
+      capabilityStrengths.set(capability, Number(capabilityStrengths.get(capability) || 0) + strength);
+    }
+  }
+  for (const [capability, rows] of capabilitySources) {
+    capabilitySources.set(capability, Object.freeze(rows));
+  }
+
   return Object.freeze({
     entityId: id,
     effects: Object.freeze(effectRows),
@@ -224,6 +288,8 @@ export function snapshotStatusState(world, entityId) {
     effectStrengths,
     derivedStatusStrengths: projectedStatusStrengths,
     statusStrengths,
+    capabilityStrengths,
+    capabilitySources,
   });
 }
 
@@ -285,6 +351,40 @@ export function hasAnyStatus(world, entityId, statusTypes) {
 }
 
 /**
+ * @param {{ get:(id:number, Comp:any)=>any, isAlive?:(id:number)=>boolean }} world
+ * @param {number} entityId
+ * @param {string} capability
+ */
+export function capabilityStrength(world, entityId, capability) {
+  const key = normalizeKey(capability);
+  if (!key) return 0;
+  const snap = snapshotStatusState(world, entityId);
+  if (!snap) return 0;
+  return Number(snap.capabilityStrengths.get(key) || 0);
+}
+
+/**
+ * @param {{ get:(id:number, Comp:any)=>any, isAlive?:(id:number)=>boolean }} world
+ * @param {number} entityId
+ * @param {string} capability
+ */
+export function hasCapability(world, entityId, capability) {
+  return capabilityStrength(world, entityId, capability) > 0;
+}
+
+/**
+ * @param {{ get:(id:number, Comp:any)=>any, isAlive?:(id:number)=>boolean }} world
+ * @param {number} entityId
+ * @param {string} capability
+ */
+export function capabilitySources(world, entityId, capability) {
+  const key = normalizeKey(capability);
+  if (!key) return [];
+  const snap = snapshotStatusState(world, entityId);
+  return snap?.capabilitySources.get(key) || [];
+}
+
+/**
  * Status/effect facade with per-context memoization.
  *
  * @param {{ get:(id:number, Comp:any)=>any, isAlive?:(id:number)=>boolean }} world
@@ -333,6 +433,14 @@ export function createStatusFacade(world, anchors = {}) {
     const snap = snapshot(entityId);
     if (!snap) return 0;
     return Number(snap.effectStrengths.get(normalized) || 0);
+  }
+
+  function readCapabilityStrength(entityId, key) {
+    const normalized = normalizeKey(key);
+    if (!normalized) return 0;
+    const snap = snapshot(entityId);
+    if (!snap) return 0;
+    return Number(snap.capabilityStrengths.get(normalized) || 0);
   }
 
   /**
@@ -386,6 +494,17 @@ export function createStatusFacade(world, anchors = {}) {
     },
     effectStrength(entityId, effectKey) {
       return readEffectStrength(entityId, effectKey);
+    },
+    hasCapability(entityId, capability) {
+      return readCapabilityStrength(entityId, capability) > 0;
+    },
+    capabilityStrength(entityId, capability) {
+      return readCapabilityStrength(entityId, capability);
+    },
+    capabilitySources(entityId, capability) {
+      const normalized = normalizeKey(capability);
+      if (!normalized) return [];
+      return snapshot(entityId)?.capabilitySources.get(normalized) || [];
     },
     actor() { return snapshotFromAnchor("actor"); },
     primary() { return snapshotFromAnchor("primary"); },

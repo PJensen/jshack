@@ -22,7 +22,7 @@ import { isWalkable, isFlyable } from "../environment/dungeon/tileMap.js";
 import { Flying } from "../components/Flying.js";
 import { getTileQuerySnapshot, forEachItemAt } from "../utils/tileQueryCache.js";
 import { combatSeed, mulberry32 } from "../utils/rng.js";
-import { effectStrength, statusStrength } from "../utils/statusFacade.js";
+import { capabilityStrength, hasCapability, statusStrength } from "../utils/statusFacade.js";
 import { sleepPreventsMovement } from "../utils/sleep.js";
 import { addToInventory, hasCapacityForItem } from "../utils/inventoryFacade.js";
 import { resolveBump } from "../data/bumpResolvers.js";
@@ -188,8 +188,7 @@ export function movementSystem(world) {
         world.remove(actor, MoveIntent);
         continue;
       }
-      if (statusStrength(world, actor, "stunned") + effectStrength(world, actor, "gaze_beam") > 0
-        || statusStrength(world, actor, "rooted") + effectStrength(world, actor, "frost_nova") > 0) {
+      if (hasCapability(world, actor, "immobilized")) {
         world.remove(actor, MoveIntent);
         continue;
       }
@@ -226,9 +225,7 @@ export function movementSystem(world) {
 
       // "Slowed" skips every Nth movement attempt (stacks+1 cadence).
       // 1 stack → move every 2nd attempt, 2 → every 3rd, 3 → every 4th.
-      const slowedStacks = Math.min(3, statusStrength(world, actor, "slowed")
-        + effectStrength(world, actor, "bog_curse")
-        + effectStrength(world, actor, "iron_flesh"));
+      const slowedStacks = Math.min(3, capabilityStrength(world, actor, "slowed"));
       if (slowedStacks > 0) {
         const tick = (slowMoveTicks.get(actor) || 0) + 1;
         slowMoveTicks.set(actor, tick);

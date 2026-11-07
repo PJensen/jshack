@@ -217,6 +217,15 @@ export function createFacets(init) {
     hasEffect(entityId, effectKey) {
       return status.hasEffect(entityId | 0, effectKey);
     },
+    hasCapability(entityId, capability) {
+      return status.hasCapability(entityId | 0, capability);
+    },
+    capabilityStrength(entityId, capability) {
+      return status.capabilityStrength(entityId | 0, capability);
+    },
+    capabilitySources(entityId, capability) {
+      return status.capabilitySources(entityId | 0, capability);
+    },
     livingAt(x, y, opts = {}) {
       const tx = Number(x) | 0;
       const ty = Number(y) | 0;
@@ -625,6 +634,15 @@ export function createFacets(init) {
     },
     hasEffect(entityId = actor, effectKey = "") {
       return status.hasEffect(entityId | 0, effectKey);
+    },
+    hasCapability(entityId = actor, capability = "") {
+      return status.hasCapability(entityId | 0, capability);
+    },
+    capabilityStrength(entityId = actor, capability = "") {
+      return status.capabilityStrength(entityId | 0, capability);
+    },
+    capabilitySources(entityId = actor, capability = "") {
+      return status.capabilitySources(entityId | 0, capability);
     },
     pick(values, fallback = null) {
       if (!Array.isArray(values) || values.length <= 0) return fallback;

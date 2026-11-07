@@ -16,7 +16,7 @@ import { ItemInfo } from "../components/ItemInfo.js";
 import { Vitality } from "../components/Vitality.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { blind, getEffectiveVisionRange } from "../utils/blind.js";
-import { effectStrength, statusStrength } from "../utils/statusFacade.js";
+import { capabilityStrength } from "../utils/statusFacade.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { ensureActiveEffects } from "../utils/effects.js";
 import { combatSeed, mulberry32 } from "../utils/rng.js";
@@ -118,7 +118,7 @@ export const COMBAT_INTERACTION_RULES = [
     phase: "beforeHit",
     gate(world, ctx) {
       return ctx.damageType === "blunt"
-        && statusStrength(world, ctx.defender, "frozen") + effectStrength(world, ctx.defender, "frost_nova") > 0;
+        && capabilityStrength(world, ctx.defender, "frozen") > 0;
     },
     apply(world, ctx) {
       ctx.damage = Math.floor(ctx.damage * 2);
@@ -135,7 +135,7 @@ export const COMBAT_INTERACTION_RULES = [
     phase: "beforeHit",
     gate(world, ctx) {
       return ctx.damageType === "pierce"
-        && statusStrength(world, ctx.defender, "frozen") + effectStrength(world, ctx.defender, "frost_nova") > 0;
+        && capabilityStrength(world, ctx.defender, "frozen") > 0;
     },
     apply(world, ctx) {
       ctx.damage = Math.floor(ctx.damage * 1.5);
