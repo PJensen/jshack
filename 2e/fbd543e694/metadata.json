@@ -2,8 +2,10 @@
   "cli_version": "0.10.2",
   "checkpoint_id": "2efbd543e694",
   "strategy": "manual-commit",
+  "branch": "master",
   "checkpoints_count": 3,
   "files_touched": [
+    "VERSION",
     "src/rules/data/effectDefs.js",
     "src/rules/data/spells.js",
     "src/rules/scripts/spells.js",
