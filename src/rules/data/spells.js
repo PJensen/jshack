@@ -808,9 +808,7 @@ export const SPELL_DEFS = {
     targeting: 'self',
     description: 'A blooming ward of bark and sap that knits flesh while hardening skin for a long stretch.',
     effects: [
-      { kind: 'status', status: 'regen', duration: '60 turns' },
-      { kind: 'status', status: 'stoneskin', duration: '60 turns' },
-      { kind: 'utility', note: 'Uses a vision stat envelope for heightened field awareness' },
+      { kind: 'effect', effect: 'verdant_ward', duration: '30 turns (+2 AC, recovery, heightened sight)' },
     ],
   },
   harmony_ward: {

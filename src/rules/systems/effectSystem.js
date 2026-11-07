@@ -385,7 +385,7 @@ export function effectSystem(world, dt = 1) {
                 }
             }
 
-            if (key === 'barkskin' && e.meta && Number(e.meta.tickHeal || 0) > 0) {
+            if (e.meta && Number(e.meta.tickHeal || 0) > 0) {
                 applyHealing(world, {
                     target: id,
                     amount: Number(e.meta.tickHeal || 0) * stacks,

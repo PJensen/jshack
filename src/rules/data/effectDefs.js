@@ -171,6 +171,13 @@ export const EFFECT_DEFS = [
     description: "Shadow Veil. Dusk hides the bearer, bends attacks, and primes an ambush.",
   },
   {
+    id: "verdant_ward",
+    keys: ["verdant_ward"],
+    operation: "none",
+    statuses: [],
+    description: "Verdant Ward. Living growth hardens the bearer, restores flesh, and heightens sight.",
+  },
+  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

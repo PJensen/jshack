@@ -98,7 +98,8 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     stoneskin: statusStrength(world, id, "stoneskin")
       + effectStrength(world, id, "divine_shield")
       + effectStrength(world, id, "iron_flesh")
-      + effectStrength(world, id, "barkskin"),
+      + effectStrength(world, id, "barkskin")
+      + effectStrength(world, id, "verdant_ward"),
     serpent_hide: statusStrength(world, id, "serpent_hide"),
     berserk: statusStrength(world, id, "berserk"),
     primal_roar: effectStrength(world, id, "primal_roar"),

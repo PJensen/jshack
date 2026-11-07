@@ -1812,6 +1812,7 @@ function ensureEffectsStack(container) {
     quicken:      { name: 'Quicken', glyph: '\u26A1', hue: 60 },
     barkskin:     { name: 'Barkskin', glyph: '\u{1F333}', hue: 120 },
     shadow_veil:  { name: 'Shadow Veil', glyph: '\u2307', hue: 275 },
+    verdant_ward: { name: 'Verdant Ward', glyph: '\u2042', hue: 140 },
     blessed:      { name: 'Blessed',   glyph: '\u{1F31F}',       hue: 50  },
     stoneskin:    { name: 'Stoneskin', glyph: '\u{1FAA8}',       hue: 220 },
     taunted:      { name: 'Taunted',   glyph: '\u{1F624}',       hue: 0   },

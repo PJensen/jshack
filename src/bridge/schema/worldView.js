@@ -135,6 +135,7 @@ const DISPLAY_STATUS_TAGS = new Set([
 	'quicken',
 	'barkskin',
 	'shadow_veil',
+	'verdant_ward',
 	'blessed',
 	'mindwiped',
 	'stoneskin',

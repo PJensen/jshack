@@ -49,7 +49,7 @@ Deno.test("barkskin applies one authored defensive identity", () => {
   assertEquals(world.get(caster, Vitality).hp, 11, "barkskin should recover one HP per tick");
 });
 
-Deno.test("verdant_ward applies long regen, stoneskin, and vision stat envelope", () => {
+Deno.test("verdant_ward applies one authored recovery and perception identity", () => {
   const world = new World({ seed: 0xC0FFEE });
   const caster = makeCaster(world);
   const events = [];
@@ -58,17 +58,13 @@ Deno.test("verdant_ward applies long regen, stoneskin, and vision stat envelope"
   runSpellScript(world, caster, SPELL_DEFS.verdant_ward, {});
 
   const keys = effectKeys(world, caster);
-  assert(keys.includes("regen"), "verdant_ward should apply regen");
-  assert(keys.includes("stoneskin"), "verdant_ward should apply stoneskin");
-  assert(keys.includes("stat_envelope"), "verdant_ward should apply stat_envelope");
+  assertEquals(keys, ["verdant_ward"], "verdant_ward should have one spell-owned effect");
 
   const ae = world.get(caster, ActiveEffects);
-  const regen = ae.effects.find((e) => e?.key === "regen");
-  assertEquals(Number(regen?.turnsLeft || 0), 30);
-
-  const envelope = ae.effects.find((e) => e?.key === "stat_envelope" && e?.stat === "visionRange");
-  assert(envelope, "verdant_ward should include vision envelope");
-  assert(Number(envelope.toValue) > Number(envelope.startValue), "verdant_ward envelope should boost vision");
+  const ward = ae.effects.find((e) => e?.key === "verdant_ward");
+  assertEquals(Number(ward?.turnsLeft || 0), 30);
+  assertEquals(ward?.meta?.tickHeal, 1);
+  assert(Number(ward.meta.visionTo) > Number(ward.meta.visionStart), "verdant_ward should boost vision");
   assert(events.length === 1, "verdant_ward should emit spell event");
 });
 

@@ -3556,30 +3556,29 @@ REGISTRY['verdant_ward'] = function verdantWardScript(world, actor, _spell, _int
 
   const DURATION = 30;
   upsertTimedEffect(ae.effects, {
-    key: 'regen',
-    turnsLeft: DURATION,
-    potency: 1,
-    stacks: 1,
-    sourceId: actor,
-  });
-  upsertTimedEffect(ae.effects, {
-    key: 'stoneskin',
+    key: 'verdant_ward',
     turnsLeft: DURATION,
     potency: 2,
     stacks: 1,
     sourceId: actor,
+    meta: {
+      tickHeal: 1,
+      visionStart: 0,
+      visionTo: 0,
+      visionEnd: 0,
+      visionRampIn: 3,
+      visionHold: 20,
+      visionRampOut: 7,
+    },
   });
 
   const startVision = getEffectiveVisionRange(world, actor);
-  upsertVisionEnvelope(ae.effects, 'spell:verdant_ward', {
-    startValue: startVision,
-    toValue: startVision + 2,
-    endValue: startVision,
-    rampIn: 3,
-    hold: 20,
-    rampOut: 7,
-    turnsLeft: DURATION,
-  });
+  const ward = ae.effects.find((e) => e?.key === 'verdant_ward');
+  if (ward?.meta) {
+    ward.meta.visionStart = startVision;
+    ward.meta.visionTo = startVision + 2;
+    ward.meta.visionEnd = startVision;
+  }
 
   world.emit('spell:verdant_ward', {
     actor,
