@@ -3,7 +3,7 @@
   "checkpoint_id": "7289e613388b",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 3,
   "files_touched": [
     "src/rules/data/effectDefs.js",
     "src/rules/data/spells.js",
@@ -17,6 +17,13 @@
       "compact_transcript": "/72/89e613388b/0/transcript.jsonl",
       "content_hash": "/72/89e613388b/0/content_hash.txt",
       "prompt": "/72/89e613388b/0/prompt.txt"
+    },
+    {
+      "metadata": "/72/89e613388b/1/metadata.json",
+      "transcript": "/72/89e613388b/1/full.jsonl",
+      "compact_transcript": "/72/89e613388b/1/transcript.jsonl",
+      "content_hash": "/72/89e613388b/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
