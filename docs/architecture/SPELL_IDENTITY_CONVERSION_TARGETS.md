@@ -8,11 +8,14 @@ timers.
 ## Working rule
 
 Each converted spell should have one canonical spell-owned active effect. That
-effect owns the spell's duration, source, refresh/stack behavior, and authored
-identity. Existing status names may remain as projected compatibility views for
-combat, targeting, resistance, AI, and other rule queries. They should not be
-separate spell timers unless the mechanic genuinely has an independent
-lifecycle.
+effect owns the spell's duration, source, refresh/stack behavior, mechanics, and
+authored identity. The converted spell should not retain legacy component
+statuses merely to keep old consumers working. Rule consumers should query the
+spell-owned capability or a deliberate canonical mechanic interface.
+
+Generic statuses remain valid when they are genuinely shared mechanics authored
+by multiple independent sources. They are not valid as compatibility aliases
+for a spell that has been given a clean identity.
 
 Spell-specific mechanics belong in the spell identity, not in an accidental
 bundle of whichever existing statuses happen to approximate the design.
@@ -38,8 +41,8 @@ bundle of whichever existing statuses happen to approximate the design.
 
 1. The caster's active-effect view shows one spell identity for the cast.
 2. Recasting refreshes or transforms that identity instead of multiplying rows.
-3. Projected statuses still satisfy canonical rule queries where they are
-   intentionally retained.
+3. Rule consumers use the spell-owned mechanic interface; no compatibility
+   aliases or legacy spell-status rows are required.
 4. Independent mechanics keep independent lifecycles only when the design
    requires them (for example, a shield that can break before its duration).
 5. Spell-specific values come from the spell/effect definition and canonical
@@ -53,11 +56,11 @@ bundle of whichever existing statuses happen to approximate the design.
 
 ## Lessons from the pilots
 
-- `EFFECT_DEFS.statuses` is a useful compatibility projection surface: one
-  runtime key can satisfy several existing status queries.
-- Projection alone is not enough for mechanics with different operations or
-  lifecycles. Healing, retaliation, resource cadence, and breakable shields
-  need explicit design before being collapsed into one effect.
+- The pilots showed that collapsing several old statuses into one effect is a
+  useful migration experiment, but it is not the final architecture.
+- Projection alone is not enough for a clean disposition. Healing, retaliation,
+  resource cadence, resistances, and breakable shields need explicit
+  spell-owned mechanics and deliberate query surfaces.
 - The active-effect row, spell event, message, VFX, and audio should converge on
-  the spell-owned name. Generic projected statuses are implementation details,
-  not the player's primary identity.
+  the spell-owned name. The old component statuses should disappear from the
+  converted spell's implementation and presentation.
