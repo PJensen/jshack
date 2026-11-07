@@ -135,13 +135,6 @@ export const EFFECT_DEFS = [
     description: "Slowed. Movement reduced.",
   },
   {
-    id: "consecrate",
-    keys: ["consecrate"],
-    operation: "none",
-    statuses: [],
-    description: "Consecrate. Holy ground burns the wicked while its caster is restored.",
-  },
-  {
     id: "hastened",
     keys: ["hastened", "haste"],
     operation: "none",

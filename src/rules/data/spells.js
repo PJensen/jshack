@@ -1145,10 +1145,16 @@ export const SPELL_DEFS = {
     script: 'consecrate',
     targeting: 'self',
     radius: 2,
+    activeEffect: {
+      duration: 5,
+      potency: 2,
+      stacks: 1,
+      mechanics: { tickHeal: 2, hazardDuration: 5 },
+    },
     description: 'Sanctify the ground beneath your feet. Holy fire scorches the wicked and mends the faithful.',
     effects: [
-      { kind: 'damage', element: 'holy', amount: '3 per tick to hostiles in radius; INT-scaled', duration: '20 turns' },
-      { kind: 'effect', effect: 'consecrate', duration: '5 turns (caster recovery; field persists independently)' },
+      { kind: 'damage', element: 'holy', amount: '3 per tick to hostiles in radius; INT-scaled', duration: '5 turns' },
+      { kind: 'effect', effect: 'consecrate', note: 'caster recovery; field persists independently' },
     ],
   },
 

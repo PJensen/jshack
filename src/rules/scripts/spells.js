@@ -4362,7 +4362,9 @@ REGISTRY['consecrate'] = function consecrateScript(world, actor, spell, _intent)
   if (!apos) return;
 
   const RADIUS = Number(spell?.radius || 2) | 0;
-  const TURNS = 5;
+  const active = spell?.activeEffect || {};
+  const mechanics = active.mechanics || {};
+  const TURNS = Math.max(1, Number(mechanics.hazardDuration ?? active.duration ?? 5) | 0);
   const BASE_TICK = 3;
   const scaledDmg = scaleSpellDamage(world, actor, BASE_TICK);
 
@@ -4389,8 +4391,12 @@ REGISTRY['consecrate'] = function consecrateScript(world, actor, spell, _intent)
   const ae = ensureActiveEffectList(world, actor);
   if (ae) {
     upsertTimedEffect(ae.effects, {
-      key: 'consecrate', turnsLeft: TURNS, potency: 2, stacks: 1, sourceId: actor,
-      meta: { tickHeal: 2 },
+      key: spell?.id || 'consecrate',
+      turnsLeft: Math.max(1, Number(active.duration || 5) | 0),
+      potency: Number(active.potency ?? 1),
+      stacks: Number(active.stacks ?? 1),
+      sourceId: actor,
+      meta: { ...(active.mechanics || {}) },
     });
   }
 

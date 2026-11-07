@@ -366,6 +366,24 @@ Deno.test("consecrate hazard has correct damage type", () => {
   }
 });
 
+Deno.test("consecrate reads its recovery mechanics from the spell definition", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  runSpellScript(world, caster, {
+    ...SPELL_DEFS.consecrate,
+    activeEffect: { duration: 7, potency: 4, stacks: 2, mechanics: { tickHeal: 4, hazardDuration: 3 } },
+  }, {});
+
+  const recovery = world.get(caster, ActiveEffects).effects.find((e) => e?.key === 'consecrate');
+  assertEquals(recovery.turnsLeft, 7);
+  assertEquals(recovery.potency, 4);
+  assertEquals(recovery.stacks, 2);
+  assertEquals(recovery.meta.tickHeal, 4);
+  for (const [, hazard] of world.query(HazardArea)) {
+    if (hazard.kind === 'holy') assertEquals(hazard.turnsLeft, 3);
+  }
+});
+
 // ─── Smoke Bomb ─────────────────────────────────────────────────────────────
 
 Deno.test("smoke_bomb blinds and resets aggro on nearby enemies", () => {
