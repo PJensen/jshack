@@ -15,6 +15,9 @@ Deno.test("HUD uses the labeled linear vitals surface and keeps the vitals event
   assertStringIncludes(hud, "alignSelf: 'flex-end'");
   assertStringIncludes(hud, "height: 'auto'");
   assertStringIncludes(hud, "left: 'auto'");
+  assertStringIncludes(hud, "top: 'calc(50px + env(safe-area-inset-top, 0px))'");
+  assertStringIncludes(hud, "width: '250px', maxWidth: 'calc(100vw - 16px)'");
+  assertStringIncludes(hud, "maxWidth: '100%'");
   assertStringIncludes(bars, "value.textContent = '— / —'");
   assertStringIncludes(bars, "justifyContent: 'space-between'");
   assert(!hud.includes("createConcentricGauge"), "player HUD should not instantiate the circular gauge");

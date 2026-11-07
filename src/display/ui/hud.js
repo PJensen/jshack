@@ -513,14 +513,14 @@ export function initHUD() {
   worldControls.appendChild(moonPhaseEl);
   worldControls.appendChild(zoomHud);
 
-  // Active effects HUD: vertical stack below the gauge on the right side.
-  // Effects HUD — anchored top-left, horizontal flex row across the top.
+  // Active effects and quest HUD: a compact left column below world context.
   const effectsHud = document.createElement('div');
   Object.assign(effectsHud.style, {
     position: 'fixed',
     left: 'calc(8px + env(safe-area-inset-left, 0px))',
-    top: 'calc(8px + env(safe-area-inset-top, 0px))',
+    top: 'calc(50px + env(safe-area-inset-top, 0px))',
     display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px',
+    width: '250px', maxWidth: 'calc(100vw - 16px)', boxSizing: 'border-box',
     padding: '6px 8px', borderRadius: UX_THEME.radius,
     background: 'rgba(10, 9, 8, 0.58)', border: UX_THEME.surfaceBorderSoft,
     boxShadow: 'inset 0 0 0 1px rgba(188,206,224,0.04)',
@@ -534,16 +534,19 @@ export function initHUD() {
     flexWrap: 'wrap',
     alignItems: 'flex-start',
     gap: '6px',
+    width: '100%',
   });
   const affixRow = document.createElement('div');
-  Object.assign(affixRow.style, { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: '4px' });
+  Object.assign(affixRow.style, { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: '4px', width: '100%' });
   const questRow = document.createElement('div');
   Object.assign(questRow.style, {
     display: 'none',
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '4px',
-    width: 'min(280px, calc(100vw - 32px))',
+    width: '250px',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
     pointerEvents: 'auto',
   });
   effectsHud.appendChild(statusRow);
@@ -1406,6 +1409,8 @@ export function initHUD() {
       alignItems: 'center',
       gap: '6px',
       minHeight: '28px',
+      width: '100%',
+      boxSizing: 'border-box',
       padding: '5px 7px',
       borderRadius: '7px',
       border: '1px solid #5d5122',
