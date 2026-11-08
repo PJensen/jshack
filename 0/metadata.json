@@ -1,0 +1,43 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "cba6a7a69605",
+  "session_id": "019f47b7-5da2-76e3-8e93-99749d40d0b8",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-09T18:37:33.110258591Z",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/hud.js",
+    "src/display/ui/inventoryOverlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/display/ui/overlayUtils.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "8c9a64966eac",
+  "token_usage": {
+    "input_tokens": 1053890,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 16139392,
+    "output_tokens": 42013,
+    "api_call_count": 116
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-09T18:37:32.920584876Z",
+    "agent_lines": 10,
+    "agent_removed": 35,
+    "human_added": 166,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 176,
+    "total_lines_changed": 225,
+    "agent_percentage": 20,
+    "metric_version": 2
+  }
+}
