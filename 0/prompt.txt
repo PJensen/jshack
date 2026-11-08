@@ -1,0 +1,7 @@
+1. make flint purchasable in the general store (kind of like fishish rod)
+2. make sure it's a mining / digging drop as well
+3. potentially a nice to have utility item that maybe drops from certain elemeental stone type creatures.
+
+---
+
+lets do it now -- aint no way we'll ever revisit this form a tech debt standpoint -- it's fresh, it's in context, we're warm, lets do it.
