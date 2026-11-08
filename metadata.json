@@ -1,0 +1,32 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8fd7dd618b7f",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/rules/data/buildings/apothecary.js",
+    "src/rules/data/buildings/church.js",
+    "src/rules/data/buildings/gem_store.js",
+    "src/rules/data/buildings/general_store.js",
+    "src/rules/data/buildings/smithy.js",
+    "src/rules/data/buildings/tavern.js",
+    "src/rules/environment/dungeon/townPlacement.js",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 12,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1382400,
+    "input_tokens": 37234,
+    "output_tokens": 6041
+  }
+}
