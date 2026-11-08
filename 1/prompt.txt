@@ -1,0 +1,8 @@
+The visual  fidelity and look and feel of the character creation screen needs to be applied broadly to the rest of the games UX. My gut says that migrating the CSS alone would be a massive improvement.
+
+Objective:
+
+Make the games UX consistent with the character creation screen.
+
+NOTE: character creation had early special attention and so is ahead visually of the rest of the game.
+SCOPE: if there are other UX or quality of llife improvements you want to make whille doing this that is okay.
