@@ -1,0 +1,59 @@
+Broadly speaking, what would it take to start making NPCs targetable via spells and other things. I've got sort of two dimensions in my head.
+
+* NPCs (including shop keepers) start tracking arrgo level toward certain entities (akin to monsters)
+* When you piss them off ( in grades ) it influences their behavior, disposition and even hostility towards you.
+
+We started down this pathway regarding shop-law and other zones -- but I think it's time to start exploring the bare metal NPC interactions and dispositions toward the player.
+
+We should be considering what **kinds**of things influence ths.
+Do they decay over time (GTA, "wanted")
+Are crimes forgiven
+How bad is polymorphing a shop keeper
+What are the consequences
+
+Should we explore temporary polymorph -- unfortunately, I'm 90% certain that polymorph is a near permanent change. But it migh be worth exploring ideas around temporary a temporary polymorph condition via the use of a stack or some other data structure.
+
+Last detail:
+
+Eating a cocatrice mighy be a good way to become immune to polymorph.
+
+Last last detail:
+
+Maybe certain mosters may attempt to polymorph you
+Maybe shopkeepers may attempt to polymorph you.
+
+Mostly I'm thinking out loud here -- find the common grain between all of these and lets start building.
+
+---
+
+I'm 95% certain that I asked you to begin planning and not at all start to code. In fact, I specifically asked "what would it take" and yet -- you decided to go off and start building without my clear go-ahead. Now you've been busy burning tokens on a design and direction that was almost certainly not agreed to -- which gives me an undue review burnen, my expense, my time, cost, and much more.
+
+moving forward -- there was much we should have discussed without the token bonfire.
+
+why you chose social disposition instead of aggro component
+the difference between hostile targeting and accedential damage
+how bumping an NPC and hitting them should have been gated by an "are you sure" UX gate
+
+can you see how frustrating what you did is?
+
+I've done more thinking -- and my decision is:
+
+I've decided to stash everything you just did -- but give you the benefit of letting you know the stash identifier so you may draw from it. Because -- you are going to plan with me, and, you may find that (hopefully) some of what you guessed at is useful.
+
+the name of the stash is your punishment "codex fails to listen"
+
+---
+
+You have the clear go-ahead to begin planning. Perhaps my mistake was not explicitly invoking planning mode.
+
+---
+
+I agree with the first pass milestone. We already have two bump handlers around NPC, one for talking, one for trading places, I very much doubt a third will make things clearer. It almost feels like we should have a melee attack button -- which solves for the issue completely. before we begin, lets dial in that subtle detail.
+
+NOTE: for hostile creates, bumping shall still be considered an attack.
+
+An attack action must have a cardinal direction component to it.
+
+---
+
+proceed down that first pass milestone pathway as described -- make sure your using existing utils, cardinal driections, etc. also: once an NPC becomes hostile, bump attack works until hostility subsides -- but that may come way later.
