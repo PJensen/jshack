@@ -1,0 +1,13 @@
+we've been working on re-building interactable things. I want to make
+
+sarc and urn more RNG based outomes, 
+
+an urn can spawn a spectral .. something
+a sarc can spwan a skeleton
+
+other outcomes?
+booby trapped?
+other creatures?
+
+
+NOTE: use new interaction strategy outlined in fountain.

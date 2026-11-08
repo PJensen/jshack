@@ -1,0 +1,408 @@
+what were some big refactorings and cleanups that I've been busy working towards?
+
+** interactions, interactables (defineInteractable)
+** improving item, monster authoring (defineItem, defineMonster)
+
+I feel like interactions was partially migrated -- but I don't know how many other types of complex interactions there really is beyond fountain -- which I think we did a good enough job at.
+
+I feel like we should be focusing on gameplay more; specifically, really making quests more sophisticated, making use of the new `rifts` feature, and beyond. we have a ton of content that can be surfaced.
+
+along with making even more use of the lighting engine across the board. help me set the direction please. frankly, I think we've done enough today -- so this might be just planning for the week.
+
+---
+
+the challenge I think is to make a fun game from all we have -- chckout this writeup from a recent web session.
+
+Reading through it, the mechanics are solid. The problem isn't the code. The problem is the story. Right now it's a classic MMO quest:
+
+> Rats exist → kill 5 → collect reward.
+
+A Witcher quest almost never works like that. It starts with an assumption, then slowly reveals you were wrong.
+
+Your quest already has the beginnings of this—the barkeep, the cellar, the key, the rats. We just need to add mystery and escalation. 
+
+I'd restructure it into acts.
+
+---
+
+## Act I — The Obvious Problem
+
+The barkeep is irritated.
+
+> "Something's gotten into the cellar again.
+> Barrels chewed open.
+> Customers hear scratching all night.
+> Kill five rats and I'll pay."
+
+Nothing unusual.
+
+Player accepts.
+
+Barkeep hands over the cellar key.
+
+Exactly what you have today.
+
+---
+
+## Act II — Something Isn't Right
+
+Player enters.
+
+Instead of ten rats charging...
+
+It's...
+
+quiet.
+
+One rat runs away.
+
+Another ignores the player.
+
+Dead rats are everywhere.
+
+Gnawed from the inside.
+
+Something killed them.
+
+Now curiosity begins.
+
+---
+
+## Environmental Storytelling
+
+This is where Witcher quests shine.
+
+Instead of exposition, the dungeon tells the story.
+
+Things the player notices:
+
+* Flour sacks ripped open
+* Tiny bloody footprints
+* Strange slime
+* Bite marks far larger than any rat
+* One barrel broken outward—not inward
+* Rat nests abandoned
+
+Every room answers one question while raising another.
+
+---
+
+## Act III — Discovery
+
+Player eventually finds:
+
+A much larger chamber.
+
+Inside...
+
+Not a rat.
+
+Maybe:
+
+* Giant brood mother
+* Sewer ghoul
+* Cave weasel
+* Carrion ooze
+* Mutated rat king
+* Ancient mimic living among barrels
+
+Suddenly...
+
+The rats weren't the infestation.
+
+They were victims.
+
+---
+
+## Act IV — Moral Twist
+
+Here's where Witcher earns its reputation.
+
+There isn't one correct answer.
+
+Example:
+
+The "Rat King" is actually protecting newborn pups.
+
+Kill it?
+
+Drive it away?
+
+Seal the tunnels?
+
+Burn the nest?
+
+Different consequences.
+
+Maybe later...
+
+No rats.
+
+But now giant spiders move in.
+
+---
+
+## NPC Twist
+
+When you return:
+
+The barkeep says...
+
+> "Thought you'd just kill a few rats."
+
+Player:
+
+> "They weren't the problem."
+
+Now the barkeep realizes the cellar extends into forgotten tunnels beneath town.
+
+Suddenly this isn't a tutorial quest.
+
+It's the first hint that the town sits atop something much older.
+
+---
+
+## The Real Reward
+
+The reward shouldn't be the gold.
+
+The reward is knowledge.
+
+Player learns:
+
+```
+Tavern
+    ↓
+Old Cellar
+    ↓
+Smuggler Tunnel
+    ↓
+Ancient Sewers
+    ↓
+???
+```
+
+Now the world feels deeper.
+
+---
+
+## Mechanics
+
+Your state machine naturally expands.
+
+```
+Offer
+    ↓
+
+Investigate
+
+    ↓
+
+Discover
+
+    ↓
+
+Decision
+
+    ↓
+
+Return
+
+    ↓
+
+Complete
+```
+
+Notice "Hunt" disappears.
+
+The player is no longer grinding kills.
+
+They're investigating.
+
+---
+
+## Even Better...
+
+Instead of counting rats...
+
+Track discoveries.
+
+```
+□ Found the cellar.
+
+□ Examined dead rats.
+
+□ Followed strange tracks.
+
+□ Found collapsed tunnel.
+
+□ Defeated (or spared) the creature.
+
+□ Reported findings.
+```
+
+Now combat supports exploration instead of replacing it.
+
+---
+
+## One Small Touch I'd Absolutely Add
+
+Your current quest spawns a rat in front of the barkeep.
+
+Keep that.
+
+But make it scripted.
+
+The barkeep is talking...
+
+```
+"...been hearing scratching all week..."
+```
+
+A rat darts across the floor.
+
+A patron screams.
+
+The barkeep throws a mug.
+
+```
+"There! Again!"
+
+"Go on then!"
+```
+
+The player kills the rat in the tavern.
+
+Silence.
+
+Then...
+
+More scratching.
+
+From beneath the floorboards.
+
+That single moment establishes the tone better than a paragraph of dialogue. It immediately tells the player this is a living place, not an NPC with an exclamation mark over their head.
+
+Asking mysef what makes a good quest, what can the engine actually support?
+
+---
+
+I'm not sure how I feel about clues since we're lacking "chaff" (story telling decorative stuff), but I do really like more than one way to resolve something. Did the player use a scroll of genocide on rats? How can we make a "rat-king" type of monster. Can the player kill the rat-king and have the game remember it? How can the game tell a story?
+
+---
+
+only ammendment, small dungeon, short dungeon generation makes now allowance for "more optional depth" right now -- it's as long as it is and that's it. I cannot think of a clean way to execute on that short of:
+
+* expanding the cellar, then ...
+* placing a gate under lock and key in the middle of the dungeon
+* at the end of the generation, past the locked cellar door, placing rat_king
+
+this strikes me as potentially tricky, doable, but tricky.
+
+if you want to start by adding geocide completion path, that would be a good start. but do tell me how hard this second half dungeon actually is.
+
+NOTE: reward is now a world outcome in a sense.
+NOTE: we do have some chaff stuff, but I think we should work to make them interactable, shelving, etc.
+
+/plan
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Rat Quest Next Step: Genocide Path First, Rat King Later
+
+## Summary
+
+Start with the clean, low-risk gameplay branch: let `scroll_genocide` on rats resolve or alter Rat Infestation. Defer the “second half of the cellar” until after that because forcing optional depth into a fixed one-floor template is doable but not clean.
+
+The Rat King itself is not hard. The hard part is guaranteeing a satisfying gated “back half” inside a short generated dungeon without breaking reachability, stair placement, or template simplicity.
+
+## Difficulty Call
+
+- **Genocide completion path: low difficulty.**
+  - `genocideSystem` already emits `scroll:genocide:success`.
+  - Quest runtime can already listen to that event.
+  - Rat quest can store `resolution: "genocide"` in `QuestVars`.
+  - Barkeep dialogue can branch from quest state.
+
+- **Rat King as a monster: low to medium difficulty.**
+  - Add `rat_king` with `defineMonster()`.
+  - Spawn it with existing monster spawning helpers.
+  - Detect its death through `DeathApplied`, like run contracts do.
+
+- **Rat King in a locked second half of tavern basement: medium-high difficulty.**
+  - Tavern basement is one floor, one generated extent, currently `floors: 1`.
+  - The template does not have a concept of optional extra depth.
+  - A middle gate requires reliable map partitioning: player side, locked side, reachable boss side.
+  - The tricky part is not placing a door; it is proving the generated floor still has a valid route, that the gate actually separates content, and that the Rat King lands behind it.
+
+## Key Changes
+
+- Add Rat Infestation genocide resolution.
+  - Rat quest listens for `scroll:genocide:success`.
+  - If `identity === "rat"` and the quest is active, set:
+    - `ratsGenocided: true`
+    - `resolution: "genocide"`
+    - `worldOutcome: "rats_erased"`
+    - `objective: "Return to the barkeep."`
+  - Advance quest to `report`.
+  - Completion text and `quest:completed` include the resolution.
+
+- Update barkeep response.
+  - If normal completion: “Good. Maybe now I can sleep.”
+  - If genocide completion: barkeep reacts uneasily because the cellar is silent in the wrong way.
+  - This makes the reward a world outcome, not just an item payout.
+
+- Keep reward behavior explicit.
+  - `bow_mirror` can remain the material reward if the quest turns in.
+  - The more important outcome is the remembered resolution in quest vars and completion payload.
+  - Future systems can branch from `resolution`.
+
+- Do not build the second-half gate in this first slice.
+  - Add a small planning note or TODO near the rat quest describing the later “locked deeper cellar” direction.
+  - Avoid modifying generation until the quest memory branch is proven.
+
+## Later Rat King Approach
+
+- Preferred first Rat King version:
+  - Spawn Rat King in the farthest valid room or farthest valid tile from the up stair.
+  - No internal locked gate yet.
+  - Quest can resolve by killing Rat King, killing enough rats, or genociding rats.
+  - This gives the story branch without generation surgery.
+
+- If we later want the locked back half:
+  - Expand `tavern_basement` room budget slightly.
+  - Post-process generated rooms after floor generation.
+  - Pick two far-apart rooms.
+  - Place a locked `Door`/`DoorLock` or portcullis on a connector between regions.
+  - Place Rat King past the gate.
+  - Add a reachability test proving:
+    - player spawn can reach gate,
+    - gate blocks the Rat King side while locked,
+    - Rat King side is reachable after unlock/open.
+
+## Test Plan
+
+- Genocide path:
+  - Active Rat Infestation receives `scroll:genocide:success` for `identity: "rat"`.
+  - Quest advances to `report`.
+  - Quest vars record `resolution: "genocide"` and `worldOutcome: "rats_erased"`.
+  - `quest:completed` includes the resolution.
+
+- Negative cases:
+  - Genociding another monster does not resolve Rat Infestation.
+  - Genociding rats before accepting the quest does not crash or create duplicate quest state.
+
+- Dialogue:
+  - Barkeep turn-in choice appears after genocide resolution.
+  - Barkeep completion text branches on `resolution`.
+
+- Existing behavior:
+  - Normal rat kill path still works.
+  - Rat quest reward grant remains stable.
+
+## Assumptions
+
+- Start with story through remembered systemic action, not clue objects.
+- Chaff/decor interactables are valuable, but not required for this branch.
+- Generation changes wait until there is a working Rat King story branch to place behind a gate.

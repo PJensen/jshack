@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "48d1634e4915",
+  "session_id": "019f1462-2734-7fc0-88b5-a87ca9a90036",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T17:23:16.787311936Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/quests/definitions/ratInfestation.js",
+    "tests/ratQuestProgress.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "83efa1075779",
+  "token_usage": {
+    "input_tokens": 155421,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1664768,
+    "output_tokens": 8398,
+    "api_call_count": 18
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T17:23:16.756486095Z",
+    "agent_lines": 209,
+    "agent_removed": 2,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 209,
+    "total_lines_changed": 211,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
