@@ -1,0 +1,28 @@
+{
+  "branch": "master",
+  "checkpoint_id": "7be326408a8b",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/events/Died.js",
+    "src/rules/utils/deathApplied.js",
+    "src/shared/events/statusEvent.js",
+    "src/shared/math/point.js"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 8,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1046528,
+    "input_tokens": 48936,
+    "output_tokens": 2071
+  }
+}
