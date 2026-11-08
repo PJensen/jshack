@@ -1,0 +1,3 @@
+audio:
+
+I just added `action_harvest_plant.mp3` to assets -- please pay this sound when a plant is harvested, either by an NPC or by a player.

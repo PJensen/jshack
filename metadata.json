@@ -1,0 +1,30 @@
+{
+  "branch": "master",
+  "checkpoint_id": "3cefd990ec35",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/sounds.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/audioSoundsRegistry.test.mjs",
+    "tests/audioWiring.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 15,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 579840,
+    "input_tokens": 62083,
+    "output_tokens": 4216
+  }
+}
