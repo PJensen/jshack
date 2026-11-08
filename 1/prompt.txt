@@ -1,0 +1,13 @@
+We need to make a quest chain. When the player completes "The Book Below" the priest creates a rift dungeon as a second priest quest. Make sense? I think we'll get much deeper into quest chaining in the future, but this feels like a good start, and a good first use of the rift system.
+
+For the first rift, I'm thinking a shallow 3 level dungeon, extremely compact, high density, crypt type generation, all monsters allowed, with a bosttle at the end.
+
+/plan plan with me on how to build it out.
+
+---
+
+We need to make a quest chain. When the player completes "The Book Below" the priest creates a rift dungeon as a second priest quest. Make sense? I think we'll get much deeper into quest chaining in the future, but this feels like a good start, and a good first use of the rift system.
+
+For the first rift, I'm thinking a shallow 3 level dungeon, extremely compact, high density, crypt type generation, all monsters allowed, with a bosttle at the end.
+
+/plan plan with me on how to build it out.

@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "7c7796134656",
+  "session_id": "019f420b-d645-73f1-b8f7-c7a059622cd3",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T14:20:13.847282006Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/components/RiftPortal.js",
+    "src/rules/components/RiftState.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/environment/dungeon/transition.js",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "src/rules/quests/definitions/priestRift.js",
+    "src/rules/utils/riftRuntime.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "799386b0f340",
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T14:20:13.82956458Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
