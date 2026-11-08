@@ -1,0 +1,50 @@
+{
+  "branch": "master",
+  "checkpoint_id": "165303736294",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 357,
+    "agent_percentage": 100,
+    "agent_removed": 70,
+    "calculated_at": "2026-06-10T21:38:08.799776811Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 357,
+    "total_lines_changed": 427
+  },
+  "files_touched": [
+    "src/rules/data/buildings/abandoned_camp.js",
+    "src/rules/data/buildings/buildingRegistry.js",
+    "src/rules/data/buildings/ruined_watchtower.js",
+    "src/rules/data/buildings/strange_grove.js",
+    "src/rules/data/buildings/wayside_shrine.js",
+    "src/rules/environment/dungeon/overworld.js",
+    "src/rules/environment/dungeon/stampBuilding.js",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 18,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1130240,
+    "input_tokens": 97253,
+    "output_tokens": 16208
+  }
+}

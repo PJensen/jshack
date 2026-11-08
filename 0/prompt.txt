@@ -1,0 +1,1 @@
+I feel like these new overworld structures should have all been inside .js files just like the rest of the buildings we have.
