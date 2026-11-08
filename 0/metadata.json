@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a7164bcc9488",
+  "session_id": "019f3d74-c0b0-7cc3-9468-69f5392653b4",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T16:53:48.248553862Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/cloud/llm/openAICompatible.js",
+    "src/display/ui/overlayRenders.js",
+    "src/main/resources/AI.js",
+    "src/main/scheduler.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/rules/resources/AI.js",
+    "src/shared/aiSettings.js",
+    "tests/aiResource.test.mjs",
+    "tests/aiSettings.test.mjs",
+    "tests/openAICompatible.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "e3b210e12213",
+  "checkpoint_transcript_start": 214,
+  "transcript_lines_at_start": 214,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T16:53:48.2043113Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

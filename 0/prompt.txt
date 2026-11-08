@@ -1,0 +1,3 @@
+question: why wouldn't rules be able to access it -- the split there is not clear to me, this resource specifically should be accessible from just about any system. (e.g.) an NPC speaks
+
+is that not true?
