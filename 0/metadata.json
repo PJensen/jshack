@@ -1,0 +1,64 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "75f70337a40c",
+  "session_id": "019edc3a-e11b-7b11-a10a-98cbdf89f227",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-18T19:58:16.747962939Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/utils/spawnCookingFire.js",
+    "tests/applyDataDriven.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "45cfee92f2f0",
+  "checkpoint_transcript_start": 293,
+  "transcript_lines_at_start": 293,
+  "token_usage": {
+    "input_tokens": 93319,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3997056,
+    "output_tokens": 7456,
+    "api_call_count": 21
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-18T19:58:16.634529003Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 28,
+    "total_committed": 0,
+    "total_lines_changed": 28,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 954,
+      "user_lines_removed": 28,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/ui/wiring/floatTextWiring.js": 14,
+        "src/rules/interaction/mutations.js": 7,
+        "src/rules/utils/spawnCookingFire.js": 46,
+        "tests/applyDataDriven.test.mjs": 22
+      },
+      "user_removed_per_file": {
+        "src/display/ui/wiring/floatTextWiring.js": 20,
+        "src/rules/interaction/mutations.js": 6,
+        "tests/applyDataDriven.test.mjs": 2
+      }
+    }
+  ]
+}

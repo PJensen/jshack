@@ -1,0 +1,15 @@
+why would you not use an archetype, or a helper function?
+
+---
+
+ehhh, I mean, I just moved off the tile, collission did nothing afterwards.
+
+---
+
+bro -- that is NOT the same cooking fire as the one in the tavern, also, the word "SPARK" does nothing for me in a game with a particle system, make some sparks man, use the particle pool. 
+
+you want to say "spark!" say it in the sys log.
+
+---
+
+unclear precisely what you thought I'd be asking for, and why you'd go off writing bespoke methods -- granted we dont do a lot of decoration spawning, but still -- you got to think with me here bruv.
