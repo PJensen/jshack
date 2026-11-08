@@ -1,0 +1,44 @@
+{
+  "branch": "master",
+  "checkpoint_id": "918d1066eb93",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 177,
+    "agent_percentage": 100,
+    "agent_removed": 5,
+    "calculated_at": "2026-06-10T21:30:50.371055816Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 177,
+    "total_lines_changed": 182
+  },
+  "files_touched": [
+    "src/rules/environment/dungeon/overworld.js",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 28,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2395136,
+    "input_tokens": 234294,
+    "output_tokens": 11745
+  }
+}

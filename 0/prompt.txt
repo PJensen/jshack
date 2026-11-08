@@ -1,0 +1,120 @@
+Captured as usable v0.9 notes. Cleaned, sharpened, kept your intent intact. 🐀
+
+# JSHack v0.9 Notes
+
+## 1. RatQuest / Clustering
+
+Rat discovery is too thin for the current quest shape.
+
+Observed case: four rats found across three floors. That is technically functional, but it feels scattered and underpowered. The quest needs stronger clustering pressure so the player can actually read the pattern.
+
+Changes:
+
+* Increase rat spawner max.
+* Increase rat spawner concurrent count.
+* Boost first-floor rat probability.
+* Make rat presence feel like an infestation, not a random distribution artifact.
+
+The player should feel: “something is wrong in this building,” not “I found some unrelated rats.”
+
+## 2. Dungeon Scale / Extents
+
+The dungeon shape is monstrous right now. Way too large.
+
+The likely culprit is cutouts increasing the effective extents. That is wrong. Cutouts should affect local structure, not inflate the global dungeon footprint.
+
+Fix direction:
+
+* Isolate extents from cutout geometry.
+* Treat cutouts as subtractive/interior features.
+* Prevent cutouts from expanding bounding boxes.
+* Re-tune dungeon dimensions after extent isolation.
+
+Desired result: dungeons feel intentional, bounded, and navigable. Not like the generator lost its mind.
+
+## 3. Overworld Is Boring
+
+The overworld currently lacks reasons to exist beyond traversal.
+
+It needs landmarks, places of interest, places of power, strange terrain, visible hooks, and reasons to wander off the obvious path.
+
+Add:
+
+* Landmarks.
+* Ruins.
+* Shrines.
+* Camps.
+* Towers.
+* Odd terrain features.
+* Dangerous zones.
+* Resource pockets.
+* Named places.
+* Environmental storytelling.
+* Visible curiosity bait.
+
+The overworld should create questions. “What is that?” “Can I reach it?” “Is it dangerous?” “Why is this here?” 🌲
+
+## 4. Simulation Chaff / Interior Interaction
+
+Exploring someone’s home is currently boring.
+
+A house should not just be geometry with collision. It should be a pile of temptations.
+
+The player should be able to:
+
+* Read books.
+* Steal things.
+* Open shelves.
+* Search drawers.
+* Pick locks.
+* Loot chests.
+* Crack lockboxes.
+* Inspect tables.
+* Move around chairs.
+* Notice decor.
+* Interact with fireplaces.
+* Find hidden objects.
+* Discover private details.
+
+Objects needed:
+
+* Shelves.
+* Chests.
+* Lockboxes.
+* Tables.
+* Chairs.
+* Desks.
+* Beds.
+* Cabinets.
+* Fireplaces.
+* Rugs.
+* Paintings.
+* Books.
+* Notes.
+* Keys.
+* Trinkets.
+* Food.
+* Coins.
+* Tools.
+
+Interior spaces need affordances. If the player enters a home, the home should immediately imply verbs.
+
+Not just: “I am in a room.”
+
+Instead: “I can violate this place.” 🗝️
+
+See anything fun?
+
+---
+
+We just finished bacic lockpicking, why dont you do some work along the outlined direction. I'll review when you're done.
+
+---
+
+skip rat quest clustering -- that is least interestng
+
+---
+
+okay -- that pocket helper, seriously represents the next deep architectural push; lol. overworld is huge, we seriously need disconnected dungeons --- but -- player should be able to MINE between those massively disconnected chunks. Make sense? (.e.g) no instanced dungeons
+
+Tell me I m wrong -- fight me bro
