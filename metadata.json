@@ -1,0 +1,24 @@
+{
+  "branch": "master",
+  "checkpoint_id": "c885ff2c7ea3",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/hud.js",
+    "src/main/input/rulesDispatch.js",
+    "tests/drink.test.mjs",
+    "tests/quickSlotStack.test.mjs",
+    "tests/rulesDispatch.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
