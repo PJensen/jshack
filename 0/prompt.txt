@@ -1,0 +1,11 @@
+okay -- checked in, onward toward:
+
+That is the needle: serious engine investment in direct service of content authorship, without generalized infrastructure that has not earned a gameplay use. The standard should be whether adding strange rules becomes small, explicit, composable, deterministic, and inspectable.
+
+even **something** that pushes us toward canonical rules authoring with wildness would be amazing -- think single file maintainability like we did for cretain monsters and complex items.
+
+I do like fountain as the test-subject since it's got two verbs, table driven outcomes, other odd interactions.
+
+---
+
+reading this latest changeset; it almost looks like we'd partially started down this path, but didn't cutover interaction as well as we might've.
