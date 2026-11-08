@@ -1,0 +1,26 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f6e208faad38",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/inventoryOverlay.js"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 16,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 887296,
+    "input_tokens": 76939,
+    "output_tokens": 6119
+  }
+}

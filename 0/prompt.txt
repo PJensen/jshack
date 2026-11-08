@@ -1,0 +1,2 @@
+on mobile, inside equipment and inventory tabs, I cannot scroll to the selected item detail, 
+either make selected item detail smaller, or allow me to scroll to it.
