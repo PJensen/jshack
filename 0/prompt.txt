@@ -1,0 +1,3 @@
+in short you are saying there are events with no listeners -- and so you created orphan events? is that what you're saying? you made additional arch burden for me to sift through later?
+
+also: it's not clear precisely why ensure-state is needed, another bespoke symbol without architectural constraint.
