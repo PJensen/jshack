@@ -1,0 +1,26 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b97d1816dcca",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "assets/audio/spell_holy_healing.mp3"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 5,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 126720,
+    "input_tokens": 32905,
+    "output_tokens": 1338
+  }
+}

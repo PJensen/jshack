@@ -1,0 +1,7 @@
+I finally found the missing `pray` audio as well as find a nice fear sound.
+
+rename holy-healing to `spell_holy_healing`
+
+or at leat conceptually in line with other files please.
+
+then we'll weave the pray sound in,.
