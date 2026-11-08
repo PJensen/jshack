@@ -1,0 +1,9 @@
+add one simple but interesting item
+
+---
+
+make sure it has a glyph too, effect seems good -- thx
+
+---
+
+what happens when thrown on ground when hiting an npc or monster?
