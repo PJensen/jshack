@@ -1,0 +1,31 @@
+{
+  "branch": "master",
+  "checkpoint_id": "db925fdd821a",
+  "checkpoints_count": 3,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/rules/components/Disposition.js",
+    "src/rules/components/index.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/systems/combatSystem.js",
+    "src/rules/utils/disposition.js",
+    "tests/disposition.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 177,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 21237248,
+    "input_tokens": 682506,
+    "output_tokens": 63157
+  }
+}
