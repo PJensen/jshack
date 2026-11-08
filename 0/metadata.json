@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "fa09f3f87238",
+  "session_id": "019ee02c-c106-7c70-ba51-8a2dd7d005b8",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-20T19:57:57.979829638Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/display/audio/audioWiring.js",
+    "tests/audioSoundsRegistry.test.mjs",
+    "tests/audioWiring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "9b160a29ca79",
+  "checkpoint_transcript_start": 1103,
+  "transcript_lines_at_start": 1103,
+  "token_usage": {
+    "input_tokens": 0,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 0,
+    "output_tokens": 0,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-20T19:57:57.807640183Z",
+    "agent_lines": 63,
+    "agent_removed": 0,
+    "human_added": 6,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 69,
+    "total_lines_changed": 69,
+    "agent_percentage": 91.30434782608695,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+added four new MP3 sounds, time to wire them up:
+
+* `sound_click.mp3` should be used every time spirit guide collects a little spirit, make sure that max-voices is turned up so every pickup plays it.
+* ghost_alerted can be wired up if we do not already have a spectral alerted
+* pet meow (there is now two) can be played when kitty (specifically kitty) is happy -- make sure this one has a cooldown, I would consider happy as being at 100% health, or after feeding
+* we can use cash register after paying for something from any shop keeper.
+
+overall difficulty rating should be low, if you run into anything severe, please let me know; otherwise, you've got nearly full control to add each of these four to the game cleanly and in a maintainable way like we always do -- following existing & established patterns.
+
+---
+
+one small followup: I added "spectral_snake_alerted.mp3" -- register and wire it up
+
+---
+
+I assigned:
+
+
+  spectral_snake: "spectral:snake:alert",
+
+mild head start.
