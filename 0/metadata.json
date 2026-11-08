@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "8ea5fa459e6c",
+  "session_id": "019ec630-0512-78d0-9759-82ac8e464592",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-14T15:10:15.225607847Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "VERSION",
+    "src/display/fx/spellAreaFx.js",
+    "src/events/VoidHoleCast.js",
+    "src/rules/components/VoidHole.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/townfolkAmbientDialogueSystem.js",
+    "src/rules/systems/voidHoleSystem.js",
+    "src/rules/utils/blind.js",
+    "src/shared/math/envelope.js",
+    "tests/townfolkAmbientDialogueSystem.test.mjs",
+    "tests/voidHole.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "44cc72fd9e74",
+  "checkpoint_transcript_start": 1049,
+  "transcript_lines_at_start": 1049,
+  "token_usage": {
+    "input_tokens": 17911,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4992,
+    "output_tokens": 316,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-14T15:10:15.046249712Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

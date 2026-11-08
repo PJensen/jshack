@@ -1,0 +1,67 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "8ea5fa459e6c",
+  "session_id": "019ec6a3-6b95-73f2-85d7-7bf5b9487498",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-14T15:05:58.188144856Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/fx/spellAreaFx.js",
+    "src/events/VoidHoleCast.js",
+    "src/rules/components/VoidHole.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/townfolkAmbientDialogueSystem.js",
+    "src/rules/systems/voidHoleSystem.js",
+    "src/rules/utils/blind.js",
+    "tests/townfolkAmbientDialogueSystem.test.mjs",
+    "tests/voidHole.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "9368ae12913a",
+  "token_usage": {
+    "input_tokens": 126764,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1280768,
+    "output_tokens": 4109,
+    "api_call_count": 18
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-14T15:05:58.14605078Z",
+    "agent_lines": 143,
+    "agent_removed": 46,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 52,
+    "total_committed": 143,
+    "total_lines_changed": 241,
+    "agent_percentage": 78.42323651452283,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 922,
+      "user_lines_removed": 52,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/events/VoidHoleCast.js": 5,
+        "src/rules/components/VoidHole.js": 7,
+        "src/rules/utils/blind.js": 2,
+        "src/shared/math/envelope.js": 43
+      },
+      "user_removed_per_file": {
+        "src/rules/components/VoidHole.js": 3,
+        "src/rules/utils/blind.js": 49
+      }
+    }
+  ]
+}
