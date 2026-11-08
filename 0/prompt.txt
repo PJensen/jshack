@@ -1,0 +1,16 @@
+# Files mentioned by the user:
+
+## Pasted text.txt: /home/pjensen/.codex/attachments/b8fc225c-4d1a-46a5-84c7-9a49d11e8e58/pasted-text.txt
+
+## My request for Codex:
+read this -- tell me if there are any doctrinal violations.
+
+if there are, write them somewhere under the docs tree
+
+---
+
+wider point -- events to not lead to mutation of rules side state -- I'm sure you understand why
+
+---
+
+fine -- but are there any VIOLATIONS of that principle?

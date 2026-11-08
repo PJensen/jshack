@@ -1,0 +1,72 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "b9d8f770b0e5",
+  "session_id": "019e94ea-295c-7de1-9017-ddb7f4d48f3c",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-04T23:20:51.153205417Z",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "docs/architecture/COMPONENT_PHASE_SYSTEM_EVENT_DOCTRINE_REVIEW.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "b86a0566d4c6",
+  "token_usage": {
+    "input_tokens": 123347,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 906368,
+    "output_tokens": 7880,
+    "api_call_count": 19
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-04T23:20:51.108430172Z",
+    "agent_lines": 207,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 207,
+    "total_lines_changed": 207,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 120,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 155,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

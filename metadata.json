@@ -1,0 +1,25 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b9d8f770b0e5",
+  "checkpoints_count": 3,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/architecture/COMPONENT_PHASE_SYSTEM_EVENT_DOCTRINE_REVIEW.md"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 19,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 906368,
+    "input_tokens": 123347,
+    "output_tokens": 7880
+  }
+}
