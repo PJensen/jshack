@@ -1,0 +1,33 @@
+{
+  "branch": "master",
+  "checkpoint_id": "d3df2648d3fb",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.2",
+  "files_touched": [
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/main/wiring/shopWiring.js",
+    "src/rules/systems/shopkeeperSystem.js",
+    "src/rules/utils/shopClaims.js",
+    "src/rules/utils/shopEnforcement.js",
+    "tests/drink.test.mjs",
+    "tests/learnSpell.test.mjs",
+    "tests/shopEnforcement.test.mjs",
+    "tests/shopkeeperSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 36,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6630528,
+    "input_tokens": 129054,
+    "output_tokens": 18825
+  }
+}
