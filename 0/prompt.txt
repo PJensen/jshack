@@ -1,0 +1,1 @@
+I would delete trapsPresent at least, monsters being null is plain enuugh: this dungeon is unspecified

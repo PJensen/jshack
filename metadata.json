@@ -1,0 +1,45 @@
+{
+  "branch": "master",
+  "checkpoint_id": "e71f9d866c4a",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 2,
+    "agent_percentage": 88.88888888888889,
+    "agent_removed": 14,
+    "calculated_at": "2026-06-18T12:10:21.268647516Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 3,
+    "total_lines_changed": 18
+  },
+  "files_touched": [
+    "VERSION",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "tests/sparseUnderworld.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 7,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1614976,
+    "input_tokens": 9327,
+    "output_tokens": 1094
+  }
+}
