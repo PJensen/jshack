@@ -1,0 +1,5 @@
+one thing I dont love is that stability may be enough, do we really need discrete failure modes?? in other words -- what does "fixed" and "volatile" do together? sewhat I mean -- dont get me wrong; if they can be combined in amazing ways we should keep it, but it's an NxM type of thing.
+
+---
+
+I agree -- backlash could even me whole classes of monsters, scripts, and other things; so why not write that down as a todo under docs -- AND of course, remove the extra/unneeded dimension.
