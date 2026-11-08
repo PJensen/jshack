@@ -1,0 +1,3 @@
+why does the new class not show up in character creation screen?! 
+
+NOTE: in the future adding a new class should be completely transparent.

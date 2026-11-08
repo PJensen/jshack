@@ -1,0 +1,29 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8a0764ddc602",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/display/ui/charCreation.js",
+    "src/main.js",
+    "src/main/classDisplayData.js",
+    "src/rules/data/classes.js",
+    "tests/classDisplayData.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 9,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1481088,
+    "input_tokens": 83069,
+    "output_tokens": 3156
+  }
+}
