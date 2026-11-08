@@ -1,0 +1,31 @@
+{
+  "branch": "master",
+  "checkpoint_id": "859969804756",
+  "checkpoints_count": 2,
+  "cli_version": "0.9.0",
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayUtils.js",
+    "src/display/ui/speechBubbleLayer.js",
+    "src/main.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs",
+    "tests/speechBubbleLayer.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 16,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1452032,
+    "input_tokens": 48959,
+    "output_tokens": 9615
+  }
+}

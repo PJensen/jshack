@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.9.0",
+  "checkpoint_id": "859969804756",
+  "session_id": "019fe1db-efab-7c71-bc53-0f6137317673",
+  "strategy": "manual-commit",
+  "created_at": "2026-08-08T15:08:43.218343705Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayUtils.js",
+    "src/display/ui/speechBubbleLayer.js",
+    "src/main.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs",
+    "tests/speechBubbleLayer.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "8e336ed67885",
+  "checkpoint_transcript_start": 104,
+  "transcript_lines_at_start": 104,
+  "compact_transcript_start": 21,
+  "token_usage": {
+    "input_tokens": 48959,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1452032,
+    "output_tokens": 9615,
+    "api_call_count": 16
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-08-08T15:08:43.16064707Z",
+    "agent_lines": 149,
+    "agent_removed": 7,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 149,
+    "total_lines_changed": 156,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
