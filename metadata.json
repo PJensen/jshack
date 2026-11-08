@@ -1,0 +1,28 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5bed9b16fa3a",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/ui/bubbleDialog.js",
+    "src/display/ui/dialogOverlay.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 20,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1013760,
+    "input_tokens": 89662,
+    "output_tokens": 7513
+  }
+}
