@@ -1,0 +1,17 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f304d15a7243",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": null,
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
