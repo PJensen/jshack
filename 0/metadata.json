@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "6411ac0e6014",
+  "session_id": "019f52c5-97f0-76b2-8d49-52e4a22a3846",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-11T20:14:43.18457736Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/rules/environment/dungeon/chunk.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/chunkGen.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "b768e97f515b",
+  "token_usage": {
+    "input_tokens": 87077,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1063424,
+    "output_tokens": 6925,
+    "api_call_count": 19
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-11T20:14:43.158225346Z",
+    "agent_lines": 128,
+    "agent_removed": 32,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 128,
+    "total_lines_changed": 160,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

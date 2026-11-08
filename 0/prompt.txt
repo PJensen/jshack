@@ -1,0 +1,17 @@
+I've heard good things about your capabilities -- why don't you take a pass at cleaning up dungeon generation since this is one of the more technical domains in the project.
+
+ensure there are not random doors in the middle of rooms
+see if you can digure out how to improve gates and valve placement
+ensure dead-end leaf rooms as well decorated and thematic
+see if we can add more lighting (I've turned down background lighting and so we need to lean on decorative lights more)
+
+---
+
+I've heard good things about your capabilities -- why don't you take a pass at cleaning up dungeon generation since this is one of the more technical domains in the project.
+
+ensure there are not random doors in the middle of rooms
+see if you can digure out how to improve gates and valve placement
+ensure dead-end leaf rooms as well decorated and thematic
+see if we can add more lighting (I've turned down background lighting and so we need to lean on decorative lights more)
+
+you have virtually full authority.
