@@ -1,0 +1,1 @@
+BUG: when interacting with ratatoskr, the first interaction pops up the overlay as expected; however, interacting a second time does NOT popup the shop overlay.
