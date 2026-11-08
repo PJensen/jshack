@@ -1,0 +1,38 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "c1350002718c",
+  "session_id": "019f19e5-c65c-7511-819c-d32f8034697d",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-30T19:07:02.701065944Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/interactables/fountain/index.js",
+    "src/display/ui/wiring/fountainPresentationExtension.js",
+    "src/display/ui/wiring/messages/fountainMessages.js",
+    "src/events/FountainPurified.js",
+    "src/rules/components/FountainState.js",
+    "src/rules/interaction/interactRunner.js",
+    "tests/fountainRuleAuthoring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "e678ad6ade59",
+  "checkpoint_transcript_start": 275,
+  "transcript_lines_at_start": 275,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-30T19:07:02.664356652Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

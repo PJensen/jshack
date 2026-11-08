@@ -1,0 +1,3 @@
+I like the shape of what you outlind, this should open the door to even more rich design space. see if you can nail it being a minimalist and really leveraging the existing architecture; I think we have more than enough.
+
+NOTE: to the side digging will be being worked on, no surprises.
