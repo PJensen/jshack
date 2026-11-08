@@ -1,0 +1,13 @@
+make me a town_economy.md file that contains a mermaid diagram -- I'm thinking about things in classical economic terms -- raw inputs, outputs.
+
+while we're thinking about it; we're going to want to take a pass over the town economy, I waited a few days to see what chests were filling up.
+
+this left me with an open question: why were things not being produced? why were chests not filling up?
+
+anything we can do to improve the economy -- lets do it.
+
+future stuff:
+
+more advanced crafting recipes especially for smithing
+town stew has an effect of it's own (all food has it's own effects) -- icon is the same as the food item
+new gear slot -- trinket

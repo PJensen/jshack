@@ -1,0 +1,28 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f348d89e1886",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/rules/environment/dungeon/townPlacement.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "town_economy.md"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 28,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2259968,
+    "input_tokens": 145312,
+    "output_tokens": 13055
+  }
+}
