@@ -1,0 +1,19 @@
+{
+  "branch": "master",
+  "checkpoint_id": "752295e0aa4b",
+  "checkpoints_count": 0,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "VERSION",
+    "src/rules/utils/threat.js"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
