@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "eb1e3e2262d3",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/ui/wiring/messages/spellMessages.js",
+    "tests/classes.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 16,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1577344,
+    "input_tokens": 16039,
+    "output_tokens": 2613
+  }
+}
