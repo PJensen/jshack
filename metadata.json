@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "646e743162e0",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/ui/wiring/floatTextWiring.js",
+    "tests/floatText.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 12,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 520448,
+    "input_tokens": 68520,
+    "output_tokens": 6670
+  }
+}
