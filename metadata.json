@@ -1,0 +1,32 @@
+{
+  "branch": "master",
+  "checkpoint_id": "d0c859f25284",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/rules/components/Intents/MoveIntent.js",
+    "src/rules/systems/intentValidationSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/systems/tauntSystem.js",
+    "tests/intentValidationSystem.test.mjs",
+    "tests/movementRefactored.test.mjs",
+    "tests/wandOfStasis.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 10,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1711616,
+    "input_tokens": 34352,
+    "output_tokens": 7378
+  }
+}

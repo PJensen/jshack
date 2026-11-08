@@ -1,0 +1,9 @@
+somehow I doubt that will work -- but I digress. I would almost want:
+
+a. the move intent having a cancelled property on it
+
+cancelled: stasis
+
+or a bool + reason
+
+I dunno -- I'm super sus about your approach here
