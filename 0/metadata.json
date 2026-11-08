@@ -1,0 +1,75 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "25c69ad6305b",
+  "session_id": "019ee60b-142b-7602-aa61-f6a4533f1982",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-20T17:34:05.10520233Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/worldFacade.js",
+    "src/main/scheduler.js",
+    "src/rules/components/HealingApplied.js",
+    "src/rules/components/HealingModifiers.js",
+    "src/rules/components/index.js",
+    "src/rules/data/callbacks/eat.js",
+    "src/rules/data/weaponCoatings.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiCorpseEatSystem.js",
+    "src/rules/systems/combatSystem.js",
+    "src/rules/systems/deitySystem.js",
+    "src/rules/systems/effectSystem.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/systems/healingReactions/deityHealingReactionSystem.js",
+    "src/rules/systems/hungerSystem.js",
+    "src/rules/systems/petBehaviorSystem.js",
+    "src/rules/systems/praySystem.js",
+    "src/rules/utils/actionContexts.js",
+    "src/rules/utils/applyHealing.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/healingApplied.js",
+    "src/rules/utils/legacyAffixDispatch.js",
+    "src/rules/utils/procApplication.js",
+    "tests/applyHealing.test.mjs",
+    "tests/healingArchitectureGuards.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "03fe28a28f97",
+  "token_usage": {
+    "input_tokens": 193869,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3755776,
+    "output_tokens": 18365,
+    "api_call_count": 45
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-20T17:34:05.067213044Z",
+    "agent_lines": 360,
+    "agent_removed": 126,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 360,
+    "total_lines_changed": 486,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

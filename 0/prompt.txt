@@ -1,0 +1,45 @@
+General Class Updates
+
+** of the following ideas, which is something that we can do to have an outsize impact, specifically, I'm looking to enhance the game by making more dimensionality, or at the very least to surface mechanics that are oftentimes buried under the sheer breadth of the game.
+
+The ideas are as follows:
+
+Want to make a shaman class?
+
+# Shaman
+
+- dungeon mushrooms have a very different effect on them, unclear precisely how we can do this type of behavioral override without making a mess.
+- they commune with the forces of nature (lightning, fire, wind, water)
+- they carry a talisman
+
+What about the druid class?
+
+# Druid
+
+> we're going to modify the druid along the following lines
+
+- they commune with mother nature, gaia
+- druids start with a spell that allows them to tame creatures (the current scroll stays where it is, but the underlying "spell" if you will becomes a formal spell that is granted to the druid)
+
+Any other classes while we're thinking about it?
+
+# Knight
+
+- devoted, light, sunsword, shield, heavy plate armor
+- limited healing (note: we need some kind of healing suppression stat) -- damage is well centralized, but I don't know that healing follows a similar trajectory.
+
+## General
+
+- it's rare to be encumbered, I don't think I've ever had a run where I was encumbered, we need to tweak encumberence to make it more realistic, right now it feels like players can carry the world
+
+---
+
+This is roughly where I landed, you have broad and full authority to proceed as discussed. I think healing may be the biggest shift in thinking, damage pipeline took a few days to properly land, but, thankfully we have a working proof down that pathway, so it should be less discovery and more following the pattern with the latest architectural knowledge.
+
+Naturally, I want you do do as much as you possibly can for the fewest tokens; other criteria is as follows:
+
+* when you finish, whatever you did should be ready to release
+* you do not need to run the full test suite,ll do that manually when you are done.
+* remember: one conversation turn == one completed feature
+
+proceeed!

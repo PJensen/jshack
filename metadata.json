@@ -1,0 +1,50 @@
+{
+  "branch": "master",
+  "checkpoint_id": "25c69ad6305b",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/content/worldFacade.js",
+    "src/main/scheduler.js",
+    "src/rules/components/HealingApplied.js",
+    "src/rules/components/HealingModifiers.js",
+    "src/rules/components/index.js",
+    "src/rules/data/callbacks/eat.js",
+    "src/rules/data/weaponCoatings.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiCorpseEatSystem.js",
+    "src/rules/systems/combatSystem.js",
+    "src/rules/systems/deitySystem.js",
+    "src/rules/systems/effectSystem.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/systems/healingReactions/deityHealingReactionSystem.js",
+    "src/rules/systems/hungerSystem.js",
+    "src/rules/systems/petBehaviorSystem.js",
+    "src/rules/systems/praySystem.js",
+    "src/rules/utils/actionContexts.js",
+    "src/rules/utils/applyHealing.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/healingApplied.js",
+    "src/rules/utils/legacyAffixDispatch.js",
+    "src/rules/utils/procApplication.js",
+    "tests/applyHealing.test.mjs",
+    "tests/healingArchitectureGuards.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 45,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3755776,
+    "input_tokens": 193869,
+    "output_tokens": 18365
+  }
+}
