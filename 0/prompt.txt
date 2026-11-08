@@ -1,0 +1,112 @@
+Hey! We need bigger feedback loops in the town economy.
+
+Yeah. The problem is not that it lacks *complexity*. It lacks **economic tension and circularity**.
+
+Right now the economy is basically:
+
+`resource node → worker → chest → processor → item/state counter`
+
+That is a production pipeline, not yet an economy.
+
+The biggest structural weakness is that almost every flow terminates. Wheat becomes flour, flour becomes stew, stew becomes a reserve counter or gets eaten. Ore becomes iron, iron becomes tools, tools mostly stop. Herbs become potions, potions become shop stock, then stop. There is very little feedback from the town back into production.
+
+I think the missing shape is:
+
+`production → consumption → capability → increased/changed production → scarcity → substitution`
+
+For example, a stronger farming loop would be:
+
+`farmer → wheat → flour → meals → fed workers → labor capacity`
+
+but then:
+
+`tools → farming speed`
+`weather → yield`
+`worker hunger → productivity`
+`seed reserve → next harvest`
+`town population → consumption pressure`
+
+Now food isn't merely a number. The town can enter recognizable states: abundance, shortage, famine, recovery.
+
+The other major weakness is that your current bottlenecks are mostly **routing failures**:
+
+> Goods only produce when inputs land in the correct chest.
+
+That's a software architecture problem masquerading as economic gameplay. 😄 The interesting question isn't whether lumber accidentally ended up in the wrong chest. It is:
+
+> The town has 12 lumber. Does the smith consume it for tools, the barkeep burn it for dinner, or the mason repair the bridge?
+
+You already have the beginnings of that with lumber. I would make that conflict the **central model**.
+
+A much stronger economy would have perhaps five strategic stocks:
+
+* **Food** — keeps population and labor functioning.
+* **Fuel** — enables cooking, smelting, winter survival.
+* **Materials** — enables tools, repairs, construction.
+* **Medicine** — mitigates sickness, injury, poison, events.
+* **Morale/luxury** — creates resilience, migration, celebration, recruitment.
+
+Then professions don't merely convert items. They compete for scarce stocks and alter town capability.
+
+The smith is particularly underpowered conceptually. A pickaxe should not simply be an output. It should feed backward:
+
+`iron + lumber → pickaxe → miner productivity ↑ → ore supply ↑`
+
+Likewise:
+
+`hatchet → woodcutter productivity ↑`
+`knife → cooking efficiency ↑`
+`fishing gear → fish yield ↑`
+`hoe/scythe → agricultural yield ↑`
+
+Now the smith becomes a **capital-goods producer**. That's interesting because consuming iron today can increase production tomorrow.
+
+I'd also separate **inventory** from **town state**. Right now these edges bother me:
+
+`MillChest → TownState.foodStores`
+
+because that appears to double-represent reality. If there are 14 wheat, 8 flour, 3 fish, and 5 stew physically present, derive food security from those actual inventories. `TownState.foodStores` should probably be a projection or index, not another stock.
+
+The town should also consume things unevenly. Villagers shouldn't just subtract `foodStores`. They should consume actual goods according to preference:
+
+`stew > fish > bread/flour? > raw crops`
+
+That immediately gives prepared food meaning. Stew can provide better morale, healing, work stamina, or cold resistance. During shortage, the town starts consuming seed crops or medicinal herbs as food. That's where simulation becomes narrative.
+
+My strongest instinct: **don't add more recipes yet**. Advanced smithing recipes and another gear slot will make the graph wider but not deeper.
+
+I would instead make four changes:
+
+1. Tools affect worker productivity and degrade.
+2. Workers consume actual food and lose productivity under shortage.
+3. Lumber/firewood becomes a genuinely contested resource.
+4. TownState values become derived assessments of physical inventory and infrastructure rather than parallel resource counters.
+
+With those changes, your existing graph becomes substantially more alive without adding many items.
+
+The target isn't a bigger crafting tree. It's a town that can get into trouble **because of what it chose to do yesterday**. That's the missing ingredient.
+
+
+~~~~~~~~~~~~~~~~~
+
+For example, the tavern runs short of firewood. The barkeep stops serving stew. Villagers start eating raw food. Morale drops. The woodcutter is injured—or perhaps his hatchet was stolen by the player. The player can now:
+
+Tavern runs out of stew → patrons complain → barkeep substitutes worse food → prices rise → hungry NPC steals carrots → farmer confronts thief
+
+give the woodcutter a hatchet;
+cut and donate wood;
+sell wood to the tavern;
+steal remaining food;
+heal the woodcutter;
+ignore everything and watch the shortage propagate.
+
+That feels much more JSHack.
+
+So I would probably reduce the macroeconomic abstraction, not increase it. Keep the NPC production loops simple, physical, and legible. The depth comes from interference.
+
+My instinct for JSHack is therefore: keep roughly the current number of resources and production nodes, but make shortages propagate into NPC behavior and world state. The economy should be a quest generator and chaos engine, not a spreadsheet.
+
+
+~~~~~~~~~~~~~~~
+
+Lets Blaze!

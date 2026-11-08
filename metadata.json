@@ -1,0 +1,29 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f3d7ffa724c7",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/rules/components/TownState.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "src/rules/systems/townSimulationSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/townSimulationSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 55,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5487744,
+    "input_tokens": 161213,
+    "output_tokens": 23176
+  }
+}
