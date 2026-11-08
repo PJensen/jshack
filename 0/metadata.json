@@ -1,0 +1,76 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "b31b03487955",
+  "session_id": "019eae4a-53c4-7f80-b600-0641aa9d4d4b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-09T23:33:46.32988783Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/events/LockpickPrompted.js",
+    "src/events/LockpickResolved.js",
+    "src/main.js",
+    "src/main/input/rulesDispatch.js",
+    "src/main/wiring/lockPickingWiring.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/classes.js",
+    "src/rules/utils/inventoryFacade.js",
+    "tests/classes.test.mjs",
+    "tests/interaction.test.mjs",
+    "tests/inventoryFacade.test.mjs",
+    "tests/messageWiring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "83170e7688b1",
+  "checkpoint_transcript_start": 369,
+  "transcript_lines_at_start": 369,
+  "token_usage": {
+    "input_tokens": 445688,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7053184,
+    "output_tokens": 21958,
+    "api_call_count": 54
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-09T23:33:46.153134412Z",
+    "agent_lines": 347,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 347,
+    "total_lines_changed": 348,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 281,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+okay, time to nail down a first locked component, one "easy" vantage point is to allow lock picking the gem dealers door after they leave and lock up.
+
+it's an easy strategy that short circuits new component creation.
+
+except
+
+we'd need "lockpick"x5 item in all classes inventory at start
+
+---
+
+one easy strategy, is to show a "I need a lockpick" message if you have none, otherwise, to open the modal supposiing you had lockpicks in inventory.
+
+helper method:
+
+hasItem(entityId, itemId)->bool
+
+otherwise good -- love the diretion!
+
+what the HECK is `installedWorlds` weakSet? why are we not using a proper extension
+
+what was wrong with original lockpick glyph?
+
+why do you have a base.js entry? and an economy.js entry?
