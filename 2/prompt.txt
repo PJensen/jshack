@@ -1,0 +1,13 @@
+please enable `reflect-js` it's an MCP we built
+
+---
+
+I see substrate but not reflect mcp
+
+---
+
+we had this working previously
+
+---
+
+it's working

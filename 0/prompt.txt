@@ -1,0 +1,58 @@
+is reflect_js up?
+
+---
+
+The codebase is not broken, but it is overgrown. 
+
+This is the first set of findings
+
+**Main Findings**
+1. [src/main.js](/home/pjensen/Repos/JSHack/src/main.js:1) is still the real gravity well.
+   It is 5,451 lines and imports both display systems and rules internals directly. The manifest says app wiring should have no game logic, but this file owns targeting, UI events, inventory/pickup behavior, FX routing, debug, save/load, and runtime wiring.
+
+have a look -- use reflect-js if you can
+
+2. [src/main/scheduler.js](/home/pjensen/Repos/JSHack/src/main/scheduler.js:194) is a second gravity well.
+   It registers 76 systems and installs a large listener graph in one place. This makes ordering explicit, which is good, but every feature now pays rent in this file.
+
+3. The event bus is powerful but invisible.
+   I counted 882 `world.on` / `world.emit` occurrences and 136 `Symbol.for("jshack:...")` guards. That is too much implicit API surface without an event schema/catalog.
+
+4. [src/bridge/schema/worldView.js](/home/pjensen/Repos/JSHack/src/bridge/schema/worldView.js:1) is under-factored.
+   `src/bridge` has only 3 files, but `worldView.js` is 1,480 lines and imports a huge slice of rules. The bridge is doing the right job, but it is acting as one mega-selector.
+
+5. The item registry cleanup mostly worked.
+   The old static catalogs are nearly gone: `itemCatalogEquipment.js` is 33 lines and `itemCatalogMagic.js` is 2 lines. `tests/contentCatalogCanonical.test.mjs` passes. The remaining issue is now big content DSL modules: `weapons.js` is 863 lines, `potions.js` 591, `scrolls.js` 347.
+
+6. [src/rules/content/interaction/interactPayloads.js](/home/pjensen/Repos/JSHack/src/rules/content/interaction/interactPayloads.js:1) is the new interaction god file.
+   It is 2,327 lines and imports a broad set of mechanics. The “one authoritative registry” idea is good, but the file has become a feature landfill.
+
+7. Several system files look legacy or orphaned relative to the scheduler.
+   Not imported by `scheduler.js`: `affixTriggerSystem.js`, `autoPickupSystem.js`, `equipmentSystem.js`, `overworldAmbientSystem.js`, `petConstants.js`, `plasmaCloudSystem.js`, `projectileSystem.js`, `tombstoneSystem.js`. Some may be intentionally called elsewhere, but they need an audit.
+
+**What Is Actually Valuable**
+The project has real guardrails: separation tests pass, determinism guards pass, content canonical tests pass, and the action transaction boundary is tested. The ECS child-entity topology is also a good direction. This is not “throw it away” territory.
+
+**What I’d Do First**
+1. Create an event catalog: event name, payload shape, producer files, consumer files. Add a test that fails on unknown event strings.
+2. Split `main.js` by lifecycle: boot, input/UI events, render loop, FX wiring, debug, save/load. No behavior change.
+3. Split `worldView.js` into focused projectors: entities, tiles/FOV, weather/calendar, perception, equipment/procs, audio.
+4. Break `interactPayloads.js` into feature modules registered through one interaction registry.
+5. Audit and delete or explicitly document orphaned system files.
+6. Update architecture docs: the old Phase A item-registry diagnosis is stale; the next rot zone is orchestration and event opacity.
+
+The project became wild because the rules layer kept gaining canonical paths, but the composition layer never got the same treatment. The fix is not a rewrite. It is making the hidden registries and wiring surfaces explicit, then shrinking the few files that everyone has to touch.
+
+______________
+
+Use reflect-js to bolster the case and use reflection to really nail down the shape of the issue
+
+---
+
+I broadly agree; however, simply making a catalog means continued maintenance. I would almost rather instrument the event bus at runtime so we can answer the same set of questions at runtime -- if you do not agree with me, state your case.
+
+---
+
+I can agree with that -- so long as we don't fall into a make-work category of excersize; I do think bus instrumentation is a good first move. maybe an alternative is that we can make an event bus explorer through clever use of the `reflect-js` mcp? finding those emit and on calll sites and making either a mermaid or CSV output.
+
+as an artifact that we can use.
