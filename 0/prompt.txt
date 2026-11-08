@@ -1,0 +1,5 @@
+I've got a really interesting idea. The spirit guide is the deity. What I was thinking about is the idea of having the spirit guide be the source of *all* of your troubles. Meaning: its the mind responsble for spawning monsters behind you, placing traps in front of you, giving you loot, placinng a health potion ahead in the nick of time.
+
+all of this happening just out of sight so the dungeon feels pre-computed. but reality is much much stranger. the function that deity is trying to optimize is player fun ;-)
+
+draft the technical memo, place it inside `docs`
