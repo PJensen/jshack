@@ -1,0 +1,5 @@
+in this followup action, we should start thinking about precise pull mechanics, threat level, how it diminishes over time, what mechanics allow players  this is almost certainly a planning turn.
+
+---
+
+commit this detail to `docs` as a new memo -- then we'll begin.
