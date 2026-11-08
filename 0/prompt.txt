@@ -1,0 +1,3 @@
+NOTE: offering is show, but, re-interacting still shows offer, we can either disallow any action, or, disable "offer" while one is active.
+NOTE: if you look how user made campfires expire, that might inspire you as it relates to offers expiring.
+NOTE: an ative offering might want to change the lighing character of the altar -- up to you, could be tricky to give it a vibe that matches the offering quality somehow.
