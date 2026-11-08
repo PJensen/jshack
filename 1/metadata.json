@@ -1,0 +1,30 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "bede9087fbf6",
+  "session_id": "019ec78d-745d-7b33-a0b6-a99766d17942",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-15T15:59:17.052335359Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/rules/environment/dungeon/transition.js",
+    "tests/sparseUnderworld.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "19f253b7ef98",
+  "checkpoint_transcript_start": 163,
+  "transcript_lines_at_start": 163,
+  "initial_attribution": {
+    "calculated_at": "2026-06-15T15:59:17.0182803Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

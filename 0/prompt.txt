@@ -1,0 +1,23 @@
+this is an excellent first pass; the only real issue I encountered was attempting to find the graveyard crypt from tavern basedment or the tavern basement from the graveyard crypt. 
+
+(e.g.)
+
+I should be able to open the debug console, type "noclip" and move between these two generated dungeons -- thereby proving that they exist on the same plane of existence.
+
+have a look -- let me know what you find. otherwise, pretty good!
+
+---
+
+honestly; I think the point is that both are resident at the same time. "load the union of authored regions" resonates with me. I've just turned you up to medium. review what we just did and complete what I just asked of you.
+
+once done this should really make the concept sing.
+
+NOTE: it's apparent to me that the project has been leaning this way virtually since inception, I kept circling it, and circling it  but I never pulled the trigger. What tipped me over the edge was my noticing that during my testing I would only ever progress minimal amounts, the enjoyment factor was waning for me.
+
+this change lets the game become almost a cross between minecraft and skyrim if you think about it.
+
+when you are completed this important task, why dont you enumerate some other possible entrances. I know I spoke about bear cave as being one of them, I know I spoke about bat cave as being another. and the human mine as being the other.
+
+NOTE: a bear cave is a simple one room cave, lit by mushrooms, with really dangerous bear inside.
+
+the other is that I was thinking about the bigger and deeper more generic dungeon, but that can come after we first fix then issue and make these two more authored entrances.
