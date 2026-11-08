@@ -33,6 +33,7 @@ copies remain at the old locations.
 | `jshack_fx_builder.html` | retained browser authoring tool | manual browser users | standalone UI; not deterministic agent utility |
 | `lighting-engine-work.html` | retained browser diagnostics | manual browser users | standalone UI; not deterministic agent utility |
 | `test-runner.html` | retained browser test harness | visual test users | browser visual scenarios; not agent-facing |
+| `check-hud-browser.mjs` | retained browser regression harness | HUD developers, `tests/browser/hud.html` | local Chromium/CDP; `deno run -A tools/check-hud-browser.mjs`; screenshots and geometry at phone/desktop widths |
 | `FX_INTERFACE.md` | retained browser-tool reference | FX tools | documentation for browser tooling; no skill owner |
 | `help/index.html` | retained browser help surface | manual browser users | browser-readable help; no skill owner |
 | `greenlight/README.md` | retained developer/app tooling | greenlight workflow | independent developer lifecycle |

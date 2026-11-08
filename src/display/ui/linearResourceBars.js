@@ -1,5 +1,6 @@
 // display/ui/linearResourceBars.js
 // Compact, labeled player resource bars for health, mana, and stamina.
+import { HUD_COLUMNS, HUD_GAP } from './hudTheme.js';
 
 const RESOURCE_DEFS = Object.freeze([
   Object.freeze({
@@ -9,8 +10,7 @@ const RESOURCE_DEFS = Object.freeze([
     maxKey: 'hpMax',
     color: '#ff4164',
     gradient: 'linear-gradient(90deg, #c71942 0%, #ff4164 58%, #ff6b7f 100%)',
-    height: '28px',
-    labelSize: '17px',
+    shortLabel: 'H',
   }),
   Object.freeze({
     key: 'mana',
@@ -19,8 +19,7 @@ const RESOURCE_DEFS = Object.freeze([
     maxKey: 'manaMax',
     color: '#55aaff',
     gradient: 'linear-gradient(90deg, #1d68c5 0%, #4aa3ff 58%, #72c2ff 100%)',
-    height: '22px',
-    labelSize: '14px',
+    shortLabel: 'M',
   }),
   Object.freeze({
     key: 'stamina',
@@ -29,8 +28,7 @@ const RESOURCE_DEFS = Object.freeze([
     maxKey: 'staminaMax',
     color: '#ffc530',
     gradient: 'linear-gradient(90deg, #b87908 0%, #f4b52d 58%, #ffd45e 100%)',
-    height: '22px',
-    labelSize: '14px',
+    shortLabel: 'S',
   }),
 ]);
 
@@ -91,34 +89,20 @@ export function createLinearResourceBars(root, initial = {}) {
     background: 'transparent',
     border: 'none',
     boxShadow: 'none',
-    display: 'block',
-    gap: '6px',
+    display: 'grid',
+    gridTemplateColumns: HUD_COLUMNS,
+    gap: HUD_GAP,
     fontFamily: 'monospace',
     pointerEvents: 'none',
   });
   root.setAttribute('role', 'group');
   root.setAttribute('aria-label', 'Player vitals');
 
-  const table = document.createElement('table');
-  table.setAttribute('role', 'presentation');
-  Object.assign(table.style, {
-    width: '100%',
-    tableLayout: 'fixed',
-    borderCollapse: 'separate',
-    borderSpacing: '6px 0',
-  });
-  const body = document.createElement('tbody');
-  const resourceRow = document.createElement('tr');
-  body.appendChild(resourceRow);
-  table.appendChild(body);
-  root.appendChild(table);
-
   const rows = new Map();
   for (const def of RESOURCE_DEFS) {
-    const row = document.createElement('td');
+    const row = document.createElement('div');
     row.dataset.resource = def.key;
     Object.assign(row.style, {
-      width: '33.333333%',
       padding: '0',
       minWidth: '0',
     });
@@ -127,14 +111,12 @@ export function createLinearResourceBars(root, initial = {}) {
     Object.assign(content.style, { minWidth: '0' });
 
     const label = document.createElement('span');
-    label.textContent = def.label;
+    label.textContent = def.shortLabel;
     Object.assign(label.style, {
       minWidth: '0',
-      flex: '1 1 auto',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      flex: '0 0 auto',
       whiteSpace: 'nowrap',
-      fontSize: def.labelSize,
+      fontSize: '12px',
       fontWeight: def.key === 'health' ? '800' : '700',
       letterSpacing: def.key === 'health' ? '0.01em' : '0.02em',
       color: '#fff8ea',
@@ -145,7 +127,7 @@ export function createLinearResourceBars(root, initial = {}) {
     const value = document.createElement('span');
     Object.assign(value.style, {
       flex: '0 0 auto',
-      fontSize: def.key === 'health' ? '15px' : '13px',
+      fontSize: 'clamp(10px, 2.8vw, 12px)',
       fontWeight: '800',
       letterSpacing: '0.01em',
       whiteSpace: 'nowrap',
@@ -171,8 +153,8 @@ export function createLinearResourceBars(root, initial = {}) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '8px',
-      padding: '0 7px',
+      gap: '3px',
+      padding: '0 6px',
     });
     const fill = document.createElement('div');
     Object.assign(fill.style, {
@@ -190,7 +172,7 @@ export function createLinearResourceBars(root, initial = {}) {
     track.appendChild(value);
     content.appendChild(track);
     row.appendChild(content);
-    resourceRow.appendChild(row);
+    root.appendChild(row);
     rows.set(def.key, { def, row, value, track, fill });
   }
 

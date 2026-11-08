@@ -1314,19 +1314,15 @@ export function initOverlays() {
     tileKeyTip.style.display = 'flex';
   });
 
-  // Passive updates to the always-on ticker — single topline (NetHack style).
-  // The old 3-line fade ticker only appears when the user clicks to expand.
+  // Keep the full history even while the separate More renderer owns display.
   let _moreActive = false;
   window.addEventListener('ui:updateMessageTicker', (ev) => {
-    if (_moreActive) return; // --More-- queue owns the ticker right now
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     const entries = (e?.detail?.entries) || [];
-    // Single topline: show only the newest message, no fade stack.
-    const newest = entries.length > 0 ? entries[entries.length - 1] : null;
-    if (newest) {
-      renderMessageMore(ticker, newest, false);
-    }
+    (/** @type {any} */ (ticker))._entries = entries.slice();
+    if (_moreActive) return;
+    renderMessageTicker(ticker, entries);
   });
 
   // NetHack --More-- queue display events
@@ -1341,11 +1337,8 @@ export function initOverlays() {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     _moreActive = false;
-    const entries = (e?.detail?.entries) || [];
-    const newest = entries.length > 0 ? entries[entries.length - 1] : null;
-    if (newest) {
-      renderMessageMore(ticker, newest, false);
-    }
+    const entries = e?.detail?.entries || (/** @type {any} */ (ticker))._entries || [];
+    renderMessageTicker(ticker, entries);
   });
 
   // Gesture debug path overlay

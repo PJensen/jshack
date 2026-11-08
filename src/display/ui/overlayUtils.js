@@ -4,6 +4,7 @@
 import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/client.js';
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
+import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
 
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
@@ -1446,27 +1447,39 @@ export function installDetachableKeyHandler(panel, propName, onKey) {
 }
 
 // --- Always-on message ticker ---------------------------------------------
+function applyCollapsedTickerStyle(container) {
+  Object.assign(container.style, {
+    ...HUD_PANEL_STYLE,
+    minHeight: '58px', maxHeight: '',
+    fontSize: 'clamp(12px, 3.4vw, 15px)', lineHeight: '1.35',
+    padding: '8px 10px', cursor: 'pointer',
+  });
+}
+
+function publishTickerHeight(container) {
+  // The bottom margin is part of the occupied space; safe-area is added by
+  // consumers themselves, exactly once.
+  const height = Math.ceil(container.getBoundingClientRect().height) + parseInt(HUD_MARGIN, 10);
+  const value = `${height}px`;
+  if (document.documentElement.style.getPropertyValue('--jshack-ticker-height') === value) return;
+  document.documentElement.style.setProperty('--jshack-ticker-height', value);
+  window.dispatchEvent(new CustomEvent('ui:tickerResize'));
+}
+
 /** @param {HTMLElement} root */
 export function ensureMessageTicker(root) {
   const box = document.createElement('div');
+  box.id = 'hud-message-ticker';
   Object.assign(box.style, {
     position: 'fixed',
-    left: '0',
-    bottom: '0',
-    width: '100%',
+    left: HUD_MARGIN,
+    right: HUD_MARGIN,
+    bottom: 'calc(8px + env(safe-area-inset-bottom, 0px))',
     display: 'block',
     pointerEvents: 'auto',
     zIndex: 850,
     color: UX_THEME.text,
     fontFamily: GAME_LOG_FONT_FAMILY,
-    fontSize: 'min(15px, 3.4vw)',
-    lineHeight: '1.35',
-    background: 'rgba(10, 9, 8, 0.92)',
-    borderRadius: '0',
-    padding: '5px 12px',
-    borderTop: UX_THEME.surfaceBorderSoft,
-    boxShadow: '0 -8px 24px rgba(0,0,0,0.36), inset 0 1px 0 rgba(188,206,224,0.05)',
-    overflow: 'hidden',
     cursor: 'pointer',
     userSelect: 'none',
     webkitTextSizeAdjust: 'none',
@@ -1474,9 +1487,11 @@ export function ensureMessageTicker(root) {
     boxSizing: 'border-box',
     transition: 'max-height 180ms ease-out, background 140ms ease-out',
   });
+  applyCollapsedTickerStyle(box);
   (/** @type {any} */ (box))._entries = [];
   (/** @type {any} */ (box))._expanded = false;
   box.addEventListener('click', (ev) => {
+    if ((/** @type {any} */ (box))._moreActive) return;
     ev.preventDefault();
     ev.stopPropagation();
     const next = !(/** @type {any} */ (box))._expanded;
@@ -1484,8 +1499,13 @@ export function ensureMessageTicker(root) {
     renderMessageTicker(box, (/** @type {any} */ (box))._entries || []);
   });
   root.appendChild(box);
-  // Publish ticker height so action bar + other bottom HUD can stack above it.
-  document.documentElement.style.setProperty('--jshack-ticker-height', '30px');
+  // Track wrapping, history expansion, viewport/font changes and the More path.
+  if (typeof ResizeObserver !== 'undefined') {
+    const observer = new ResizeObserver(() => publishTickerHeight(box));
+    observer.observe(box);
+  }
+  window.addEventListener('resize', () => publishTickerHeight(box));
+  publishTickerHeight(box);
   return box;
 }
 
@@ -1493,6 +1513,7 @@ export function ensureMessageTicker(root) {
 export function renderMessageTicker(container, entries) {
   if (!container) return;
   const store = /** @type {any} */ (container);
+  store._moreActive = false;
   const allEntries = Array.isArray(entries) ? entries.slice() : [];
   store._entries = allEntries;
   const expanded = !!store._expanded;
@@ -1503,27 +1524,17 @@ export function renderMessageTicker(container, entries) {
       fontSize: 'min(13px, 3.1vw)',
       lineHeight: '1.45',
       padding: '8px 12px',
-      background: UX_THEME.panelBg,
-      borderBottom: UX_THEME.surfaceBorderSoft,
-      boxShadow: '0 4px 24px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(188,206,224,0.05)',
       cursor: 'pointer',
     });
   } else {
-    Object.assign(container.style, {
-      maxHeight: '',
-      gap: '2px',
-      fontSize: 'min(15px, 3.4vw)',
-      lineHeight: '1.35',
-      padding: '5px 12px',
-      background: 'rgba(10, 9, 8, 0.92)',
-      borderBottom: UX_THEME.surfaceBorderSoft,
-      boxShadow: '0 2px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(188,206,224,0.05)',
-      cursor: 'pointer',
-    });
+    applyCollapsedTickerStyle(container);
   }
 
   container.innerHTML = '';
-  if (!allEntries.length) return;
+  if (!allEntries.length) {
+    requestAnimationFrame(() => publishTickerHeight(container));
+    return;
+  }
 
   if (expanded) {
     const list = document.createElement('div');
@@ -1558,41 +1569,16 @@ export function renderMessageTicker(container, entries) {
     }
     container.appendChild(list);
     list.scrollTop = 0;
-    requestAnimationFrame(() => {
-      const h = Math.max(0, Math.ceil(container.getBoundingClientRect().height || 0));
-      document.documentElement.style.setProperty('--jshack-ticker-height', `${h}px`);
-    });
+    requestAnimationFrame(() => publishTickerHeight(container));
     return;
   }
 
-  // Collapsed mode: newest message on top (prominent), older messages fade below.
-  const recent = allEntries.slice(-3).reverse();
-  if (!recent.length) return;
-
-  const tierStyles = [
-    { opacity: 1.0, textShadow: '0 1px 0 rgba(0,0,0,0.45), 0 0 6px rgba(0,0,0,0.25)' },
-    { opacity: 0.50, textShadow: '0 1px 0 rgba(0,0,0,0.38)' },
-    { opacity: 0.30, textShadow: '0 1px 0 rgba(0,0,0,0.32)' },
-  ];
-
-  for (let i = 0; i < recent.length; i++) {
-    const m = recent[i];
-    const row = document.createElement('div');
-    const tier = tierStyles[Math.min(i, tierStyles.length - 1)];
-    applyMessageContent(row, m);
-    row.style.textShadow = tier.textShadow;
-    row.style.opacity = String(tier.opacity);
-    row.style.whiteSpace = 'nowrap';
-    row.style.overflow = 'hidden';
-    row.style.textOverflow = 'ellipsis';
-    container.appendChild(row);
-  }
-
-  // Publish ticker height so other HUD elements can offset below it.
-  requestAnimationFrame(() => {
-    const h = Math.max(0, Math.ceil(container.getBoundingClientRect().height || 0));
-    document.documentElement.style.setProperty('--jshack-ticker-height', `${h}px`);
-  });
+  // Prioritize the newest complete message. History remains available on tap.
+  const row = document.createElement('div');
+  applyMessageContent(row, allEntries[allEntries.length - 1]);
+  Object.assign(row.style, { whiteSpace: 'normal', overflowWrap: 'anywhere', textShadow: '0 1px 0 rgba(0,0,0,0.45)' });
+  container.appendChild(row);
+  requestAnimationFrame(() => publishTickerHeight(container));
 }
 
 /**
@@ -1607,6 +1593,7 @@ export function renderMessageMore(container, message, hasMore) {
   if (!container) return;
   const store = /** @type {any} */ (container);
   store._expanded = false;
+  store._moreActive = !!hasMore;
 
   // Lazily build the cached single-line DOM structure once.
   if (!store._moreRow) {
@@ -1622,13 +1609,12 @@ export function renderMessageMore(container, message, hasMore) {
     Object.assign(row.style, {
       display: 'flex',
       alignItems: 'baseline',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      whiteSpace: 'normal',
+      overflowWrap: 'anywhere',
       textShadow: '0 1px 0 rgba(0,0,0,0.45), 0 0 6px rgba(0,0,0,0.25)',
     });
     const msgSpan = document.createElement('span');
-    Object.assign(msgSpan.style, { flex: '1', overflow: 'hidden', textOverflow: 'ellipsis' });
+    Object.assign(msgSpan.style, { flex: '1', minWidth: '0' });
     const moreSpan = document.createElement('span');
     moreSpan.textContent = '';
     Object.assign(moreSpan.style, {
@@ -1648,14 +1634,7 @@ export function renderMessageMore(container, message, hasMore) {
   // Swap container content to the cached row (only if not already showing it).
   if (row.parentNode !== container) {
     container.innerHTML = '';
-    Object.assign(container.style, {
-      maxHeight: '', gap: '2px',
-      fontSize: 'min(15px, 3.4vw)', lineHeight: '1.35',
-      padding: '5px 12px',
-      background: 'rgba(10, 9, 8, 0.92)',
-      borderTop: UX_THEME.surfaceBorderSoft,
-      boxShadow: '0 -8px 24px rgba(0,0,0,0.36), inset 0 1px 0 rgba(188,206,224,0.05)',
-    });
+    applyCollapsedTickerStyle(container);
     container.appendChild(row);
   }
 
@@ -1668,6 +1647,7 @@ export function renderMessageMore(container, message, hasMore) {
   }
   moreSpan.style.display = hasMore ? '' : 'none';
   container.style.cursor = hasMore ? 'pointer' : 'default';
+  requestAnimationFrame(() => publishTickerHeight(container));
 }
 
 /**

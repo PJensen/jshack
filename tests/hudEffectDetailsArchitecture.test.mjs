@@ -3,15 +3,17 @@ import { EFFECT_DEFS } from "../src/rules/data/effectDefs.js";
 import { buildEffectRows } from "../src/main/ui/effectRows.js";
 import { World } from "../src/lib/ecs-js/index.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { getSpell } from "../src/rules/data/spells.js";
 
 Deno.test("VIS effect badges intercept pointer input before canvas movement", async () => {
   const hud = await Deno.readTextFile("src/display/ui/hud.js");
 
   assertStringIncludes(hud, "installBadgeInputGuards");
   assertStringIncludes(hud, "stopImmediatePropagation");
-  assertStringIncludes(hud, "addEventListener('pointerdown', open, { capture: true, passive: false })");
-  assertStringIncludes(hud, "addEventListener('touchstart', open, { capture: true, passive: false })");
-  assertStringIncludes(hud, "addEventListener('click', consume, { capture: true, passive: false })");
+  assertStringIncludes(hud, "addEventListener('pointerdown', stop, { capture: true })");
+  assertStringIncludes(hud, "addEventListener('touchstart', stop, { capture: true, passive: true })");
+  assertStringIncludes(hud, "addEventListener('click', open, { capture: true, passive: false })");
+  assertStringIncludes(hud, "touchAction: 'pan-x'");
   assertStringIncludes(hud, "showEffectDetails");
   assertStringIncludes(hud, "renderItemDetails");
 });
@@ -31,8 +33,10 @@ Deno.test("VIS covers the approved unmapped status keys", async () => {
     ["marked", "\\u{1F3AF}"], ["stasis", "\\u23F8\\uFE0F"],
   ];
   for (const [key, glyph] of expected) {
-    const definition = EFFECT_DEFS.find((def) => def.statuses.includes(key));
-    assert(definition, `effect definition should include '${key}'`);
+    // Timed spell effects (Bloodthirst) are authored on the spell rather than
+    // in the generic per-turn effect operation registry.
+    const definition = EFFECT_DEFS.find((def) => def.statuses.includes(key)) || getSpell(key)?.activeEffect;
+    assert(definition, `an authored status or timed spell should include '${key}'`);
     assertStringIncludes(vis, `${key}:`);
     assertStringIncludes(vis, `glyph: '${glyph}'`);
   }

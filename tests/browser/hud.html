@@ -1,0 +1,38 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HUD responsive regression fixture</title>
+<style>
+  html, body { margin: 0; background: #191917; color: white; }
+  body { min-height: 100vh; background-image: repeating-linear-gradient(0deg, transparent 0 63px, #ffffff08 63px 64px), repeating-linear-gradient(90deg, transparent 0 63px, #ffffff08 63px 64px); }
+  #player { position: fixed; left: 50%; top: 48%; color: #ffd85a; font: 44px monospace; }
+</style>
+<div id="player">@</div>
+<script type="module">
+  import { initHUD } from '/src/display/ui/hud.js';
+  import { initOverlays } from '/src/display/ui/overlay.js';
+  import { enableInputLockdown } from '/src/display/input/lockdown.js';
+  const emit = (name, detail) => window.dispatchEvent(new CustomEvent(name, { detail }));
+  enableInputLockdown({ canvas: null });
+  initHUD();
+  window.overlays = initOverlays();
+  window.fixture = ({ effects = 3, longQuest = false } = {}) => {
+    emit('ui:updateCalendar', { moonEmoji: '🌕', moonLabel: 'Full Moon', phase: 'breakfast' });
+    emit('ui:updateTurn', { clockLabel: '11:59 AM', phase: 'breakfast' });
+    emit('ui:updateVitals', { hp: 22, maxHp: 26, mana: 30, maxMana: 32, stamina: 103, maxStamina: 115 });
+    emit('ui:updateCombatHUD', { statuses: Array.from({ length: effects }, (_, i) => ({
+      key: ['satiated', 'frozen', 'blessed'][i % 3], instanceId: i + 1, turns: 99 - i, stacks: i + 1,
+    })) });
+    emit('ui:updateQuestTracker', { focused: {
+      title: longQuest ? 'Scout the Quarter and return to the town watch captain' : 'Scout the Quarter',
+      summary: longQuest ? 'Explore the eastern streets and investigate the abandoned watchtower' : 'Active objective',
+      progress: 9, target: 12,
+    } });
+    emit('ui:updateMessageTicker', { entries: [
+      { text: 'An older message, retained in history.', type: 'ambient' },
+      { text: 'Gold coins bubble up from the depths! (+14 gold)', type: 'system' },
+    ] });
+  };
+  window.fixture();
+  window.ready = true;
+</script>

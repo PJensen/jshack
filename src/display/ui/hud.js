@@ -1,6 +1,7 @@
 // display/ui/hud.js
 // Minimal HUD with an Active Spell button.
 import { createLinearResourceBars } from './linearResourceBars.js';
+import { HUD_COLUMNS, HUD_GAP, HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
 import { renderItemDetails } from './overlay.js';
 import { ensureItemTooltip, positionTooltip, rarityStyle, UX_THEME } from './overlayUtils.js';
 import { UI_ACTION_GLYPHS, UI_PET_STATE_GLYPHS } from './iconGlyphs.js';
@@ -371,17 +372,18 @@ export function initHUD() {
     pointerEvents: 'auto', zIndex: 900
   });
 
-  // Top-right HUD cluster for world context and player vitals.
+  // All top rows flow together; no independently maintained vertical offsets.
   const topRightHud = document.createElement('div');
+  topRightHud.id = 'hud-top';
   Object.assign(topRightHud.style, {
     position: 'fixed',
-    left: '16px',
-    right: '16px',
-    top: '0',
+    left: HUD_MARGIN,
+    right: HUD_MARGIN,
+    top: 'calc(8px + env(safe-area-inset-top, 0px))',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    gap: '6px',
+    gap: HUD_GAP,
     width: 'auto',
     maxWidth: 'none',
     minWidth: '0',
@@ -391,32 +393,24 @@ export function initHUD() {
   });
 
   const worldControls = document.createElement('div');
+  worldControls.id = 'hud-world-controls';
   Object.assign(worldControls.style, {
-    position: 'fixed',
-    left: '16px',
-    right: '16px',
-    top: '14px',
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-    gap: '6px',
-    alignItems: 'center',
+    gridTemplateColumns: HUD_COLUMNS,
+    gap: HUD_GAP,
+    alignItems: 'stretch',
     width: 'auto',
     minWidth: '0',
     pointerEvents: 'auto',
   });
 
-  // Linear vitals panel: health leads, mana and stamina stay immediately readable.
+  // Vitals use the same three columns as the controls above.
   const vitals = document.createElement('div');
   vitals.id = 'hud-vitals';
   Object.assign(vitals.style, {
-    position: 'fixed',
-    left: '16px',
-    right: '16px',
-    top: '84px',
-    width: 'calc(100vw - 32px)',
+    width: '100%',
     maxWidth: 'none',
     height: 'auto',
-    alignSelf: 'flex-end',
     boxSizing: 'border-box',
     minWidth: '0',
     flex: '0 0 auto',
@@ -432,28 +426,24 @@ export function initHUD() {
   let clockLabel = '12:00 AM';
 
   function syncSkyChip() {
-    moonPhaseEl.textContent = `${moonEmoji} ${phaseLabel}  ${clockLabel}`;
+    moonPhaseEl.textContent = `${moonEmoji} ${phaseLabel} ${clockLabel}`;
     moonPhaseEl.title = `${moonLabel} • ${phaseLabel} • ${clockLabel}`;
     moonPhaseEl.setAttribute('aria-label', `${moonLabel}, ${phaseLabel}, ${clockLabel}`);
   }
 
   Object.assign(moonPhaseEl.style, {
+    ...HUD_PANEL_STYLE,
     minWidth: '0',
-    minHeight: '30px',
-    padding: '5px 11px',
-    borderRadius: '999px',
-    border: UX_THEME.surfaceBorder,
-    background: 'linear-gradient(180deg, rgba(42,47,53,0.95) 0%, rgba(24,22,20,0.96) 100%)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.10)',
+    minHeight: '36px',
+    padding: '3px 2px',
+    display: 'grid',
+    placeItems: 'center',
     color: UX_THEME.textStrong,
-    fontSize: '13px',
+    fontSize: 'clamp(10px, 2.6vw, 13px)',
     fontWeight: '800',
-    lineHeight: '19px',
-    letterSpacing: '0.02em',
+    lineHeight: '1.2',
     textAlign: 'center',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    whiteSpace: 'normal',
     pointerEvents: 'none',
     textShadow: '0 1px 0 rgba(0,0,0,0.7)',
   });
@@ -462,22 +452,19 @@ export function initHUD() {
   let zoomPercent = 100;
   const zoomHud = document.createElement('div');
   Object.assign(zoomHud.style, {
-    display: 'flex',
+    ...HUD_PANEL_STYLE,
+    display: 'grid',
+    gridTemplateColumns: '1fr auto 1fr',
     alignItems: 'center',
-    gap: '2px',
-    minHeight: '30px',
-    padding: '2px 4px',
-    borderRadius: '999px',
-    border: UX_THEME.surfaceBorder,
-    background: 'linear-gradient(180deg, rgba(30,35,43,0.96) 0%, rgba(17,21,29,0.96) 100%)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.08)',
+    minHeight: '36px',
+    padding: '0',
     pointerEvents: 'auto',
   });
   const zoomValue = document.createElement('span');
   Object.assign(zoomValue.style, {
-    minWidth: '47px',
+    minWidth: '0',
     color: UX_THEME.textStrong,
-    fontSize: '12px',
+    fontSize: 'clamp(10px, 2.6vw, 12px)',
     fontWeight: '800',
     textAlign: 'center',
     whiteSpace: 'nowrap',
@@ -492,11 +479,11 @@ export function initHUD() {
     btn.textContent = label;
     btn.title = factor > 1 ? 'Zoom in' : 'Zoom out';
     Object.assign(btn.style, {
-      width: '25px', height: '25px',
+      width: '100%', height: '34px', minWidth: '0',
       padding: '0', margin: '0',
-      border: '1px solid rgba(255,255,255,0.16)',
-      borderRadius: '50%',
-      background: 'rgba(16,22,38,0.75)',
+      border: '0',
+      borderRadius: '11px',
+      background: 'transparent',
       color: 'rgba(255,255,255,0.82)',
       fontSize: '15px', lineHeight: '1',
       cursor: 'pointer',
@@ -522,13 +509,11 @@ export function initHUD() {
 
   const questControl = document.createElement('button');
   Object.assign(questControl.style, {
-    minWidth: '0', minHeight: '52px', padding: '5px 10px',
-    borderRadius: '16px', border: UX_THEME.surfaceBorder,
-    background: 'linear-gradient(180deg, rgba(42,47,53,0.95) 0%, rgba(24,22,20,0.96) 100%)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.10)',
+    ...HUD_PANEL_STYLE,
+    minHeight: '36px', padding: '3px 2px',
     color: UX_THEME.textStrong, fontFamily: GAME_TEXT_FONT_FAMILY,
-    fontSize: 'clamp(13px, 2.8vw, 24px)', fontWeight: '800', lineHeight: '1.1',
-    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+    fontSize: 'clamp(10px, 2.6vw, 13px)', fontWeight: '800', lineHeight: '1.2',
+    whiteSpace: 'normal',
     cursor: 'pointer', pointerEvents: 'auto', textShadow: '0 1px 0 rgba(0,0,0,0.7)',
   });
   questControl.textContent = '\uD83D\uDCDC  Quests';
@@ -536,82 +521,54 @@ export function initHUD() {
   questControl.addEventListener('click', () => window.dispatchEvent(new CustomEvent('ui:openQuests')));
   worldControls.appendChild(questControl);
 
-  // Active effects and quest HUD: a compact left column below world context.
+  // Effect tiles scroll within their own row; the objective is its next sibling.
   const effectsHud = document.createElement('div');
   Object.assign(effectsHud.style, {
-    position: 'fixed',
-    left: '16px',
-    right: '16px',
-    top: '120px',
-    display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px',
-    width: 'auto', maxWidth: 'none', boxSizing: 'border-box',
-    padding: '5px 8px', borderRadius: UX_THEME.radius,
-    background: 'linear-gradient(180deg, rgba(10, 13, 18, 0.90) 0%, rgba(10, 9, 8, 0.62) 100%)',
-    border: UX_THEME.surfaceBorderSoft,
-    boxShadow: 'inset 0 0 0 1px rgba(188,206,224,0.04), 0 8px 18px rgba(0,0,0,0.28)',
+    ...HUD_PANEL_STYLE,
+    display: 'none', flexDirection: 'column', gap: '4px',
+    alignSelf: 'flex-start', width: 'fit-content', maxWidth: '100%', boxSizing: 'border-box',
+    padding: '3px',
     pointerEvents: 'none',
     zIndex: 905,
   });
-  const statusHeader = document.createElement('div');
-  Object.assign(statusHeader.style, {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '7px',
-    flex: '0 0 auto',
-    width: 'auto',
-    marginBottom: '0',
-    color: UX_THEME.textStrong,
-    fontFamily: GAME_TEXT_FONT_FAMILY,
-    fontSize: '14px',
-    fontWeight: '800',
-    lineHeight: '1',
-    textShadow: '0 1px 2px rgba(0,0,0,0.9)',
-  });
-  const statusHeaderIcon = document.createElement('span');
-  statusHeaderIcon.textContent = '\u2726';
-  statusHeaderIcon.style.color = '#8fffc7';
-  statusHeaderIcon.style.fontSize = '17px';
-  statusHeaderIcon.setAttribute('aria-hidden', 'true');
-  const statusHeaderLabel = document.createElement('span');
-  statusHeaderLabel.textContent = 'Status Effects';
-  statusHeader.appendChild(statusHeaderIcon);
-  statusHeader.appendChild(statusHeaderLabel);
   const statusRow = document.createElement('div');
+  statusRow.id = 'hud-status-effects';
+  statusRow.setAttribute('role', 'group');
+  statusRow.setAttribute('aria-label', 'Status effects. Swipe or scroll horizontally to view all active effects.');
+  statusRow.tabIndex = 0;
   Object.assign(statusRow.style, {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'flex-start',
     gap: '6px',
-    minHeight: '40px',
-    flex: '1 1 auto',
-    width: 'auto',
+    minWidth: '0',
+    padding: '1px',
+    overflowX: 'auto',
+    overscrollBehaviorX: 'contain',
+    pointerEvents: 'auto',
   });
   const affixRow = document.createElement('div');
   Object.assign(affixRow.style, { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: '4px', width: '100%' });
   const questRow = document.createElement('div');
+  questRow.id = 'hud-objective';
   Object.assign(questRow.style, {
     display: 'none',
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '4px',
     width: 'auto',
-    position: 'fixed',
-    left: '16px',
-    right: '16px',
-    top: '180px',
     maxWidth: '100%',
     boxSizing: 'border-box',
     pointerEvents: 'auto',
   });
-  effectsHud.appendChild(statusHeader);
   effectsHud.appendChild(statusRow);
-  effectsHud.appendChild(questRow);
   effectsHud.appendChild(affixRow);
   topRightHud.appendChild(worldControls);
   topRightHud.appendChild(vitals);
+  topRightHud.appendChild(effectsHud);
+  topRightHud.appendChild(questRow);
   root.appendChild(topRightHud);
-  root.appendChild(effectsHud);
   vitalsBars.draw();
 
   // Help button — desktop only, top-left corner
@@ -1150,9 +1107,6 @@ export function initHUD() {
     const isMobile = mobileLayoutMq.matches;
     // Temporarily hidden per UX direction.
     helpBtn.style.display = 'none';
-    // Vitals are a full-width three-column band; never inherit the removed gauge dimensions.
-    vitals.style.width = 'calc(100vw - 32px)';
-    vitals.style.height = 'auto';
     // Desktop and mobile share the same visible action/spell surfaces.
     spellSlotsContainer.style.display = 'none';
     bagBtn.style.display = 'none';
@@ -1442,6 +1396,8 @@ export function initHUD() {
       });
       affixRow.appendChild(chip);
     }
+    affixRow.style.display = affixRow.children.length ? 'flex' : 'none';
+    effectsHud.style.display = statuses.length || affixRow.children.length ? 'flex' : 'none';
   });
 
   window.addEventListener('ui:updateQuestTracker', (ev) => {
@@ -1451,7 +1407,7 @@ export function initHUD() {
     if (focused) {
       const current = Math.max(0, Number(focused?.progress || 0) | 0);
       const target = Math.max(0, Number(focused?.target || 0) | 0);
-      questControl.textContent = target > 0 ? `\uD83D\uDCDC  Quests  ${current}/${target}` : '\uD83D\uDCDC  Quests';
+      questControl.textContent = target > 0 ? `\uD83D\uDCDC Quests ${current}/${target}` : '\uD83D\uDCDC Quests';
     } else {
       questControl.textContent = '\uD83D\uDCDC  Quests';
     }
@@ -1466,16 +1422,15 @@ export function initHUD() {
 
     const card = document.createElement('div');
     Object.assign(card.style, {
+      ...HUD_PANEL_STYLE,
       display: 'grid',
-      gridTemplateColumns: 'auto 1fr auto',
+      gridTemplateColumns: 'auto minmax(0, 1fr) auto',
       alignItems: 'center',
       gap: '6px',
-      minHeight: '76px',
+      minHeight: '40px',
       width: '100%',
       boxSizing: 'border-box',
-      padding: '9px 12px',
-      borderRadius: '7px',
-      border: '1px solid rgba(214,178,91,0.78)',
+      padding: '4px 8px',
       background: 'linear-gradient(180deg, rgba(49,39,18,0.94) 0%, rgba(22,18,10,0.94) 100%)',
       boxShadow: '0 6px 18px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,240,180,0.12)',
       cursor: 'pointer',
@@ -1498,7 +1453,7 @@ export function initHUD() {
     const icon = document.createElement('div');
     icon.textContent = String(focused?.icon || '✦');
     Object.assign(icon.style, {
-      fontSize: '27px',
+      fontSize: '20px',
       lineHeight: '1',
       filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))',
     });
@@ -1514,12 +1469,10 @@ export function initHUD() {
     const title = document.createElement('div');
     title.textContent = String(focused?.title || 'Quest');
     Object.assign(title.style, {
-      fontSize: 'clamp(17px, 2.5vw, 24px)',
+      fontSize: '13px',
       lineHeight: '1.1',
       color: '#fff1ba',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      overflowWrap: 'anywhere',
       letterSpacing: '0.02em',
     });
 
@@ -1527,12 +1480,10 @@ export function initHUD() {
     const summaryText = String(focused?.summary || '').trim();
     summary.textContent = summaryText || 'Active objective';
     Object.assign(summary.style, {
-      fontSize: 'clamp(14px, 2vw, 18px)',
+      fontSize: '11px',
       lineHeight: '1.1',
       color: 'rgba(255,245,210,0.72)',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      overflowWrap: 'anywhere',
     });
 
     const reward = document.createElement('div');
@@ -1555,7 +1506,7 @@ export function initHUD() {
     Object.assign(progress.style, {
       minWidth: '36px',
       textAlign: 'right',
-      fontSize: 'clamp(17px, 2.5vw, 24px)',
+      fontSize: '13px',
       fontWeight: '700',
       color: '#ffd85a',
       textShadow: '0 1px 0 rgba(0,0,0,.8)',
@@ -1818,6 +1769,10 @@ export function initHUD() {
     syncActionBarHeight();
     syncQuickSlotPosition();
   });
+  window.addEventListener('ui:tickerResize', () => {
+    syncActionBarHeight();
+    syncQuickSlotPosition();
+  });
   if (typeof ResizeObserver !== 'undefined') {
     const obs = new ResizeObserver(() => {
       syncActionBarHeight();
@@ -1937,7 +1892,7 @@ function ensureEffectsStack(container) {
 
   const hsla = (h, a = 0.2) => `hsla(${h} 80% 50% / ${a})`;
   const shadowColor = (h) => `hsl(${h} 55% 35%)`;
-  const VIS_SCALE = 0.66;
+  const VIS_SCALE = 0.83;
   const scaledPx = (px) => `${Math.max(1, Math.round(px * VIS_SCALE))}px`;
 
   function consumeBadgeInput(ev) {
@@ -1991,25 +1946,34 @@ function ensureEffectsStack(container) {
       consumeBadgeInput(ev);
       showEffectDetails(el, getStatus());
     };
-    const consume = (ev) => consumeBadgeInput(ev);
-    el.addEventListener('pointerdown', open, { capture: true, passive: false });
-    el.addEventListener('touchstart', open, { capture: true, passive: false });
-    el.addEventListener('pointerup', consume, { capture: true, passive: false });
-    el.addEventListener('click', consume, { capture: true, passive: false });
+    // Stop game input without cancelling the native horizontal pan. A swipe
+    // cancels click, so details open only after a tap, not at the start of a pan.
+    const stop = (ev) => ev.stopPropagation();
+    el.addEventListener('pointerdown', stop, { capture: true });
+    el.addEventListener('touchstart', stop, { capture: true, passive: true });
+    el.addEventListener('pointerup', stop, { capture: true });
+    el.addEventListener('click', open, { capture: true, passive: false });
+    el.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') open(ev);
+    });
   }
 
   function createBadge(spec, total) {
     const hue = Number.isFinite(Number(spec.hue)) ? Number(spec.hue) : 210;
     const glyphColor = spec.glyphColor || shadowColor(hue);
     const el = document.createElement('div');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', spec.name);
+    el.tabIndex = 0;
     Object.assign(el.style, {
       position: 'relative', width: scaledPx(58), height: scaledPx(58), borderRadius: scaledPx(8),
+      flex: '0 0 auto', boxSizing: 'border-box',
       display: 'grid', placeItems: 'center',
       boxShadow: '0 1px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04)',
       outline: `1px solid ${hsla(hue, 0.28)}`,
       background: hsla(hue, 0.2),
       pointerEvents: 'auto',
-      touchAction: 'none',
+      touchAction: 'pan-x',
       cursor: 'pointer',
     });
     el.title = `${spec.name} \u2022 ${total} turns`;
@@ -2060,20 +2024,6 @@ function ensureEffectsStack(container) {
   }
 
   const MASKED_SPEC = { name: '?', glyph: '\u2753', hue: 200 };
-  const emptySlots = [];
-  for (let i = 0; i < 7; i++) {
-    const slot = document.createElement('div');
-    Object.assign(slot.style, {
-      width: scaledPx(58), height: scaledPx(58), borderRadius: scaledPx(8),
-      boxSizing: 'border-box', flex: '0 0 auto',
-      border: '1px solid rgba(132,145,160,0.34)',
-      background: 'linear-gradient(180deg, rgba(30,35,43,0.72), rgba(14,18,25,0.84))',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
-    });
-    emptySlots.push(slot);
-    container.appendChild(slot);
-  }
-
   function update(statuses) {
     const seen = new Set();
     for (const s of (Array.isArray(statuses) ? statuses : [])) {
@@ -2107,12 +2057,6 @@ function ensureEffectsStack(container) {
       rec.stacksEl.textContent = stacks >= 9999 ? '\u221E' : `x${stacks}`;
       seen.add(badgeKey);
     }
-    for (const slot of emptySlots) {
-      slot.style.display = 'block';
-      container.appendChild(slot);
-    }
-    const occupied = Math.min(7, seen.size);
-    for (let i = 0; i < occupied; i++) emptySlots[i].style.display = 'none';
     for (const [key, rec] of byKey.entries()) {
       if (!seen.has(key)) {
         if (rec?.el?.parentNode === container) container.removeChild(rec.el);
