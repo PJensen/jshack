@@ -1,0 +1,16 @@
+when getting the lock to "open", clicking "open" should close the modal and return success condition to the caller, "successPickedListener" or some simular shape, that is propagated into rules via a turn consuming intent. 
+
+NOTE: failing the lockpick also consume the intent
+NOTE: success or fail consumes the lockpick (see below)
+
+next we're going to work to incorporate this into the rules
+
+1. we can create a simple "Lockbox" almost variant of a chest.
+2. when engaging with a lockbox, provided you do not have the key, and you have at least one [Lockpick] item in inventory -- open the lockpicking modal
+3. A lockpick is a simple consumable item.
+
+I have some open questions as to weather a lockbox may be picked up, and a lockpick subsequently "used" on it -- but honestly, I'm strongly leaning away from this at least on the first iteration.
+
+you feel me?
+
+ecs-js for the win.
