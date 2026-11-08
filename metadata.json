@@ -1,0 +1,30 @@
+{
+  "branch": "master",
+  "checkpoint_id": "c35cad7dbcc3",
+  "checkpoints_count": 0,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "AGENTS.md",
+    "assets/audio/pickup_gold.mp3",
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/sounds.js",
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/main.js",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "src/rules/systems/autoPickupSystem.js",
+    "src/rules/systems/itemPickupSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/utils/inventoryFacade.js",
+    "tests/audioSoundsRegistry.test.mjs",
+    "tests/inventoryFacade.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}

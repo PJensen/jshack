@@ -1,0 +1,1 @@
+HEY: do not format code please, it's not needed, and it makes diffs absolutely disgusting -- add this constraint to AGENTS.md -- I don't want to miss in this way again if we can prevent it.
