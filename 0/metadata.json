@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "5857520a1cdc",
+  "session_id": "019f19ee-8ab1-7ef1-83e7-e4bfba311c64",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-30T19:14:14.799749104Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/sparksFxController.js",
+    "src/display/lighting/sources/index.js",
+    "src/display/ui/wiring/messageWiring.js",
+    "src/main.js",
+    "tests/messageWiring.test.mjs",
+    "tests/sparksFx.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "fb9a78d53fdd",
+  "checkpoint_transcript_start": 227,
+  "transcript_lines_at_start": 227,
+  "token_usage": {
+    "input_tokens": 8708,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 138624,
+    "output_tokens": 106,
+    "api_call_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-30T19:14:14.760965244Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

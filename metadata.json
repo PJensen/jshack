@@ -1,0 +1,49 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5857520a1cdc",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 38,
+    "agent_percentage": 18.803418803418804,
+    "agent_removed": 6,
+    "calculated_at": "2026-06-30T19:15:03.307464178Z",
+    "human_added": 189,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 227,
+    "total_lines_changed": 234
+  },
+  "files_touched": [
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/sparksFxController.js",
+    "src/display/lighting/sources/index.js",
+    "src/display/ui/wiring/messageWiring.js",
+    "src/main.js",
+    "tests/messageWiring.test.mjs",
+    "tests/sparksFx.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 9,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 456576,
+    "input_tokens": 69401,
+    "output_tokens": 2660
+  }
+}

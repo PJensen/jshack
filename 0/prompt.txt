@@ -1,0 +1,12 @@
+create a new short lived "sparks" VFX via particles and lighing systems.
+
+* sparks are short lived white then rapidly cooling particles.
+* smallest point of light
+
+usage: when digging emit a sparks VFX a half tile in the direction of digging.
+
+NOTE: sparks is a transitory VFX that is locatable just like most other VFX.
+
+While we're thinking about wielding and impact VFX -- I really feel the "tint" we worked on is barely legible (e.g.) suppose I poision my sword, I really do not see any tint that would indicate it's poisioned based on the weapon swing arc profiles.
+
+QUESTION: is there a reason I do not see "system" messages are they being filtered? "The water tastes like .."

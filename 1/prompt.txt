@@ -1,0 +1,5 @@
+Broad question: can particles emit their wavelengths into the lighting engine, weighed by size? easy? hard?
+
+what I've noticed is that sometimes I want particles to shed light, other times I do not want them to shed light.
+
+NOTE: potential performance implications.
