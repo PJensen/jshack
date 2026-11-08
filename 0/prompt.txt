@@ -1,0 +1,3 @@
+1. milling grain sound does not work
+2. milling corn -> food_cornmeal does not work -- it should just happen when interacting with the mill
+3. valkarie glyph is still not set -- this is obnoxious that I have to do this this late in the game!
