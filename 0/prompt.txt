@@ -1,0 +1,1 @@
+and we're not trying to include every metadata stat in the summary printf's right? we're being smart abouot the overall textual feel here correct?
