@@ -1,0 +1,39 @@
+{
+  "branch": "master",
+  "checkpoint_id": "a70ab5cacdcb",
+  "checkpoints_count": 0,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/content/items/spellbooks.js",
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/display/palette/base.js",
+    "src/events/VoidHoleCast.js",
+    "src/main/scheduler.js",
+    "src/rules/components/VoidHole.js",
+    "src/rules/components/index.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/lifespanSystem.js",
+    "src/rules/systems/voidHoleSystem.js",
+    "tests/lootResolver.test.mjs",
+    "tests/voidHole.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 1,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 84352,
+    "input_tokens": 3080,
+    "output_tokens": 246
+  }
+}
