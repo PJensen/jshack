@@ -1,0 +1,7 @@
+Sleeping in bed should advance time (one night duration, by ticking through simulation) a small UX popup shows track bar for time to sleep for Same savegame behavior sleeping at beds.
+
+---
+
+1. I refuse to believe that is 720 turns having slept several times. that looks like just over 2 hours -- ish based on time passed in calendar.
+2. an interactable UX should ask with trackbar how many turns to sleep (or cancel)
+3. after any sleep game save (original behavior)

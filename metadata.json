@@ -1,0 +1,29 @@
+{
+  "branch": "master",
+  "checkpoint_id": "c97f0a802e86",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/events/BedSleepRequested.js",
+    "src/main.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "tests/interaction.test.mjs",
+    "tests/savegameWiring.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 40,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3376640,
+    "input_tokens": 273984,
+    "output_tokens": 11902
+  }
+}

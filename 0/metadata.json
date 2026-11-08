@@ -1,0 +1,65 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "c97f0a802e86",
+  "session_id": "019ed295-eb62-7802-a5c4-809c2a8895bb",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-16T23:33:17.619104493Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/events/BedSleepRequested.js",
+    "src/main.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "tests/interaction.test.mjs",
+    "tests/savegameWiring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "2ad073c9d81a",
+  "token_usage": {
+    "input_tokens": 273984,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3376640,
+    "output_tokens": 11902,
+    "api_call_count": 40
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-16T23:33:17.580027397Z",
+    "agent_lines": 299,
+    "agent_removed": 24,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 299,
+    "total_lines_changed": 323,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 185,
+      "agent_lines_removed": 24,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
