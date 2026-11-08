@@ -1,0 +1,14 @@
+we're going to focus in on some more arcane gameplay usecases; particularly -- i want to zoom into polymorph and all sorts of implications, interactions and side effects. this is a seriously complex area --- and a a true "complex and dynamical" system type of thing that we want to unpack. i'll briefly sketch some of the details and lets see where we land.
+
+part 1 -- the current situation:
+the first thing is polymorph generally --  if well controlled, it's an excellent crowd control strategy, if not well controlled its a gamble. supposing I had a ring of polymorph control, and i had a wand of polymorphing -- the player would be able to control the outcome by typing the target class. I dont love this UX as it pesently sits. I would much rather give the player a UI surface to control the outcome -- it can have a 'search" component of course, but we can surface useful/common polymorph targets for the player.
+
+part-2 -- the future
+
+---
+
+part-2 was all about the applicabilty and the allowed moves -- can the player polymorph themselves -- can the player polymorph the shopkeeper -- what about villagers -- what happens then, how do other systems react. my strong recommendation is to stay scope locked on part-1 -- the part-2 problems are extremely challenging; but the overall objective is support all of those use cases (and more) -- so -- please start building part-1 -- with part-2 i-2 ideas in the back of your head. if you would rather do one more chat turn where you outline the part-2 ideas first, that way they are fresh in your mind before planning part 2 I would be fine with that.
+
+---
+
+no -- I'll take care of that.

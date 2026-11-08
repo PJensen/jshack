@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "677141f0acd5",
+  "session_id": "019e745b-a59a-78b3-8141-ef56391e3a73",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T15:55:08.264541881Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "src/display/ui/polymorphChooserOverlay.js",
+    "src/main/polymorph/polymorphChoices.js",
+    "src/main/wiring/scrollWandWiring.js",
+    "tests/polymorphChoices.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "6ff99aa0429c",
+  "token_usage": {
+    "input_tokens": 149428,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1609728,
+    "output_tokens": 12408,
+    "api_call_count": 24
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T15:55:08.238451069Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 44,
+    "total_committed": 0,
+    "total_lines_changed": 44,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1352,
+      "user_lines_removed": 44,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/ui/overlay.js": 28,
+        "src/display/ui/polymorphChooserOverlay.js": 269,
+        "src/main/polymorph/polymorphChoices.js": 90,
+        "src/main/wiring/scrollWandWiring.js": 73,
+        "tests/polymorphChoices.test.mjs": 27
+      },
+      "user_removed_per_file": {
+        "src/main/wiring/scrollWandWiring.js": 44
+      }
+    }
+  ]
+}
