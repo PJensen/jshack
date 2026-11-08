@@ -1,0 +1,53 @@
+{
+  "branch": "master",
+  "checkpoint_id": "647ccce4d683",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 2,
+    "agent_percentage": 3.296703296703297,
+    "agent_removed": 1,
+    "calculated_at": "2026-06-19T14:32:29.434052734Z",
+    "human_added": 86,
+    "human_modified": 0,
+    "human_removed": 2,
+    "metric_version": 2,
+    "total_committed": 88,
+    "total_lines_changed": 91
+  },
+  "files_touched": [
+    "VERSION",
+    "assets/audio/ambient_nighttime.mp3",
+    "src/display/audio/biomeAmbientController.js",
+    "src/display/audio/sounds.js",
+    "tests/biomeAmbientController.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 89,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10794112,
+    "input_tokens": 691600,
+    "output_tokens": 25512
+  }
+}
