@@ -1,0 +1,38 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "a3d76efc6d82",
+  "session_id": "019e7948-3446-7383-8f76-c59bc0b14a9d",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-30T14:35:14.3263213Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/main/scheduler.js",
+    "src/rules/components/AggroState.js",
+    "src/rules/components/ThreatEntry.js",
+    "src/rules/components/index.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/tauntSystem.js",
+    "src/rules/systems/threatSystem.js",
+    "src/rules/utils/threat.js",
+    "tests/threatSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "0fb1fdae3c1f",
+  "checkpoint_transcript_start": 139,
+  "transcript_lines_at_start": 139,
+  "initial_attribution": {
+    "calculated_at": "2026-05-30T14:35:14.282135267Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
