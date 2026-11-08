@@ -1,0 +1,7 @@
+any followups? tunes? enhancements I could be overlooking? awesome ideas?
+
+---
+
+Nice!
+
+Go-fer: spell threat metadata. It removes hardcoded spell IDs and makes future content much cleaner.

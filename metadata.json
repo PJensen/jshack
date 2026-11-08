@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "386cca4ba868",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/rules/data/spells.js",
+    "src/rules/systems/threatSystem.js",
+    "tests/threatSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 12,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1963008,
+    "input_tokens": 384232,
+    "output_tokens": 4143
+  }
+}
