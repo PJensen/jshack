@@ -1,0 +1,11 @@
+the player glyph as necromancer is falling back to default.
+
+I am to the right of the fountain
+
+---
+
+I want to fix this somwhat permanently -- right, it seemed like we made the basic change, but there must be some gap we didn't see -- we should close that gap -- feel me?
+
+---
+
+the change you just made looked pretty good.
