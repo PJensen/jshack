@@ -1,0 +1,65 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "30b9d23f1653",
+  "session_id": "019ea7e6-78b2-73f2-977f-e644125b0aaa",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-08T16:58:14.576223614Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "docs/WORLD_RESOURCE_CANDIDATES.md",
+    "ratchets/worldStateAttachmentRatchet.test.mjs",
+    "src/rules/resources/jumpScareState.js",
+    "src/rules/systems/jumpScareSystem.js",
+    "tests/jumpScareAudio.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "df6af94144c0",
+  "token_usage": {
+    "input_tokens": 209947,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1570560,
+    "output_tokens": 7912,
+    "api_call_count": 26
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-08T16:58:14.551690264Z",
+    "agent_lines": 75,
+    "agent_removed": 4,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 75,
+    "total_lines_changed": 79,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 55,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

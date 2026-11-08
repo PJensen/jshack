@@ -1,0 +1,5 @@
+ambient:roar happens repeatedly and is super annoying -- observed in overworld which is rediculous -- this was intended to be a rare, dungeon only sound on a cooldown-- be super circumspect about how you address this. minimalist even without introducing many new concepts if at all possiible.
+
+---
+
+there is more of the bespoke world[symbol] stuff we've been working on slowly removing -- you should have surfaced that to me -- is there a resource there we should be creating?
