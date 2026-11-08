@@ -74,7 +74,6 @@ import { drawEquipmentBadges } from "./display/fx/equipBadges.js";
 import { readRuntimeConfig } from "./main/config/runtimeConfig.js";
 import { createMessageLog } from "./main/ui/messageLog.js";
 import { createMessageMoreQueue } from "./display/ui/messageMore.js";
-import { installDeityUiWiring } from "./display/ui/wiring/deityUiWiring.js";
 import { installMessageWiring } from "./display/ui/wiring/messageWiring.js";
 import { installCombatLogTooltip } from "./display/ui/combatLogTooltip.js";
 import { installShopWiring } from "./main/wiring/shopWiring.js";
@@ -1735,7 +1734,6 @@ if (_overlays?.ticker) {
   }, true);
 }
 
-installDeityUiWiring(world, { log: messageLog.log.bind(messageLog) });
 installMessageWiring({
   world,
   messageLog,

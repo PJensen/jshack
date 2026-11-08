@@ -96,6 +96,87 @@ Deno.test("messageWiring bridges direct system message events", () => {
   assertEquals(messageLog.entries[1].type, "system");
 });
 
+Deno.test("messageWiring keeps routine deity chatter visible", () => {
+  const world = new World({ seed: 42 });
+  const playerId = world.create();
+  world.add(playerId, Player, {});
+  world.add(playerId, NamedIdentity, { name: "You", identity: "player" });
+  world.add(playerId, Devotion, { deityId: "molkhar" });
+
+  const messageLog = createMessageLog();
+  installWithDeps(world, messageLog, playerId);
+
+  world.emit("deity:demand", { deityId: "molkhar", deityName: "Molkhar" });
+  world.emit("deity:omen", { deityId: "molkhar", deityName: "Molkhar" });
+  world.emit("deity:moodShift", { deityId: "molkhar", deityName: "Molkhar", to: "wrath" });
+  world.emit("deity:utterance", {
+    deityId: "molkhar",
+    deityName: "Molkhar",
+    dominant: { dimension: "wrath" },
+  });
+
+  assertEquals(messageLog.entries.length, 4);
+  assertEquals(messageLog.entries.every((entry) => entry.type === "deity"), true);
+});
+
+Deno.test("messageWiring keeps consequential deity events visible", () => {
+  const world = new World({ seed: 42 });
+  const playerId = world.create();
+  world.add(playerId, Player, {});
+  world.add(playerId, NamedIdentity, { name: "You", identity: "player" });
+  world.add(playerId, Devotion, { deityId: "molkhar" });
+
+  const messageLog = createMessageLog();
+  installWithDeps(world, messageLog, playerId);
+
+  world.emit("deity:offense", {
+    playerId,
+    deityId: "molkhar",
+    deityName: "Molkhar",
+    offense: "desecration",
+    severity: "grave",
+  });
+  world.emit("deity:miracle", {
+    playerId,
+    deityId: "molkhar",
+    deityName: "Molkhar",
+    effect: "heal",
+    amount: 5,
+  });
+
+  assertEquals(messageLog.entries.length, 2);
+  assertEquals(messageLog.entries[0].type, "danger");
+  assertEquals(messageLog.entries[1].type, "legendary");
+});
+
+Deno.test("messageWiring does not duplicate specific deity consequences through interventions", () => {
+  const world = new World({ seed: 42 });
+  const playerId = world.create();
+  world.add(playerId, Player, {});
+  world.add(playerId, NamedIdentity, { name: "You", identity: "player" });
+  world.add(playerId, Devotion, { deityId: "molkhar" });
+
+  const messageLog = createMessageLog();
+  installWithDeps(world, messageLog, playerId);
+
+  world.emit("deity:wrath", {
+    playerId,
+    deityId: "molkhar",
+    deityName: "Molkhar",
+    intensity: 0.8,
+    damage: 7,
+  });
+  world.emit("deity:intervention", {
+    playerId,
+    deityId: "molkhar",
+    deityName: "Molkhar",
+    kind: "wrath",
+    damage: 7,
+  });
+
+  assertEquals(messageLog.entries.length, 1);
+});
+
 Deno.test("messageWiring ignores non-homecoming depth teleports", () => {
   const world = new World({ seed: 42 });
   const playerId = world.create();

@@ -55,9 +55,60 @@ export function installEnvironmentMessages(ctx) {
     if (k === 'prayer_uncurse') { log(`${deityName || 'A deity'} reaches down and tears the curse from ${bracketizeName(String(itemName || 'your gear'))}.`, 'deity'); return; }
     if (k === 'prayer_refusal') { log(`${deityName || 'Your deity'} turns away. Your prayer goes unanswered.`, 'danger'); return; }
     if (k === 'prayer_curse') { log(`${deityName || 'Your deity'} answers with spite. ${bracketizeName(String(itemName || 'your gear'))} is cursed!`, 'danger'); return; }
-    if (k === 'patron_shift') { log(`The divine currents shift. ${deityName || 'A new patron'} claims you.`, 'deity'); return; }
+    if (k === 'patron_shift') return;
     if (k === 'boon') return;
-    if (k === 'wrath') log(`${deityName || 'A deity'}'s wrath descends upon you!`, 'deity');
+    if (k === 'wrath') return;
+  });
+
+  world.on('deity:demand', ({ deityId, deityName }) => {
+    const pe = playerEntity(world);
+    if (!pe) return;
+    const dev = compGet(pe.id, Devotion);
+    if (!dev || dev.deityId !== deityId) return;
+    log(`${deityName || 'Your deity'} grows impatient. Make an offering at the altar.`, 'deity');
+  });
+
+  world.on('deity:omen', ({ deityId, deityName }) => {
+    const pe = playerEntity(world);
+    if (!pe) return;
+    const dev = compGet(pe.id, Devotion);
+    if (!dev || dev.deityId !== deityId) return;
+    log(`An omen from ${deityName || 'Your deity'}. Something shifts in the unseen.`, 'deity');
+  });
+
+  world.on('deity:moodShift', ({ deityId, deityName, to }) => {
+    const pe = playerEntity(world);
+    if (!pe) return;
+    const dev = compGet(pe.id, Devotion);
+    if (!dev || dev.deityId !== deityId) return;
+    const deity = String(deityName || 'Your deity');
+    const mood = String(to || 'neutral');
+    const labels = {
+      wrath: 'wrathful',
+      serenity: 'serene',
+      hunger: 'hungry',
+      amusement: 'amused',
+      sorrow: 'sorrowful',
+      chaos: 'chaotic',
+    };
+    if (labels[mood]) log(`${deity} grows ${labels[mood]}.`, 'deity');
+  });
+
+  world.on('deity:utterance', ({ deityId, deityName, dominant }) => {
+    const pe = playerEntity(world);
+    if (!pe) return;
+    const dev = compGet(pe.id, Devotion);
+    if (!dev || dev.deityId !== deityId) return;
+    const deity = String(deityName || 'Your deity');
+    const lines = {
+      wrath: `"More blood!" bellows ${deity}.`,
+      serenity: `"You serve well," whispers ${deity}.`,
+      hunger: `"Feed me, mortal," growls ${deity}.`,
+      amusement: `${deity} laughs at your antics.`,
+      sorrow: `${deity} weeps silently.`,
+      chaos: 'The air crackles with divine unease.',
+    };
+    log(lines[dominant?.dimension] || `${deity} stirs.`, 'deity');
   });
 
   world.on('deity:boon', ({ actor, deityId, message, boon, amount, removed, uncursed }) => {
@@ -560,48 +611,6 @@ export function installEnvironmentMessages(ctx) {
     } else {
       log(`${deity} reaches down and delivers a sharp rebuke. (-${dmg} HP)`, 'deity');
     }
-  });
-
-  world.on('deity:demand', ({ deityId, deityName, tick }) => {
-    const pe = playerEntity(world);
-    if (!pe) return;
-    const dev = compGet(pe.id, Devotion);
-    if (!dev || dev.deityId !== deityId) return;
-    const deity = String(deityName || 'Your deity');
-    log(`${deity} grows impatient. Make an offering at the altar.`, 'deity');
-  });
-
-  world.on('deity:omen', ({ deityId, deityName }) => {
-    const pe = playerEntity(world);
-    if (!pe) return;
-    const dev = compGet(pe.id, Devotion);
-    if (!dev || dev.deityId !== deityId) return;
-    const deity = String(deityName || 'Your deity');
-    log(`An omen from ${deity}. Something shifts in the unseen.`, 'deity');
-  });
-
-  world.on('deity:moodShift', ({ deityId, deityName, to }) => {
-    const pe = playerEntity(world);
-    if (!pe) return;
-    const dev = compGet(pe.id, Devotion);
-    if (!dev || dev.deityId !== deityId) return;
-    const deity = String(deityName || 'Your deity');
-    const mood = String(to || 'neutral');
-    if (mood === 'pleased' || mood === 'content') log(`${deity}\u2019s presence feels warm and attentive.`, 'deity');
-    else if (mood === 'angry' || mood === 'wrathful') log(`${deity}\u2019s presence darkens. Tread carefully.`, 'deity');
-    else if (mood === 'indifferent') log(`${deity} turns their gaze elsewhere.`, 'deity');
-  });
-
-  world.on('deity:utterance', ({ deityId, deityName, dominant }) => {
-    const pe = playerEntity(world);
-    if (!pe) return;
-    const dev = compGet(pe.id, Devotion);
-    if (!dev || dev.deityId !== deityId) return;
-    const deity = String(deityName || 'Your deity');
-    const d = String(dominant || '');
-    if (d === 'positive') log(`${deity} murmurs approval. You feel watched over.`, 'deity');
-    else if (d === 'negative') log(`${deity} whispers a warning. You feel judged.`, 'deity');
-    else log(`${deity} speaks, though the words are beyond mortal comprehension.`, 'deity');
   });
 
   world.on('deity:miracle', ({ playerId, deityId, deityName, effect, amount, itemName }) => {

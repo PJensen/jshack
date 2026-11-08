@@ -76,20 +76,20 @@ Deno.test("deity demand and utterance are cooldown-gated and forwarded", () => {
   world.on("deity:utterance", (e) => utteranceEvents.push(e));
   world.on("deity:moodShift", (e) => moodEvents.push(e));
 
-  deity._emit("demand", { tick: 31, intensity: 0.8 });
-  deity._emit("demand", { tick: 40, intensity: 0.8 }); // blocked by cooldown
-  deity._emit("demand", { tick: 70, intensity: 0.8 }); // allowed
+  deity._emit("demand", { tick: 121, intensity: 0.8 });
+  deity._emit("demand", { tick: 130, intensity: 0.8 }); // blocked by cooldown
+  deity._emit("demand", { tick: 250, intensity: 0.8 }); // allowed
 
   deity._emit("utterance", {
-    tick: 31,
+    tick: 121,
     dominant: { dimension: "wrath", value: 0.7 },
   });
   deity._emit("utterance", {
-    tick: 40,
+    tick: 130,
     dominant: { dimension: "wrath", value: 0.7 },
   }); // blocked
   deity._emit("utterance", {
-    tick: 70,
+    tick: 250,
     dominant: { dimension: "serenity", value: 0.9 },
   }); // allowed
 

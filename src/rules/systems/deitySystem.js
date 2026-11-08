@@ -1236,7 +1236,7 @@ function wireDeityMiracles(deity, deityId, world) {
   const cooldowns = { demand: 0, utterance: 0, omen: 0 };
   const wrathRollSteps = new Map();
   const wrathRecoveryUntil = new Map();
-  const DEITY_COOLDOWN = 30;
+  const DEITY_COOLDOWN = 120;
 
   // Wrath is a rare per-turn gamble: 1% just above threshold, up to 10% at
   // maximum wrath. A successful strike grants four committed turns of recovery;
