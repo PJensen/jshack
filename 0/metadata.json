@@ -1,0 +1,64 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "5125e86bd975",
+  "session_id": "019f42df-8c1a-7a21-b1a0-51b2c34cf1b5",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T18:06:18.756684804Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/content/monsters/animals.js",
+    "src/content/monsters/humanoids.js",
+    "src/rules/environment/dungeon/tables.js",
+    "tests/lootGoblin.test.mjs",
+    "tests/norseContent.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "7ef612ee8671",
+  "token_usage": {
+    "input_tokens": 147504,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2846592,
+    "output_tokens": 8463,
+    "api_call_count": 29
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T18:06:18.646398856Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 4,
+    "total_committed": 2,
+    "total_lines_changed": 4,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 886,
+      "user_lines_removed": 4,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/content/monsters/animals.js": 1,
+        "src/content/monsters/humanoids.js": 1,
+        "src/rules/environment/dungeon/tables.js": 2,
+        "tests/lootGoblin.test.mjs": 17
+      },
+      "user_removed_per_file": {
+        "src/content/monsters/animals.js": 1,
+        "src/content/monsters/humanoids.js": 1,
+        "src/rules/environment/dungeon/tables.js": 2
+      }
+    }
+  ]
+}

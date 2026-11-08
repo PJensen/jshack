@@ -1,0 +1,21 @@
+small play testing notes
+
+1. I've never seen a loot goblin
+1.1. mark loot goblins with the rare portrait
+
+2. ratatoskr is missing a portrait label
+2.1. ratatoskr should also be marked with a rare portrait
+
+---
+
+for rare, it should show a star above their glyph like how we did a certain dangerous venomous snake
+
+---
+
+it's NOT a composite -- it's a glyph fx, do I need to find it for you? it's legimately a star above their symbol.
+
+reading some code; it's the "elite" tag that I'm thinking about.
+
+---
+
+ratatoskr should have a label too
