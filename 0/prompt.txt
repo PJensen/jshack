@@ -1,0 +1,16 @@
+playtesting results
+
+1. fisherman needs to actually fish -- meaning it's showing the same fishing VFX as if they player was fishing
+2. interacting with shopkeepers after hours should not popup shopkeeper inventory (while in overworld) -- however, a shop in a dungeon shall be considered to be open 24 hours. else, I can walk into a cottage of a shop keeper and conduct business at 2AM.
+3. herbalist was found not working and an empty chest
+4. re-enable permadeath regardless of difficulty
+
+---
+
+1. when NPC starts fishing, they never complete fishing. also: they fish on a ground tile! while being nearby to a fishery.
+2. wood_chopped sound never plays when player chops tree with axe -- what's up with that?
+3. shop bells single shot audio and ambient shop log lines still appearing while all shops are closed
+
+---
+
+why would'nt dig and chop use the same audio approach? that's super confusing to me at least.

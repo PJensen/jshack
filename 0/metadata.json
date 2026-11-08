@@ -1,0 +1,90 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "cd8b28447543",
+  "session_id": "019f33de-a09b-71f1-a1ff-8e56c19f6310",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-05T20:30:31.008095131Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/display/audio/audioWiring.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/main/wiring/shopWiring.js",
+    "src/rules/data/bumpResolvers.js",
+    "src/rules/data/tileReactions.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "src/rules/systems/shopAmbientSoundSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/audioWiring.test.mjs",
+    "tests/bumpResolvers.test.mjs",
+    "tests/shopAmbientSoundSystem.test.mjs",
+    "tests/shopWiringCheckout.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "c132df92a9fe",
+  "token_usage": {
+    "input_tokens": 332615,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7467136,
+    "output_tokens": 17649,
+    "api_call_count": 51
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-05T20:30:30.936268135Z",
+    "agent_lines": 43,
+    "agent_removed": 0,
+    "human_added": 120,
+    "human_modified": 6,
+    "human_removed": 0,
+    "total_committed": 169,
+    "total_lines_changed": 169,
+    "agent_percentage": 25.443786982248522,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 992,
+      "user_lines_removed": 7,
+      "agent_lines_added": 92,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/audio/audioWiring.js": 5,
+        "src/display/fx/spellAreaFx.js": 11,
+        "src/rules/data/bumpResolvers.js": 3,
+        "src/rules/data/tileReactions.js": 3,
+        "src/rules/systems/aiTownfolkSystem.js": 11,
+        "src/rules/systems/shopAmbientSoundSystem.js": 2,
+        "src/rules/utils/deathModes.js": 1,
+        "tests/aiTownfolk.test.mjs": 5,
+        "tests/audioWiring.test.mjs": 49,
+        "tests/bumpResolvers.test.mjs": 5,
+        "tests/shopAmbientSoundSystem.test.mjs": 32
+      },
+      "user_removed_per_file": {
+        "src/display/audio/audioWiring.js": 3,
+        "src/display/fx/spellAreaFx.js": 2,
+        "src/rules/systems/aiTownfolkSystem.js": 1,
+        "src/rules/utils/deathModes.js": 1
+      }
+    }
+  ]
+}
