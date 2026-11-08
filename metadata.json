@@ -1,0 +1,28 @@
+{
+  "branch": "master",
+  "checkpoint_id": "809c3392c74d",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "VERSION",
+    "src/bridge/schema/worldView.js",
+    "src/main.js",
+    "src/main/wiring/savegameSerializationRegistry.js",
+    "src/rules/components/AltarOfferingState.js",
+    "src/rules/components/index.js",
+    "src/rules/content/interaction/actionMenus.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/scripting.js",
+    "src/rules/systems/interactionSystem.js",
+    "tests/interaction.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}

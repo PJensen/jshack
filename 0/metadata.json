@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "809c3392c74d",
+  "session_id": "019f28dd-d03e-7891-8579-fc2e3f8cc011",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-03T16:59:57.783129125Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "VERSION",
+    "src/bridge/schema/worldView.js",
+    "src/main.js",
+    "src/main/wiring/savegameSerializationRegistry.js",
+    "src/rules/components/AltarOfferingState.js",
+    "src/rules/components/index.js",
+    "src/rules/content/interaction/actionMenus.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/scripting.js",
+    "src/rules/systems/interactionSystem.js",
+    "tests/interaction.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "6245ff6cc50d",
+  "checkpoint_transcript_start": 432,
+  "transcript_lines_at_start": 432,
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-03T16:59:57.731117807Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
