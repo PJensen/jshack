@@ -1,0 +1,7 @@
+You made a mess of underworldRegions.js --- 
+
+1. featurePool exists -- while content.features also exits -- explain why precisely; that is your authoring -- I'm not going to be able to review every weakness, I need you to start making catches as part of every ask.
+
+2. I don't love your incessant use of `object.freeze` I get it -- it's cool, but are we really getting some kind of gain from it?
+
+3. overall -- I like a lot of what we've built here -- I jus think we might want to do light and geeral cleanup pass along the lines of what I'm talking about above. under your own power please.
