@@ -83,17 +83,15 @@ export function createLinearResourceBars(root, initial = {}) {
   if (!root) throw new Error('createLinearResourceBars(root): root is required');
 
   Object.assign(root.style, {
-    width: root.style.width || 'min(420px, calc(100vw - 16px))',
+    width: root.style.width || '100%',
     boxSizing: 'border-box',
     minWidth: '0',
-    padding: '9px clamp(9px, 2.5vw, 16px) 10px',
+    padding: '0',
     borderRadius: '16px',
-    background:
-      'linear-gradient(135deg, rgba(45, 35, 34, 0.96) 0%, rgba(23, 24, 31, 0.97) 52%, rgba(19, 23, 32, 0.98) 100%)',
-    border: '1px solid rgba(214, 178, 91, 0.44)',
-    boxShadow: '0 14px 30px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 0 0 1px rgba(255,255,255,0.035)',
-    display: 'flex',
-    flexDirection: 'column',
+    background: 'transparent',
+    border: 'none',
+    boxShadow: 'none',
+    display: 'block',
     gap: '6px',
     fontFamily: 'monospace',
     pointerEvents: 'none',
@@ -101,12 +99,27 @@ export function createLinearResourceBars(root, initial = {}) {
   root.setAttribute('role', 'group');
   root.setAttribute('aria-label', 'Player vitals');
 
+  const table = document.createElement('table');
+  table.setAttribute('role', 'presentation');
+  Object.assign(table.style, {
+    width: '100%',
+    tableLayout: 'fixed',
+    borderCollapse: 'separate',
+    borderSpacing: '6px 0',
+  });
+  const body = document.createElement('tbody');
+  const resourceRow = document.createElement('tr');
+  body.appendChild(resourceRow);
+  table.appendChild(body);
+  root.appendChild(table);
+
   const rows = new Map();
   for (const def of RESOURCE_DEFS) {
-    const row = document.createElement('div');
+    const row = document.createElement('td');
     row.dataset.resource = def.key;
     Object.assign(row.style, {
-      display: 'block',
+      width: '33.333333%',
+      padding: '0',
       minWidth: '0',
     });
 
@@ -148,7 +161,7 @@ export function createLinearResourceBars(root, initial = {}) {
     Object.assign(track.style, {
       position: 'relative',
       width: '100%',
-      height: def.height,
+      height: '28px',
       overflow: 'hidden',
       borderRadius: '999px',
       background: 'linear-gradient(180deg, rgba(3, 6, 13, 0.86), rgba(19, 24, 35, 0.92))',
@@ -177,7 +190,7 @@ export function createLinearResourceBars(root, initial = {}) {
     track.appendChild(value);
     content.appendChild(track);
     row.appendChild(content);
-    root.appendChild(row);
+    resourceRow.appendChild(row);
     rows.set(def.key, { def, row, value, track, fill });
   }
 

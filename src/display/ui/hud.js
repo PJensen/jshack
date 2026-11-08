@@ -375,28 +375,32 @@ export function initHUD() {
   const topRightHud = document.createElement('div');
   Object.assign(topRightHud.style, {
     position: 'fixed',
-    right: 'calc(8px + env(safe-area-inset-right, 0px))',
-    top: 'calc(8px + env(safe-area-inset-top, 0px))',
+    left: '16px',
+    right: '16px',
+    top: '0',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '6px',
-    width: '420px',
-    maxWidth: 'calc(100vw - 16px)',
+    width: 'auto',
+    maxWidth: 'none',
     minWidth: '0',
     boxSizing: 'border-box',
     pointerEvents: 'none',
-    left: 'auto',
     zIndex: 925,
   });
 
   const worldControls = document.createElement('div');
   Object.assign(worldControls.style, {
+    position: 'fixed',
+    left: '16px',
+    right: '16px',
+    top: '14px',
     display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1fr) auto',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
     gap: '6px',
     alignItems: 'center',
-    width: '100%',
+    width: 'auto',
     minWidth: '0',
     pointerEvents: 'auto',
   });
@@ -405,9 +409,12 @@ export function initHUD() {
   const vitals = document.createElement('div');
   vitals.id = 'hud-vitals';
   Object.assign(vitals.style, {
-    position: 'relative',
-    width: '420px',
-    maxWidth: 'calc(100vw - 16px)',
+    position: 'fixed',
+    left: '16px',
+    right: '16px',
+    top: '84px',
+    width: 'calc(100vw - 32px)',
+    maxWidth: 'none',
     height: 'auto',
     alignSelf: 'flex-end',
     boxSizing: 'border-box',
@@ -513,28 +520,72 @@ export function initHUD() {
   worldControls.appendChild(moonPhaseEl);
   worldControls.appendChild(zoomHud);
 
+  const questControl = document.createElement('button');
+  Object.assign(questControl.style, {
+    minWidth: '0', minHeight: '52px', padding: '5px 10px',
+    borderRadius: '16px', border: UX_THEME.surfaceBorder,
+    background: 'linear-gradient(180deg, rgba(42,47,53,0.95) 0%, rgba(24,22,20,0.96) 100%)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.28), inset 0 1px 0 rgba(188,206,224,0.10)',
+    color: UX_THEME.textStrong, fontFamily: GAME_TEXT_FONT_FAMILY,
+    fontSize: 'clamp(13px, 2.8vw, 24px)', fontWeight: '800', lineHeight: '1.1',
+    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+    cursor: 'pointer', pointerEvents: 'auto', textShadow: '0 1px 0 rgba(0,0,0,0.7)',
+  });
+  questControl.textContent = '\uD83D\uDCDC  Quests';
+  questControl.title = 'Open quest journal';
+  questControl.addEventListener('click', () => window.dispatchEvent(new CustomEvent('ui:openQuests')));
+  worldControls.appendChild(questControl);
+
   // Active effects and quest HUD: a compact left column below world context.
   const effectsHud = document.createElement('div');
   Object.assign(effectsHud.style, {
     position: 'fixed',
-    left: 'calc(8px + env(safe-area-inset-left, 0px))',
-    top: 'calc(50px + env(safe-area-inset-top, 0px))',
-    display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px',
-    width: '250px', maxWidth: 'calc(100vw - 16px)', boxSizing: 'border-box',
-    padding: '0', borderRadius: UX_THEME.radius,
-    background: 'transparent', border: 'none',
-    boxShadow: 'none',
+    left: '16px',
+    right: '16px',
+    top: '120px',
+    display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px',
+    width: 'auto', maxWidth: 'none', boxSizing: 'border-box',
+    padding: '8px 10px 9px', borderRadius: UX_THEME.radius,
+    background: 'linear-gradient(180deg, rgba(10, 13, 18, 0.90) 0%, rgba(10, 9, 8, 0.62) 100%)',
+    border: UX_THEME.surfaceBorderSoft,
+    boxShadow: 'inset 0 0 0 1px rgba(188,206,224,0.04), 0 8px 18px rgba(0,0,0,0.28)',
     pointerEvents: 'none',
     zIndex: 905,
   });
+  const statusHeader = document.createElement('div');
+  Object.assign(statusHeader.style, {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '7px',
+    flex: '0 0 auto',
+    width: 'auto',
+    marginBottom: '0',
+    color: UX_THEME.textStrong,
+    fontFamily: GAME_TEXT_FONT_FAMILY,
+    fontSize: 'clamp(18px, 3vw, 30px)',
+    fontWeight: '800',
+    lineHeight: '1',
+    textShadow: '0 1px 2px rgba(0,0,0,0.9)',
+  });
+  const statusHeaderIcon = document.createElement('span');
+  statusHeaderIcon.textContent = '\u2726';
+  statusHeaderIcon.style.color = '#8fffc7';
+  statusHeaderIcon.style.fontSize = '17px';
+  statusHeaderIcon.setAttribute('aria-hidden', 'true');
+  const statusHeaderLabel = document.createElement('span');
+  statusHeaderLabel.textContent = 'Status Effects';
+  statusHeader.appendChild(statusHeaderIcon);
+  statusHeader.appendChild(statusHeaderLabel);
   const statusRow = document.createElement('div');
   Object.assign(statusRow.style, {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     alignItems: 'flex-start',
     gap: '6px',
-    width: '100%',
+    minHeight: '70px',
+    flex: '1 1 auto',
+    width: 'auto',
   });
   const affixRow = document.createElement('div');
   Object.assign(affixRow.style, { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: '4px', width: '100%' });
@@ -544,11 +595,16 @@ export function initHUD() {
     flexDirection: 'column',
     alignItems: 'stretch',
     gap: '4px',
-    width: '230px',
+    width: 'auto',
+    position: 'fixed',
+    left: '16px',
+    right: '16px',
+    top: '222px',
     maxWidth: '100%',
     boxSizing: 'border-box',
     pointerEvents: 'auto',
   });
+  effectsHud.appendChild(statusHeader);
   effectsHud.appendChild(statusRow);
   effectsHud.appendChild(questRow);
   effectsHud.appendChild(affixRow);
@@ -1094,10 +1150,9 @@ export function initHUD() {
     const isMobile = mobileLayoutMq.matches;
     // Temporarily hidden per UX direction.
     helpBtn.style.display = 'none';
-    // Resize vitals gauge for mobile vs desktop
-    const gaugeSize = isMobile ? 'min(110px, 26vw)' : 'min(188px, 22vw)';
-    vitals.style.width = gaugeSize;
-    vitals.style.height = gaugeSize;
+    // Vitals are a full-width three-column band; never inherit the removed gauge dimensions.
+    vitals.style.width = 'calc(100vw - 32px)';
+    vitals.style.height = 'auto';
     // Desktop and mobile share the same visible action/spell surfaces.
     spellSlotsContainer.style.display = 'none';
     bagBtn.style.display = 'none';
@@ -1393,6 +1448,13 @@ export function initHUD() {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     const focused = e?.detail?.focused || null;
+    if (focused) {
+      const current = Math.max(0, Number(focused?.progress || 0) | 0);
+      const target = Math.max(0, Number(focused?.target || 0) | 0);
+      questControl.textContent = target > 0 ? `\uD83D\uDCDC  Quests  ${current}/${target}` : '\uD83D\uDCDC  Quests';
+    } else {
+      questControl.textContent = '\uD83D\uDCDC  Quests';
+    }
 
     questRow.replaceChildren();
     if (!focused) {
@@ -1408,14 +1470,14 @@ export function initHUD() {
       gridTemplateColumns: 'auto 1fr auto',
       alignItems: 'center',
       gap: '6px',
-      minHeight: '44px',
+      minHeight: '76px',
       width: '100%',
       boxSizing: 'border-box',
-      padding: '5px 6px',
+      padding: '9px 12px',
       borderRadius: '7px',
-      border: '1px solid rgba(93,81,34,0.42)',
-      background: 'rgba(22,18,10,0.42)',
-      boxShadow: 'none',
+      border: '1px solid rgba(214,178,91,0.78)',
+      background: 'linear-gradient(180deg, rgba(49,39,18,0.94) 0%, rgba(22,18,10,0.94) 100%)',
+      boxShadow: '0 6px 18px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,240,180,0.12)',
       cursor: 'pointer',
       pointerEvents: 'auto',
       touchAction: 'manipulation',
@@ -1436,7 +1498,7 @@ export function initHUD() {
     const icon = document.createElement('div');
     icon.textContent = String(focused?.icon || '✦');
     Object.assign(icon.style, {
-      fontSize: '15px',
+      fontSize: '27px',
       lineHeight: '1',
       filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))',
     });
@@ -1452,7 +1514,7 @@ export function initHUD() {
     const title = document.createElement('div');
     title.textContent = String(focused?.title || 'Quest');
     Object.assign(title.style, {
-      fontSize: '11px',
+      fontSize: 'clamp(17px, 2.5vw, 24px)',
       lineHeight: '1.1',
       color: '#fff1ba',
       whiteSpace: 'nowrap',
@@ -1465,7 +1527,7 @@ export function initHUD() {
     const summaryText = String(focused?.summary || '').trim();
     summary.textContent = summaryText || 'Active objective';
     Object.assign(summary.style, {
-      fontSize: '10px',
+      fontSize: 'clamp(14px, 2vw, 18px)',
       lineHeight: '1.1',
       color: 'rgba(255,245,210,0.72)',
       whiteSpace: 'nowrap',
@@ -1493,7 +1555,7 @@ export function initHUD() {
     Object.assign(progress.style, {
       minWidth: '36px',
       textAlign: 'right',
-      fontSize: '11px',
+      fontSize: 'clamp(17px, 2.5vw, 24px)',
       fontWeight: '700',
       color: '#ffd85a',
       textShadow: '0 1px 0 rgba(0,0,0,.8)',
@@ -1998,6 +2060,19 @@ function ensureEffectsStack(container) {
   }
 
   const MASKED_SPEC = { name: '?', glyph: '\u2753', hue: 200 };
+  const emptySlots = [];
+  for (let i = 0; i < 7; i++) {
+    const slot = document.createElement('div');
+    Object.assign(slot.style, {
+      width: scaledPx(58), height: scaledPx(58), borderRadius: scaledPx(8),
+      boxSizing: 'border-box', flex: '0 0 auto',
+      border: '1px solid rgba(132,145,160,0.34)',
+      background: 'linear-gradient(180deg, rgba(30,35,43,0.72), rgba(14,18,25,0.84))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)',
+    });
+    emptySlots.push(slot);
+    container.appendChild(slot);
+  }
 
   function update(statuses) {
     const seen = new Set();
@@ -2032,6 +2107,12 @@ function ensureEffectsStack(container) {
       rec.stacksEl.textContent = stacks >= 9999 ? '\u221E' : `x${stacks}`;
       seen.add(badgeKey);
     }
+    for (const slot of emptySlots) {
+      slot.style.display = 'block';
+      container.appendChild(slot);
+    }
+    const occupied = Math.min(7, seen.size);
+    for (let i = 0; i < occupied; i++) emptySlots[i].style.display = 'none';
     for (const [key, rec] of byKey.entries()) {
       if (!seen.has(key)) {
         if (rec?.el?.parentNode === container) container.removeChild(rec.el);
