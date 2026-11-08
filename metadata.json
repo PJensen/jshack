@@ -1,0 +1,39 @@
+{
+  "branch": "master",
+  "checkpoint_id": "aa212f26cdd0",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/hud.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "tests/buffSpells.test.mjs",
+    "tests/primalRoarIdentity.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 102,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 15146752,
+    "input_tokens": 220948,
+    "output_tokens": 34607
+  }
+}
