@@ -1,0 +1,1 @@
+We need to be thinking this way (architecturally) forever after, update AGENTS.md by dropping running the whole test suite (that didn't work for us since there are 12 failures as of my last count) -- I'm almost to the point where I think AGENTS.md needs to be serverely cut and ammended to match the evolving ethos of the project.
