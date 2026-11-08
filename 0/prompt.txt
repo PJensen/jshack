@@ -1,0 +1,1 @@
+I just added 3 new audio fies, portal created, portal idle, portal destroyed, I'm 90% sure you know what to do with these. portal idle should be at about 60% volume so as not to overwhelm the rest of the scene and be proximity attenuated like most other point sources.
