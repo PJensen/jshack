@@ -1,0 +1,33 @@
+still one of my craziest projects to date
+
+---
+
+the other thing is that it follows the agentic arc almost perfectly
+
+---
+
+when did it start, where did I pause
+
+---
+
+just need a start and end commit timestamp, across all branches
+
+---
+
+time ellapsed?
+
+---
+
+amazing, I think you can see why I stopped -- things were getting away from me, it wouldn't be the first stoppage either. Since stopping new models have come out with substantially more power.
+
+---
+
+Why dont you do a quick architectural scan, sampling if you will. Anything interesting? Do we need to update STORY.md ;-)
+
+---
+
+lol -- amazing, why don't you start working on updating STORY.md -- I somehow love maintaining that file.
+
+---
+
+that update look good to you?

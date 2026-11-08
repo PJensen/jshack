@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "ef00026a14e8",
+  "checkpoints_count": 9,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 116,
+    "agent_percentage": 98.33333333333333,
+    "agent_removed": 2,
+    "calculated_at": "2026-09-02T21:34:02.438861477Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 117,
+    "total_lines_changed": 120
+  },
+  "files_touched": [
+    "STORY.md",
+    "VERSION"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 37,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1725184,
+    "input_tokens": 96654,
+    "output_tokens": 10424
+  }
+}
