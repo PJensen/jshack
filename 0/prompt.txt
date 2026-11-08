@@ -1,0 +1,8 @@
+Do you want to do one quick pass on the overworld economy? The tests are passing which is great, but in game, the chests are not filling.
+
+Herbalist should be collecting and depositing herbs
+Miner should be mining and depositing ore
+Woodcutter should be choppping down trees and depositing wood.
+Smithy should be making knives and other forged items.
+
+Anyhow! Do your best and making it all come together.

@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "6ab8c8195b81",
+  "session_id": "019f56a4-8ace-7b63-8e02-e79fda4c2aba",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-12T14:12:24.389807943Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/rules/environment/dungeon/townPlacement.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "8ec3975906c2",
+  "token_usage": {
+    "input_tokens": 114123,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1845504,
+    "output_tokens": 7846,
+    "api_call_count": 27
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-12T14:12:24.368430644Z",
+    "agent_lines": 73,
+    "agent_removed": 21,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 73,
+    "total_lines_changed": 94,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
