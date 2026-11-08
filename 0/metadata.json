@@ -1,0 +1,66 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "fe1fd0cc09ec",
+  "session_id": "019ecbb8-8c55-7ce2-a590-9167dfc04aab",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-15T16:57:10.096615582Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/data/buildings/bandit_hideout.js",
+    "src/rules/data/buildings/bat_cave.js",
+    "src/rules/data/buildings/bear_cave.js",
+    "src/rules/data/buildings/buildingRegistry.js",
+    "src/rules/data/buildings/collapsed_cellar.js",
+    "src/rules/data/buildings/forgotten_shrine.js",
+    "src/rules/data/buildings/human_mine.js",
+    "src/rules/data/buildings/old_well.js",
+    "src/rules/data/buildings/wolf_den.js",
+    "src/rules/environment/dungeon/index.js",
+    "src/rules/environment/dungeon/overworld.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/environment/dungeon/transition.js",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "tests/sparseUnderworld.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "f9d55e418051",
+  "checkpoint_transcript_start": 679,
+  "transcript_lines_at_start": 679,
+  "token_usage": {
+    "input_tokens": 258661,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7501952,
+    "output_tokens": 19475,
+    "api_call_count": 48
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-15T16:57:09.964854583Z",
+    "agent_lines": 551,
+    "agent_removed": 24,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 551,
+    "total_lines_changed": 575,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

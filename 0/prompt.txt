@@ -1,0 +1,25 @@
+The only thing I'm not sure I agree with is the concept of "seen" I'm not sure precisely what bearing that has on the situation. Anyhow! Lets kin n eep cooking! TIme for more authored entrances! These should be further afield into the overworld map, ideally, they'd be located in thematically appropriate locations.
+
+Agree with these strong next authored entrances:
+
+bear_cave: one-room mushroom-lit cave, one very dangerous sleeping/territorial bear, maybe a mauled corpse and one tempting chest.
+
+bat_cave: short cave, open, cavernous, many bats, guano piles, mushrooms, maybe a flaming bat rare spawn.
+
+human_mine: working mine with miners, ore veins, carts, lanterns, silver/gems, and a deeper sealed branch.
+
+bandit_hideout: shallow cave or cellar with bedrolls, stolen goods, archers, traps near the loot room.
+
+old_well: tiny vertical descent under town, wet stone, rats/slimes, maybe connects later to deeper waterworks.
+
+collapsed_cellar: ruined house basement, crates, mold, vermin, one blocked passage players can dig through.
+
+wolf_den: small natural cave, bones, pups/pack behavior, valuable remains deeper inside.
+
+forgotten_shrine: two-room sacred pocket with an altar, curse/blessing interaction, undead or cultist pressure.
+
+We should also consider offloading these various entrances away from "just code" and more towards how we author buildings. It's an idea. Almost like the metadata for the entrance node contains the generation details / metadata. Otherwise we wind up with keys like, "cellar_stairs" in the building and yet do not have dungeon generation criteria readily at hand.
+
+NOTE: one generation detail we've not added yet, is depth, but it's something we can circle back to once we make our first multi-level dungeon.
+
+NOTE: it might be worthwhile making at least one harder dungeon.
