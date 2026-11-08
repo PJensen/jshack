@@ -1,0 +1,49 @@
+{
+  "branch": "master",
+  "checkpoint_id": "0be90c5f473a",
+  "checkpoints_count": 3,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 311,
+    "agent_percentage": 100,
+    "agent_removed": 59,
+    "calculated_at": "2026-07-09T17:41:34.621613299Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 311,
+    "total_lines_changed": 370
+  },
+  "files_touched": [
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/inventoryOverlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main.js",
+    "src/main/input/worldTapGate.js",
+    "tests/worldTapGate.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 19,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3121792,
+    "input_tokens": 174828,
+    "output_tokens": 9701
+  }
+}

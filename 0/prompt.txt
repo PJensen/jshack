@@ -1,0 +1,1 @@
+why dont you take the wheel for a minute -- I feel like most core overlays could be cleaned up visually and behavioraly -- see what you can do, I'm interested on ways we can improve the feel of inventory, of equipment, menus, etc.
