@@ -1,0 +1,15 @@
+1. milling grain sound does not work
+2. milling corn -> food_cornmeal does not work -- it should just happen when interacting with the mill
+3. valkarie glyph is still not set -- this is obnoxious that I have to do this this late in the game!
+
+---
+
+so crazy -- these patterns should have been well established by now -- I feel like you (and all coding agents) make monsterous messes -- and the only way I can remediate these issues (and many others) is to spend HUGE amounts of tokens.
+
+Honestly -- I have days where I feel like I could hand-craft something that is ultra-stable compared with what you're producing.
+
+Think about it.
+
+FYI: you completely RUINED CLASS ICONS -- ALL I ASKED WAS THAT VALKARIE BE '@' LIKE ALL OTHER PLAYER CHARCTERS LEAVE THE ICONS ALONE . -- STILL SHOWING THE DEFAULT GLYPH in GAME.
+
+I had to undo absolutely everything you just did except for sounds.js -- SAD.
