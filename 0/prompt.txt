@@ -1,0 +1,7 @@
+explain the difference between:
+
+floors
+targetDepth
+roomTarget
+
+inside [underworldRegions.js](src/rules/environment/dungeon/underworldRegions.js) please

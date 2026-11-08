@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "d7e7002a007c",
+  "session_id": "019f32a9-6169-7c50-82ad-4133d73258c1",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-05T14:28:37.18240167Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/rules/environment/dungeon/underworldRegions.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "4d279aeb049f",
+  "token_usage": {
+    "input_tokens": 64283,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 134272,
+    "output_tokens": 1456,
+    "api_call_count": 7
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-05T14:28:37.170455483Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 3,
+    "total_committed": 0,
+    "total_lines_changed": 3,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 868,
+      "user_lines_removed": 3,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/rules/environment/dungeon/underworldRegions.js": 3
+      },
+      "user_removed_per_file": {
+        "src/rules/environment/dungeon/underworldRegions.js": 3
+      }
+    }
+  ]
+}
