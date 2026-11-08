@@ -1,0 +1,1 @@
+right and that's how we devestate even a moderate sofware project over time. it's silent rot that you introduce constantly. you'll observe that I've created many tools, rules, layers, tests, ratchets and beyond. Lets make this easier on ourselves. Why dont we somehow make some `deno` tasks that set us up for success please.
