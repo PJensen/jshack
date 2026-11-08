@@ -1,0 +1,48 @@
+{
+  "branch": "master",
+  "checkpoint_id": "7289e613388b",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 35,
+    "agent_percentage": 100,
+    "agent_removed": 12,
+    "calculated_at": "2026-11-07T21:19:23.670552226Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 35,
+    "total_lines_changed": 47
+  },
+  "files_touched": [
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/classAbilities.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 44,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4890112,
+    "input_tokens": 73725,
+    "output_tokens": 13533
+  }
+}
