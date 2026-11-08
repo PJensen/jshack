@@ -1,0 +1,9 @@
+Would you rather we use `attach` as a hierachy instead of using a `ShopDebtLedger` object having an array, that way we get cleaner type safety, and less data-dependency or schema fragility?  I wonder also if we shouldn't add a simple unit test to ensure this feature is well covered. I also want to incorporate other consumable, obvious things, like potions. let me know what you think about the approach first, then we can explore the other details.
+
+---
+
+We do have the structural support for virtual components, that are composed almost entirely from underlying hierachy. I feel like this fits rather nicely, since those are cached, and relatively well managed.
+
+---
+
+lets do it, and yes, unit test covers both layers.
