@@ -1,0 +1,5 @@
+one issue, the trap is firing after I walk off the tile; that might be tricky to solve, and require a re-ordering of trap scheduling
+
+---
+
+right -- but your missing my broader point, walking ONTO the trap should trigger it, not walking off of it .

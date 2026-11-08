@@ -1,0 +1,53 @@
+{
+  "branch": "master",
+  "checkpoint_id": "9842aac36780",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 211,
+    "agent_percentage": 99.37888198757764,
+    "agent_removed": 109,
+    "calculated_at": "2026-06-02T00:02:18.663085106Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 212,
+    "total_lines_changed": 322
+  },
+  "files_touched": [
+    "VERSION",
+    "src/main/scheduler.js",
+    "src/rules/systems/trapSystem.js",
+    "tests/sensoryOverload.test.mjs",
+    "tests/trap.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 25,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3099520,
+    "input_tokens": 239323,
+    "output_tokens": 10654
+  }
+}
