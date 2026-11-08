@@ -1,0 +1,50 @@
+{
+  "branch": "master",
+  "checkpoint_id": "cf023d39544e",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 75,
+    "agent_percentage": 100,
+    "agent_removed": 21,
+    "calculated_at": "2026-06-19T15:09:53.929483578Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 75,
+    "total_lines_changed": 96
+  },
+  "files_touched": [
+    "src/display/audio/worldAmbientController.js",
+    "tests/worldAmbientController.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 10,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 446080,
+    "input_tokens": 125208,
+    "output_tokens": 4197
+  }
+}
