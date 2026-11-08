@@ -1,0 +1,13 @@
+and how does the shopkeeper react?
+
+---
+
+and the player wiill be let out?
+
+---
+
+easy enough -- next item?
+
+---
+
+FAILURE: clicking "pay bill" does nothing, clicking "return item" does work.

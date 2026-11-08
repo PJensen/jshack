@@ -1,0 +1,28 @@
+{
+  "branch": "master",
+  "checkpoint_id": "093a9cead09d",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/display/ui/shopOverlay.js",
+    "src/main/wiring/shopWiring.js",
+    "tests/shopOverlayCheckout.test.mjs",
+    "tests/shopWiringCheckout.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 36,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2392576,
+    "input_tokens": 347600,
+    "output_tokens": 10915
+  }
+}
