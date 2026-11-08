@@ -1,0 +1,33 @@
+{
+  "branch": "master",
+  "checkpoint_id": "1b0bfd5d5a0b",
+  "checkpoints_count": 2,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/fx/cloudFx.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/utils/factionHostility.js",
+    "tests/monsterAbilities.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 56,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7530496,
+    "input_tokens": 233597,
+    "output_tokens": 30496
+  }
+}

@@ -1,0 +1,17 @@
+I feel like certain enemies should have an aura that is triggered from an ability. the aura does *something* to surrounding mobs.
+
+---
+
+allies of course ;-) some applicable VFX aura would be fantastic.
+
+---
+
+primitive like that
+
+---
+
+yes there is a field like that
+
+---
+
+I think it's called "hostility" or gosh I cannot remember -- but I cannot remember the precise field name for threat or friend or foe enemy or neutral
