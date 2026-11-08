@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "30be449046df",
+  "session_id": "019ec630-0512-78d0-9759-82ac8e464592",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-14T17:49:32.638755117Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/composition/targetingReticle.js",
+    "src/main.js",
+    "src/main/targeting/targetingController.js",
+    "tests/activeSpellTargetingConfig.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "3b44bdd25dac",
+  "checkpoint_transcript_start": 1180,
+  "transcript_lines_at_start": 1180,
+  "token_usage": {
+    "input_tokens": 205783,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3216640,
+    "output_tokens": 5157,
+    "api_call_count": 25
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-14T17:49:32.47877349Z",
+    "agent_lines": 37,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 37,
+    "total_lines_changed": 37,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
