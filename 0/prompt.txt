@@ -1,0 +1,8 @@
+what happens if a potion is quaffed?
+what happens if you cannot pay -- is this where we explore the shopkeeper going aggro?
+
+---
+
+lets deal with potions nearly first; lets make sure the public surface is super clean; we might even use the oppertunity for making reading book even cleaner if at all possible.
+
+we'll table aggro until afterwards.
