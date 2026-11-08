@@ -1,0 +1,18 @@
+We've got a design task ahead of us, we need to start planning for shopkeeper aggro for when things go south. We need this system to be clever and rich with depth.
+
+a lot of effort was placed on making killer items, amazing gems; most of out of the players price range.
+
+Half the fun should be
+
+** risking everything stealing something
+** exploiting the game and feeling like you got away with it -- only to find, nope, the game knew.
+
+(e.g)
+
+- player throws an expensive gem from the shop
+- player teleports outside of the shop after drinking a potion
+- player teleports outside of the shop after picking something up
+
+---
+
+write it down please -- file it away inside of the `docs` folder.
