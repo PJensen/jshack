@@ -1,0 +1,25 @@
+{
+  "branch": "master",
+  "checkpoint_id": "fac52cf9763e",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/ECS_JS_WORLD_LOCAL_STATE_MEMO.md"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 3,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 349824,
+    "input_tokens": 12612,
+    "output_tokens": 3315
+  }
+}

@@ -1,0 +1,5 @@
+fine; write up the tech-memo; draft it in detail, state the need, the requirement, the shape, the motivation -- document it under `docs` root -- I'll shift to ecs-js and make it happen.
+
+propose at least 3 canonical names for the concept.
+
+surprised we got this far without it frankly.
