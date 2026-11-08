@@ -1,0 +1,26 @@
+{
+  "branch": "master",
+  "checkpoint_id": "6490c6c05f12",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/interactables/rift/index.js",
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main.js",
+    "src/main/input/rulesDispatch.js",
+    "src/rules/interaction/interactableAffordance.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/rulesDispatchContextActions.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}

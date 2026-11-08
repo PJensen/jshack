@@ -1,0 +1,40 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "6490c6c05f12",
+  "session_id": "019f00a0-2b9d-7762-926a-0096ef5e6ddf",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T13:34:10.093534142Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/interactables/rift/index.js",
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main.js",
+    "src/main/input/rulesDispatch.js",
+    "src/rules/interaction/interactableAffordance.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/rulesDispatchContextActions.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "6f160c23a084",
+  "checkpoint_transcript_start": 1529,
+  "transcript_lines_at_start": 1529,
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T13:34:09.702698387Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
