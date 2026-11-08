@@ -1,0 +1,31 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f7d49bfb90fe",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/content/items/rings.js",
+    "src/main/wiring/scrollWandWiring.js",
+    "src/rules/components/Equipment.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/utils/passiveBonuses.js",
+    "src/rules/utils/polymorphPolicy.js",
+    "tests/polymorphPolicy.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 28,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3857920,
+    "input_tokens": 83241,
+    "output_tokens": 8037
+  }
+}
