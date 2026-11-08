@@ -1,0 +1,58 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "09c0a785c6f4",
+  "session_id": "019e94ea-295c-7de1-9017-ddb7f4d48f3c",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-05T12:53:24.029902225Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "docs/architecture/COMPONENT_PHASE_SYSTEM_EVENT_DOCTRINE_REVIEW.md",
+    "src/events/Died.js",
+    "src/main/scheduler.js",
+    "src/rules/components/DeathApplied.js",
+    "src/rules/components/index.js",
+    "src/rules/quests/definitions/ratInfestation.js",
+    "src/rules/quests/definitions/runContract.js",
+    "src/rules/systems/monsterDeathHookSystem.js",
+    "src/rules/systems/perceptionMemorySystem.js",
+    "src/rules/systems/scoreSystem.js",
+    "src/rules/systems/tombstoneSystem.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/deathApplied.js",
+    "tests/dealDamage.test.mjs",
+    "tests/gridBugDeathHazard.test.mjs",
+    "tests/plasmaCloud.test.mjs",
+    "tests/ratQuestProgress.test.mjs",
+    "tests/runContract.test.mjs",
+    "tests/scoreSystem.test.mjs",
+    "tests/tombstoneKillerAttribution.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "89b11ead9a68",
+  "checkpoint_transcript_start": 1114,
+  "transcript_lines_at_start": 1114,
+  "token_usage": {
+    "input_tokens": 3995,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 120704,
+    "output_tokens": 395,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-05T12:53:23.854601095Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

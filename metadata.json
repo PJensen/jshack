@@ -1,0 +1,62 @@
+{
+  "branch": "master",
+  "checkpoint_id": "09c0a785c6f4",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 11,
+    "agent_percentage": 4.8979591836734695,
+    "agent_removed": 13,
+    "calculated_at": "2026-06-05T12:53:27.189577068Z",
+    "human_added": 369,
+    "human_modified": 0,
+    "human_removed": 97,
+    "metric_version": 2,
+    "total_committed": 380,
+    "total_lines_changed": 490
+  },
+  "files_touched": [
+    "docs/architecture/COMPONENT_PHASE_SYSTEM_EVENT_DOCTRINE_REVIEW.md",
+    "src/events/Died.js",
+    "src/main/scheduler.js",
+    "src/rules/components/DeathApplied.js",
+    "src/rules/components/index.js",
+    "src/rules/quests/definitions/ratInfestation.js",
+    "src/rules/quests/definitions/runContract.js",
+    "src/rules/systems/monsterDeathHookSystem.js",
+    "src/rules/systems/perceptionMemorySystem.js",
+    "src/rules/systems/scoreSystem.js",
+    "src/rules/systems/tombstoneSystem.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/deathApplied.js",
+    "tests/dealDamage.test.mjs",
+    "tests/gridBugDeathHazard.test.mjs",
+    "tests/plasmaCloud.test.mjs",
+    "tests/ratQuestProgress.test.mjs",
+    "tests/runContract.test.mjs",
+    "tests/scoreSystem.test.mjs",
+    "tests/tombstoneKillerAttribution.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 34,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2627840,
+    "input_tokens": 205674,
+    "output_tokens": 16865
+  }
+}
