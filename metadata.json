@@ -1,0 +1,30 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8d4971adb2f0",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.2",
+  "files_touched": [
+    "src/main/wiring/shopWiring.js",
+    "src/rules/systems/deitySystem.js",
+    "src/rules/systems/shopkeeperSystem.js",
+    "src/rules/utils/shopEnforcement.js",
+    "tests/shopEnforcement.test.mjs",
+    "tests/shopkeeperSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 18,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2593024,
+    "input_tokens": 161519,
+    "output_tokens": 9160
+  }
+}
