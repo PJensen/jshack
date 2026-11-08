@@ -1,0 +1,1 @@
+Shopkeeper overlay, ideally, should show the name of the shop keeper instead of simply "Shopkeeper" -- this is especially relevant for "Ratatoskr" -- in the future, we might decide to give NPCs actual names -- though iit's unclear precisely how I'll accomplish this feat.

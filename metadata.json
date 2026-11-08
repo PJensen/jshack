@@ -1,0 +1,48 @@
+{
+  "branch": "master",
+  "checkpoint_id": "2a1d4c5814ea",
+  "checkpoints_count": 5,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 31,
+    "agent_percentage": 100,
+    "agent_removed": 6,
+    "calculated_at": "2026-07-11T14:50:49.909411184Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 31,
+    "total_lines_changed": 37
+  },
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "src/display/ui/shopOverlay.js",
+    "src/main/wiring/shopWiring.js",
+    "tests/shopAppraise.test.mjs",
+    "tests/shopOverlayCheckout.test.mjs",
+    "tests/shopWiringCheckout.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 178,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 21301888,
+    "input_tokens": 1587042,
+    "output_tokens": 67508
+  }
+}
