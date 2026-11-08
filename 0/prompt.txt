@@ -1,0 +1,10 @@
+small handful of UX work items.
+
+1. the "mail" ux is a bit awkward on mobile,  currently left aligned with no easy way to close it. I was thinking we could design a centered window with an obvious close button on each tab. this is our primary focus.
+
+2. bumping into an altar from the left or right on mobile forces an offering of whatever item happens to be under your finger because inventory opens right away and the player is still mid tap.
+2.1. we should only allow one offering per day per altar
+2.2. the offered item glyph should appear rendered atop the shrine.
+2.3. we should consider adding "on_offered" handler -- I know we have special handling for offering a dead pet, but I was thinking about making it (offering handler) canon across the engine. this opens up a whole new design dimension, if you offer something under a specific set of circumstances, something special happens -- we can dream stuff up.
+
+do as much as you possibly can in one-shot.
