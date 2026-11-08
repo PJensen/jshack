@@ -1,0 +1,30 @@
+{
+  "branch": "master",
+  "checkpoint_id": "2f1cb1f2ab64",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/rules/systems/deitySystem.js",
+    "src/rules/systems/praySystem.js",
+    "tests/deitySystem.test.mjs",
+    "tests/praySystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 69,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8086016,
+    "input_tokens": 184757,
+    "output_tokens": 17564
+  }
+}
