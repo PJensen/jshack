@@ -1,0 +1,7 @@
+one fail:
+
+thrown potion_vigor heals target on landing tile => ./tests/wildThrow.test.mjs:213:6
+
+---
+
+??? did you just let a test drag the implementation backwards?
