@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "9d7aa285c02b",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 20,
+    "agent_percentage": 100,
+    "agent_removed": 2,
+    "calculated_at": "2026-11-07T20:59:33.12551493Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 20,
+    "total_lines_changed": 22
+  },
+  "files_touched": [
+    "src/rules/data/spells.js",
+    "tests/spellFlavorData.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 370,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 54458880,
+    "input_tokens": 910166,
+    "output_tokens": 134798
+  }
+}
