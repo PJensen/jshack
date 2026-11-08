@@ -68,6 +68,7 @@ async function main() {
   for (const file of toProcess) {
     const inputPath = `${AUDIO_DIR}/${file.name}`;
     const tempPath = `${AUDIO_DIR}/.${file.name}.tmp`;
+    const backupPath = `${AUDIO_DIR}/.${file.name}.original`;
 
     try {
       console.log(`Processing: ${file.name}`);
