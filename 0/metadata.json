@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "ca5144a00d44",
+  "session_id": "019e7e39-501d-71a2-b6fa-d5de0a59033f",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-31T13:31:26.420402445Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/design/THREAT_ATTRIBUTION_UNSEEN_CASTERS.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "30ad661dc8ae",
+  "token_usage": {
+    "input_tokens": 46529,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 209536,
+    "output_tokens": 4383,
+    "api_call_count": 7
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-31T13:31:26.40801977Z",
+    "agent_lines": 305,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 305,
+    "total_lines_changed": 305,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

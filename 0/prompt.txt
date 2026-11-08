@@ -1,0 +1,30 @@
+Write a tech memo under `docs` for the following design.
+
+Threat Attribution For Unseen Casters
+Right now control spell events attribute cleanly to actor. Later, invisibility/LOS/witness logic should decide whether enemies get precise source threat, generic alert/search, or no attribution.
+
+Spell Threat Metadata [DONE]
+Add optional fields on spell defs:
+threatMult, flatThreat, threatKind, threatRadius, threatAttribution.
+Then threatSystem can stop hardcoding control spell names.
+
+Ranged Noise
+Missed arrows currently add tiny threat to the intended target. Next step: nearby enemies could get curious/alerted or low noise threat depending on weapon/ammo tags like silent, loud, explosive.
+
+Healing / Shielding Threat
+Heals, regen, stoneskin, shield guard, divine shield, and pet heals should create threat from nearby hostiles who are already engaged with the healed/protected target.
+
+Threat Transfer Tools
+Strong gameplay: “Misdirect” style item/spell transfers part of player threat to pet/summon for a few turns. Very useful for pet tanking.
+
+Tank Gear / Rogue Gear
+Add item tags/bonuses:
+
+menacing, threat_boost, threatGenerationMult
+subtle, silent, threatReduction
+Good for shields, bells, cursed noisy armor, assassin gear, muffled boots.
+Threat Inspector
+Keep world visuals minimal, but debug inspector should show per-enemy threat entries. This will make tuning much easier.
+
+NPC Policy Layer
+Hostile NPCs should use threat, but guards/shopkeepers may override with policy: defend stock, protect civilians, hold exits, ignore pet taunts briefly unless physically blocked.
