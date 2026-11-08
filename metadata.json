@@ -1,0 +1,33 @@
+{
+  "branch": "master",
+  "checkpoint_id": "27d39ac6d059",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/content/monsters/auras.js",
+    "src/content/monsters/index.js",
+    "src/display/fx/cloudFx.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/utils/auraFields.js",
+    "tests/monsterAuras.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 47,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3942912,
+    "input_tokens": 152868,
+    "output_tokens": 20636
+  }
+}
