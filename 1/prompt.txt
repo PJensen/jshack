@@ -1,0 +1,15 @@
+so we have an entire listing of materials in materials.js
+
+I've also added lighting-engine-work.html that shows roughly how to incorporate materials into the lighting syste,
+
+our first objective is to incorporate material lighting interactions.
+
+our second objective is to change the way void lighing works to make it more official.
+
+both are representing in the new HTML file -- your job is to backport them into engine.js
+
+and to make sure it's solid as it can be.
+
+---
+
+it looks really really blocky, like one dungon tile, what did you do?!
