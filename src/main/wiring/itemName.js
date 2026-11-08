@@ -13,7 +13,7 @@ import { AffixTopologyNode } from "../../rules/components/AffixTopologyNode.js";
 import { isIdentified } from "../../rules/data/identification.js";
 import { getUnidentifiedName, requiresIdentification } from "../../rules/data/itemAppearances.js";
 import { getDecayStage } from "../../rules/data/food.js";
-import { getAffixDescription, getAffixName } from "../../rules/data/affixes.js";
+import { getAffix, getAffixDescription, getAffixName } from "../../rules/data/affixes.js";
 import { Beatitude } from "../../rules/components/Beatitude.js";
 import { GemSocketNode } from "../../rules/components/GemSocketNode.js";
 import { ProcEffect } from "../../rules/components/ProcEffect.js";
@@ -292,6 +292,36 @@ function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
   return { mechanics, authoredIds };
 }
 
+function formatAffixMechanics(affixes, mechanicFormats = {}) {
+  const formats = mechanicFormats?.affixes && typeof mechanicFormats.affixes === 'object'
+    ? mechanicFormats.affixes
+    : {};
+  const mechanics = [];
+  const authoredIds = new Set();
+  for (const affixId of Array.isArray(affixes) ? affixes : []) {
+    const key = String(affixId || '');
+    const formatSpec = formats[key] || getAffix(key)?.display;
+    if (formatSpec == null) continue;
+    const format = typeof formatSpec === 'string' ? formatSpec : formatSpec?.format;
+    if (typeof format !== 'string' || !format.trim()) continue;
+    const values = {
+      ...(formatSpec?.values && typeof formatSpec.values === 'object' ? formatSpec.values : {}),
+      id: key,
+      name: getAffixName(key),
+    };
+    const text = format.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, name) => String(values[name] ?? ''));
+    if (!text.trim()) continue;
+    mechanics.push({
+      context: typeof formatSpec === 'object' && formatSpec.context
+        ? String(formatSpec.context)
+        : 'Equip',
+      text: text.trim(),
+    });
+    authoredIds.add(key);
+  }
+  return { mechanics, authoredIds };
+}
+
 function formatEventKind(value) {
   const key = String(value || "").trim();
   if (!key) return "On Trigger";
@@ -444,10 +474,16 @@ function buildProcNodeSummaries(world, itemId) {
     if (proc && proc.enabled !== false) {
       const summary = summarizeProcNode(world, entityId, nextSource);
       summary.packageId = current.packageId || "";
+      summary.affixId = String(affix?.affixId || current.affixId || "");
       out.push(summary);
     }
     for (const childId of children(world, entityId)) {
-      stack.push({ id: childId, source: nextSource, packageId: pkg?.packageId || current.packageId || "" });
+      stack.push({
+        id: childId,
+        source: nextSource,
+        packageId: pkg?.packageId || current.packageId || "",
+        affixId: affix?.affixId || current.affixId || "",
+      });
     }
   }
   return out;
@@ -514,6 +550,7 @@ export function buildItemDisplayData(world, itemId) {
   const procPackages = identified ? buildProcPackageSummaries(world, itemId) : [];
   const catalogItem = identified ? getCatalogItem(identity) : null;
   const procPackageMechanics = formatProcPackageMechanics(procPackages, catalogItem?.mechanicFormats);
+  const affixMechanics = formatAffixMechanics(info.affixes, catalogItem?.mechanicFormats);
   const procPackageDetailLines = procPackages.map((pkg) => {
     if (procPackageMechanics.authoredIds.has(String(pkg?.id || ''))) return '';
     const summary = String(pkg?.summary || "").trim();
@@ -546,9 +583,12 @@ export function buildItemDisplayData(world, itemId) {
     : [];
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
   mechanics.push(...procPackageMechanics.mechanics);
+  mechanics.push(...affixMechanics.mechanics);
   const procNodes = identified ? buildProcNodeSummaries(world, itemId) : [];
   const visibleProcNodes = catalogItem
-    ? procNodes.filter((node) => !procPackageMechanics.authoredIds.has(String(node?.packageId || "")))
+    ? procNodes.filter((node) =>
+        !procPackageMechanics.authoredIds.has(String(node?.packageId || ""))
+        && !affixMechanics.authoredIds.has(String(node?.affixId || "")))
     : procNodes;
 
   return {

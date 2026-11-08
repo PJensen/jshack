@@ -729,6 +729,15 @@ function normalizeAffixRecord(id, spec) {
   const slots = Array.isArray(spec?.slots) ? spec.slots.map((slot) => String(slot || "")).filter(Boolean) : [];
   const triggerScripts = normalizeTriggerScripts(spec);
   const passiveRefs = normalizePassiveRefs(spec);
+  const display = spec?.display && typeof spec.display === "object"
+    ? Object.freeze({
+        context: String(spec.display.context || "Equip"),
+        format: String(spec.display.format || ""),
+        values: Object.freeze({
+          ...(spec.display.values && typeof spec.display.values === "object" ? spec.display.values : {}),
+        }),
+      })
+    : null;
   return Object.freeze({
     id: normalizedId,
     name: String(spec?.name || normalizedId),
@@ -737,6 +746,7 @@ function normalizeAffixRecord(id, spec) {
     weight: Number(spec?.weight || 0),
     elementTint: spec?.elementTint || null,
     visualAffinity: spec?.visualAffinity || null,
+    display,
     passiveRefs: Object.freeze(passiveRefs),
     triggerScripts: Object.freeze(Object.fromEntries(
       Object.entries(triggerScripts).map(([trigger, refs]) => [trigger, Object.freeze(refs.slice())]),
@@ -755,40 +765,40 @@ export function unregisterAffixDefinition(id) {
 }
 
 [
-  ["thorns1", { name: "Thorns I", slots: ["armor"], weight: 30, triggerScripts: { onHit: [AFFIX_THORNS] } }],
-  ["vamp1", { name: "Vampiric I", slots: ["weapon"], weight: 20, triggerScripts: { onHit: [AFFIX_VAMP] } }],
-  ["fierce", { name: "Fierce", slots: ["weapon"], weight: 25, triggerScripts: { onBeforeHit: [AFFIX_FIERCE] } }],
-  ["guard1", { name: "Guarded", slots: ["armor"], weight: 25, passiveRefs: [AFFIX_GUARD] }],
-  ["life1", { name: "Healthy", slots: ["armor", "ring"], weight: 22, passiveRefs: [AFFIX_LIFE] }],
-  ["attuned1", { name: "Attuned", slots: ["ring"], weight: 20, passiveRefs: [AFFIX_ATTUNED] }],
-  ["fireWard1", { name: "Flame Ward", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 18, passiveRefs: [AFFIX_FIRE_WARD] }],
-  ["poisonWard1", { name: "Venom Ward", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 18, passiveRefs: [AFFIX_POISON_WARD] }],
-  ["kineticWard1", { name: "Fortified", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 15, passiveRefs: [AFFIX_KINETIC_WARD] }],
-  ["caustic1", { name: "Caustic", slots: ["weapon"], weight: 16, elementTint: ELEMENT_TINT_ACID, triggerScripts: { onHit: [AFFIX_CAUSTIC] } }],
-  ["capacitive1", { name: "Capacitive", slots: ["weapon"], weight: 15, elementTint: ELEMENT_TINT_ELECTRIC, triggerScripts: { onHit: [AFFIX_CAPACITIVE] } }],
-  ["insulated1", { name: "Insulated", slots: ["armor", "offhand"], weight: 16, passiveRefs: [AFFIX_INSULATED] }],
-  ["lucky1", { name: "Lucky", slots: ["ring", "armor"], weight: 18, passiveRefs: [AFFIX_LUCKY] }],
-  ["venomous1", { name: "Venomous", slots: ["weapon"], weight: 14, elementTint: ELEMENT_TINT_POISON, triggerScripts: { onHit: [AFFIX_VENOMOUS] } }],
-  ["chainLightning1", { name: "Chain Lightning", slots: ["weapon"], weight: 8, elementTint: ELEMENT_TINT_ELECTRIC, triggerScripts: { onHit: [AFFIX_CHAIN_LIGHTNING] } }],
-  ["firestorm1", { name: "Firestorm", slots: ["weapon"], weight: 10, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_FIRESTORM] } }],
-  ["soulDrain1", { name: "Soul Drain", slots: ["weapon"], weight: 7, triggerScripts: { onHit: [AFFIX_SOUL_DRAIN] } }],
-  ["berserk1", { name: "Berserking", slots: ["weapon", "ring"], weight: 8, triggerScripts: { onHit: [AFFIX_BERSERK] } }],
-  ["shieldWall1", { name: "Stoneskin Proc", slots: ["armor", "offhand"], weight: 10, triggerScripts: { onDamaged: [AFFIX_SHIELD_WALL] } }],
-  ["helmGuard1", { name: "Helm Guard", slots: ["head"], weight: 16, passiveRefs: [AFFIX_GUARD] }],
-  ["helmAttuned1", { name: "Helm of Attunement", slots: ["head"], weight: 14, passiveRefs: [AFFIX_ATTUNED] }],
-  ["manaSurge1", { name: "Mana Surge", slots: ["ring", "weapon"], weight: 10, triggerScripts: { onHit: [AFFIX_MANA_SURGE] } }],
-  ["executioner1", { name: "Executioner", slots: ["weapon"], weight: 6, triggerScripts: { onBeforeHit: [AFFIX_EXECUTIONER] } }],
-  ["frostbite1", { name: "Frostbite", slots: ["weapon"], weight: 10, elementTint: ELEMENT_TINT_FROST, triggerScripts: { onHit: [AFFIX_FROSTBITE] } }],
-  ["hemorrhage1", { name: "Hemorrhage", slots: ["weapon"], weight: 12, triggerScripts: { onHit: [AFFIX_HEMORRHAGE] } }],
-  ["secondWind1", { name: "Second Wind", slots: ["armor", "offhand"], weight: 8, triggerScripts: { onDamaged: [AFFIX_SECOND_WIND] } }],
-  ["flaming", { name: "Flaming", slots: ["weapon"], weight: 8, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_FLAMING] } }],
-  ["stunning1", { name: "Stunning", slots: ["weapon"], weight: 0, triggerScripts: { onHit: [AFFIX_STUNNING] } }],
+  ["thorns1", { name: "Thorns I", slots: ["armor"], weight: 30, display: { context: "Equip", format: "When hit, {chance}% chance to retaliate for {damage} damage and gain thorns for {turns} turns.", values: { chance: 20, damage: 2, turns: 3 } }, triggerScripts: { onHit: [AFFIX_THORNS] } }],
+  ["vamp1", { name: "Vampiric I", slots: ["weapon"], weight: 20, display: { context: "Equip", format: "On hit, heal for one-third of the damage dealt." }, triggerScripts: { onHit: [AFFIX_VAMP] } }],
+  ["fierce", { name: "Fierce", slots: ["weapon"], weight: 25, display: { context: "Equip", format: "Attacks deal +1 damage." }, triggerScripts: { onBeforeHit: [AFFIX_FIERCE] } }],
+  ["guard1", { name: "Guarded", slots: ["armor"], weight: 25, display: { context: "Equip", format: "+1 evade." }, passiveRefs: [AFFIX_GUARD] }],
+  ["life1", { name: "Healthy", slots: ["armor", "ring"], weight: 22, display: { context: "Equip", format: "+5 max HP." }, passiveRefs: [AFFIX_LIFE] }],
+  ["attuned1", { name: "Attuned", slots: ["ring"], weight: 20, display: { context: "Equip", format: "+0.25 mana regeneration." }, passiveRefs: [AFFIX_ATTUNED] }],
+  ["fireWard1", { name: "Flame Ward", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 18, display: { context: "Equip", format: "+15% fire resistance." }, passiveRefs: [AFFIX_FIRE_WARD] }],
+  ["poisonWard1", { name: "Venom Ward", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 18, display: { context: "Equip", format: "+15% poison resistance." }, passiveRefs: [AFFIX_POISON_WARD] }],
+  ["kineticWard1", { name: "Fortified", slots: ["armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet", "ranged"], weight: 15, display: { context: "Equip", format: "+2 kinetic damage reduction." }, passiveRefs: [AFFIX_KINETIC_WARD] }],
+  ["caustic1", { name: "Caustic", slots: ["weapon"], weight: 16, display: { context: "Equip", format: "On hit, deal +1 acid damage." }, elementTint: ELEMENT_TINT_ACID, triggerScripts: { onHit: [AFFIX_CAUSTIC] } }],
+  ["capacitive1", { name: "Capacitive", slots: ["weapon"], weight: 15, display: { context: "Equip", format: "On hit, deal +1 electric damage; {chance}% chance to shock for {turns} turns.", values: { chance: 35, turns: 2 } }, elementTint: ELEMENT_TINT_ELECTRIC, triggerScripts: { onHit: [AFFIX_CAPACITIVE] } }],
+  ["insulated1", { name: "Insulated", slots: ["armor", "offhand"], weight: 16, display: { context: "Equip", format: "+600 electric ohms." }, passiveRefs: [AFFIX_INSULATED] }],
+  ["lucky1", { name: "Lucky", slots: ["ring", "armor"], weight: 18, display: { context: "Equip", format: "+3 luck." }, passiveRefs: [AFFIX_LUCKY] }],
+  ["venomous1", { name: "Venomous", slots: ["weapon"], weight: 14, display: { context: "Equip", format: "On hit, {chance}% chance to poison for {turns} turns.", values: { chance: 40, turns: 4 } }, elementTint: ELEMENT_TINT_POISON, triggerScripts: { onHit: [AFFIX_VENOMOUS] } }],
+  ["chainLightning1", { name: "Chain Lightning", slots: ["weapon"], weight: 8, display: { context: "Equip", format: "On hit, {chance}% chance to strike a nearby enemy for {damage} electric damage.", values: { chance: 30, damage: 1 } }, elementTint: ELEMENT_TINT_ELECTRIC, triggerScripts: { onHit: [AFFIX_CHAIN_LIGHTNING] } }],
+  ["firestorm1", { name: "Firestorm", slots: ["weapon"], weight: 10, display: { context: "Equip", format: "On hit, {chance}% chance to deal +{damage} fire damage and burn for {turns} turns.", values: { chance: 12, damage: 1, turns: 3 } }, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_FIRESTORM] } }],
+  ["soulDrain1", { name: "Soul Drain", slots: ["weapon"], weight: 7, display: { context: "Equip", format: "On hit, {chance}% chance to heal for half the damage dealt.", values: { chance: 18 } }, triggerScripts: { onHit: [AFFIX_SOUL_DRAIN] } }],
+  ["berserk1", { name: "Berserking", slots: ["weapon", "ring"], weight: 8, display: { context: "Equip", format: "On hit, {chance}% chance to gain berserk for {turns} turns.", values: { chance: 10, turns: 5 } }, triggerScripts: { onHit: [AFFIX_BERSERK] } }],
+  ["shieldWall1", { name: "Stoneskin Proc", slots: ["armor", "offhand"], weight: 10, display: { context: "Equip", format: "When damaged, {chance}% chance to gain stoneskin for {turns} turns.", values: { chance: 15, turns: 4 } }, triggerScripts: { onDamaged: [AFFIX_SHIELD_WALL] } }],
+  ["helmGuard1", { name: "Helm Guard", slots: ["head"], weight: 16, display: { context: "Equip", format: "+1 evade." }, passiveRefs: [AFFIX_GUARD] }],
+  ["helmAttuned1", { name: "Helm of Attunement", slots: ["head"], weight: 14, display: { context: "Equip", format: "+0.25 mana regeneration." }, passiveRefs: [AFFIX_ATTUNED] }],
+  ["manaSurge1", { name: "Mana Surge", slots: ["ring", "weapon"], weight: 10, display: { context: "Equip", format: "On hit, {chance}% chance to restore {mana} mana.", values: { chance: 20, mana: 3 } }, triggerScripts: { onHit: [AFFIX_MANA_SURGE] } }],
+  ["executioner1", { name: "Executioner", slots: ["weapon"], weight: 6, display: { context: "Equip", format: "Attacks against targets below {threshold}% HP deal +{damage} damage.", values: { threshold: 30, damage: 3 } }, triggerScripts: { onBeforeHit: [AFFIX_EXECUTIONER] } }],
+  ["frostbite1", { name: "Frostbite", slots: ["weapon"], weight: 10, display: { context: "Equip", format: "On hit, {chance}% chance to frost for {turns} turns.", values: { chance: 20, turns: 3 } }, elementTint: ELEMENT_TINT_FROST, triggerScripts: { onHit: [AFFIX_FROSTBITE] } }],
+  ["hemorrhage1", { name: "Hemorrhage", slots: ["weapon"], weight: 12, display: { context: "Equip", format: "On hit, {chance}% chance to bleed for {turns} turns.", values: { chance: 25, turns: 4 } }, triggerScripts: { onHit: [AFFIX_HEMORRHAGE] } }],
+  ["secondWind1", { name: "Second Wind", slots: ["armor", "offhand"], weight: 8, display: { context: "Equip", format: "When damaged, {chance}% chance to regenerate and restore {stamina} stamina.", values: { chance: 10, stamina: 5 } }, triggerScripts: { onDamaged: [AFFIX_SECOND_WIND] } }],
+  ["flaming", { name: "Flaming", slots: ["weapon"], weight: 8, display: { context: "Equip", format: "On hit, {chance}% chance to burn for {turns} turns.", values: { chance: 50, turns: 3 } }, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_FLAMING] } }],
+  ["stunning1", { name: "Stunning", slots: ["weapon"], weight: 0, display: { context: "Equip", format: "On hit, {chance}% chance to stun for {turns} turn.", values: { chance: 25, turns: 1 } }, triggerScripts: { onHit: [AFFIX_STUNNING] } }],
   ["earthshaker", { name: "Earthshaker", slots: ["weapon", "gloves", "feet"], weight: 6, description: "Earthshatter erupts with volcanic fury" }],
-  ["weaken1", { name: "Weakening", slots: ["weapon"], weight: 9, triggerScripts: { onHit: [AFFIX_WEAKEN] } }],
-  ["agony1", { name: "Agony", slots: ["weapon"], weight: 8, triggerScripts: { onHit: [AFFIX_AGONY] } }],
-  ["cripple1", { name: "Crippling", slots: ["weapon"], weight: 7, triggerScripts: { onHit: [AFFIX_CRIPPLE] } }],
-  ["plague1", { name: "Plague", slots: ["weapon"], weight: 6, elementTint: ELEMENT_TINT_POISON, triggerScripts: { onHit: [AFFIX_PLAGUE] } }],
-  ["soulfire1", { name: "Soulfire", slots: ["weapon"], weight: 7, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_SOULFIRE] } }],
+  ["weaken1", { name: "Weakening", slots: ["weapon"], weight: 9, display: { context: "Equip", format: "On hit, {chance}% chance to weaken for {turns} turns.", values: { chance: 20, turns: 3 } }, triggerScripts: { onHit: [AFFIX_WEAKEN] } }],
+  ["agony1", { name: "Agony", slots: ["weapon"], weight: 8, display: { context: "Equip", format: "On hit, {chance}% chance to inflict agony for {turns} turns.", values: { chance: 25, turns: 4 } }, triggerScripts: { onHit: [AFFIX_AGONY] } }],
+  ["cripple1", { name: "Crippling", slots: ["weapon"], weight: 7, display: { context: "Equip", format: "On hit, {chance}% chance to frost and deal +1 pierce damage for {turns} turns.", values: { chance: 20, turns: 2 } }, triggerScripts: { onHit: [AFFIX_CRIPPLE] } }],
+  ["plague1", { name: "Plague", slots: ["weapon"], weight: 6, display: { context: "Equip", format: "On hit, {chance}% chance to inflict poison for {poisonTurns} turns and disease for {diseaseTurns} turns.", values: { chance: 20, poisonTurns: 4, diseaseTurns: 3 } }, elementTint: ELEMENT_TINT_POISON, triggerScripts: { onHit: [AFFIX_PLAGUE] } }],
+  ["soulfire1", { name: "Soulfire", slots: ["weapon"], weight: 7, display: { context: "Equip", format: "On hit, {chance}% chance to heal {heal} HP and burn for {turns} turns.", values: { chance: 15, heal: 2, turns: 3 } }, elementTint: ELEMENT_TINT_FIRE, triggerScripts: { onHit: [AFFIX_SOULFIRE] } }],
 ].forEach(([id, spec]) => {
   registerAffixDefinition(id, spec);
 });

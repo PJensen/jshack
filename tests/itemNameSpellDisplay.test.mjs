@@ -141,6 +141,18 @@ Deno.test("buildItemDisplayData does not repeat Mirror Bow package mechanics as 
   assertEquals(data.detailLines, []);
 });
 
+Deno.test("buildItemDisplayData formats Leech Blade's authored affix as equip mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 184 });
+  const data = buildItemDisplayData(world, buildCatalogItem(world, "leech_blade"));
+
+  assertEquals(data.mechanics, [
+    { context: "Equip", text: "On hit, 18% chance to heal for half the damage dealt." },
+  ]);
+  assertEquals(data.procNodes, []);
+});
+
 Deno.test("buildItemDisplayData exposes Bombardier metadata-backed mechanics", () => {
   resetIdentification();
   installContent();
