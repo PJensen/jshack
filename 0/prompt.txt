@@ -1,0 +1,27 @@
+I wonder if we should use the skip-list to expire these crafted cooking fires 12 hours (game time) after created?
+
+other random ideas?
+
+---
+
+AGREE:
+
+temporary expiry component + scheduled/skip-list removal, 12 in-game hours, only for flint-created fires. Keep authored cooking_fire permanent.
+
+ ++
+
+Ash residue: on expiry, maybe spawn ashes or a small inert campfire_ashes decoration, but only if that already exists cleanly.
+
+WHICH IS FANTASTIC.
+
+---
+
+Give it some jitter lol -- we cant't be that harsh abount the accounting for a "fire" afterall ;-)
+
+---
+
+where I the skip-list -- I cannot say I saw you use it, you said a bunch of things used it. I dont see you have used the resource.
+
+---
+
+no kidding -- no -- "resource" is the word you're looking for.

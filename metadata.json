@@ -1,0 +1,61 @@
+{
+  "branch": "master",
+  "checkpoint_id": "55838d9629e4",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 0,
+    "agent_percentage": 0,
+    "agent_removed": 0,
+    "calculated_at": "2026-06-19T13:04:33.698081304Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 1,
+    "total_lines_changed": 2
+  },
+  "files_touched": [
+    "VERSION",
+    "src/main/scheduler.js",
+    "src/rules/components/TemporarySpawn.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/temporarySpawnExpirySystem.js",
+    "tests/applyDataDriven.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "/3/prompt.txt",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 55,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7110912,
+    "input_tokens": 379117,
+    "output_tokens": 18853
+  }
+}

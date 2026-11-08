@@ -1,0 +1,68 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "55838d9629e4",
+  "session_id": "019edc3a-e11b-7b11-a10a-98cbdf89f227",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-18T20:43:59.617038532Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/rules/components/TemporarySpawn.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/temporarySpawnExpirySystem.js",
+    "tests/applyDataDriven.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "cf7ef6374cc5",
+  "checkpoint_transcript_start": 675,
+  "transcript_lines_at_start": 675,
+  "token_usage": {
+    "input_tokens": 266547,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6761856,
+    "output_tokens": 15052,
+    "api_call_count": 46
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-18T20:43:59.393455803Z",
+    "agent_lines": 9,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 2,
+    "total_committed": 9,
+    "total_lines_changed": 11,
+    "agent_percentage": 81.81818181818183,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1108,
+      "user_lines_removed": 2,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/main/scheduler.js": 3,
+        "src/rules/components/TemporarySpawn.js": 14,
+        "src/rules/components/TemporarySpawnWakeupState.js": 13,
+        "src/rules/data/itemCatalogHooks.js": 13,
+        "src/rules/interaction/mutations.js": 21,
+        "src/rules/systems/temporarySpawnExpirySystem.js": 119,
+        "tests/applyDataDriven.test.mjs": 60
+      },
+      "user_removed_per_file": {
+        "src/rules/data/itemCatalogHooks.js": 1,
+        "src/rules/interaction/mutations.js": 1
+      }
+    }
+  ]
+}
