@@ -3,8 +3,9 @@
   "checkpoint_id": "b95c3c88ddd9",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 3,
+  "checkpoints_count": 5,
   "files_touched": [
+    "VERSION",
     "src/display/ui/overlay.js",
     "src/display/ui/overlayUtils.js"
   ],
@@ -15,6 +16,13 @@
       "compact_transcript": "/b9/5c3c88ddd9/0/transcript.jsonl",
       "content_hash": "/b9/5c3c88ddd9/0/content_hash.txt",
       "prompt": "/b9/5c3c88ddd9/0/prompt.txt"
+    },
+    {
+      "metadata": "/b9/5c3c88ddd9/1/metadata.json",
+      "transcript": "/b9/5c3c88ddd9/1/full.jsonl",
+      "compact_transcript": "/b9/5c3c88ddd9/1/transcript.jsonl",
+      "content_hash": "/b9/5c3c88ddd9/1/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
