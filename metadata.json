@@ -1,0 +1,32 @@
+{
+  "branch": "master",
+  "checkpoint_id": "ad9011768e36",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/content/items/dawnbreaker.js",
+    "src/content/weaponHookBridge.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/systems/combatSystem.js",
+    "src/rules/utils/procApplication.js",
+    "src/rules/utils/procEvaluator.js",
+    "tests/dawnbreakerProc.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 31,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5964800,
+    "input_tokens": 86081,
+    "output_tokens": 13517
+  }
+}
