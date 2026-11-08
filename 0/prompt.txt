@@ -1,0 +1,131 @@
+regarding "whenState" frankly, it strikes me as a bleedthrough of a concept that does no belong there, much easier to attach something reactive to the light emitter itself vs let the field bleed into the lighting model, also, colorShiftScale -- did that field imply a secondary color? I wasn't sure. I was playing inside the lighting demo and I didn't notice that color shift was making any meaninful difference. Maybe you can clarify for me precisely what colorShift actually did.
+
+`lighing-engine-work.html`
+
+When you finish -- propose to me what you percieve is an early shape for [ParticleEmitter]
+
+do the same for [Glyph] -- NOTE: I disagree with [RenderableGlyph] -- Glyph is the easier read.
+
+---
+
+dont worry about the BG session -- forward.
+
+---
+
+Hmmm --- glyph especially, the way you've wired it up looks particularly suspicous. I was thinking
+
+`Glyph { char, bg, fg }` 
+
+and FIN -- anything else risks severely bleeding display concerns into the rules situation.
+
+In short, it was my weak attempt at getting glyphs more manageable.
+
+and now that I'm looking at [ParticleEmitter] -- I'm having similar thoughts.
+
+overall:
+
+we need to be supremely careful about how we poceeed. we're risking punching a hole through a line that we've firmly held for months.
+
+lets think through some examples.
+
+defineArchetype('Fountain', 
+   [ParticleEmitter]
+   [LighEmitter]
+   [AudioEmitter]
+   [Glyph],
+   [Position])
+
+^^ that all comes together nicely right?!
+
+Lets do one more, a glowing weapon.
+
+// inside a factory
+weaponId = world.create(..)
+world.attach(weaponId, [LightEmitter]);
+^^ attaching light emitter to weapon
+
+Q: how to disable when in inventory.
+Q: maybe the existing tags way is better
+
+Anyhow -- lets carefully plan out the next mvoes.
+
+---
+
+here is the thing, there are real benefits to the separation at the cost of performance.
+
+it's one thing to quickly and easily do:
+
+world.query([LightEmitter]).where(inRadius)
+
+it's another thing entirely to do it inside of tags.
+
+at any rate -- it's not clear to me that now is the time to burn the level of tokens that we're talking about on making this shift.  it's almost certainly something that I need to continue thinking about behind the scenes.
+
+I am confortable where light emitter landed, I kind of like it for it's flexibility.
+
+But I'm not fully there yet for glyphs and particles since the display-runtime takes over very quickly -- indeed, the display virtually owns glyphs and particles from the outset.
+
+many questions in my head.
+
+what happens when a glyph changes between ticks?
+what happens when a particile emitter changes between ticks?
+what about particles that are emitted from projectiles?
+what about particles that change shape/color/speed over time?
+what about particles that are themselves the result of a status effect?
+what about particles that are a short burst based on some spell having landed?
+
+and so much more -- I think you see where my head is at here.
+
+fixed lights -- okay, good even.
+particles --- needs thinking
+glyphs --- needs thinking.
+
+---
+
+We're aligned. Why don't you deepen the cut for the [LightEmitter] bringing over mostly fixed, decorative emitters where we can.
+
+I agree on the big picture:
+
+it's more than likely that the "final" (if there is such a thing) surface is liable to be blended; not in a messy way, but in a way that offers itself up to maxmimal authored flexibility.
+
+So!
+
+Why don't you make one heavy pass a bringing over various [LightEmitters]
+
+I'll be checking your work as you go.
+
+---
+
+before we commit to baseColor: [r,g,b] -- is there a way to use a color in a way where VS code offers up a selector instead of using color compoents? I dont mind the array as a fallback, but I would love it if we could use actual color codes here.
+
+either:
+
+#000FFF
+
+named colors occred to me, but I think I like the selector better.
+
+** array as fallback
+
+---
+
+this look right to you?
+
+return [
+			parseInt(color[1] + color[1], 16),
+			parseInt(color[2] + color[2], 16),
+			parseInt(color[3] + color[3], 16),
+		];
+
+color[1] + color[1]
+
+why not 
+
+color[1] * 2
+
+-- 
+
+but really, I think I expected something different.
+
+---
+
+where did "intensity" go on [LightEmitter] -- I see radius, but not intensity. I see intensityScale, but not intensity. Hmmm.
