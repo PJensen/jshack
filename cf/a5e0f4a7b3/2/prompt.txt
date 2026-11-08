@@ -1,0 +1,17 @@
+I wonder -- can we switch entire to use git-refs instead of checkpoint branch without loosing all of our history?
+
+---
+
+Honestly - once we're converted to refs, why would we keep the old checkpoint branch laying around? (certainly on the remote) -- but I dont mind hanging onto it locally.
+
+---
+
+before we do anything what the hell is going on owith git and gh
+
+---
+
+can we please fix this situation -- git instability last two commits if I'm honest
+
+---
+
+something still aint righ --- restarting

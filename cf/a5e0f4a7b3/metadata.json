@@ -3,7 +3,7 @@
   "checkpoint_id": "cfa5e0f4a7b3",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 5,
+  "checkpoints_count": 6,
   "files_touched": [
     "VERSION",
     "assets/audio/action_stance_changed.mp3",
@@ -25,13 +25,20 @@
       "compact_transcript": "/cf/a5e0f4a7b3/1/transcript.jsonl",
       "content_hash": "/cf/a5e0f4a7b3/1/content_hash.txt",
       "prompt": "/cf/a5e0f4a7b3/1/prompt.txt"
+    },
+    {
+      "metadata": "/cf/a5e0f4a7b3/2/metadata.json",
+      "transcript": "/cf/a5e0f4a7b3/2/full.jsonl",
+      "compact_transcript": "/cf/a5e0f4a7b3/2/transcript.jsonl",
+      "content_hash": "/cf/a5e0f4a7b3/2/content_hash.txt",
+      "prompt": "/cf/a5e0f4a7b3/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 972567,
+    "input_tokens": 1043589,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 44348416,
-    "output_tokens": 91501,
-    "api_call_count": 286
+    "cache_read_tokens": 45382784,
+    "output_tokens": 98263,
+    "api_call_count": 305
   }
 }
