@@ -1,0 +1,30 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5228c1078e8b",
+  "checkpoints_count": 5,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "AGENTS.md",
+    "VERSION",
+    "src/content/items/pocketRelics.js",
+    "src/main/wiring/itemName.js",
+    "tests/itemNameSpellDisplay.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 167,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 13771648,
+    "input_tokens": 265476,
+    "output_tokens": 48494
+  }
+}
