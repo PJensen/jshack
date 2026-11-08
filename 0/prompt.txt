@@ -1,0 +1,28 @@
+adjusted mailbox glyph -- noticed possibility of showing if one has mail by changing the glyph accordingly.
+
+📬 — New mail waiting
+📪 — Empty mailbox
+
+^^ my only question is how to occasionally check mail without hammering server; maybe check once at game start, maybe web-sockets, likely that's a bridge too far for a simple MVP if I'm honest -- there are 100 things we should be doing ;-)
+
+just reply with 1 paragraph acknowledging.
+
+---
+
+I've got the idea that will allow us to use these new glyphs for mailbox state. These new glyphs should apply while your checking your mailbox!
+
+(e.g.)
+
+If you send something, it shows flag up
+if you recieve something, it shows as open with something in it.
+
+Use whatever you want:
+
+📬	Open mailbox with raised flag	U+1F4EC
+📭	Open mailbox with lowered flag	U+1F4ED
+📪	Closed mailbox with lowered flag	U+1F4EA
+📫	Closed mailbox with raised flag	U+1F4EB
+
+This all stems from my observation that interacting with the mailbox checks my mail. It might be worth placing a [State] component directly onto the mailbox archetype to track it in a persistent way.
+
+worst case -- the mailbox glyph only changes temporarily while interacting with the mailbox.
