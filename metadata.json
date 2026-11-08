@@ -1,0 +1,24 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8d0bae19f536",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/display/lighting/sources/temporalPatterns.js",
+    "src/display/passes/vfx/particles/statusEmitterController.js",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/utils/riftRuntime.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/statusEmitterWeaponVfx.test.mjs",
+    "tests/worldViewLightEmitters.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
