@@ -1,0 +1,21 @@
+question: why wouldn't rules be able to access it -- the split there is not clear to me, this resource specifically should be accessible from just about any system. (e.g.) an NPC speaks
+
+is that not true?
+
+---
+
+lets think about one solid integration point, strictly optional (e.g.) deity actions are LLM mediated, maxTokens is intentionally small, context is fed in, output is an action string, one dimensional. what would that look like?
+
+another; possibility, allowing player to speak with NPCs -- yuck, kind of nasty.
+
+another; NPC speach bubbles
+
+I do think the `await` issue is likely our biggest. we'll need to think throgh the implications.
+
+OTHER IDEA: llm calls happen well outside of rules and strictly add flavor only but are not invoked in a way that is central to simulation.
+
+---
+
+I'm game to at least try it -- those concerns are legitimate, even in a turn based game. so let try to thread the needle.
+
+eventually, I would love to see much deeper integration, but now is not the time.
