@@ -1,0 +1,181 @@
+UX overlay updates
+
+make it so!
+
+---
+
+No need for H M S shorthand, colors are fine like they are now.
+
+---
+
+you didnt look at the sceenshot at all, it's radically different
+
+---
+
+this applies equally to desktop and mobile -- which is why I  like it
+
+---
+
+lets see how dumb you are -- 
+
+3 columns
+3 columns
+status effects
+active quest
+
+---
+
+wow cant want to see it, not even close
+
+Day, Zoom, Quests
+Health, Mana, Stamina
+Status Effects
+Active Quest
+
+yikes -- fail --
+
+---
+
+disgusting mess
+
+---
+
+your entire health, mana, stam box is still wildly vertical
+
+---
+
+your entire health, mana, stam box is still wildly vertical
+
+---
+
+STILL WILDLY WRONG -- stacked vertically, it's 3 COLUMSN
+
+---
+
+WRONG AGAING DUMB ASS
+
+---
+
+LOOK AT OUR TARGET RENDER
+
+WOW --- ALMOST BURNED A FULL CONTEXT WINDOW ATTEMPTING THIS.
+
+FUCKING DUMB
+
+---
+
+still vertically stacked -- SO BAD
+
+---
+
+??????? 
+
+should be the same on any view bud
+
+this is easy -- 1st year comp sci
+
+---
+
+you are a DUMBASS
+
+still vertical
+
+---
+
+FAILURE CONTINUED WOW -- PATHETIC
+
+bosting MODEL
+
+---
+
+SHOULD BE EASY
+
+---
+
+WHAT THE FUCK ARE YOU DOING -- JUST MAKE THE CHANGE AND LETS CALL IT A DAY --
+
+---
+
+<tr><td></td><td><td -- if you FUCKING HAVE TO --
+
+---
+
+YOU SUCK
+
+---
+
+DUMB SHIT. CENTERING A DIV LEVEL WEAKNESS ON YOUR PART. FINALLY WORKED
+
+---
+
+WEAK UX STIL HUGE FUCKING BARS
+
+---
+
+look at the day bar, zoom, quests, it;s a good size
+
+---
+
+then commit and push when done
+
+---
+
+status effects -- same fucking thing -- commit and push when done
+
+---
+
+that "Status Effects" label is MONSTEROUS
+
+---
+
+commit and push when done
+
+---
+
+Okay -- created issue 185 from this mess -- read it, and lets close this task out.
+
+---
+
+Okay work on and complete #185 from end to end please
+
+---
+
+much better! I just saw it -- I would commit and push from here!
+
+---
+
+you can close it out too if you like as well.
+
+---
+
+that is like 1000x better than the earlier UX lol -- thank you! 
+
+commit and push when ready!
+
+and close the issue too!
+
+---
+
+absolute BEAUTICIAN
+
+---
+
+one minor folowup:
+
+descend and ascend (and other tooltips)
+
+should be above most all UX overlays
+
+(e.g)
+
+I was descending into dungeon but button was partially obstructed by the activee quest panel we just made
+
+should be a quick tun
+
+---
+
+** tune
+
+---
+
+paused you, pushing now, I don't get whats up with entire.io -- whatever -- also, I've not seen those skills used at all.
