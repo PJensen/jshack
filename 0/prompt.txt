@@ -1,0 +1,21 @@
+Nice work -- that was a great one-shot
+
+* Make encumberence not only possible, but a semi-realistic constraint that players must work to mitigate. I don't want it to be so brutal that it's a constant demand, but I do NOT want actors carrying piles of rocks while wearing plate armor while weilding a giant 2H greatsword. 
+
+Thinking back, I'm pretty sure that stamina was the primary stat that drove carry capacity, almost 1:1 if memory serves correctly. In my mind, we just need a multiplier that allows us to tune carry weight.
+
+---
+
+One small followup item:
+
+** should those new _constants_ actually be player stats -- that way players can better cope with things, not only that but it opens up yet another creative / mechanics surface for us to tinker with at runtime.
+
+the closest analogy we currently have is mana regeneration, this just happens to be encumberance.
+
+NOTE: net-net it may no actually be worth it, there are maybe a 100 other things that would offer more value to us -- but -- philosophically, the feature I'm talking about is well aligned.
+
+Imagine picking up an equippable "Feather Necklace" that reduces encumberance penalties -- would be great for a future knight class.
+
+At any rate, I am happy to leave things as they stand; entire.io will record this as a note for future possible refinement.
+
+I'll run the test suite as things stand, do a quick play-test and report back. You need only ACK to me.
