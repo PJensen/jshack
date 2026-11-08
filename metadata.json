@@ -1,0 +1,36 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f6088885d3ce",
+  "checkpoints_count": 0,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/rules/content/items/applyPayloads.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/interaction/facets/createFacets.js",
+    "tests/applyDataDriven.test.mjs",
+    "tests/applyResolverAgreement.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}

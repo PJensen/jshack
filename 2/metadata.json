@@ -1,0 +1,38 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "f6088885d3ce",
+  "session_id": "019edb8b-283f-7ba0-b9e2-e2c28e673d36",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-18T18:38:07.935998037Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/rules/content/items/applyPayloads.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/interaction/facets/createFacets.js",
+    "tests/applyDataDriven.test.mjs",
+    "tests/applyResolverAgreement.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "91fb36a5d786",
+  "checkpoint_transcript_start": 287,
+  "transcript_lines_at_start": 287,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-18T18:38:07.865463076Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

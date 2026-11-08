@@ -1,0 +1,1 @@
+ideally, you want to be emitting messages at each step, a little VFX for each attempt "spark" would be amazing, is it raining, is it wet, you know the world we're in -- details accumulate.
