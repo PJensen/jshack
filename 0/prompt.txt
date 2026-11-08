@@ -1,0 +1,12 @@
+BUGS:
+
+1. drinking from fountain eruption destroys the fountain and leaves no water -- found in overworld.
+2. 'descend' on a locked stair / dungeon entrace must trigger lock picking -- and -- emit message into sys indicating it's locked.
+3. scale dialog text and bubbles down leaving an easy constant for tuning.
+
+---
+
+escape (keyboard) on NPC dialogs closes them.
+enter (keyboard) on NPC dialog accepts default option.
+character sheet rememebers the tab
+esc (keyboard) on character sheet exits window

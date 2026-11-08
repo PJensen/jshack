@@ -1,0 +1,91 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b068f225d4be",
+  "checkpoints_count": 8,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 973,
+    "agent_percentage": 99.90054699154649,
+    "agent_removed": 1036,
+    "calculated_at": "2026-06-25T21:31:06.589463063Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 974,
+    "total_lines_changed": 2011
+  },
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/content/define.js",
+    "src/content/index.js",
+    "src/content/install.js",
+    "src/content/interactables/fountain/dip.js",
+    "src/content/interactables/fountain/index.js",
+    "src/content/interactables/fountain/outcomes.js",
+    "src/content/interactables/fountain/state.js",
+    "src/content/interactables/index.js",
+    "src/content/registry.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/fountainAmbientController.js",
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/passes/vfx/particles/statusEmitterController.js",
+    "src/display/ui/wiring/eventUiWiring.js",
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/display/ui/wiring/fountainPresentationExtension.js",
+    "src/display/ui/wiring/fountainUiExtension.js",
+    "src/display/ui/wiring/messageWiring.js",
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/display/ui/wiring/messages/fountainMessages.js",
+    "src/events/FountainDipPrompted.js",
+    "src/events/FountainDipResolved.js",
+    "src/events/FountainDried.js",
+    "src/events/FountainDrinkResolved.js",
+    "src/events/FountainRefilled.js",
+    "src/events/InteractionChoicePrompted.js",
+    "src/main.js",
+    "src/rules/archetypes/Overworld.js",
+    "src/rules/archetypes/RoomFeatures.js",
+    "src/rules/components/FountainState.js",
+    "src/rules/components/index.js",
+    "src/rules/content/interaction/actionMenus.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/interaction/interactRunner.js",
+    "src/rules/systems/fountainRegrowthSystem.js",
+    "src/rules/systems/interactionSystem.js",
+    "tests/fountainAmbientController.test.mjs",
+    "tests/fountainAuthoringArchitecture.test.mjs",
+    "tests/fountainOutcomes.test.mjs",
+    "tests/fountainRegrowthSystem.test.mjs",
+    "tests/helpers/installContentCatalog.mjs",
+    "tests/interaction.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "/2/prompt.txt",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 265,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 34949504,
+    "input_tokens": 1216162,
+    "output_tokens": 83529
+  }
+}

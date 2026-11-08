@@ -1,0 +1,24 @@
+# Files mentioned by the user:
+
+## Right. Strip it back. The job is **not** to redesign the engine. The job is to …: /home/pjensen/.codex/attachments/ff880ca5-4107-4fc4-be5e-b6c806c8079f/pasted-text.txt
+
+## Yes — this is the **actual gameplay-side twin** of the float-text mess. The pre…: /home/pjensen/.codex/attachments/d0960bb4-925a-45fa-beef-69b004b07744/pasted-text.txt
+
+## My request for Codex:
+Of this design doc, what do you think we should do? Attached an earlier variant second -- /plan looking to get us out of this mess for interaction, we're firmly out of the same mess for items, weapons, monsters -- just not interactions.
+
+---
+
+I dont care about backwards compatability.
+I dont care if the new fountain behavior is slighly different
+I do care that whatever we do works.
+I do care that whatever we do is maintainable.
+I do care that whatever we do can be applied to the others.
+I do care that resources are used properly
+I do care that events typed (classes) are upgraded to extensions.
+
+Make sense? I'm inclined to left you work with broad authority. These shapes will influence al that comes after. I think fountain is small and simple enough to be a viable first target.
+
+I really like how item authoring came out, would love to see interables fall in line in a similar neat and clean way. Wish I had caught this earlier, alas, we're moving on so many fronts that it's not possible.
+
+I do not want you just doing one cheap thing can coming back to me -- I want you to finish something meaningful, completed. Remember: no backwards compatibity, no shims, there are no players, so there are no save games.

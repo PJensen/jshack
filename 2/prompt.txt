@@ -1,0 +1,39 @@
+# Files mentioned by the user:
+
+## ## Summary JSHack has reached the point where its current interaction and excep…: /home/pjensen/.codex/attachments/5ed8e714-b431-4268-b1a9-3452432df081/pasted-text.txt
+
+## My request for Codex:
+please assess the following architectural task, I stashed an earlier fountain refactoring attempt because (a) it had a bug (b) it didn't rise to my level of expectations. I think now is the time to start making deep architectural improvemenst before we add more content, or more nuanced rules -- which are legitimately my favorite thing about the entire game as it presently stands as well as the entire genre of game. 
+
+Here have a look at this latest technical memo:
+
+```md
+Technical Memo: Burning the Boats on JSHack’s Exotic Behavior Surface
+```
+
+^^ attached
+
+let me know what you think -- I'll almost certainly be buying credits for this excersize.
+
+I can also provide you with earlier drafts; that may shed some light on the origin. But I do quite like this latest version.
+
+---
+
+** updated entire
+** look at that latest fountain interactPayload breakout stash before we move forward.
+
+---
+
+it's in a stash -- anyhow! I can unstash if you want it in your face.
+
+---
+
+did you understand my ask -- we're trying to thread the needle -- my memo came *after* the stash.
+
+---
+
+I don't cae what the ten commandments say -- I want the best content authoring we can possibly get. feel me?
+
+---
+
+Start by unstashing earlyier fountain work then -- feels like.
