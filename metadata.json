@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "15fb31133a8a",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION",
+    "src/content/items/boots.js",
+    "src/content/scriptCtx.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/utils/breadcrumbs.js",
+    "tests/itemAbilities.test.mjs",
+    "tests/itemNameSpellDisplay.test.mjs",
+    "tests/movementProc.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
