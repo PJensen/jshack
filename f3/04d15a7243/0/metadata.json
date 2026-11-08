@@ -3,20 +3,14 @@
   "checkpoint_id": "f304d15a7243",
   "session_id": "01a1b8e5-da3d-7660-b242-7c3cd64e5156",
   "strategy": "manual-commit",
-  "created_at": "2026-11-08T03:34:58.590228764Z",
+  "created_at": "2026-11-08T03:43:02.028546247Z",
   "branch": "master",
   "checkpoints_count": 1,
-  "save_step_count": 1,
   "files_touched": [],
   "agent": "Codex",
   "model": "gpt-6.1-sol",
   "turn_id": "0dac615c386c",
-  "compact_transcript_start": 0,
-  "token_usage": {
-    "input_tokens": 421604,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 22414848,
-    "output_tokens": 41994,
-    "api_call_count": 137
-  }
+  "checkpoint_transcript_start": 907,
+  "transcript_lines_at_start": 907,
+  "compact_transcript_start": 156
 }

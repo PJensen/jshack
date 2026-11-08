@@ -13,12 +13,5 @@
       "content_hash": "/f3/04d15a7243/0/content_hash.txt",
       "prompt": "/f3/04d15a7243/0/prompt.txt"
     }
-  ],
-  "token_usage": {
-    "input_tokens": 421604,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 22414848,
-    "output_tokens": 41994,
-    "api_call_count": 137
-  }
+  ]
 }
