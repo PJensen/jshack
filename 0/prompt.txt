@@ -1,0 +1,33 @@
+give me a bar chart showing item distribution
+
+---
+
+oh wow -- it looks pretty damn good! thank you -- I was expecting to see a major drop in uncommon -- tell me how you determined what was uncommon?
+
+---
+
+I understand --- is the tool capable enough to determine item strength? WOW uses this idea of `item_level` -- it's pretty clever iif you think about it, but we need not re-create it - maybe we could use our deterministic tools to help cook.
+
+---
+
+very interesting -- I'm not 100% convinced, but directionally, it seems like a worthwhile endevour
+
+---
+
+very interesting -- it'd be hard to quantify "power" of all these things, sockets, proc-nodes, etc. tricky -- maybe it's more like, play and tune as I go.
+
+---
+
+1. Flag obvious rarity outliers.
+2. Show same-slot comparisons.
+3. Report what contributes to each item’s estimate.
+4. Pair with seeded runtime playtests.
+5. Let authored feel beat the spreadsheet.
+
+
+
+^^ great ideas -- seems like a useful next rung.
+
+---
+
+run it -- give me a report
