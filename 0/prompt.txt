@@ -1,0 +1,7 @@
+jesus christ. that explains that -- what a token bonfire here. that's mental.
+
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+scheduler.js:65 Uncaught SyntaxError: The requested module '../rules/systems/movementSystem.js' does not provide an export named 'stasisMovementFirewallExtension' (at scheduler.js:65:3)
+
+
+^^ yikes
