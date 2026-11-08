@@ -1,0 +1,55 @@
+okay -- so I played for the first time in a while; just playing in a sort of basic arcade mindset; here are some early findings.
+
+1. the rats quest -- I really struggled to find 5 rats on dungeon level 1 -- we seriosuly need to ensure that there are at least 5 rats on dungeon level 1.
+2. I ate my pet, my spirit guide started zipping around angrily, but, the audio system kept playing a sound every few turns. note: it's the same sound as when touching a shrine. turn it off, with a note to find and rate limit an angry god sound.
+3. there are far too many chests -- I would much rather see singleton items and gear vs an endless succession of chests. NOTE: I still love chests, but their appeal is significantly cut down by encountering a chest virtually every room.
+
+There is much more -- but I'll stop here.
+
+---
+
+I really do not like how you are achieving rats inside of dungeon level 1 -- I would much rather that be anchored to the accepted quest. what you are doing there is basically hacking the situation and making a mess.
+
+look at how book of the dead works, that item in forcibly spawned on quest acceptance. I see no reason why rats cannot use the same mechanic. naurally there would be many rats and not just 5 --- but the point is that it would be anchored to quest acceptance.
+
+second: with chests you are again hacking, all we needed was to boost floor loot, an to turn down chests chance.
+
+---
+
+This cannot be the best way we can quest for stairs. 
+
+`world.query(Position, NamedIdentity)`
+
+that is disgusting -- ecs-js supports tags. are you seriously saying that we have to move through all named identities to find stairs?! that is insanity.
+
+note: a tag is a component with no props in ecs-js -- read up
+
+---
+
+This cannot be the best way we can query for stairs. 
+
+`world.query(Position, NamedIdentity)`
+
+that is disgusting -- ecs-js supports tags. are you seriously saying that we have to move through all named identities to find stairs?! that is insanity.
+
+note: a tag is a component with no props in ecs-js -- read up
+
+---
+
+in fact: I want you to find as many of this entire class of issues -- it strikes me as a profound waste that you would iterate entire collections when looking for something so simple.
+
+additionally, we should absolutely namespace these under a tags folder
+
+note: you know stair-up and stair-down are the same thing depening on which direction you are traveling right?
+
+---
+
+proceed -- just a stair tag would have been fine.
+
+---
+
+/plan find missing tags
+
+---
+
+write this down as a md file under a new class of folder called cleanup
