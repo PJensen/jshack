@@ -1,0 +1,7 @@
+FYI: at present there is no wand for polymorphing. I suppose we can live with that for a moment and i can test with the scroll.
+
+what we are missing is any affix/stat that allows for polymorph control. be it in the form of a ring, an player attribute or intrinsic -- etc. I feel like the ring is the easiest starting point -- but why don't you address both of these issues.
+
+secondarily: there is a conceptual overlap with scroll of genocide -- it was previously using the input technique -- this might be a perfect opertunity to make a generic monster chooser.
+
+your next move should be to deal with the generic chooser -- apply it to genocide -- then we'll cycle back to the ring of polymorph control.

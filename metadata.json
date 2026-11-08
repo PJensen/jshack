@@ -1,0 +1,33 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8365881b5b0a",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/display/ui/monsterChooserOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/display/ui/polymorphChooserOverlay.js",
+    "src/main/monsters/monsterChoices.js",
+    "src/main/polymorph/polymorphChoices.js",
+    "src/main/wiring/scrollWandWiring.js",
+    "src/rules/systems/genocideSystem.js",
+    "tests/genocideSystem.test.mjs",
+    "tests/polymorphChoices.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 13,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1311104,
+    "input_tokens": 21175,
+    "output_tokens": 7836
+  }
+}

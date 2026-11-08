@@ -1,0 +1,60 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "8365881b5b0a",
+  "session_id": "019e745b-a59a-78b3-8141-ef56391e3a73",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T15:59:15.530784059Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/monsterChooserOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/display/ui/polymorphChooserOverlay.js",
+    "src/main/monsters/monsterChoices.js",
+    "src/main/polymorph/polymorphChoices.js",
+    "src/main/wiring/scrollWandWiring.js",
+    "src/rules/systems/genocideSystem.js",
+    "tests/genocideSystem.test.mjs",
+    "tests/polymorphChoices.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "ec8fbc21d5c7",
+  "checkpoint_transcript_start": 185,
+  "transcript_lines_at_start": 185,
+  "token_usage": {
+    "input_tokens": 21175,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1311104,
+    "output_tokens": 7836,
+    "api_call_count": 13
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T15:59:15.501768776Z",
+    "agent_lines": 449,
+    "agent_removed": 395,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 449,
+    "total_lines_changed": 844,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
