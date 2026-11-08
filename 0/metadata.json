@@ -1,0 +1,86 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "c9311bff3601",
+  "session_id": "019f37f2-c953-7313-bd92-4c56c54d0a6c",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-06T18:23:24.538422224Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "assets/audio/action_millstone_grind.mp3",
+    "src/content/items/economy.js",
+    "src/display/audio/sounds.js",
+    "src/display/palette/base.js",
+    "src/display/ui/wiring/messages/economyMessages.js",
+    "src/main/classDisplayData.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/buildings/smithy.js",
+    "src/rules/data/classes.js",
+    "src/rules/data/millingRecipes.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "src/rules/systems/townSimulationSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/audioSoundsRegistry.test.mjs",
+    "tests/classDisplayData.test.mjs",
+    "tests/displayGlyphCoverage.test.mjs",
+    "tests/interaction.test.mjs",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "8eb0942333d5",
+  "checkpoint_transcript_start": 425,
+  "transcript_lines_at_start": 425,
+  "token_usage": {
+    "input_tokens": 357352,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3421312,
+    "output_tokens": 10868,
+    "api_call_count": 32
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-06T18:23:24.464958692Z",
+    "agent_lines": 138,
+    "agent_removed": 17,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1,
+    "total_committed": 138,
+    "total_lines_changed": 156,
+    "agent_percentage": 99.35897435897436,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 867,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/palette/base.js": 1,
+        "src/rules/data/buildings/smithy.js": 1
+      },
+      "user_removed_per_file": {
+        "src/rules/data/buildings/smithy.js": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 117,
+      "agent_lines_removed": 18,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

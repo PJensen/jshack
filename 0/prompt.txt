@@ -1,0 +1,8 @@
+1. valkarie is missing glyph
+2. new milling feat: mill + corn -> cornmeal
+3. general store sign (glyph) is missing -- attempted add
+4. move smithy sign right 1, up 2 -- in building JS
+
+---
+
+added new sound file: `action_millstone_grind.mp3` please incorporate as part of the millstone interaction behavior -- i should apply to both players and NPCs that operate the millstone
