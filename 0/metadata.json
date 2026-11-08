@@ -1,0 +1,36 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "939ed2f20ff5",
+  "session_id": "019e9d60-fcfe-7873-9dfc-3e88f8953e5b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-07T15:42:32.762014269Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "AGENTS.md",
+    "VERSION",
+    "deno.json",
+    "ratchets/worldStateAttachmentRatchet.test.mjs",
+    "tests/determinismArchitectureGuards.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "945cd68d9b33",
+  "checkpoint_transcript_start": 893,
+  "transcript_lines_at_start": 893,
+  "session_metrics": {
+    "turn_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-07T15:42:32.546189148Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
