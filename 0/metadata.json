@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "7ff454a10f7b",
+  "session_id": "019f430f-26de-7291-b0fa-cffb76c9ceb4",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T19:27:19.300022414Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/main/wiring/shopWiring.js",
+    "src/rules/dialogues/ratatoskrDialog.js",
+    "tests/ratatoskrSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "ade1ab540140",
+  "checkpoint_transcript_start": 437,
+  "transcript_lines_at_start": 437,
+  "token_usage": {
+    "input_tokens": 37225,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2034944,
+    "output_tokens": 4096,
+    "api_call_count": 10
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T19:27:19.119157904Z",
+    "agent_lines": 0,
+    "agent_removed": 7,
+    "human_added": 10,
+    "human_modified": 22,
+    "human_removed": 0,
+    "total_committed": 24,
+    "total_lines_changed": 39,
+    "agent_percentage": 17.94871794871795,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 10,
+      "agent_lines_removed": 5,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
