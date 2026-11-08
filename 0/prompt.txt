@@ -1,0 +1,1 @@
+Why would we need an array -- my idea was A light emitter component. I really do not like the presence of arrays in our components.

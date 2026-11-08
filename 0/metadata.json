@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "9112679d382a",
+  "session_id": "019ec742-2eab-7820-ab1a-f09131d2c8a7",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-15T13:21:57.904525209Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/display/lighting/sources/index.js",
+    "src/rules/archetypes/Overworld.js",
+    "src/rules/archetypes/RoomFeatures.js",
+    "src/rules/components/LightEmitter.js",
+    "src/rules/components/index.js",
+    "tests/dungeonAtmosphereLighting.test.mjs",
+    "tests/worldViewLightEmitters.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "30adeb9cbd86",
+  "checkpoint_transcript_start": 756,
+  "transcript_lines_at_start": 756,
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-15T13:21:57.797679914Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
