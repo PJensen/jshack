@@ -1,0 +1,65 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "47ff1896ae1e",
+  "session_id": "019f1462-2734-7fc0-88b5-a87ca9a90036",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T21:01:08.470114509Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/content/interactables/crypt/index.js",
+    "src/content/interactables/index.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/ui/wiring/messages/itemMessages.js",
+    "src/events/SarcophagusInteractionResolved.js",
+    "src/events/UrnInteractionResolved.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/lootResolver.js",
+    "src/rules/interaction/facets/createFacets.js",
+    "src/rules/interaction/interactRunner.js",
+    "src/rules/interaction/mutations.js",
+    "tests/cryptInteractables.test.mjs",
+    "tests/interaction.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "f941b97f3b46",
+  "checkpoint_transcript_start": 196,
+  "transcript_lines_at_start": 196,
+  "token_usage": {
+    "input_tokens": 207175,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8949888,
+    "output_tokens": 23326,
+    "api_call_count": 55
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T21:01:08.413404306Z",
+    "agent_lines": 606,
+    "agent_removed": 214,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 606,
+    "total_lines_changed": 820,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

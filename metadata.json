@@ -1,0 +1,37 @@
+{
+  "branch": "master",
+  "checkpoint_id": "47ff1896ae1e",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/content/interactables/crypt/index.js",
+    "src/content/interactables/index.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/ui/wiring/messages/itemMessages.js",
+    "src/events/SarcophagusInteractionResolved.js",
+    "src/events/UrnInteractionResolved.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/lootResolver.js",
+    "src/rules/interaction/facets/createFacets.js",
+    "src/rules/interaction/interactRunner.js",
+    "src/rules/interaction/mutations.js",
+    "tests/cryptInteractables.test.mjs",
+    "tests/interaction.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 55,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8949888,
+    "input_tokens": 207175,
+    "output_tokens": 23326
+  }
+}
