@@ -1,0 +1,51 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "7cdc238dbcf8",
+  "session_id": "019ef0c2-a416-78d0-89fa-cfcf926990ef",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-22T20:10:02.094940873Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/environment/dungeon/transition.js",
+    "tests/shopDoorKeys.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "5388df507cbe",
+  "token_usage": {
+    "input_tokens": 209223,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9908992,
+    "output_tokens": 19894,
+    "api_call_count": 91
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-22T20:10:02.051613149Z",
+    "agent_lines": 86,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 86,
+    "total_lines_changed": 86,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

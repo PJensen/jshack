@@ -1,0 +1,10 @@
+* BUG: It looks like gems are duplicating themselves after repeat trips between underworld and overworld.
+* BUG: _all_ shop keepers are letting me walk right out of their shop in broad daylight and nighttime whith the shopkeeper inside the shop.
+* BUG: rat infestation quest is restarted on completion, goes down to 0/5 rats, retains quest info at top left as if I had not completed it.
+* BUG: I was able to pickup an item from outside the shop through the wall, keep the fix simple if at all possible (warning: this one might be challenging)
+
+---
+
+discarded the shop keeper portion, since it was completely failing, this worked not long ago; it's unclear to me precisely what changed, but it's almost certainly subtle, I know because walking out of a shop with something in your hand used to trigger payment at the door if the shopkeeper was in sight.
+
+NOTE: when a shop keeper is not in sight, and there is no one to take payment -- different story, that is what we added, and likely what regressed things.

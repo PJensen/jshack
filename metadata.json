@@ -1,0 +1,26 @@
+{
+  "branch": "master",
+  "checkpoint_id": "7cdc238dbcf8",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/rules/environment/dungeon/transition.js",
+    "tests/shopDoorKeys.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 91,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9908992,
+    "input_tokens": 209223,
+    "output_tokens": 19894
+  }
+}
