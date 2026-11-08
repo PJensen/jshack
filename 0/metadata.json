@@ -1,0 +1,97 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "4b6faf83e5ec",
+  "session_id": "019eef7d-ff3e-72c3-9d91-50926c7a6b41",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-22T13:39:29.484627765Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/todo/playtest-followups-2026-06-22.md",
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/polymorphSmokeFx.js",
+    "src/display/fx/teleportFxController.js",
+    "src/main.js",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/components/DungeonEntrance.js",
+    "src/rules/components/Interactable.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/questLocks.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/environment/dungeon/index.js",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "src/rules/quests/definitions/graveyardWatch.js",
+    "src/rules/quests/definitions/ratInfestation.js",
+    "src/rules/scripts/spells.js",
+    "tests/blink.test.mjs",
+    "tests/chestLootBalance.test.mjs",
+    "tests/fountainOutcomes.test.mjs",
+    "tests/phaseStrike.test.mjs",
+    "tests/polymorphSmokeFx.test.mjs",
+    "tests/questEntranceAccess.test.mjs",
+    "tests/teleportFxController.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "3edd79612d19",
+  "token_usage": {
+    "input_tokens": 459568,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10407168,
+    "output_tokens": 28007,
+    "api_call_count": 79
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-22T13:39:29.435025167Z",
+    "agent_lines": 107,
+    "agent_removed": 93,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 24,
+    "total_committed": 107,
+    "total_lines_changed": 224,
+    "agent_percentage": 89.28571428571429,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1162,
+      "user_lines_removed": 24,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "docs/todo/playtest-followups-2026-06-22.md": 61,
+        "src/display/composition/setupDisplayRuntime.js": 5,
+        "src/display/fx/polymorphSmokeFx.js": 44,
+        "src/display/fx/teleportFxController.js": 52,
+        "src/main.js": 3,
+        "src/main/wiring/transitionWiring.js": 40,
+        "src/rules/archetypes/RoomFeatures.js": 1,
+        "src/rules/components/DungeonEntrance.js": 2,
+        "src/rules/components/Interactable.js": 16,
+        "src/rules/content/interaction/interactPayloads.js": 1,
+        "src/rules/data/lootTables.js": 1,
+        "src/rules/data/questLocks.js": 2,
+        "src/rules/environment/dungeon/index.js": 2,
+        "src/rules/environment/dungeon/underworldRegions.js": 3,
+        "src/rules/quests/definitions/graveyardWatch.js": 27,
+        "src/rules/quests/definitions/ratInfestation.js": 37
+      },
+      "user_removed_per_file": {
+        "src/display/composition/setupDisplayRuntime.js": 1,
+        "src/main/wiring/transitionWiring.js": 7,
+        "src/rules/data/lootTables.js": 1,
+        "src/rules/quests/definitions/graveyardWatch.js": 7,
+        "src/rules/quests/definitions/ratInfestation.js": 8
+      }
+    }
+  ]
+}

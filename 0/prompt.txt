@@ -1,0 +1,55 @@
+would'n't I love being able to make an archetype that defined the interaction behavior right on the archetype instead of having this identity tracing nightmare, especially for simple interactables.
+
+```
+
+export const PotionShelf = defineArchetype(
+  "PotionShelf",
+  [Position, (p) => ({ x: p.x, y: p.y })],
+  [NamedIdentity, { name: "Potion Shelf", identity: "potion_shelf" }],
+  [Material, { kind: "wood" }],
+  [Collider, { solid: true, blocksSight: false }],
+  [Inventory, { capacity: 6 }],
+  [Interactable, { action: "browseRack", params: null }],
+);
+```
+
+at any rate, we need not do the above since there are many more higher value things on my radar; have a look below:
+
+Drinking from fountain teleport, and maybe teleport generally does a camera move instead of a more sophisticated animation.
+
+fade out
+teleport,
+fade in
+
+Or something even more visually appealing.
+
+While we're working on teleportation, We should increase the drop rate for Scroll of Teleportation -- historically its been one of my favorite scrolls to get out of a sticky situation.
+Edited1:37 PM
+
+Doing "the book below" out of sequence does not work, particularly if the player already has the book.
+
+Also, if rat infestation is started after clearing the dungeon, it's gated. In this instance, I feel like we should lock the dungeon with a very hard lock, and give the key when the quest is accepted.
+
+Maybe a similar mechanism for "the book below" is viable -- although, that one is easier to check if the quest is accepted after collecting the book.
+
+The Polymorph spell should leave a small VFX particle magical smoke puff on successfull cast.
+
+Mentally think of it as obscuring and otherwise harsh glyph change / flip.
+
+First move, make this into a TODO list, including my note about archetypes -- then we'll work through them all in short order.
+
+---
+
+Work through everything but the archetype item please, do so in a robust, clean way.
+
+---
+
+you need not run the full suite at all, I'll take care of that manually at the end,.
+
+---
+
+why not make the quest turn-in condition based on what is actively in inventory, lest we be keeping this odd bit of state floating around that is de-syncronized.
+
+---
+
+completedCondition: (ctx) => { ctx.hasItem('book_of_the_dead'); } // a sketch ?? no?
