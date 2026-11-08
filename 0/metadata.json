@@ -1,0 +1,64 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "17891c91e921",
+  "session_id": "019ee60b-142b-7602-aa61-f6a4533f1982",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-20T17:49:22.15142887Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/rules/utils/encumbrance.js",
+    "tests/inventoryDataProvider.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "cceaf4f2a95a",
+  "checkpoint_transcript_start": 353,
+  "transcript_lines_at_start": 353,
+  "token_usage": {
+    "input_tokens": 36795,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3618816,
+    "output_tokens": 4978,
+    "api_call_count": 18
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-20T17:49:22.094477769Z",
+    "agent_lines": 3,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 16,
+    "total_committed": 3,
+    "total_lines_changed": 20,
+    "agent_percentage": 20,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 902,
+      "user_lines_removed": 16,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/ui/characterOverlay.js": 17,
+        "src/display/ui/overlay.js": 3,
+        "src/main/ui/inventoryDataProvider.js": 17
+      },
+      "user_removed_per_file": {
+        "src/display/ui/characterOverlay.js": 2,
+        "src/display/ui/overlay.js": 2,
+        "src/main/ui/inventoryDataProvider.js": 12
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+one issue is that we appear to have lost the encumberance, carry-weigh UX that was previously visible either on the character sheet, or in the equipment tab. why dont you dig into that quickly, it should be pretty cheap to address.
+
+---
+
+the point I was making is that it stopped showing at all -- correct the projectionn, and make sure it's actually visible and showing.
