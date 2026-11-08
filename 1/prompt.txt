@@ -1,0 +1,395 @@
+# Shopkeeper Aggro and Shop Law Design
+
+This note captures the intended direction for shopkeeper aggro when shop
+interactions go bad. The goal is not a simple "player steals, shopkeeper turns
+hostile" switch. The goal is a rich shop-law system that lets players attempt
+exploits, feel clever for a moment, and then discover that the simulation kept
+the receipt.
+
+## Design Goals
+
+- Expensive shop stock should tempt the player. Killer items and rare gems are
+  more interesting when most are out of reach.
+- Theft should be possible, risky, and sometimes temporarily successful.
+- The game should detect value extraction by behavior, not by hardcoded item or
+  spell cases.
+- Shopkeepers should have memory, evidence, debt claims, and escalating
+  responses.
+- Clever exploits should create better stories, not bypass the economy.
+
+Example target moments:
+
+- The player throws an expensive gem out of the shop, walks out later, and the
+  shopkeeper already knows what happened.
+- The player drinks a potion and teleports outside, only to trigger a debt claim
+  and shop alarm.
+- The player picks up unpaid stock, blinks outside, and learns that teleporting
+  avoided the door guard but not the ledger.
+
+## Current Foundation
+
+The codebase already has a strong first layer:
+
+- `src/rules/components/Unpaid.js` marks shop-owned stock.
+- `src/rules/components/ShopDebt.js` records extracted value attached under the
+  debtor actor.
+- `src/rules/utils/shopDebt.js` provides the debt ledger and virtual view.
+- `src/rules/utils/shopEnforcement.js` evaluates bills, credit, containment,
+  and refusal.
+- `src/rules/systems/shopkeeperSystem.js` blocks ordinary movement out of a
+  shop while the player carries unpaid goods or unpaid extracted-value debt.
+
+The main gap is that current enforcement is mostly door/exit based. It catches
+normal walking out. It should also catch value leaving shop control through
+throwing, consumption, teleportation, destruction, laundering, and delayed
+recovery.
+
+## Core Model
+
+Keep `Unpaid` as the canonical ownership marker for shop stock. Keep `ShopDebt`
+as the canonical bill. Add a richer incident/memory record for how the crime was
+discovered and how the world should respond.
+
+Proposed new child-entity component:
+
+```js
+export const ShopIncident = defineComponent("ShopIncident", {
+  shopkeeperId: 0,
+  actorId: 0,
+  itemId: 0,
+  amount: 0,
+  reason: "carried_out",
+  evidence: "ledger",
+  severity: 0,
+  createdTurn: 0,
+  resolved: false,
+});
+```
+
+`ShopDebt` answers: what does the actor owe?
+
+`ShopIncident` answers: what does the shopkeeper know, remember, and do about
+it?
+
+Suggested `reason` values:
+
+- `carried_out`
+- `thrown_out`
+- `consumed`
+- `teleport_exit`
+- `destroyed`
+- `laundered`
+- `knowledge_theft`
+
+Suggested `evidence` values:
+
+- `seen`
+- `heard`
+- `ledger`
+- `arcane_mark`
+- `witness`
+- `circumstantial`
+
+## Canonical Shop-Law Path
+
+All shop crimes should route through one canonical rules helper, not scattered
+special cases:
+
+```txt
+shop-owned item or value changes state
+  -> classify incident
+  -> record debt if value was extracted
+  -> record incident/evidence
+  -> evaluate response tier
+  -> emit shop-law events
+```
+
+Proposed helper module:
+
+- `src/rules/utils/shopLaw.js`
+
+Likely helpers:
+
+- `findShopAt(world, x, y)`
+- `findOwnerShop(world, shopkeeperId)`
+- `isInsideShopRoom(world, x, y, shopkeeperId)`
+- `recordShopIncident(world, spec)`
+- `recordUnpaidExtraction(world, spec)`
+- `evaluateShopLawResponse(world, spec)`
+
+The helper should use deterministic data only. No DOM, no timers, no async, no
+display imports.
+
+## Event Hooks
+
+Install a Symbol-guarded listener bundle from `configureWorld()`:
+
+```js
+const INSTALLED = Symbol.for("jshack:shopLaw:listeners:installed");
+
+export function installShopLawListeners(world) {
+  if (world[INSTALLED]) return;
+  world[INSTALLED] = true;
+
+  world.on("item:thrown", onItemThrown);
+  world.on("item:dropped", onItemDropped);
+  world.on("item:pickup", onItemPickup);
+  world.on("moved", onMoved);
+  world.on("shop:unauthorized-use", onUnauthorizedUse);
+}
+```
+
+Do not call systems directly. Listeners should record facts and emit events.
+AI/system response should remain phase controlled.
+
+## Trigger Semantics
+
+### Pickup
+
+Picking up unpaid stock inside its owner shop is not theft by itself. It is
+handling merchandise.
+
+Possible response:
+
+- Cheap item: no response.
+- Expensive item: shopkeeper warning.
+- Repeated handling: suspicion increases.
+
+No aggro should happen on pickup alone unless the player is already under an
+active claim.
+
+### Drop
+
+Dropping unpaid stock inside its owner shop is fine.
+
+Dropping unpaid stock outside the owner shop records extracted value or an
+incident, depending on whether the item remains recoverable.
+
+Questions to settle during implementation:
+
+- If the item lands just outside the door, does the shopkeeper demand payment or
+  retrieve it?
+- If the item lands in a dangerous/hazardous tile, does that count as
+  destruction?
+
+### Throw
+
+Throwing is the first high-value exploit case.
+
+Rules:
+
+- If an unpaid item is thrown from inside its owner shop to outside that shop,
+  record `ShopDebt` and `ShopIncident(reason: "thrown_out")`.
+- If the thrown item is destroyed or consumed by its throw payload, record the
+  full value immediately.
+- If a stack throw creates a fresh item copy, the copy must preserve shop claim
+  state or the thrown unit must immediately become debt.
+- The throw event should include enough `from` and `to` data for shop-law
+  classification.
+
+This avoids parity drift between whole-entity throws, stack throws, and special
+throw payloads.
+
+### Consumption and Use
+
+Unpaid value consumed by the player should become debt even if the item entity is
+destroyed.
+
+Existing spellbook knowledge theft already points in the right direction:
+consuming the unpaid book records debt even when the book is gone. Generalize
+that behavior for potions, scrolls, wands, and other use/apply/drink flows.
+
+Consumption should classify the reason:
+
+- Potion: `consumed`
+- Scroll/spellbook knowledge: `knowledge_theft`
+- Wand charge: possibly `charge_theft`
+- Item transformation: `laundered` or `altered_stock`
+
+### Teleport and Forced Movement
+
+Ordinary exits can be blocked before `movementSystem`. Teleports are different:
+they may change `Position` before shop enforcement can block the move.
+
+Use the canonical `moved` event:
+
+- If `from` is inside a shop and `to` is outside the same shop,
+- and the actor carries unpaid stock or has unpaid extracted-value debt,
+- then record `ShopIncident(reason: "teleport_exit")`.
+
+Because the actor has already moved, the response should not pretend the exit
+was blocked. It should escalate to pursuit, lockdown, alarm, or delayed debt
+collection.
+
+Spells and potion effects may emit richer source events such as `spell:blink`,
+but shop law should key primarily off movement and unpaid value. Spell-specific
+branches should be flavor only.
+
+## Response Tiers
+
+Shopkeeper aggro should be tiered, not binary.
+
+### Tier 0: Notice
+
+The shopkeeper notices suspicious handling.
+
+Examples:
+
+- "Careful with that."
+- "That ruby is worth more than your boots."
+
+Used for expensive pickup, repeated handling, and suspicious positioning.
+
+### Tier 1: Challenge
+
+The shopkeeper asserts a claim.
+
+Examples:
+
+- Exit blocked.
+- Checkout opened.
+- Player is told the exact bill.
+
+This maps to existing `shop:claim-enforced` and `shop:exit-blocked` behavior.
+
+### Tier 2: Containment
+
+The shop locks down.
+
+Examples:
+
+- Doors close and lock.
+- Shopkeeper moves toward the exit.
+- Bell/alarm event fires.
+- Nearby townfolk react.
+
+Reuse existing townfolk door and bell mechanisms where possible.
+
+### Tier 3: Pursuit
+
+The shopkeeper actively hunts the player.
+
+Implementation should use `AggroState` or existing AI intent pathways, not
+direct system calls. The shopkeeper should know a last-seen or last-known
+position, with evidence severity affecting persistence.
+
+### Tier 4: Town Alarm
+
+The theft becomes social knowledge.
+
+Examples:
+
+- Other shops refuse service.
+- Other shops increase markup.
+- Townfolk avoid or report the player.
+- Guards or bounty hunters become possible.
+
+This should be separate from the individual shop bill. Debt is economic. Alarm
+is reputation/legal state.
+
+### Tier 5: Delayed Consequence
+
+This is the most important fantasy for "the game knew."
+
+Examples:
+
+- The player returns later and the shopkeeper says, "You still owe me for the
+  emerald."
+- A merchant recognizes a supposedly stolen gem.
+- A debt collector confronts the player after several turns.
+- A magically marked item cannot be sold cleanly.
+- A different shop refuses service because word traveled.
+
+Delayed consequence lets theft feel successful before the simulation closes the
+loop.
+
+## Example Flows
+
+### Throwing an Expensive Gem
+
+1. Gem has `Unpaid { shopkeeperId, price }`.
+2. Player throws it.
+3. `item:thrown` includes `from` inside the shop and `to` outside the shop.
+4. Shop law records debt for `price`.
+5. Shop law records incident:
+
+```js
+{
+  reason: "thrown_out",
+  evidence: "seen", // or "ledger" if not directly visible
+  severity: high,
+}
+```
+
+6. If the player remains inside, the shopkeeper blocks exit and demands payment.
+7. If the player escapes, pursuit or delayed debt collection begins.
+
+### Drinking an Unpaid Teleport Potion
+
+1. Potion has `Unpaid`.
+2. Drink pipeline consumes the potion.
+3. Shop law records debt with `reason: "consumed"`.
+4. Potion effect teleports actor outside.
+5. `moved` listener sees inside-to-outside displacement.
+6. Shop law records `reason: "teleport_exit"`.
+7. Response escalates because the player both consumed stock and escaped.
+
+### Picking Up Stock Then Blinking Out
+
+1. Player picks up unpaid item inside shop.
+2. No theft yet; maybe warning if high value.
+3. Player casts blink or uses a teleport item.
+4. `moved` listener catches shop exit with unpaid goods.
+5. Existing debt/bill evaluator can calculate carried unpaid goods.
+6. Since exit cannot be blocked retroactively, emit alarm/pursuit instead.
+
+## Implementation Plan
+
+1. Add `ShopIncident` component and export it from component index.
+2. Add `src/rules/utils/shopLaw.js` with canonical classification and recording
+   helpers.
+3. Add `installShopLawListeners(world)` and call it once from
+   `src/main/scheduler.js`.
+4. Add tests for:
+   - throwing unpaid item outside records debt
+   - thrown stack preserves or converts unpaid claim
+   - unpaid consumed potion records debt
+   - teleport out with unpaid item records incident
+   - walking exit behavior remains unchanged
+5. Add response events only after the ledger is correct:
+   - `shop:incident-recorded`
+   - `shop:theft-escaped`
+   - `shop:alarm`
+   - `shop:pursuit-requested`
+6. Wire AI/reputation behavior through existing ECS events and phase systems.
+
+## Design Constraints
+
+- Rules layer only. No display imports.
+- All randomness through `world.rand()`.
+- No async, timers, promises, or fetch in rules.
+- No system-to-system calls.
+- Preserve one canonical path for recording extracted shop value.
+- Do not duplicate material/gem value data into display.
+- World coordinates may be negative; do not clamp.
+- Stack handling must preserve ownership/debt semantics.
+
+## Open Questions
+
+- Should a recoverable thrown item outside the shop immediately become debt, or
+  only become debt when the player exits or another actor retrieves it?
+- Should shopkeepers have magical ledgers by default, or should evidence quality
+  depend on shop type and item value?
+- How should honest mistakes be forgiven? For example, picking up an item and
+  returning it immediately.
+- Should high-value gems carry intrinsic shop marks that other merchants can
+  recognize?
+- How long should delayed debt collection wait before escalating into town
+  reputation?
+
+## Guiding Principle
+
+The shopkeeper does not need to physically see every exploit. The shop has a
+ledger, ownership marks, witnesses, memory, and social reach. Players should be
+able to steal. They should even be able to escape for a while. But the value
+trail should remain part of the world.
