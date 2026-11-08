@@ -1,0 +1,11 @@
+Pitch is too high, I do not hear the pitch changes, also, not hearing any potion breaking sound (thrown potions)
+
+is there any nighttime adudio righ now? I still hear birds during the night time
+
+---
+
+I'm sorry, I could accept none of that; time of day, meaning night time, explain how the sound transitions to night time and turns down/off daytime ambience in overworld.
+
+addded: ambient_nightime.mp3 that we can also use in the nighttime mix.
+
+I really didn't like potion break solution you had, you hacked. potions breaking have nothing to do with the hazard, potion break, "splash" anything can happen
