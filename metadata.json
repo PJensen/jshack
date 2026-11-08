@@ -1,0 +1,33 @@
+{
+  "branch": "master",
+  "checkpoint_id": "d22c0e0f10e8",
+  "checkpoints_count": 2,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    ".agents/skills/agent-tools/SKILL.md",
+    ".agents/skills/agent-tools/scripts/item-rarity-audit.mjs",
+    "deno.json",
+    "src/content/helpers.js",
+    "src/content/items/economy.js",
+    "src/content/items/scrolls.js",
+    "tests/agentTools.test.mjs",
+    "tests/contentDsl.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 22,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2672384,
+    "input_tokens": 44183,
+    "output_tokens": 10817
+  }
+}

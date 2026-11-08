@@ -1,0 +1,15 @@
+yeah, we've got to fix that whole situation -- it means we're going to need to sweep all items, and re-balance the rarity slots. if I were you I'd make some kind of deterministic tool that was able to quicky query and scan the item-defs
+
+SECOND: confirm the gear is display as being green in color vs blue or purple or legendary color.
+
+---
+
+you got my labels righ?
+
+common
+uncommon
+rare
+epic
+legendary
+
+artifact mighy be interesting, unique is an interesting tag indictating "one of" or "only one"
