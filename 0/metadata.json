@@ -1,0 +1,83 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "7e80d11dd17b",
+  "session_id": "019f37f2-c953-7313-bd92-4c56c54d0a6c",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-06T16:00:28.559523716Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/content/monsters/undead.js",
+    "src/events/TreasureDisturbed.js",
+    "src/main/scheduler.js",
+    "src/rules/components/GuardedTreasure.js",
+    "src/rules/components/Hamingja.js",
+    "src/rules/components/Landvaettir.js",
+    "src/rules/components/TreasureGuardian.js",
+    "src/rules/components/index.js",
+    "src/rules/data/classes.js",
+    "src/rules/data/monsters.js",
+    "src/rules/data/norseFate.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/treasureGuardianSystem.js",
+    "src/rules/utils/monsterSpawnParams.js",
+    "src/rules/utils/passiveBonuses.js",
+    "src/rules/utils/spawnMonsterEntity.js",
+    "src/rules/utils/treasureGuards.js",
+    "tests/classes.test.mjs",
+    "tests/norseContent.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "0f4d77529172",
+  "token_usage": {
+    "input_tokens": 354639,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5659648,
+    "output_tokens": 20723,
+    "api_call_count": 52
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-06T16:00:28.516792621Z",
+    "agent_lines": 691,
+    "agent_removed": 23,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 691,
+    "total_lines_changed": 714,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 249,
+      "agent_lines_removed": 3,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

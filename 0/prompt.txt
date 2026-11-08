@@ -1,0 +1,32 @@
+I was researching norse stuff this morning over breakfast, this is what I came away with. 
+
+Let's work on these, broadly. 
+
+VALKARIE — a new class. The only one that belongs at the same ontological level as fighter, mage, etc. Death-aware, fate-oriented, perhaps gains power from nearby deaths, interacts differently with corpses and Draugr.
+
+Ratatoskr — one diminutive squirrel, unique outdoor squirrel. Not hostile. Rare encounter. Moves between distant outdoor regions, perhaps carrying rumors, insults, quest state, or items between otherwise disconnected NPCs. 🐿️
+^^ kind of like chicken, but way way way cooler. Use that unicode character too,
+
+Landvættir — invisible or dormant spirits attached to particular places. A grove, standing stone, pond, old tree, ruined foundation. The player discovers that the place itself has state and disposition.
+^^ We've already made a spirit guide, as well as spirit essence -- I feel like we could make this happen especially around landmarks.
+
+Draugr — not generic undead. A specific dead NPC who refuses to leave something: house, chest, grave, weapon, family property. Territorial rather than wandering. 💀 
+^ I think it gets angry when the thing it's gaurding is touched.
+
+Hamingja — not a creature at all. An inheritable luck-state attached to character lineage across games, and save history. Something good follows a person or family. Early version cannot be transferred.
+
+Once you're done we can review -- I'll keep the salient bits, and toss what is less than ideal -- but, honestly, all of these look great. I especially love the squirrel!
+
+---
+
+hey -- this is a decent starting point - but there is quite a bit more that can be fleshed out.
+
+drauger is peaceful until it gaurded treasure is messed with.
+come up with a way for a monster to gaurd treasure, to start assign dragon and drager to that role.
+
+why is inheritable luck not a component?
+why is landvaettir not a component attached to a tile with a radius?  right?
+
+anyhow -- I have to step away for outdoor time I'd really love it if you could run with the ideas I pitched.
+
+overall: make sure we're using the engine for all aspects for what we're doing instead of just slamming frozen objects around.

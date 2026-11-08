@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "7e80d11dd17b",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/content/monsters/undead.js",
+    "src/events/TreasureDisturbed.js",
+    "src/main/scheduler.js",
+    "src/rules/components/GuardedTreasure.js",
+    "src/rules/components/Hamingja.js",
+    "src/rules/components/Landvaettir.js",
+    "src/rules/components/TreasureGuardian.js",
+    "src/rules/components/index.js",
+    "src/rules/data/classes.js",
+    "src/rules/data/monsters.js",
+    "src/rules/data/norseFate.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/treasureGuardianSystem.js",
+    "src/rules/utils/monsterSpawnParams.js",
+    "src/rules/utils/passiveBonuses.js",
+    "src/rules/utils/spawnMonsterEntity.js",
+    "src/rules/utils/treasureGuards.js",
+    "tests/classes.test.mjs",
+    "tests/norseContent.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 52,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5659648,
+    "input_tokens": 354639,
+    "output_tokens": 20723
+  }
+}
