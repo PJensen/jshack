@@ -1,0 +1,31 @@
+{
+  "branch": "master",
+  "checkpoint_id": "0600173672d1",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/display/fx/spellAreaFx.js",
+    "src/events/VoidHoleCast.js",
+    "src/rules/components/VoidHole.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/voidHoleSystem.js",
+    "tests/voidHole.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 19,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1031808,
+    "input_tokens": 155724,
+    "output_tokens": 10827
+  }
+}
