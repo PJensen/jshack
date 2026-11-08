@@ -1,0 +1,39 @@
+{
+  "branch": "master",
+  "checkpoint_id": "3d0f1a3a2a66",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "assets/audio/spell_smoke_bomb.mp3",
+    "src/content/items/spellbooks.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/sounds.js",
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/fx/spellAreaFx.js",
+    "src/display/palette/base.js",
+    "src/events/FrostNovaCast.js",
+    "src/main/debug/debugCommands.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/shopStock.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/frostNova.test.mjs",
+    "tests/lootResolver.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 1,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 96128,
+    "input_tokens": 6826,
+    "output_tokens": 282
+  }
+}

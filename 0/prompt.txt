@@ -1,0 +1,9 @@
+new spell:
+
+frost_nova
+
+similar to blastwave, except, instead of knockback it freezes enemies in place in a set radius
+
+visually, also similar to blastwave, except coloring is on the ice side blue ice, maybe shards of ice
+
+if performance considerations allow; maybe it leaves a cold remant that fades over time
