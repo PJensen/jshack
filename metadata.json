@@ -1,0 +1,57 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b5880d7e4b2a",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 40,
+    "agent_percentage": 82.8125,
+    "agent_removed": 13,
+    "calculated_at": "2026-06-18T18:52:11.116367843Z",
+    "human_added": 11,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 51,
+    "total_lines_changed": 64
+  },
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/populate.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 14,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2545920,
+    "input_tokens": 228947,
+    "output_tokens": 2203
+  }
+}
