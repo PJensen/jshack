@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "d8db84518e5d",
+  "session_id": "019f47c6-0927-7b93-9d9e-ce238b931e77",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-09T19:56:30.843112194Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "VERSION",
+    "docs/design/RATATOSKR_STATE_MACHINE.md",
+    "src/content/monsters/animals.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/polymorphSmokeFx.js",
+    "src/display/fx/puffFx.js",
+    "src/events/PuffSpawned.js",
+    "src/main/scheduler.js",
+    "src/rules/dialogues/ratatoskrDialog.js",
+    "src/rules/systems/ratatoskrSystem.js",
+    "tests/audioWiring.test.mjs",
+    "tests/polymorphSmokeFx.test.mjs",
+    "tests/puffFx.test.mjs",
+    "tests/ratatoskrSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "fba4903c1c6d",
+  "checkpoint_transcript_start": 352,
+  "transcript_lines_at_start": 352,
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-09T19:56:30.776302798Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

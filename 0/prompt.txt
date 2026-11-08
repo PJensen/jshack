@@ -1,0 +1,15 @@
+lets tweak ratatoskr in a handful of ways
+
+1. teleports near the player, if within earshot the teleport sound is heard
+2. several turns after an interaction, teleports away in a puff of particle smoke (see polymorph) for inspiration -- teleport sound again
+3. ratatoskr is notoriously unpredictable -- I feel like he may want a state machine, that way he's not just there while the player starts the game
+4. several turns after an interaction, teleports away
+5. I think the style of interaction should change -- shift away from menu and towards how priest handles interaction. reason: on mobile the window takes up a huge amount of real estate.
+
+my rec: use mermaid to lay out the state machine -- there has to be a reason this mythical squirrel appears -- think with me on what would cause that? completion of a quest? something else? many things?
+
+---
+
+do it -- 
+
+NOTE: relabel "polymorph smoke fx" to just "puffFx" or something like that so it's more generally applicable (without breaking polymorph of course)

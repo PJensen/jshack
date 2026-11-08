@@ -1,0 +1,63 @@
+{
+  "branch": "master",
+  "checkpoint_id": "d8db84518e5d",
+  "checkpoints_count": 8,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 327,
+    "agent_percentage": 100,
+    "agent_removed": 85,
+    "calculated_at": "2026-07-09T19:56:33.741101625Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 327,
+    "total_lines_changed": 412
+  },
+  "files_touched": [
+    "VERSION",
+    "docs/design/RATATOSKR_STATE_MACHINE.md",
+    "src/content/monsters/animals.js",
+    "src/display/audio/audioWiring.js",
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/polymorphSmokeFx.js",
+    "src/display/fx/puffFx.js",
+    "src/events/PuffSpawned.js",
+    "src/main/scheduler.js",
+    "src/rules/dialogues/ratatoskrDialog.js",
+    "src/rules/systems/ratatoskrSystem.js",
+    "tests/audioWiring.test.mjs",
+    "tests/polymorphSmokeFx.test.mjs",
+    "tests/puffFx.test.mjs",
+    "tests/ratatoskrSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "/2/prompt.txt",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 197,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22981888,
+    "input_tokens": 1660324,
+    "output_tokens": 80316
+  }
+}
