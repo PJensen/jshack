@@ -1,0 +1,13 @@
+anything left from the oringinal? lol that turned out really well. honestly.
+
+1. open button should have been clicking in the center of the lock; which already says "open" on success
+2. walking out of shops with loot should now require the shopkeeper to witness.
+2.1. this allows for much more advanced, clever play -- which I love.
+
+otherwise, great message passing, and more.
+
+future: being witnessed lockpicking will become interesting.
+
+---
+
+very clever: we are getting to the point where a complex feature is becoming easy due to sheer gravity of existing features. THAT is a thing to behold! amazing! nice work.

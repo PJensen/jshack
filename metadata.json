@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "21bb90c63778",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/display/ui/lockPickingOverlay.js",
+    "src/rules/systems/shopkeeperSystem.js",
+    "tests/shopkeeperSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 15,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 642688,
+    "input_tokens": 171192,
+    "output_tokens": 5737
+  }
+}
