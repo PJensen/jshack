@@ -1,0 +1,13 @@
+so, read back to me the content authoring surface, how do you understand it; what remains from 5, 6 and 7 targets.
+
+---
+
+okay -- I'm reasonably confortable with this direction; one thing that we should almost certainly consider is how repeated attempts are dealt with, is there a diminishing return -- something else? -- I also agree that there is much more to do in this area; but I do quite like where we've landed. 
+
+why dont you use the new content authoring surface and apply it thematically to a small handful of monsters, making sure to excersize what you see as the full breadth of the capability.
+
+then, you may circle back to ensure that the underlying code paths are fully supported.
+
+also -- keep in mind, polymorph resistance should almost certainly be a player facing stat! meaning --- either certain gear, classes, traits or whatever, may make you the player harder to polymorph as well  -- perhaps with the exception of self polymorphing.
+
+at any rate -- I agree with the direction and am keen to see what you build. go far and hard ! take your time please, really nail this.
