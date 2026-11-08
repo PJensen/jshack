@@ -1,0 +1,56 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5e9e6d5fc455",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 30,
+    "agent_percentage": 25.185185185185183,
+    "agent_removed": 4,
+    "calculated_at": "2026-06-18T19:17:52.333775753Z",
+    "human_added": 101,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 131,
+    "total_lines_changed": 135
+  },
+  "files_touched": [
+    "src/main/wiring/scrollWandWiring.js",
+    "tests/scrollWandWiringInputLock.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 5,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 204672,
+    "input_tokens": 22715,
+    "output_tokens": 777
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "5e9e6d5fc455",
+  "session_id": "019edc22-c7f6-74a2-a47e-014b6139d230",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-18T19:17:40.145726327Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/wiring/scrollWandWiring.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "c4e3be8d7467",
+  "checkpoint_transcript_start": 42,
+  "transcript_lines_at_start": 42,
+  "token_usage": {
+    "input_tokens": 18977,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 72192,
+    "output_tokens": 466,
+    "api_call_count": 4
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-18T19:17:40.131751608Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 4,
+    "total_committed": 0,
+    "total_lines_changed": 4,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 996,
+      "user_lines_removed": 4,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/main/wiring/scrollWandWiring.js": 30,
+        "tests/scrollWandWiringInputLock.test.mjs": 101
+      },
+      "user_removed_per_file": {
+        "src/main/wiring/scrollWandWiring.js": 4
+      }
+    }
+  ]
+}
