@@ -1,0 +1,36 @@
+{
+  "branch": "master",
+  "checkpoint_id": "3aa88939bffb",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/display/fx/polymorphSmokeFx.js",
+    "src/display/ui/characterOverlay.js",
+    "src/main.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/quests/definitions/runContract.js",
+    "src/rules/systems/aiTownfolkSystem.js",
+    "tests/aiTownfolk.test.mjs",
+    "tests/polymorphSmokeFx.test.mjs",
+    "tests/runContract.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs",
+    "tests/worldViewPerceptionChannels.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 68,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9207808,
+    "input_tokens": 415618,
+    "output_tokens": 20042
+  }
+}

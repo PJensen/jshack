@@ -1,0 +1,5 @@
+1. we need to but nameplates underneath NPCs the same way we do for monsters.
+2. a weapon dipped in pois, flaming, ice, etc, all show colored dot in inventory. this dot should extend to equipment as well -- I was surprised NOT to see it there
+3. please repair "the town wants a trophy" quest to match up with the new dungeon authoring system, right now the quest is ambient with no giver to turn it in to, at least not clearly -- I would like for you to refine this quest, 
+4. when interacting with a chest, it's contents are emptied, and it is made not a collider; this is fine, until an NPC comes along and places something else into the chest, when an NPC places something into the chest, it should become a collider again.
+5. polymorph vfx particles happens at bottom right, it should happen centered on the tile.
