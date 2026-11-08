@@ -1,0 +1,29 @@
+{
+  "branch": "master",
+  "checkpoint_id": "31acde5b3662",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/WORLD_RESOURCE_CANDIDATES.md",
+    "src/main/scheduler.js",
+    "src/rules/resources/materialReactionEventQueue.js",
+    "src/rules/systems/materialReactionSystem.js",
+    "tests/waterPotionHooks.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 190,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22667264,
+    "input_tokens": 1433617,
+    "output_tokens": 88616
+  }
+}

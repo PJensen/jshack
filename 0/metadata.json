@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "31acde5b3662",
+  "session_id": "019e9d60-fcfe-7873-9dfc-3e88f8953e5b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-08T13:02:50.530824151Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "docs/WORLD_RESOURCE_CANDIDATES.md",
+    "src/main/scheduler.js",
+    "src/rules/resources/materialReactionEventQueue.js",
+    "src/rules/systems/materialReactionSystem.js",
+    "tests/waterPotionHooks.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "a948fe9adddc",
+  "token_usage": {
+    "input_tokens": 1433617,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22667264,
+    "output_tokens": 88616,
+    "api_call_count": 190
+  },
+  "session_metrics": {
+    "turn_count": 19
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-08T13:02:50.373901222Z",
+    "agent_lines": 93,
+    "agent_removed": 34,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 93,
+    "total_lines_changed": 127,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
