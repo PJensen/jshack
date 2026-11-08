@@ -1,0 +1,38 @@
+I want to get all  activities that run through the web worker well isolated from the rest of the project. Working name was extensions -- but since we already used that I think it can be named `cloudExtensions` -- or something like that. Let me know what you think becuase we're going to add a mailbox to the game ;-)
+
+I think this direction fits JSHack unusually well.
+
+Most games begin as networked systems and spend years trying to isolate gameplay from infrastructure. JSHack can invert that:
+
+* **Engine** → deterministic simulation.
+* **Extensions** → optional shared capabilities.
+* **Cloud** → persistence and coordination only.
+
+That also gives you a nice mental test:
+
+> "If Cloudflare disappeared tomorrow, does the game still work?"
+
+The answer should almost always be "yes." The only things that stop working are extension features.
+
+```
+✓ Combat
+✓ Quests
+✓ Crafting
+✓ NPCs
+✓ World generation
+✓ Save games
+
+✗ Mail
+✗ High scores
+✗ Daily challenges
+✗ Community events
+✗ Cloud saves
+```
+
+That's an architectural property, not just an implementation detail.
+
+It also future-proofs the engine. Someone could write a Discord extension, a Steam extension, a GitHub-backed extension, or even a LAN extension without modifying the core. The engine becomes a stable platform, while the extension fabric becomes the place where experimentation happens. I think that's a strong long-term split.
+
+---
+
+why don't you make that rail please -- `cloud` and be sure to move everything like proof of work, tombstone, etc, into that namespace -- cleanly if at all possible.
