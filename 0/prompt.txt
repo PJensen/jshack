@@ -1,0 +1,82 @@
+I just added 3 new audio fies, portal created, portal idle, portal destroyed, I'm 90% sure you know what to do with these. portal idle should be at about 60% volume so as not to overwhelm the rest of the scene and be proximity attenuated like most other point sources.
+
+---
+
+hey -- you messed up returns, previously returns were just stairs and I was fine with that, once you are in overworld, the way the portal closes is by completing the quest -- I committed a portion of your prior work, (e.g.) there was never a "return poral" per se, at least none I see in game. want me to stash the current?
+
+---
+
+for some reason I do not see the return stairs, or a return portal ... hmm, I tested rift returns not long ago, and now they appear to have regressed.
+
+we could:
+
+1. use an up stair to return
+2. use a normal "portal" to return back to the rift opening
+3. use the same rift looking portal as the return
+
+option #3 might actually be my preference the more I think about it, do what is easy.
+
+---
+
+FINE stairs it is -- keep is easy if at all possible please. I just need to return
+
+---
+
+Repro found the issue: first rift floor gets its up stair at 0,0 because rift entry has no stair anchor. I’m patching rift entry to use the opening portal’s position as the source stair position, so the first floor has a normal stair_up right where you arrive.
+
+^^ want to try this?
+
+alternative, and this might be easier. is either a portal or rift return precisely at entrance.
+
+OR
+
+and this might be even cooler
+
+at the END of the dungeon, meaning, once the boss is dead, spawn the return portal / rift return
+
+THAT COULD SERIOUSLY WORK
+
+---
+
+give me three options
+
+1. stair (easy)
+2. return rift (rift is a pairing)
+3. return portal (conflicts potentially with homecoming, hearthstone)
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Rift Return Options
+
+## 1. Stair Return
+Use normal `stair_up` as the rift exit.
+
+- Implementation: pass the rift opening portal position as `stairPos` when entering the rift.
+- Result: level 1 gets a `stair_up` exactly where the player arrives.
+- Pros: easiest, uses existing transition code, preserves retreat, low risk.
+- Cons: least flavorful; a stair inside a rift feels a bit mundane.
+
+## 2. Return Rift
+Use a paired rift portal inside the rift.
+
+- Implementation: spawn a `rift_portal`-looking return entity on rift level 1, probably at the entrance tile.
+- Interaction: same visual language as the opening rift, but action exits back to origin instead of entering.
+- Pros: thematically clean; “rift is a pairing” is easy to understand.
+- Cons: needs a small new return action/path so it does not re-enter the rift or confuse `RiftPortal` semantics.
+
+## 3. Return Portal
+Use the existing return portal concept.
+
+- Implementation: spawn a `return_portal` entity inside the rift and route it through existing `portal:return`.
+- Pros: likely reuses existing portal return wiring.
+- Cons: can conflict conceptually and technically with homecoming/hearthstone/resurrection return portals; less clean for rifts.
+
+## Recommendation
+Pick **Option 1** for the immediate regression fix. It is the safest way to restore return behavior now.
+
+Then consider **Option 2** as the better long-term rift flavor: a paired rift return, possibly spawned at entrance or after boss death.
+
+---
+
+option 1

@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "d2eca20120ee",
+  "checkpoints_count": 4,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 35,
+    "agent_percentage": 94.87179487179486,
+    "agent_removed": 2,
+    "calculated_at": "2026-07-08T17:40:16.704298753Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 36,
+    "total_lines_changed": 39
+  },
+  "files_touched": [
+    "VERSION",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/environment/dungeon/transition.js",
+    "tests/riftDebugCommands.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 134,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 15852544,
+    "input_tokens": 1097399,
+    "output_tokens": 58134
+  }
+}

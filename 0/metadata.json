@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "d2eca20120ee",
+  "session_id": "019f420e-75a8-70f2-9ab9-5cf5e8705368",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T17:39:48.881852159Z",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/environment/dungeon/transition.js",
+    "tests/riftDebugCommands.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "5a2f211b6cbc",
+  "token_usage": {
+    "input_tokens": 1097399,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 15852544,
+    "output_tokens": 58134,
+    "api_call_count": 134
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T17:39:48.620600385Z",
+    "agent_lines": 35,
+    "agent_removed": 2,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 35,
+    "total_lines_changed": 37,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
