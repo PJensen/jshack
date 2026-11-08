@@ -1,0 +1,58 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "e609820fdd84",
+  "session_id": "019e7927-05b3-7393-8f96-48f1fe7c5b06",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-30T14:21:19.564161203Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/display/fx/aggroFxController.js",
+    "src/rules/components/AggroState.js",
+    "src/rules/systems/petBehaviorSystem.js",
+    "src/rules/systems/tauntSystem.js",
+    "src/rules/utils/aggroTarget.js",
+    "tests/aggroTargetVisualEvents.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "96a446b0e4db",
+  "checkpoint_transcript_start": 329,
+  "transcript_lines_at_start": 329,
+  "token_usage": {
+    "input_tokens": 55192,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2249856,
+    "output_tokens": 6664,
+    "api_call_count": 15
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-30T14:21:19.489004754Z",
+    "agent_lines": 107,
+    "agent_removed": 13,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 107,
+    "total_lines_changed": 120,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
