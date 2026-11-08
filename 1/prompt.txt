@@ -1,0 +1,24 @@
+how can we visually represent that a creature has aggro?
+how can we visually represent that a create has aggro on another creature?
+what about an NPC creature aggro relationship?
+
+I'm approaching this from the visual VFX dimension -- your thoughts would be most appreciated.
+
+---
+
+Aggro acquired: red-orange pop / exclamation burst above aggressor.
+Aggro active: thin animated ring around aggressor.
+Target selected: brief tether from aggressor to target.
+Target is player: ring is hotter/brighter, maybe double-bracketed.
+Target is ally/pet: target gets amber danger brackets.
+NPC-vs-NPC: muted faction-colored tether, short duration only. love the muted tethers idea
+
+---
+
+i like it -- lets go for it
+
+---
+
+i think today well focus on threat visuals, modeling, changes, shifts, taunts, and shifts -- one really interesting area is ensuring that your pet can tank for you.
+
+think about World of Warcraft targeting and threat visuals. Current visual is a large red elipse, the tether has almost no transparency either. Please take all of this into consideration.

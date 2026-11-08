@@ -1,0 +1,52 @@
+{
+  "branch": "master",
+  "checkpoint_id": "cc8e01d90a0a",
+  "checkpoints_count": 3,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 505,
+    "agent_percentage": 100,
+    "agent_removed": 31,
+    "calculated_at": "2026-05-30T14:15:21.691042578Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 505,
+    "total_lines_changed": 536
+  },
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/display/composition/effectOrchestrator.js",
+    "src/display/composition/setupDisplayRuntime.js",
+    "src/display/fx/aggroFxController.js",
+    "src/main.js",
+    "src/rules/components/AggroState.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/tauntSystem.js",
+    "src/rules/utils/aggroTarget.js",
+    "tests/aggroTargetVisualEvents.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 277,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 33864704,
+    "input_tokens": 1058936,
+    "output_tokens": 110750
+  }
+}
