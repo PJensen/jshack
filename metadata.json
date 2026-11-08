@@ -1,0 +1,38 @@
+{
+  "branch": "master",
+  "checkpoint_id": "75da66e5c5fa",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/palette/base.js",
+    "src/display/ui/hud.js",
+    "src/main/debug/debugCommands.js",
+    "src/rules/archetypes/Items.js",
+    "src/rules/data/ammo.js",
+    "src/rules/data/lootResolver.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/shopStock.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/environment/dungeon/tables.js",
+    "src/rules/utils/itemFactory.js",
+    "tests/itemMaterials.test.mjs",
+    "tests/rangedAttack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 145,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 14933632,
+    "input_tokens": 518854,
+    "output_tokens": 61443
+  }
+}
