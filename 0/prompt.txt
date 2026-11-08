@@ -1,0 +1,16 @@
+we have some failing tests, please explain why they are failing
+
+initDungeon generates floor with tile data => ./tests/floor.test.mjs:10:6
+initDungeon creates DungeonState with floorEntityIds => ./tests/floor.test.mjs:19:6
+spawn position is on a walkable tile => ./tests/floor.test.mjs:34:6
+generateFloor is deterministic => ./tests/floor.test.mjs:42:6
+floor loads exactly the chunks described by the floor extent => ./tests/floor.test.mjs:73:6
+floor boundary does not expose walkable tiles into unloaded void => ./tests/floor.test.mjs:97:6
+generateFloor emits monotonic chunk progress callbacks => ./tests/floor.test.mjs:118:6
+initDungeon forwards chunk progress callback => ./tests/floor.test.mjs:140:6
+
+not sure precisely when they were introduced, but I do feel we should never again be pushing failing tests. Update AGENTS.md to stipulate that the FULL suite must run after a task is completed.
+
+---
+
+fix the issues with an eye towards not letting the tests drag the project backwards. (e.g) fix the tests, or -- if it's really a bug, fix the bug.
