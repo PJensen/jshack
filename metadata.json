@@ -1,0 +1,50 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b4632b9dcb87",
+  "checkpoints_count": 6,
+  "cli_version": "0.8.42",
+  "combined_attribution": {
+    "agent_lines": 331,
+    "agent_percentage": 100,
+    "agent_removed": 0,
+    "calculated_at": "2026-07-13T14:18:17.017664257Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 331,
+    "total_lines_changed": 331
+  },
+  "files_touched": [
+    "src/events/BarkeepStoryRequested.js",
+    "src/main.js",
+    "src/main/wiring/barkeepStoryWiring.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "tests/barkeepStoryWiring.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 201,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 24063616,
+    "input_tokens": 1681788,
+    "output_tokens": 84885
+  }
+}
