@@ -1,0 +1,61 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "b4798e403c57",
+  "session_id": "019e751c-3014-7c03-b0c1-0e01e8a8ba1f",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T19:41:17.823798895Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/main.js",
+    "src/main/input/rulesDispatch.js",
+    "src/rules/data/offenses.js",
+    "src/rules/systems/attackDirectionSystem.js",
+    "src/rules/utils/attackActionPolicy.js",
+    "src/rules/utils/offenseClassifier.js",
+    "src/rules/utils/shopClaims.js",
+    "tests/attackDirection.test.mjs",
+    "tests/offenseClassifier.test.mjs",
+    "tests/shopClaim.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "14d0570fc7a8",
+  "token_usage": {
+    "input_tokens": 527593,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 17274496,
+    "output_tokens": 48660,
+    "api_call_count": 140
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T19:41:17.740476224Z",
+    "agent_lines": 421,
+    "agent_removed": 34,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 421,
+    "total_lines_changed": 455,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
