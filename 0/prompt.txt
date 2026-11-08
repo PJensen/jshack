@@ -1,0 +1,17 @@
+I added two new sounds:
+
+action_wood_chop.mp3
+
+> for use on a singular wood chop action, for use at the moment of chopping.
+
+and
+
+ambient_woodcutter.mp3
+
+> for use positioned directly on the woodcutter job while the work is active and the observer is within earshot
+
+NOTE: singular chops may still be played by the woodcutter at the moment of various chops -- or -- we can use only the singular "action_wood_chop.mp3" so long as we varry the pitch and it takes more than one chop to fell a tree.
+
+---
+
+did you understannd my point, that many single chops may be roughly equivalent to the ambient effect overall?
