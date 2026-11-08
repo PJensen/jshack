@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "3631965306df",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "tests/agentRuntime.test.mjs",
+    "tests/combatAudioPack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 184,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22133632,
+    "input_tokens": 759337,
+    "output_tokens": 42842
+  }
+}
