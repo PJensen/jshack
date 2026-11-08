@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "25995bd79cff",
+  "session_id": "019e834d-edc5-75b2-8969-3759cfe08f62",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-01T19:08:39.297274592Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/display/palette/base.js",
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/rules/archetypes/Traps.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/environment/dungeon/tables.js",
+    "src/rules/scripts/traps.js",
+    "src/rules/systems/searchSystem.js",
+    "src/rules/systems/trapSystem.js",
+    "tests/displayGlyphCoverage.test.mjs",
+    "tests/trap.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "d8cf71f608e3",
+  "checkpoint_transcript_start": 265,
+  "transcript_lines_at_start": 265,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-01T19:08:39.274209078Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

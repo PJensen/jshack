@@ -1,0 +1,13 @@
+I want to make a new, specialized type of trap, this one is called the arrow trap. it is a combination pressure plate, and an aimed arrow shot directly at the pressure plate. what makes this trap unique is that it resets every turn.
+
+also interesting is that since this trap resets, it can be used in an adversarial way by luring monsters toward the trap. 
+
+in an ideal situation, the arrows themselves are kind of nasty -- instead of flat damage, we could use all sorts of nasty things.
+
+similar variant might magic missle trap but that can be left for a later exploration. we can start simply, simple arrows even.
+
+the challenge here is that this is a two part trap, the plate, and an arrow that comes from adjacent wall -- I dont know that we need a full on shooter, perhaps that the arrow shoots from either left, right, top, down -- nearest wall.
+
+---
+
+I do not like `resetsEveryTurn: true` why not `resetsEvery: 1` to make for something generically applicable.
