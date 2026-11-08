@@ -1,0 +1,4 @@
+ux refinements:
+
+1. for character sheet overlay, pin the tabs to the top of the overlay so while scrolling you still know what tab you are on,
+2. when interacting with most anything: an NPC, a fountain, anything, delay the popup by 250ms so the player does not accidentally tap an option -- examples: I bumped into ratatoskr and accepted a curse accidentally, I bumped into a fountain and drank from it accidentially (note: this is particularly relevant in a mobile context)

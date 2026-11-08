@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a1b5d44da406",
+  "session_id": "019f519a-e298-7812-b5aa-e21d29b0bc22",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-11T14:43:49.278583175Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/bubbleDialog.js",
+    "src/display/ui/dialogOverlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/display/ui/overlayUtils.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "ccf0d23b1d7b",
+  "token_usage": {
+    "input_tokens": 86406,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1548288,
+    "output_tokens": 8806,
+    "api_call_count": 24
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-11T14:43:49.258554091Z",
+    "agent_lines": 96,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 96,
+    "total_lines_changed": 99,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

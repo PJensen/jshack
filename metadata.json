@@ -1,0 +1,48 @@
+{
+  "branch": "master",
+  "checkpoint_id": "a1b5d44da406",
+  "checkpoints_count": 5,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 96,
+    "agent_percentage": 100,
+    "agent_removed": 3,
+    "calculated_at": "2026-07-11T14:44:10.786117375Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 96,
+    "total_lines_changed": 99
+  },
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/bubbleDialog.js",
+    "src/display/ui/dialogOverlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/display/ui/overlayUtils.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 186,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22051968,
+    "input_tokens": 1607904,
+    "output_tokens": 71886
+  }
+}
