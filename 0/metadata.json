@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M6YF91M2A73AZ5GMFANN1FEH",
+  "session_id": "01a1bcc2-742f-75a2-a752-d5fa73342233",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-08T20:58:25.677477746Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/display/ui/wiring/messages/environmentMessages.js",
+    "src/main.js",
+    "src/rules/systems/deitySystem.js",
+    "tests/deitySystem.test.mjs",
+    "tests/messageWiring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "4d7ead3c16ea",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 99804,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1391744,
+    "output_tokens": 10028,
+    "api_call_count": 22,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 2
+  }
+}
