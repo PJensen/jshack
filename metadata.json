@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "efc1c9e6ea2f",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 16,
+    "agent_percentage": 100,
+    "agent_removed": 14,
+    "calculated_at": "2026-06-22T13:56:07.63691596Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 16,
+    "total_lines_changed": 30
+  },
+  "files_touched": [
+    "docs/todo/playtest-followups-2026-06-22.md",
+    "src/rules/scripts/spells.js",
+    "tests/blink.test.mjs",
+    "tests/phaseStrike.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 9,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 750848,
+    "input_tokens": 53059,
+    "output_tokens": 2844
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "efc1c9e6ea2f",
+  "session_id": "019eef7d-ff3e-72c3-9d91-50926c7a6b41",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-22T13:56:05.148939423Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/todo/playtest-followups-2026-06-22.md",
+    "src/rules/scripts/spells.js",
+    "tests/blink.test.mjs",
+    "tests/phaseStrike.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "c8bec2d6f6da",
+  "checkpoint_transcript_start": 369,
+  "transcript_lines_at_start": 369,
+  "token_usage": {
+    "input_tokens": 3641,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 599296,
+    "output_tokens": 1546,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-22T13:56:05.096797438Z",
+    "agent_lines": 16,
+    "agent_removed": 14,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 16,
+    "total_lines_changed": 30,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+ummmm, 
+
+1. I didn't ask you to modify blink, I understand it's an x,y move, but that camera follow was right in that instance.
+
+2. for quest completion, did you switch to a delegate or callback? I had indicated that syncronization was a future nighmare.
+
+3. I don't love `townfoldDialogs` leaks into the book below -- however, I'm not sure now is the time to address this. why: it's bleeding concepts; again, now is not the time to address -- it's something I'll need to think about to the side.
