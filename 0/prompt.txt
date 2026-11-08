@@ -1,0 +1,13 @@
+shopHasCustomer() && isShopHours
+
+---
+
+scheduled gem vendor stays in the shop while the player is inside => ./tests/shopDoorKeys.test.mjs:500:6
+
+EXCEPT
+
+AFTEF HOURS
+
+---
+
+I wonder, if the player is already in the shop during work hour, then it crosses over, then they shopkeeper should at least stay and see them out. dont you agree?
