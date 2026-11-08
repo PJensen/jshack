@@ -1,0 +1,61 @@
+{
+  "branch": "master",
+  "checkpoint_id": "cb15c135b625",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 406,
+    "agent_percentage": 100,
+    "agent_removed": 2,
+    "calculated_at": "2026-06-01T15:57:15.328199099Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 406,
+    "total_lines_changed": 408
+  },
+  "files_touched": [
+    "src/main.js",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/components/RunState.js",
+    "src/rules/components/index.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/deathModes.js",
+    "tests/deathModes.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 151,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 17843072,
+    "input_tokens": 683644,
+    "output_tokens": 43763
+  }
+}

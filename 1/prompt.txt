@@ -1,0 +1,18 @@
+I would like for hard mode to have permanent death
+I would like for normal mode to have ressurection.
+
+I wonder -- how can we do that?
+
+implementation details on resurrection.
+
+how punishing is it? do you drop your gear? how hard is it to get back to where you were? I wonder if we can create a return portal.
+
+am I doing something stupid? was this game intended to have permadeath always? is there a middle road?
+
+---
+
+I completely agree with your assessment here; these are great intuitions. keep equipped gear, drop the backpack, brain stays mostly in-tact, increment a counter somewhere. possible tweaks, touching shrines creates checkpoints -- but honestly, I like "pseudo death" like you laid out, and the use of the portal from town.
+
+my favorite part of this is that it really forces the player back up and through the town. we need only make the portal obviously places.
+
+one final tweak: like like these death modes you laid out so much, why don't we handle all of them, and just set the mode.
