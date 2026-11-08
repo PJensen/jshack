@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "0e255105d9cc",
+  "session_id": "019e94ea-295c-7de1-9017-ddb7f4d48f3c",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-05T00:10:07.614282354Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/channelingSystem.js",
+    "src/rules/systems/cleanupSystem.js",
+    "src/rules/systems/itemDestructionSystem.js",
+    "src/rules/utils/electrocute.js",
+    "src/rules/utils/sleep.js",
+    "tests/deathCleanup.test.mjs",
+    "tests/drainLife.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "2b3247dfb038",
+  "checkpoint_transcript_start": 603,
+  "transcript_lines_at_start": 603,
+  "token_usage": {
+    "input_tokens": 137385,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2263168,
+    "output_tokens": 5109,
+    "api_call_count": 11
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-05T00:10:07.497124373Z",
+    "agent_lines": 4,
+    "agent_removed": 93,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 4,
+    "total_lines_changed": 97,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
