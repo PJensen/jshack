@@ -1,0 +1,42 @@
+okay -- now try and fix the ground targeting issue
+
+---
+
+(I doubt you can)
+
+---
+
+I said attacking a TILE, (e.g.) area denial, picking a tile, always shoots away from the picked location
+
+---
+
+NOPE -- not even close, 
+
+
+shoot
+
+select tile
+
+shot goes wide
+
+every time
+
+---
+
+we're talking 45 degrees.
+
+---
+
+AHHH
+
+---
+
+that would do it
+
+---
+
+should we carry rules dispatch?
+
+---
+
+tweak?
