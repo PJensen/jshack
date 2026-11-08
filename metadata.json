@@ -1,0 +1,48 @@
+{
+  "branch": "master",
+  "checkpoint_id": "18b9cc45efce",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 25,
+    "agent_percentage": 100,
+    "agent_removed": 7,
+    "calculated_at": "2026-11-07T21:23:53.930449039Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 25,
+    "total_lines_changed": 32
+  },
+  "files_touched": [
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "tests/classAbilities.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 22,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3478016,
+    "input_tokens": 37317,
+    "output_tokens": 5583
+  }
+}
