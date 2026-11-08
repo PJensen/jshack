@@ -1,0 +1,34 @@
+{
+  "branch": "master",
+  "checkpoint_id": "aad950c81001",
+  "checkpoints_count": 2,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION",
+    "src/content/define.js",
+    "src/content/items/boots.js",
+    "src/content/items/fishingRod.js",
+    "src/content/items/lodbrokSerpentBoundBreeches.js",
+    "src/main/wiring/itemName.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/utils/breadcrumbs.js",
+    "tests/itemNameSpellDisplay.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 187,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 16892800,
+    "input_tokens": 305583,
+    "output_tokens": 58097
+  }
+}
