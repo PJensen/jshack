@@ -1,0 +1,56 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5a5287e8dfd6",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 650,
+    "agent_percentage": 100,
+    "agent_removed": 203,
+    "calculated_at": "2026-06-01T14:46:18.04754751Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 650,
+    "total_lines_changed": 853
+  },
+  "files_touched": [
+    "AGENTS.md",
+    "tests/agentTools.test.mjs",
+    "tools/agent-health.mjs",
+    "tools/agent-target.mjs",
+    "tools/content-id-audit.mjs",
+    "tools/event-bus-explorer.mjs",
+    "tools/import-boundary-report.mjs",
+    "tools/system-map.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 27,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2936064,
+    "input_tokens": 135888,
+    "output_tokens": 10627
+  }
+}
