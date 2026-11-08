@@ -1,0 +1,11 @@
+okay -- perfect, say it; we should also reference all external tooling: 
+
+** rust token killer (compresses tool tokens)
+** entire (chat history, enabled a couple weeks back)
+** caveman (for Claude Code)
+
+we should mention that at least three LLM retail products are being used CODEX, Claude Code, Github CoPilot
+
+---
+
+any other tools? list them? ffmpeg, skills, whatever else you can dig up.
