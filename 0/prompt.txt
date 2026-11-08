@@ -1,0 +1,1 @@
+you locked the doors, but none are able to be picked, unclear why that is -- but we should address that issue so they behave like the gem shoppe locked and pickable door.
