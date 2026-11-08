@@ -1,0 +1,9 @@
+QUESTION: how does this relate to what we just built?  I feel like `ShopDebt`  might have been sufficient; to extend reason essentially. The two objects feel virtually isomorphic.
+
+I have `Entire` installed, and hopefully you can see what I'm talking about. Confirm that while we're here.
+
+---
+
+Obviously we keep unpaid. My primary focus is around `ShopDebt` and `ShopLaw` -- i hear what you mean regarding carried goods. So lets focus on the duplicative aspepcts, the overlap is significant. Borrowing, incidents, exploits, actual violations, and more.
+
+Anyhow -- my train is pulling into the station; there might not be much we can realistically do in 5 minutes. In which case, I'd like you to draft a short markdown file under `docs/todo`

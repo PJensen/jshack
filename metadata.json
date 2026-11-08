@@ -1,0 +1,25 @@
+{
+  "branch": "master",
+  "checkpoint_id": "ac9d2cceefcd",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/todo/shop-law-debt-model.md"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 7,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 881792,
+    "input_tokens": 128036,
+    "output_tokens": 2021
+  }
+}
