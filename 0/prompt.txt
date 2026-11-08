@@ -1,0 +1,11 @@
+I've just added `action_search_ping..mp3` and `action_rch_found.mp3` to `assets/audio` -- please incorporate into the `search` functionality. the idea is that searching produces the ping, and, when someting is found, a trap, a hidden door, the found sound plays.
+
+NOTE:
+
+search moves out in a single wave front, you may want to be smart about the delay between the ping and the found.
+
+we do something akin to this for blastwave spell, as regards VFX timing -- but its fairly involved.
+
+maybe it can be simpler, maybe it can be even easier since found actualy shows things on screen like a trap or a door, 
+
+better still, it might be as simple as allowing 2 voices.
