@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "b62310e8dfb6",
+  "session_id": "019ea916-56ba-7cf1-b0a2-1dc9029ad477",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-09T10:39:30.743364941Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/content/items/potions.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "594e1565c44a",
+  "token_usage": {
+    "input_tokens": 902410,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10442368,
+    "output_tokens": 34532,
+    "api_call_count": 80
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-09T10:39:30.665972646Z",
+    "agent_lines": 23,
+    "agent_removed": 13,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 23,
+    "total_lines_changed": 36,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
