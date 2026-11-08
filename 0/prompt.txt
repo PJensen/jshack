@@ -1,0 +1,19 @@
+The rats dungeon only had one rat in it. Let's add more dungeon authoring controls. How many. Traps present? It might be nice to somehow show the dungeon level. Colored circle on bottom right of entrance glyph.
+
+Double check that under the new underworld concept that dungeons can still have many levels. And that the number of levels is set in metadata.
+
+---
+
+Levels || Floors || Difficullty || Length
+
+See my issue?
+
+---
+
+trapsPresent: false,
+      traps: Object.freeze([]),
+
+^^ seems duplicative
+
+
+Q: what does null /emptymonsters mean? semantically
