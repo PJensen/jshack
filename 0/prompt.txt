@@ -1,0 +1,27 @@
+# Files mentioned by the user:
+
+## Pasted text.txt: /home/pjensen/.codex/attachments/2494536e-e4e6-472c-ae58-ed5c06dafb30/pasted-text.txt
+
+## My request for Codex:
+want to incorporate a lock-picking ux modal based on the following.
+
+two constructor args
+
+1. number of pins
+2. difficulty
+
+You should see the extension points already.
+
+NOTE: this is almost certainly an overlay
+
+NOTE: as regards triggering the overlay, a debug command would be sufficient to start instead of adding rules side components etc.
+
+so this will be focused on the UX portion, what extensibility it offers, constructor injection details, etc.
+
+---
+
+good? you workin?
+
+---
+
+I've got it from here.

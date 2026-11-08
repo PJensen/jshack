@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "2d4b028d17da",
+  "session_id": "019eae4a-53c4-7f80-b600-0641aa9d4d4b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-09T21:44:24.507230803Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/lockPickingOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/main/debug/consoleCommands.js",
+    "tests/consoleCommands.test.mjs",
+    "tests/lockPickingOverlay.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "6604f51124be",
+  "token_usage": {
+    "input_tokens": 237451,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1453056,
+    "output_tokens": 14725,
+    "api_call_count": 24
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-09T21:44:24.397424995Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1,
+    "total_committed": 0,
+    "total_lines_changed": 1,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1651,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/display/ui/lockPickingOverlay.js": 683,
+        "src/display/ui/overlay.js": 29,
+        "src/main/debug/consoleCommands.js": 13,
+        "tests/consoleCommands.test.mjs": 37,
+        "tests/lockPickingOverlay.test.mjs": 24
+      },
+      "user_removed_per_file": {
+        "tests/consoleCommands.test.mjs": 1
+      }
+    }
+  ]
+}
