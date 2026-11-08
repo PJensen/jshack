@@ -1,0 +1,17 @@
+scan this repository looking for concrete details about agentic development; what makes agentic development even possible on this project when it's scale, lack of type safety, complexity, and single author even possible.
+
+do not concern yourself with ranking; just pure identification of techniques that you see in the project backed by concrete evidence of the technique.
+
+there is no number of techniques that you must uncover, my suspicion is that there are many, some are unique, some are reletively common.
+
+---
+
+note: using `entire` will anchor you to recent history, however, `entire` itself is almost certainly an identified technique.
+
+---
+
+dump these into an MD file please; add some additional that I observed.
+
+1. reflect-js -- a local stdin MCP that using JS reflection tools to examine the project at a very deep level (fill in more detail here)
+2. using CLI tools to gauge project health -- orphaned events, and beyond
+3. MD files are not gaurenteed to be enforced, ratchets and CLIs are essential to the operation.

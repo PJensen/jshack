@@ -1,0 +1,25 @@
+{
+  "branch": "master",
+  "checkpoint_id": "f70add4f1968",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/AGENTIC_DEVELOPMENT_TECHNIQUES.md"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 26,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1876224,
+    "input_tokens": 299085,
+    "output_tokens": 12644
+  }
+}
