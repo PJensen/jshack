@@ -1,0 +1,63 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "cde20d17354c",
+  "session_id": "019e9d60-fcfe-7873-9dfc-3e88f8953e5b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-07T15:21:02.890686235Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "AGENTS.md",
+    "src/events/DeityChallengeCompleted.js",
+    "src/events/DeityChallengeStarted.js",
+    "src/rules/systems/deityChallengeSystem.js",
+    "tests/deityChallengeSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "71adc14dd862",
+  "checkpoint_transcript_start": 440,
+  "transcript_lines_at_start": 440,
+  "token_usage": {
+    "input_tokens": 47354,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2747008,
+    "output_tokens": 6449,
+    "api_call_count": 15
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-07T15:21:02.745416992Z",
+    "agent_lines": 79,
+    "agent_removed": 11,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 79,
+    "total_lines_changed": 90,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 107,
+      "agent_lines_removed": 11,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Imagine you are on a playthrough, walk me through the precise internal activity achieved by this latest work; and, where we can take it comprehensively from here.
+
+NOTE: any new events should use the concrete `EcsEvent` base.
+NOTE: any new listeners should use the new `install` pattern.
+NOTE: if these two requirements are not clear in AGENTS.md -- make them clear, all future events and listeners should follow this pattern.
+
+---
+
+the point was that any touch of a listener should migrate it to the new form, I think you understand.
+
+NOTE: any reference to `legacy` instanstiated by this work, (e.g.) legacy wrappers are strictly off limits -- we are moving forward concretely with the new design.
