@@ -1,0 +1,7 @@
+stepping on traps give a chance to dodge via interactive UX component, a rapid countdown progress bar and button is displayed with a "dodge" button. the amount of time the player has to tap dodge is informed by the players evasion statistic.
+
+the interactive UX component appears at a set distance away from the screen center in any one of 360 degrees (polar) to prevent players knowing in advance where to tap to dodge.
+
+---
+
+Take it away friend.
