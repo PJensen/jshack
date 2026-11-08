@@ -1,0 +1,29 @@
+{
+  "branch": "master",
+  "checkpoint_id": "67a8649bd9f2",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "src/content/items/potions.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/data/weaponCoatings.js",
+    "src/rules/systems/hazardSystem.js",
+    "tests/selectedPotionHandlers.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 47,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6445184,
+    "input_tokens": 353529,
+    "output_tokens": 24446
+  }
+}

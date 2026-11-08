@@ -1,0 +1,80 @@
+hey -- are there any missing potion throw handlers or dip handlers that we need to add?
+
+---
+
+fantastic, normally I would ask Claude Code for this type of work where I need/want hallucination, but here, I'm going to ask you to invent these handlers. you'll need to be creative, so, take your engineering hat off for a moment and lets dream up some wild handlers that are thematically approprriate for these dips and throws.
+
+---
+
+Let me take the wheel.
+
+---
+
+some of these are good: why dont you tackle the few highlighted below, only do  the handful that we can complete in a single turn.
+
+potion_vigor	
+dip:lifedraw coating is perfect
+throw: pool of blood on ground (gore system) -- heals living, hurts undead
+
+adrenaline: 
+drip: grants stamina on hit, simple, last X turns
+throw: enrages enemies, love this
+
+potion_keen_edge: 
+dip: raises the crit chance of the weapon, stackable, permanent
+
+potion_lethargy
+dip: slow perfect as written, throw: perfect as written
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Selected Potion Handler Pass
+
+## Summary
+
+Implement the four selected potion upgrades only: `potion_vigor`, `potion_adrenaline`, `potion_keen_edge`, and `potion_lethargy`. Use existing item hooks, weapon coatings, `ItemInfo.bonuses`, status effects, and hazard spawning. No new UI, verb, or broad alchemy system.
+
+## Key Changes
+
+- Add new weapon coating definitions in `weaponCoatings.js`:
+  - `lifedraw`: consumes 1 charge on hit, heals attacker for 1 HP on proc.
+  - `adrenaline`: consumes 1 charge on hit, restores a small stamina amount to attacker.
+  - `lethargy`: consumes 1 charge on hit, applies `slowed` to defender.
+- Add dip hooks in potion content:
+  - `potion_vigor`: weapon-only dip, grants `lifedraw` coating, about 8 charges.
+  - `potion_adrenaline`: weapon-only dip, grants `adrenaline` coating, about 8 charges.
+  - `potion_lethargy`: weapon/ammo dip, grants `lethargy` coating, about 6 charges.
+  - `potion_keen_edge`: weapon-only dip, permanently increments `ItemInfo.bonuses.critChance` by `0.02`, stackable, consumes potion, emits `item:applied`.
+- Upgrade throw behavior:
+  - `potion_vigor`: spawn a `blood_pool` floor hazard for a short duration; on hazard tick, living creatures heal lightly and undead take holy/life damage.
+  - `potion_adrenaline`: thrown splash applies `berserk` to living enemies on the landing tile/radius.
+  - `potion_lethargy`: keep/confirm sticky slow splash behavior using existing `slowed` status; if feasible, spawn a short `sticky_syrup` floor hazard that applies slow each tick.
+  - Leave `potion_keen_edge` throw as the existing dud/razorless splash for this single-turn pass unless there is time after the selected dips are done.
+
+## Implementation Notes
+
+- Add a small shared coating dip helper if it reduces duplication, but avoid a broad abstraction.
+- For permanent `keen_edge`, patch only `bonuses.critChance`; preserve existing bonuses and do not use coating charges.
+- For blood pool behavior, extend `hazardSystem` only for `kind === "blood_pool"` rather than inventing a gore component.
+- Use `CreatureType` / `CREATURE_TYPES.undead` for undead detection.
+- Emit normal throw/applied events so existing FX, messages, and shop/debt listeners keep working.
+
+## Tests
+
+- Add focused apply/dip tests:
+  - Vigor dip gives `lifedraw` coating and consumes potion.
+  - Adrenaline dip gives stamina coating and restores stamina on hit.
+  - Keen edge dip permanently increases weapon crit chance and stacks over repeated dips.
+  - Lethargy dip gives slow coating and applies `slowed` on hit.
+- Add focused throw tests:
+  - Vigor throw creates blood pool; living target heals, undead target is damaged.
+  - Adrenaline throw applies `berserk` to enemy target.
+  - Lethargy throw applies `slowed` and/or sticky floor hazard behavior.
+- Run focused tests: `deno test --allow-read tests/applyRuntime.test.mjs tests/combat.test.mjs tests/throwRuntime.test.mjs` plus the new potion test file.
+
+## Assumptions
+
+- “Single turn” means only these four potions and no visual/audio polish beyond existing event paths.
+- `potion_keen_edge` permanent stacking is intentionally powerful; no cap unless existing balance tests reveal an obvious failure.
+- Blood pool can be represented as a floor hazard for now; a richer gore system can come later.
