@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "4660dc681795",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/rules/scripts/spells.js",
+    "tests/resurrection.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 11,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 925184,
+    "input_tokens": 28204,
+    "output_tokens": 2143
+  }
+}
