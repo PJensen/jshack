@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.6.2",
+  "checkpoint_id": "e78b07251cbc",
+  "session_id": "019e663e-8461-70b3-bac7-6096654919df",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-26T21:50:57.798814817Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/wiring/shopWiring.js",
+    "src/rules/components/ShopDebtLedger.js",
+    "src/rules/components/index.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/interaction/verbs/usePipeline.js",
+    "src/rules/systems/shopkeeperSystem.js",
+    "src/rules/utils/shopDebt.js",
+    "tests/learnSpell.test.mjs",
+    "tests/shopWiringCheckout.test.mjs",
+    "tests/shopkeeperSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "f12f9d21fd51",
+  "token_usage": {
+    "input_tokens": 168509,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1543936,
+    "output_tokens": 10568,
+    "api_call_count": 26
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-26T21:50:57.68786792Z",
+    "agent_lines": 363,
+    "agent_removed": 2,
+    "human_added": 4,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 367,
+    "total_lines_changed": 369,
+    "agent_percentage": 98.91598915989161,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

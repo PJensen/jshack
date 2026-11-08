@@ -1,0 +1,34 @@
+{
+  "branch": "master",
+  "checkpoint_id": "e78b07251cbc",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.2",
+  "files_touched": [
+    "src/main/wiring/shopWiring.js",
+    "src/rules/components/ShopDebtLedger.js",
+    "src/rules/components/index.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/interaction/verbs/usePipeline.js",
+    "src/rules/systems/shopkeeperSystem.js",
+    "src/rules/utils/shopDebt.js",
+    "tests/learnSpell.test.mjs",
+    "tests/shopWiringCheckout.test.mjs",
+    "tests/shopkeeperSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 26,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1543936,
+    "input_tokens": 168509,
+    "output_tokens": 10568
+  }
+}

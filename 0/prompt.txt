@@ -1,0 +1,1150 @@
+The following technical memo is our target.
+
+# NPC Claim Violation and Shop Theft Model
+
+## Goal
+
+NPCs should turn on the player when the player violates a recognized claim.
+
+This should not be modeled as random NPC anger or a special-case shopkeeper reaction. It should be modeled as a rules-side claim violation system that can support shop theft, trespass, faction retaliation, sacred desecration, assault, debt, and future reputation mechanics.
+
+The immediate bug/example:
+
+A player walked into a book shop, picked up a spellbook, learned a prayer from it for free, and the shopkeeper did not react.
+
+That is wrong. Reading an unpaid spellbook is not harmless inspection. It transfers value from owned property to the player without payment. The player extracted benefit from the item even if they did not physically remove it.
+
+The model should treat this as unauthorized use of owned property: knowledge theft.
+
+## Core Design Principle
+
+Do not model this as:
+
+```txt
+shopkeeper gets mad because player picked up item
+```
+
+Model it as:
+
+```txt
+player violated a claim recognized by an NPC or faction
+```
+
+The player can violate different kinds of claims:
+
+```txt
+property claim
+territory claim
+body claim
+kin / faction claim
+sacred claim
+contract / debt claim
+```
+
+Shop theft is only one instance of the broader rule.
+
+## Immediate Behavior Target
+
+For shop items:
+
+```txt
+Picking up unpaid merchandise inside the shop may be allowed.
+Using unpaid merchandise is not allowed.
+Leaving the shop with unpaid merchandise is not allowed.
+Destroying unpaid merchandise is not allowed.
+Refusing payment after unauthorized use escalates the situation.
+Attacking the owner escalates immediately.
+```
+
+For the spellbook case:
+
+```txt
+Reading an unpaid spellbook in a shop should create debt or a transgression.
+Learning a prayer/spell from that book counts as value extraction.
+The shopkeeper should react.
+Reaction should usually begin with warning/demand, not instant combat.
+```
+
+Suggested first reaction:
+
+```txt
+"That knowledge is not free. Pay 120 gold."
+```
+
+## New Concepts
+
+### Ownership
+
+Represents a property claim over an entity.
+
+Example shape:
+
+```js
+Ownership {
+  ownerId,       // entity id of owner, if specific NPC owns it
+  factionId,     // optional faction claim, e.g. "shopkeepers"
+  price,         // sale value / debt value
+  saleState      // "for_sale" | "paid" | "stolen" | "used"
+}
+```
+
+Notes:
+
+* `ownerId` is useful for a specific shopkeeper.
+* `factionId` lets the faction remember crimes even if the specific owner dies.
+* `price` is the default debt amount.
+* `saleState` should remain semantic. Avoid visual/display fields here.
+
+### UsePolicy
+
+Represents whether using an item requires ownership or payment.
+
+Example shape:
+
+```js
+UsePolicy {
+  requiresPurchase,        // true for shop merchandise
+  unauthorizedUseKind,     // "knowledge_theft" | "consumption_theft" | "activation_theft"
+  valueOnUse,              // fraction of price owed on unauthorized use
+  consumeOnUse             // whether the item disappears after use
+}
+```
+
+Examples:
+
+```txt
+Spellbook:
+  unauthorizedUseKind = "knowledge_theft"
+  valueOnUse = 1.0
+  consumeOnUse = false
+
+Potion:
+  unauthorizedUseKind = "consumption_theft"
+  valueOnUse = 1.0
+  consumeOnUse = true
+
+Scroll:
+  unauthorizedUseKind = "activation_theft"
+  valueOnUse = 1.0
+  consumeOnUse = true
+```
+
+### Transgression
+
+A fact that the player violated a recognized claim.
+
+This may be stored as a component, record, or rules-side event depending on the current architecture.
+
+Example shape:
+
+```js
+Transgression {
+  actorId,
+  victimId,
+  factionId,
+  kind,
+  itemId,
+  value,
+  turn,
+  witnessed
+}
+```
+
+Example for the spellbook:
+
+```js
+Transgression {
+  actorId: playerId,
+  victimId: shopkeeperId,
+  factionId: "shopkeepers",
+  kind: "knowledge_theft",
+  itemId: spellbookId,
+  value: 120,
+  turn: world.turn,
+  witnessed: true
+}
+```
+
+### Debt
+
+Represents an unresolved claim for payment.
+
+Example shape:
+
+```js
+Debt {
+  debtorId,
+  creditorId,
+  factionId,
+  amount,
+  reason,
+  itemId,
+  createdTurn,
+  status       // "unpaid" | "paid" | "refused" | "forgiven"
+}
+```
+
+For the first implementation, debt may be enough without persistent reputation.
+
+### Disposition
+
+Represents how one entity currently regards another.
+
+Example shape:
+
+```js
+Disposition {
+  sourceId,
+  targetId,
+  stance,      // "neutral" | "suspicious" | "warn" | "angry" | "hostile"
+  reason
+}
+```
+
+Important: AI should read disposition. AI should not independently decide that a crime occurred.
+
+## Suggested Rule Flow
+
+### Reading / Using an Item
+
+When the player performs an item-use intent:
+
+```txt
+Intent: read / quaff / eat / activate item
+
+Rules:
+  if item has Ownership
+  and item is not paid for
+  and actor is not owner
+  and item has UsePolicy requiring purchase
+    create Transgression
+    create or update Debt
+    update owner/faction Disposition toward actor
+    emit semantic event
+
+  then continue or block the use depending on policy
+```
+
+For spellbooks, the use probably should still succeed. The player learned the prayer; now they owe money.
+
+For some magical shops or sacred texts, future variants may block the use until paid. But the first version should allow the theft and create consequences.
+
+### Leaving With Owned Goods
+
+When the player attempts to leave the shop region:
+
+```txt
+if player carries unpaid owned items belonging to shopkeeper/shop faction:
+  create theft transgression or escalate existing debt
+  shopkeeper demands payment
+  if player refuses / forces exit:
+    hostile or guards summoned
+```
+
+This can come after the read/use case. It is the second vertical slice.
+
+### Destroying Owned Goods
+
+When an owned item is destroyed:
+
+```txt
+if item has Ownership and is unpaid:
+  create property_damage transgression
+  create Debt for item price
+  update owner Disposition
+```
+
+## Shopkeeper Escalation Ladder
+
+The shopkeeper should not always instantly attack.
+
+Suggested ladder:
+
+```txt
+1. Neutral
+   Player is browsing.
+
+2. Warning
+   Player used/read an unpaid item or picked up too many items.
+   Shopkeeper says: "Careful. That is not yours yet."
+
+3. Demand Payment
+   Player has unpaid debt.
+   Shopkeeper says: "Pay 120 gold."
+
+4. Containment
+   Player tries to leave or ignores the demand.
+   Shopkeeper blocks the exit, locks door, or calls guards.
+
+5. Criminal Mark
+   Player refuses payment, flees, or repeats the offense.
+   Debt becomes transgression/reputation with shopkeeper faction.
+
+6. Hostile
+   Player attacks, refuses, flees with goods, or escalates past threshold.
+```
+
+Good first implementation:
+
+```txt
+Unauthorized use creates debt and sets shopkeeper stance to "angry" or "warn".
+Trying to leave with unpaid debt sets stance to "hostile" or summons guards.
+Attacking the shopkeeper sets stance to "hostile" immediately.
+```
+
+## First Vertical Slice
+
+Implement this in the smallest useful path.
+
+### Components / Data
+
+Add or reuse:
+
+```js
+Ownership
+UsePolicy
+Debt or Transgression
+Disposition
+FactionMember
+```
+
+### Apply to Book Shop Items
+
+For shop spellbooks:
+
+```txt
+Ownership:
+  ownerId = shopkeeper id
+  factionId = "shopkeepers"
+  price = current shop price
+  saleState = "for_sale"
+
+UsePolicy:
+  requiresPurchase = true
+  unauthorizedUseKind = "knowledge_theft"
+  valueOnUse = 1.0
+  consumeOnUse = false
+```
+
+### Hook Item Use
+
+In the rules-side item use/read path, before or after the learn effect:
+
+```js
+function handleUnauthorizedUse(world, actorId, itemId) {
+  const ownership = getOwnership(world, itemId);
+  const policy = getUsePolicy(world, itemId);
+
+  if (!ownership || !policy) return null;
+  if (!policy.requiresPurchase) return null;
+  if (ownership.saleState === "paid") return null;
+  if (ownership.ownerId === actorId) return null;
+
+  const amount = Math.ceil((ownership.price || 0) * (policy.valueOnUse ?? 1));
+
+  const debt = createDebt(world, {
+    debtorId: actorId,
+    creditorId: ownership.ownerId,
+    factionId: ownership.factionId,
+    amount,
+    reason: policy.unauthorizedUseKind,
+    itemId,
+  });
+
+  createTransgression(world, {
+    actorId,
+    victimId: ownership.ownerId,
+    factionId: ownership.factionId,
+    kind: policy.unauthorizedUseKind,
+    itemId,
+    value: amount,
+    witnessed: true,
+  });
+
+  setDisposition(world, {
+    sourceId: ownership.ownerId,
+    targetId: actorId,
+    stance: "warn",
+    reason: policy.unauthorizedUseKind,
+  });
+
+  emitEvent(world, {
+    type: "claim_violated",
+    actorId,
+    victimId: ownership.ownerId,
+    factionId: ownership.factionId,
+    kind: policy.unauthorizedUseKind,
+    itemId,
+    value: amount,
+  });
+
+  return debt;
+}
+```
+
+Names should be adapted to the existing ECS style. This is intended as shape, not exact final API.
+
+### Shopkeeper AI Response
+
+Shopkeeper behavior should check debt/disposition:
+
+```txt
+if player owes debt to this shopkeeper:
+  approach player
+  demand payment
+  block exit if player tries to leave
+
+if player attacks shopkeeper:
+  become hostile
+
+if player refuses payment or flees:
+  become hostile / call guards
+```
+
+Do not put theft detection inside shopkeeper AI. The rules system should produce debt/transgression/disposition. AI responds to those facts.
+
+## Bridge / Display Contract
+
+The rules layer should emit semantic facts only.
+
+Good event:
+
+```js
+{
+  type: "claim_violated",
+  actorId,
+  victimId,
+  factionId,
+  kind,
+  itemId,
+  value
+}
+```
+
+Good event:
+
+```js
+{
+  type: "debt_created",
+  debtorId,
+  creditorId,
+  amount,
+  reason,
+  itemId
+}
+```
+
+Good event:
+
+```js
+{
+  type: "disposition_changed",
+  sourceId,
+  targetId,
+  stance,
+  reason
+}
+```
+
+Bad event:
+
+```js
+{
+  type: "shopkeeper_turns_red_and_shakes"
+}
+```
+
+Display can choose glyphs, colors, speech bubbles, anger particles, alert marks, etc. Rules should only expose semantic state and events.
+
+## Suggested Event Names
+
+Use existing event conventions if available. Otherwise:
+
+```txt
+claim_violated
+transgression_recorded
+debt_created
+debt_paid
+debt_refused
+disposition_changed
+```
+
+No lighting, VFX, color, camera, or animation information should be introduced into rules events.
+
+## Edge Cases
+
+### Player Reads Book But Already Paid
+
+No transgression.
+
+### Player Reads Book Owned by Self
+
+No transgression.
+
+### Player Reads Book Not For Sale But Owned
+
+This is still unauthorized use, but reason may be:
+
+```txt
+forbidden_knowledge
+sacred_violation
+private_property_violation
+```
+
+Not all owned books are shop merchandise.
+
+### Player Picks Up Item But Does Not Use It
+
+No immediate theft unless the shop design wants stricter rules.
+
+Recommended default:
+
+```txt
+Pickup inside shop is suspicious but tolerated.
+Leaving with unpaid item is theft.
+Using unpaid item is theft.
+```
+
+### Player Has Enough Gold
+
+On unauthorized use, the shopkeeper can demand payment. Later, interaction can offer:
+
+```txt
+Pay now
+Refuse
+Drop item does not help if value was already extracted
+```
+
+For knowledge theft, dropping the book does not undo the theft.
+
+### Player Does Not Have Enough Gold
+
+Debt remains unpaid.
+
+Shopkeeper/faction can escalate.
+
+### Player Learns Same Prayer Already Known
+
+This is subtle.
+
+Options:
+
+```txt
+A. Still theft, because they used the merchandise.
+B. Lesser violation, because no new value was extracted.
+C. No violation, because no benefit was gained.
+```
+
+Recommended first behavior: still create violation. Simpler and more legible.
+
+Later refinement: if no new knowledge was learned, debt amount could be reduced.
+
+### Item Use Is Accidental
+
+No special handling in first version. Player intent is enough.
+
+### Owner Not Present
+
+If unwitnessed, create transgression with `witnessed: false` or create no immediate reaction.
+
+Future stealth support:
+
+```txt
+unwitnessed theft affects inventory state but not immediate disposition
+witnessed theft affects disposition immediately
+magical shops may always witness knowledge theft
+```
+
+First version can assume shopkeeper witnesses use inside shop.
+
+### Multiple Shopkeepers / Faction Store
+
+Prefer both:
+
+```txt
+ownerId: specific shopkeeper
+factionId: shopkeepers
+```
+
+The specific NPC demands payment. The faction may remember repeat offenses.
+
+## Why This Is Worth Doing
+
+This creates a reusable moral/social physics layer.
+
+Same system can power:
+
+```txt
+shop theft
+reading forbidden books
+using sacred altars incorrectly
+attacking allied NPCs
+killing faction members
+stealing from homes
+breaking contracts
+entering restricted rooms
+refusing debt
+```
+
+NPCs become more interesting because they are not merely hostile/non-hostile. They are defending claims.
+
+## Acceptance Tests
+
+### Test 1: Reading Unpaid Spellbook Creates Debt
+
+```txt
+Given a shopkeeper owns a spellbook for sale
+And player has not paid for it
+When player reads the spellbook
+Then a Debt exists from player to shopkeeper
+And the debt amount equals the spellbook price
+And a claim/transgression event is emitted
+And shopkeeper disposition toward player is warn/angry
+```
+
+### Test 2: Reading Paid Spellbook Does Not Create Debt
+
+```txt
+Given player has purchased the spellbook
+When player reads it
+Then no transgression is created
+And no new debt is created
+And shopkeeper disposition does not worsen
+```
+
+### Test 3: Picking Up Book Alone Does Not Create Theft
+
+```txt
+Given a shop spellbook is unpaid
+When player picks it up inside the shop
+Then no debt is created
+And no transgression is created
+```
+
+### Test 4: Leaving With Unpaid Item Escalates
+
+```txt
+Given player carries an unpaid shop item
+When player crosses the shop exit boundary
+Then theft transgression is created
+And shopkeeper disposition escalates
+```
+
+This can be implemented after Test 1 if exit/shop-region logic is not ready.
+
+### Test 5: Destroying Unpaid Item Creates Debt
+
+```txt
+Given an unpaid shop item exists
+When player destroys it
+Then property_damage transgression is created
+And player owes the item value
+```
+
+Optional for first pass.
+
+## Implementation Priority
+
+1. Add ownership to shop merchandise.
+2. Add use policy to spellbooks, scrolls, potions, and other usable shop items.
+3. Hook unauthorized-use detection into the item-use/read path.
+4. Create debt/transgression and disposition state.
+5. Make shopkeeper AI respond to debt/disposition.
+6. Add leaving-with-unpaid-goods detection later.
+7. Add faction/reputation memory later.
+
+## Final Rule of Thumb
+
+An NPC turns on the player when the player violates a claim the NPC recognizes.
+
+For shops, the claims are property and payment.
+
+For spellbooks, reading can be theft because the player can steal the value without stealing the object.
+
+That is the mechanic to preserve.
+
+# Repository Cross-Reference: JSHack Current Code
+
+## What Already Exists
+
+The current codebase already has most of the physical-shop model in place. Do not rebuild it from scratch.
+
+Relevant files:
+
+```txt
+src/rules/components/Unpaid.js
+src/rules/systems/shopkeeperSystem.js
+src/main/wiring/shopWiring.js
+src/rules/data/shopStock.js
+src/content/items/spellbooks.js
+src/rules/data/itemCatalogHooks.js
+src/rules/interaction/verbs/usePipeline.js
+src/rules/systems/useItemSystem.js
+tests/shopkeeperSystem.test.mjs
+tests/learnSpell.test.mjs
+tests/shopWiringCheckout.test.mjs
+```
+
+Current model:
+
+```txt
+Unpaid marks physical shop merchandise.
+shopkeeperSystem blocks exiting a shop when the player carries Unpaid items.
+shopWiring opens checkout, calculates invoice totals, lets the player return unpaid items, and lets the player pay the bill.
+Spellbooks are content items with on_use hooks.
+Using a spellbook teaches the spell and consumes/destroys the book.
+```
+
+The immediate bug is narrower than the first abstract model suggested.
+
+The game does not need a full Ownership / UsePolicy / Disposition rewrite for the first pass. It needs a persistent shop debt path for value extracted from an unpaid item that may no longer physically exist after use.
+
+## Confirmed Gap
+
+The current unpaid system is item-backed.
+
+```txt
+Bill = sum(Unpaid.price for unpaid items currently in player inventory)
+```
+
+That works for ordinary shoplifting.
+
+It fails for spellbooks because a successful read consumes the book.
+
+Current spellbook path:
+
+```txt
+UseIntent
+  -> useItemSystem
+  -> executeInteraction(... usePipeline ...)
+  -> findUsePayload
+  -> spellbook on_use hook
+  -> createLearnSpellFromIdentityHook
+  -> ctx.mutate.learnSpell(...)
+  -> emit spell:learned
+  -> return consumed: true
+  -> usePipeline queues consume(itemId, actor)
+  -> item leaves inventory / is destroyed
+```
+
+After that, `shopkeeperSystem` has nothing left to count. The value was stolen, but the bill disappeared with the consumed book.
+
+That is the bug.
+
+## Do Not Do This First
+
+Do not start by adding a generalized morality engine.
+
+Avoid the first-pass temptation to add all of these immediately:
+
+```txt
+Ownership
+UsePolicy
+Transgression
+Disposition
+Faction-wide reputation
+shopkeeper combat escalation
+crime memory
+witness model
+```
+
+Those are still good future concepts, but the current repo has a concrete shop pipeline already. Use it.
+
+## First-Pass Target
+
+Add debt that can survive consumption.
+
+The existing `Unpaid` component should remain the property marker for physical goods.
+
+Add a separate actor-side debt concept for unpaid value already extracted:
+
+```txt
+ShopDebtLedger
+  attached to actor/player
+  stores outstanding debts not represented by a live carried item
+```
+
+Suggested component:
+
+```js
+// src/rules/components/ShopDebtLedger.js
+import { defineComponent } from "../../lib/ecs-js/index.js";
+
+export const ShopDebtLedger = defineComponent("ShopDebtLedger", {
+  debts: [],
+}, {
+  validate(rec) {
+    return Array.isArray(rec.debts);
+  }
+});
+```
+
+Suggested debt record shape:
+
+```js
+{
+  shopkeeperId: 9001,
+  amount: 120,
+  reason: "knowledge_theft",
+  itemId: 1234,
+  identity: "book_smite",
+  name: "Spellbook of Smite",
+  turn: 42,
+}
+```
+
+Attach/export it near existing shop components:
+
+```txt
+src/rules/components/ShopDebtLedger.js
+src/rules/components/index.js
+```
+
+## Rules Utility
+
+Add a small rules utility rather than scattering debt logic through hooks:
+
+```txt
+src/rules/utils/shopDebt.js
+```
+
+Suggested API:
+
+```js
+recordShopDebt(world, {
+  actorId,
+  shopkeeperId,
+  amount,
+  reason,
+  itemId,
+  identity,
+  name,
+});
+
+calculateShopDebt(world, actorId, shopkeeperId);
+clearShopDebt(world, actorId, shopkeeperId);
+shopDebtRecords(world, actorId, shopkeeperId);
+```
+
+`calculateShopDebt` should only calculate ledger debt. Keep the existing unpaid-inventory calculation separate, then sum both in shopkeeper / checkout code.
+
+## Where to Hook Unauthorized Use
+
+Hook in the use interaction pipeline, not in shopkeeper AI.
+
+Relevant current path:
+
+```txt
+src/rules/systems/useItemSystem.js
+src/rules/interaction/verbs/usePipeline.js
+src/rules/content/items/usePayloads.js
+src/rules/content/items/itemHooks.js
+src/rules/data/itemCatalogHooks.js
+src/content/items/spellbooks.js
+```
+
+The best first-pass hook point is `usePipeline`, after the item hook runs and before or alongside item consumption.
+
+Reason:
+
+```txt
+usePipeline has actorId
+usePipeline has itemId
+usePipeline has identity
+usePipeline has ItemInfo
+usePipeline has hookResult
+usePipeline already decides whether use consumed the item
+```
+
+Pseudo-flow:
+
+```js
+const unpaid = ctx.query.get(itemId, Unpaid);
+const hookResult = normalizeUseHookResult(hookOut.onUse);
+
+if (!ctx.cancelled && unpaid && shouldCreateShopDebtForUse({ info, identity, hookResult })) {
+  ctx.mutate.queue({
+    type: "recordShopDebt",
+    actorId: actor,
+    shopkeeperId: unpaid.shopkeeperId,
+    amount: unpaid.price,
+    reason: classifyUnauthorizedUse({ info, identity, hookResult }),
+    itemId,
+    identity,
+    name: ctx.query.name(itemId),
+  });
+
+  ctx.io.emit("shop:unauthorized-use", {
+    actor,
+    shopkeeperId: unpaid.shopkeeperId,
+    itemId,
+    identity,
+    amount: unpaid.price,
+    reason: classifyUnauthorizedUse({ info, identity, hookResult }),
+  });
+}
+```
+
+Then add a mutation case in:
+
+```txt
+src/rules/interaction/mutations.js
+```
+
+This keeps the debt write inside the action transaction instead of directly mutating from a hook.
+
+## First-Pass Classification
+
+Keep classification small.
+
+```js
+function shouldCreateShopDebtForUse({ info, identity, hookResult }) {
+  if (!hookResult) return false;
+
+  // Spellbooks: value was extracted if a spell was actually learned.
+  if (String(info?.type || "") === "learn" && hookResult.spellId) return true;
+  if (String(identity || "").startsWith("book_") && hookResult.spellId) return true;
+
+  // Scrolls/potions/consumables can be added after spellbooks.
+  return false;
+}
+
+function classifyUnauthorizedUse({ info, identity, hookResult }) {
+  if (String(info?.type || "") === "learn" || String(identity || "").startsWith("book_")) {
+    return "knowledge_theft";
+  }
+  if (hookResult?.consumed) return "consumption_theft";
+  return "unauthorized_use";
+}
+```
+
+This intentionally avoids charging for flavor books at first.
+
+For already-known spells, the current learn hook returns consumed false and emits `spell:already-known`. First pass can avoid charging in that case. Later, if desired, browsing/reading policies can charge separately.
+
+## Update shopkeeperSystem
+
+Current `calculateBill` only sums unpaid inventory items.
+
+Change it to include both:
+
+```txt
+physical unpaid carried goods
++
+ledger debt from consumed/used shop goods
+```
+
+Suggested structure:
+
+```js
+function calculateCarriedUnpaidBill(world, playerId, shopkeeperId) { ...existing logic... }
+function calculateBill(world, playerId, shopkeeperId) {
+  return calculateCarriedUnpaidBill(world, playerId, shopkeeperId)
+       + calculateShopDebt(world, playerId, shopkeeperId);
+}
+```
+
+Do not change the movement-blocking semantics. The existing exit-blocking behavior is correct.
+
+## Update shopWiring
+
+`src/main/wiring/shopWiring.js` needs to include debt ledger entries in checkout.
+
+Current checkout data includes:
+
+```txt
+floor shop items
+unpaid items in player inventory
+totalBill
+```
+
+Extend it to include:
+
+```txt
+unpaid debt records from ShopDebtLedger
+```
+
+For display purposes, debt records can be converted into invoice rows:
+
+```js
+{
+  id: `debt:${index}`,
+  name: debt.name || debt.identity || "Unauthorized use",
+  price: debt.amount,
+  unpaid: true,
+  debt: true,
+  reason: debt.reason,
+}
+```
+
+Important behavior difference:
+
+```txt
+Physical unpaid items can be returned to the floor.
+Knowledge debt cannot be returned.
+```
+
+So `ui:removeFromInvoice` should ignore or reject debt rows.
+
+`ui:payBill` should clear both:
+
+```txt
+Unpaid components from carried physical items
+ShopDebtLedger records for this shopkeeper
+```
+
+## Event / Message Wiring
+
+Rules event:
+
+```txt
+shop:unauthorized-use
+```
+
+Payload:
+
+```js
+{
+  actor,
+  shopkeeperId,
+  itemId,
+  identity,
+  amount,
+  reason
+}
+```
+
+Main wiring can listen and log a shopkeeper line:
+
+```txt
+The shopkeeper snaps: "That knowledge is not free. You owe me 120 gold."
+```
+
+Keep this in main/UI wiring. Do not put UI copy into rules.
+
+## Aggro / Disposition Later
+
+Current repo has `Faction` and `AggroState`, but the first pass should not flip shopkeepers into ordinary enemies.
+
+Why:
+
+```txt
+AggroState currently models threat awareness for enemy-style pursuit/combat.
+Shop debt is a commerce/social state first.
+```
+
+Later escalation can bridge debt refusal into aggro:
+
+```txt
+debt created -> warning / checkout
+attempted exit -> block checkout
+refusal / forced exit / assault -> hostile state
+hostile state -> AggroState hunting or faction change
+```
+
+But do not make reading one unpaid book instantly equivalent to monster aggro.
+
+## Tests to Add
+
+Add or extend tests in the existing style.
+
+### tests/learnSpell.test.mjs
+
+Add:
+
+```txt
+using an unpaid spellbook teaches the spell, consumes the book, and records shop debt
+```
+
+Assertions:
+
+```txt
+brain.learnedSpellIds includes spell
+book removed from inventory
+book destroyed
+ShopDebtLedger exists on player
+ledger has one debt
+amount equals Unpaid.price
+reason is knowledge_theft
+shopkeeperId matches Unpaid.shopkeeperId
+```
+
+### tests/shopkeeperSystem.test.mjs
+
+Add:
+
+```txt
+shopkeeperSystem blocks exiting shop with unpaid ledger debt even when item is gone
+```
+
+Setup:
+
+```txt
+player inside shop
+no unpaid inventory items
+ShopDebtLedger on player with debt to shopkeeperId 9001
+MoveIntent attempts to leave
+```
+
+Assertions:
+
+```txt
+MoveIntent removed
+shop:exit-blocked emitted once
+bill equals ledger debt amount
+```
+
+### tests/shopWiringCheckout.test.mjs
+
+Add:
+
+```txt
+paying checkout clears shop debt ledger as well as physical unpaid items
+```
+
+Assertions:
+
+```txt
+totalBill includes debt
+ui:payBill spends gold
+ledger debt for shopkeeper is removed
+physical Unpaid items still clear as before
+```
+
+Optional:
+
+```txt
+removeFromInvoice cannot remove knowledge debt
+```
+
+## Minimal File Change List
+
+First implementation should touch roughly:
+
+```txt
+src/rules/components/ShopDebtLedger.js
+src/rules/components/index.js
+src/rules/utils/shopDebt.js
+src/rules/interaction/mutations.js
+src/rules/interaction/verbs/usePipeline.js
+src/rules/systems/shopkeeperSystem.js
+src/main/wiring/shopWiring.js
+tests/learnSpell.test.mjs
+tests/shopkeeperSystem.test.mjs
+tests/shopWiringCheckout.test.mjs
+```
+
+Do not touch display rendering, palette, lighting, camera, or VFX for this first pass.
+
+## Revised First-Pass Acceptance Criteria
+
+```txt
+Given an unpaid spellbook in player inventory
+When the player uses it and learns the spell
+Then the spell is learned
+And the book is consumed
+And a shop debt remains
+And attempting to leave the shop is blocked
+And checkout includes the knowledge debt
+And paying clears the debt
+```
