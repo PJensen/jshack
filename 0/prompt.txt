@@ -1,0 +1,5 @@
+we need to ensur that `ratatoskr` is spawned into overworld.
+
+---
+
+I've also added `ambient_squirrel.mp3` -- make sure it's got a 300+ turn cooldown, and that it plays when the squirrel is nearby.
