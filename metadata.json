@@ -1,0 +1,59 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b95c3c88ddd9",
+  "checkpoints_count": 10,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 2,
+    "agent_percentage": 21.428571428571427,
+    "agent_removed": 1,
+    "calculated_at": "2026-11-08T17:28:02.20387983Z",
+    "human_added": 7,
+    "human_modified": 0,
+    "human_removed": 4,
+    "metric_version": 2,
+    "total_committed": 9,
+    "total_lines_changed": 14
+  },
+  "files_touched": [
+    "VERSION",
+    "assets/audio/action_stance_changed.mp3",
+    "assets/audio/notification_message_notification.mp3",
+    "assets/audio/sacred_rune_lock_holy_magic_activation.mp3",
+    "assets/audio/watery_boost_sound.mp3",
+    "src/display/ui/overlay.js",
+    "src/display/ui/overlayUtils.js",
+    "tools/audio-trim-silence.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "/2/prompt.txt",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 319,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 45506304,
+    "input_tokens": 1011178,
+    "output_tokens": 99832
+  }
+}
