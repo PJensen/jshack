@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "2b79051f4636",
+  "session_id": "019f5bc2-52e5-7181-8d6b-2021aba0d39d",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-13T15:33:29.802922581Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/main/wiring/barkeepStoryWiring.js",
+    "tests/barkeepStoryWiring.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-sol",
+  "turn_id": "ea32fb5b5505",
+  "checkpoint_transcript_start": 207,
+  "transcript_lines_at_start": 207,
+  "compact_transcript_start": 41,
+  "token_usage": {
+    "input_tokens": 56713,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2989824,
+    "output_tokens": 7503,
+    "api_call_count": 17
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-13T15:33:29.679575634Z",
+    "agent_lines": 45,
+    "agent_removed": 5,
+    "human_added": 0,
+    "human_modified": 8,
+    "human_removed": 54,
+    "total_committed": 47,
+    "total_lines_changed": 112,
+    "agent_percentage": 44.642857142857146,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 871,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/main/wiring/barkeepStoryWiring.js": 6
+      }
+    }
+  ]
+}
