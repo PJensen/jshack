@@ -1,0 +1,45 @@
+{
+  "branch": "master",
+  "checkpoint_id": "e3c3110b2a9f",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 100,
+    "agent_percentage": 98.0392156862745,
+    "agent_removed": 0,
+    "calculated_at": "2026-06-10T11:47:18.209183244Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 101,
+    "total_lines_changed": 102
+  },
+  "files_touched": [
+    "VERSION",
+    "src/lib/ecs-js",
+    "tools/tick-lifetime-benchmark.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 39,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4252288,
+    "input_tokens": 160864,
+    "output_tokens": 13792
+  }
+}

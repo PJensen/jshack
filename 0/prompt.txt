@@ -1,0 +1,58 @@
+## Linear tick-lifetime performance degradation
+
+Performance appears to degrade linearly as total tick count increases.
+
+This is a distinct bug class: the system becomes slower because time has passed, not because the active workload has grown. That usually means some tick-time structure is accumulating work, state, listeners, entities, closures, allocations, or retained references without being cleared.
+
+**Expected behavior**: under a stable workload, tick cost should remain roughly bounded.
+
+**Observed behavior**: as tick count increases, tick duration increases in a predictable linear pattern. Restarting the session resets the curve.
+
+## Resolution requirements
+
+A complete fix must be:
+
+1. **Hypothesized**  
+   State the suspected cause before patching and support it with evidence. For example: growing collections, repeated listener registration, stale entities retained in queries/schedulers, historical tick data being scanned, or leaked closures/references.
+
+2. **Measured**  
+   Capture before/after data using the same workload. At minimum: tick count, average tick duration, p95/p99 if available, relevant collection sizes, live entity count, and memory/allocation pressure where useful.
+
+3. **Reproducible**  
+   Provide a deterministic repro or benchmark that runs long enough to expose the slope.
+
+4. **Bounded**  
+   Fix the unbounded growth pattern. Do not merely optimize the slow path. The affected work must become proportional to live state, not historical tick count.
+
+5. **Guarded**  
+   Add a regression test, benchmark, counter, or diagnostic check capable of detecting this class of bug again.
+
+## Acceptance criteria
+
+- Root cause identified.
+- Before/after measurements attached.
+- Linear tick-duration growth eliminated or materially reduced.
+- Affected state/work is bounded.
+- Regression protection added.
+
+---
+
+my intuitions:
+
+I'm thinking about the gameplay proof we collect every turn -- I dunno, that feels super unlikely to be something since it's so compacted.
+
+what else:
+
+hmmmm, thinking ...
+
+---
+
+oooooh! nic!
+
+---
+
+good find. I meant to revisit that. thanks!
+
+---
+
+DO NOT FORMAT THE FILE. MINIMAL DIFF ONLY
