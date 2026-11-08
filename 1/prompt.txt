@@ -1,0 +1,10 @@
+when scroll of genocide pops its modal, lock game input until interaction is completed.
+
+---
+
+for wand_taming success, lets wire up fairy_glow.mp3
+for scroll_genocide success, lets weite up use_scroll_geno.mp3
+
+---
+
+I'll do full suite to the side
