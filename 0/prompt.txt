@@ -1,0 +1,11 @@
+dealers choice -- do one thing that makes the project materially better.
+
+* gameplay
+* arch
+* design
+* ux
+* vfx
+
+it's your pick.
+
+it can be a vertical slice also.

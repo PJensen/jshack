@@ -1,0 +1,18 @@
+okay so -- emitSafe is a load of bullshit, we never needed try-catch on emit at all -- I feel like we should kill all the emit-safe call-sites and wipe out that method before going further.
+
+also -- these orphaned events are fantastic because it tells us precisely what behavior is undefined or un-wired.
+
+  spell:bog_curse producers=3 files=1
+  spell:shield_bash:failed producers=3 files=1
+  item:pickup-denied producers=2 files=1
+  log:message producers=2 files=2
+  pet:command:invalid producers=2 files=1
+  shop:debt-created producers=2 files=2
+  spell:acid_spit:failed producers=2 files=1
+  spell:death_volley:failed producers=2 files=1
+  spell:miss producers=2 files=2
+  spell:poison_spit:failed producers=2 files=1
+  spell:web_spit:failed producers=2 files=1
+  town:fed producers=2 files=1
+  townfolk:cooked producers=2 files=1
+  townfolk:forged producers=2 files=1
