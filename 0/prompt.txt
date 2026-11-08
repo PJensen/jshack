@@ -1,0 +1,1 @@
+new healthbar has icons -- we dont need those, they take up way too much real-estate, health, mana, stam icons -- remove them, (the icons) from the top right gauges please
