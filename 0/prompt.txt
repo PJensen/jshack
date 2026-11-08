@@ -1,0 +1,5 @@
+Imagine you are on a playthrough, walk me through the precise internal activity achieved by this latest work; and, where we can take it comprehensively from here.
+
+NOTE: any new events should use the concrete `EcsEvent` base.
+NOTE: any new listeners should use the new `install` pattern.
+NOTE: if these two requirements are not clear in AGENTS.md -- make them clear, all future events and listeners should follow this pattern.
