@@ -1,0 +1,25 @@
+{
+  "branch": "master",
+  "checkpoint_id": "a0d1f068a327",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/content/items/index.js",
+    "src/content/items/uncommonGear.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main.js",
+    "src/rules/data/lootTables.js",
+    "tests/lootResolver.test.mjs",
+    "tests/quickSlotStack.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
