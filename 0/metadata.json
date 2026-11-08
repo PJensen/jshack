@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "1ac913db0b95",
+  "session_id": "01a17466-d6bc-78d0-839e-47edadbb0140",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-25T19:25:58.539563681Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "docs/architecture/ITEM_EFFECT_LIFECYCLE.md",
+    "src/content/items/dungeonSoups.js",
+    "src/content/items/index.js",
+    "src/content/items/pocketRelics.js",
+    "src/rules/data/lootTables.js",
+    "tests/pocketRelicsAndSoups.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "ca03a2eba153",
+  "checkpoint_transcript_start": 577,
+  "transcript_lines_at_start": 577,
+  "compact_transcript_start": 101,
+  "token_usage": {
+    "input_tokens": 80015,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1328384,
+    "output_tokens": 12428,
+    "api_call_count": 20
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-25T19:25:58.31050462Z",
+    "agent_lines": 396,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 396,
+    "total_lines_changed": 396,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
