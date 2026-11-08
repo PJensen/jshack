@@ -1,0 +1,20 @@
+why is this function: `#sym:resolveInteractionSoundId ` exported -- if its not called from anywhere else; second; why is it a function at all -- why dont we just in-line the thing and 
+cleanup world.on('interaction,
+
+yes?
+
+my question to you, and this is philisophical -- I feel like there might be an architectural way for doing sounds -- granted they woulldn't be part of the rules later, but certainly, we could build *something* sophisticated that listens for events, runs filters, criteria, and beyond.
+
+just reading `audioWiring.js` kind of shows the smell.
+
+you need not agree with me -- but -- it's someting I'm strarting to anchor to.
+
+---
+
+Interesting. If you are doing route installation, we should use the new `ecs-js` extensions feature. Why dont you make a cutout of `audioWiring.js` called `audioWiringExtension.js` that intends to be the new canonical surface that represents thing thing way more clearly that the existing `audioWiting`
+
+NOTE: only cutover the two types of interaction events to start -- unless you are feeling particularly ambitious.
+
+---
+
+anything else you want to cutover from audioWiring.js?
