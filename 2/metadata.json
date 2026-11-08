@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "0b7f95e8f8db",
+  "session_id": "019edb8b-283f-7ba0-b9e2-e2c28e673d36",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-18T19:01:41.453903569Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/cookingFireOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/main/input/rulesDispatch.js",
+    "src/main/wiring/cookingWiring.js",
+    "src/rules/content/cooking/cookingGame.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/cookingRecipes.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/interaction.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "91fb36a5d786",
+  "checkpoint_transcript_start": 287,
+  "transcript_lines_at_start": 287,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-18T19:01:41.375205035Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
