@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "5aefb8afaa35",
+  "session_id": "019e745b-a59a-78b3-8141-ef56391e3a73",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T17:36:11.883991213Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/todo/authored-rating-enums.md",
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/content/monsters/special.js",
+    "src/rules/components/PolymorphProfile.js",
+    "src/rules/data/monsters.js",
+    "src/rules/utils/polymorphPolicy.js",
+    "tests/polymorphPolicy.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "52b0b819ed7a",
+  "checkpoint_transcript_start": 676,
+  "transcript_lines_at_start": 676,
+  "token_usage": {
+    "input_tokens": 221464,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2167424,
+    "output_tokens": 6279,
+    "api_call_count": 11
+  },
+  "session_metrics": {
+    "turn_count": 11
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T17:36:11.813127454Z",
+    "agent_lines": 116,
+    "agent_removed": 31,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 116,
+    "total_lines_changed": 147,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

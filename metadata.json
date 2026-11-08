@@ -1,0 +1,32 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5aefb8afaa35",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "files_touched": [
+    "docs/todo/authored-rating-enums.md",
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/content/monsters/special.js",
+    "src/rules/components/PolymorphProfile.js",
+    "src/rules/data/monsters.js",
+    "src/rules/utils/polymorphPolicy.js",
+    "tests/polymorphPolicy.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 11,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2167424,
+    "input_tokens": 221464,
+    "output_tokens": 6279
+  }
+}

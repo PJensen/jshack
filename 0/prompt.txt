@@ -1,0 +1,5 @@
+the only thing I do not like is the magic numbers 0,1,2,3 -- for stability -- I would much rather we align ourselves towards an enumerated type type surface versus these magic numbers. I believe there is a canonical way of doing this within the project, just know that it must survive serialization, and that since it's used in a formula (verify) that casting to a number might be ideal. plan first -- then we'll act
+
+---
+
+apply it; add a TODO to "docs/todo" that captures the idea that we may want to broadly do this across other similar magic numbers.
