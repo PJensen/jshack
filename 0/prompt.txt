@@ -1,0 +1,12 @@
+playtest results:
+
+1. dungeon muschroom effect is causing visual jittering
+2. turning in rat quest does nothing
+3. turning in the book below does nothing
+4. hard to switch spells in the spell bar on PR, click and hold wont let me traverse the spell select menu cleanly. (after learning a 5th spell and trying to switch one out)
+
+side objective: boost quest rewards, one item + more gold.
+
+tavern rats quest drops bow and arrrows onto ground, please give these to player directly instaed of dropping on ground.
+
+do as much as you can for all of the above.
