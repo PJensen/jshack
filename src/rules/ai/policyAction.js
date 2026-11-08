@@ -10,7 +10,8 @@
 // Integration contract:
 //   • Called AFTER aiChaseSystem has run.
 //   • If entity already has CastSpellIntent the hook already decided — skip.
-//   • Movement direction: replace existing MoveIntent with policy-chosen direction.
+//   • Movement direction: preserve an existing MoveIntent from aiChaseSystem;
+//     otherwise apply the policy-chosen direction.
 //   • Spell cast:  remove MoveIntent + add CastSpellIntent + mark cooldown.
 //   • Wait (8):    remove MoveIntent (monster holds its position this turn).
 //   • Ranged (13): leave existing RangedAttackIntent if present; otherwise pass.
@@ -112,11 +113,7 @@ export function applyAction(world, actorId, targetId, actionIdx, learnedSpells) 
   if (actionIdx >= 0 && actionIdx <= 7) {
     const dir = MOVE_DIRS[actionIdx];
     if (world.has(actorId, MoveIntent)) {
-      const existing = world.get(actorId, MoveIntent);
-      if (existing && existing.dx === dir.dx && existing.dy === dir.dy) {
-        return actionIdx; // same direction, no-op
-      }
-      try { world.remove(actorId, MoveIntent); } catch {}
+      return actionIdx;
     }
     try {
       world.add(actorId, MoveIntent, { dx: dir.dx, dy: dir.dy });

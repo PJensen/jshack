@@ -22,6 +22,12 @@ regression check.
 | Measure deferred-command growth | `tick-lifetime-benchmark` | `deno run --allow-read .agents/skills/runtime-tools/scripts/tick-lifetime-benchmark.mjs --ticks 3000` |
 | Run stable performance baselines | Deno benchmarks | `deno task bench` |
 
+For AI handoff probes, seed a small ECS encounter, call `rebuildSpatialIndex`
+after spawning, run `aiChaseSystem` and optionally `aiPolicySystem`, then record
+the resulting `MoveIntent`/attack intents before applying movement. This isolates
+policy overrides from combat randomness and keeps chase-versus-policy comparisons
+replayable.
+
 ## Evidence workflow
 
 1. Start with a fixed seed and a short run that isolates the behavior.
