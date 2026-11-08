@@ -1,0 +1,4 @@
+Fishing 🎣 is failing  to trigger fishing at all.
+Sunsword is failing to trigger at all.
+
+** both issues from spell bar after equipping these items  **  I tested fishing recently and it worked, which means this is relatively new issue **
