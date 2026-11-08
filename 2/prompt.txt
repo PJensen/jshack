@@ -1,0 +1,13 @@
+think about threat reducers, smoke bombs, invis, other skills/spells abilties, even gear migh influence threat aquisition.
+
+---
+
+when you're done we should also consider how ranged works in and among this whole threat picture. I don't know that we've been explicit about that as of yet -- but it bears consideration.
+
+the same thing should almost certainly apply to casters.
+
+FUTURE QUESTION: how do NPCs that go hostile behave under the new theat modeling?
+
+---
+
+do you want to take an early crack at ranged and caster threat?

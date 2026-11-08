@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "e991dd32cda2",
+  "session_id": "019e751c-3014-7c03-b0c1-0e01e8a8ba1f",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-30T16:45:22.575282291Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/systems/rangedAttackSystem.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "d960fd19f0d9",
+  "token_usage": {
+    "input_tokens": 823587,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 28844288,
+    "output_tokens": 86683,
+    "api_call_count": 223
+  },
+  "session_metrics": {
+    "turn_count": 15
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-30T16:45:22.446415346Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 121,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 121,
+    "total_lines_changed": 121,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

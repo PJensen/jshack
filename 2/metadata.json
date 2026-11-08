@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "e991dd32cda2",
+  "session_id": "019e7948-3446-7383-8f76-c59bc0b14a9d",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-30T16:45:25.910973931Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/rangedAttackSystem.js",
+    "src/rules/systems/threatSystem.js",
+    "tests/classAbilities.test.mjs",
+    "tests/threatSystem.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "0b900559b074",
+  "token_usage": {
+    "input_tokens": 493778,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7281664,
+    "output_tokens": 30386,
+    "api_call_count": 60
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-30T16:45:25.864851104Z",
+    "agent_lines": 124,
+    "agent_removed": 1,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 124,
+    "total_lines_changed": 125,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

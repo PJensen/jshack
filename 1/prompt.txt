@@ -1,0 +1,23 @@
+NOTE: NPCs under the efffect of a deleriant stop collecting memories, or their memories become mis-recorder, the wrong person did some crime, or commited some offense --since we just finished a short burst of work around social attribution -- it should be very much do-able.
+
+I think I would want things to be at least tag aware, since tags are those temporary things that can shift how systems interpolate and ingest facts. but I am happy to horse trade with you on this, by tags I mean: "tags" the property on the component, not a [tag] type component.
+
+---
+
+PLEASE READ THIS METHOD:
+
+createCastSpellFromIdentityHook
+
+see anything GROSSLY wrong?
+
+---
+
+why are those tags in the hook!?
+
+---
+
+jesus christ -- this calls into question the whole outgoing commit; you are going to need to review the whole thing somewhat exhaustively, did we not anchor to a clear plan -- I'm 90% sure we did, and we're off the rails there.
+
+---
+
+I'm sorry --- I feel I must stash; this is far too weak to accept, the failures cut far too deeply to warrant continuation.
