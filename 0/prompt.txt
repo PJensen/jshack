@@ -1,0 +1,16 @@
+we need to ensur that `ratatoskr` is spawned into overworld.
+
+---
+
+I've also added `ambient_squirrel.mp3` -- make sure it's got a 300+ turn cooldown, and that it plays when the squirrel is nearby.
+
+---
+
+what a mess -- I'm sorry, you placed audio inside of a log-writer -- almost certainly becuase of a badly named file -- but still, you legitimately stuffed audio inside there.
+
+there are much better approaches to what you did.
+
+why not use any of the canonical audio pathways?
+why not use an "on_seen" style hook?
+
+look at how cave bears emit audio once they see the player.

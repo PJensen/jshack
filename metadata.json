@@ -1,0 +1,36 @@
+{
+  "branch": "master",
+  "checkpoint_id": "88ce4a518e6f",
+  "checkpoints_count": 1,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/display/audio/audioWiring.js",
+    "src/main/scheduler.js",
+    "src/rules/components/AggroState.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/overworldAmbientSystem.js",
+    "tests/aiChase.test.mjs",
+    "tests/audioNewSounds.test.js",
+    "tests/norseContent.test.mjs",
+    "tests/overworldAmbientSystem.test.mjs",
+    "tests/schedulerArchitectureGuards.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 56,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6296576,
+    "input_tokens": 359658,
+    "output_tokens": 21846
+  }
+}
