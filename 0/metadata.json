@@ -1,0 +1,52 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "173d01f0a6ad",
+  "session_id": "019e745b-a59a-78b3-8141-ef56391e3a73",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T18:26:35.441244318Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/features/polymorph.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "37364a65b6b9",
+  "checkpoint_transcript_start": 816,
+  "transcript_lines_at_start": 816,
+  "token_usage": {
+    "input_tokens": 21211,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 721280,
+    "output_tokens": 1811,
+    "api_call_count": 6
+  },
+  "session_metrics": {
+    "turn_count": 14
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T18:26:35.286856497Z",
+    "agent_lines": 139,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 139,
+    "total_lines_changed": 139,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

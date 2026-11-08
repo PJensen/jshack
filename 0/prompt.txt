@@ -1,0 +1,1 @@
+commit the salient details of this conversation into a memo and file it away under the docs file-tree. My intuition is that we may want a 'features' folder under docs that shall serve as the current implementation notes for said feature. I can update this manually on an as needed basis -- for now, conisider polymorph as being the first feature that gets this treatment.
