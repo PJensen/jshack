@@ -32,6 +32,8 @@ import {
   showItemTooltip, hideItemTooltip,
   CHARACTER_MENU_TABS,
   DIALOG_LAYER_Z_INDEX,
+  UI_TOOLTIP_Z_BASE,
+  UI_TOOLTIP_Z_FOCUS,
 } from './overlayUtils.js';
 
 // Re-export renderItemDetails from overlayUtils as a public API
@@ -1220,18 +1222,16 @@ export function initOverlays() {
     renderRack(rack, d, _rackState);
   });
 
-  const TOOLTIP_BASE_Z = 850;
-  const TOOLTIP_FOCUS_Z = 860;
   /** @param {HTMLDivElement} active */
   function focusGameplayTooltip(active) {
     const tooltips = [groundTip, stairTip, interactableTip, trapTip];
     for (const tip of tooltips) {
       if (tip === active) {
         tip.style.display = 'block';
-        tip.style.zIndex = String(TOOLTIP_FOCUS_Z);
+        tip.style.zIndex = String(UI_TOOLTIP_Z_FOCUS);
       } else {
         tip.style.display = 'none';
-        tip.style.zIndex = String(TOOLTIP_BASE_Z);
+        tip.style.zIndex = String(UI_TOOLTIP_Z_BASE);
       }
     }
   }

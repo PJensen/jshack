@@ -9,6 +9,9 @@ import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
 export const UI_ROOT_Z_INDEX = 1000;
+// Gameplay prompts must sit above HUD panels; modal dialogs use their own layer.
+export const UI_TOOLTIP_Z_BASE = 1490;
+export const UI_TOOLTIP_Z_FOCUS = 1500;
 export const SPEECH_BUBBLE_LAYER_Z_INDEX = 2147483000;
 export const DIALOG_LAYER_Z_INDEX = 2147483100;
 
