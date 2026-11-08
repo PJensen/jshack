@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "a1fd6e719c0f",
+  "session_id": "019f38c2-0cc5-7232-91be-e45699b57e3f",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-06T19:04:52.533453921Z",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/bridge/schema/weaponVfxResolver.js",
+    "src/display/fx/meleeSlashFx.js",
+    "src/rules/data/affixes.js",
+    "src/rules/data/weaponVisualAffinity.js",
+    "src/rules/environment/dungeon/underworldRegions.js",
+    "src/rules/systems/combatSystem.js",
+    "tests/combat.test.mjs",
+    "tests/weaponVisualAffinity.test.mjs",
+    "tests/worldViewWeaponVfxProfiles.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "4ddfc6fd5dec",
+  "token_usage": {
+    "input_tokens": 340635,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7279616,
+    "output_tokens": 27244,
+    "api_call_count": 52
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-06T19:04:52.481669916Z",
+    "agent_lines": 591,
+    "agent_removed": 78,
+    "human_added": 0,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 592,
+    "total_lines_changed": 670,
+    "agent_percentage": 99.85074626865672,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

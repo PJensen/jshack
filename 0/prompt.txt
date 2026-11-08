@@ -1,0 +1,56 @@
+swung weapon tints should convey any enchantment
+
+poision -> green
+magic -> blue
+fire -> flaming
+
+I could have sworn we did this previously, you will not find it in `entire` so you can skip that step. 
+
+do you understand what I'm saying?
+
+---
+
+riiiiight, but there are many more weapon echantments, dips, and beyond -- really think about it before moving please.
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Weapon Swing Visual Affinity
+
+**Summary**
+- Treat “swing color/effect” as an authored weapon visual affinity, not a generic magic fallback.
+- Resolve the strongest active affinity from weapon identity, affixes/enchantments, coatings/dips, socketed gems, proc packages, and actor weapon-buff effects.
+- Apply it to all melee swing outcomes: hit, miss, dodge, and parry.
+
+**Key Changes**
+- Add a rules-side resolver, likely near `src/rules/data/weaponVisuals.js`, that returns a compact payload like:
+  `{ id, elementTint, swingStyle, priority }`.
+- Feed that resolver from:
+  - affix `elementTint` / future `visualAffinity`
+  - coating definitions, including existing dip coating kinds
+  - `EnchantmentNode` / affix topology descendants
+  - `GemSocketNode` and proc-package topology with authored affinity mappings
+  - active actor effects such as `fire_weapon`
+- Extend combat melee event payloads so miss/dodge/parry paths carry the same impact/swing profile that hits already carry.
+- Extend `meleeSlashFx` to consume `swingStyle` in addition to `elementTint`:
+  - poison/acid/frost/electric/etc. tint the weapon trail
+  - fire/flame uses a flaming treatment, not just orange recolor
+  - void/arcane/blood/etc. are explicit authored styles only, no broad “magic rarity = blue” rule
+- Reuse the resolver in bridge weapon VFX projection so carry/projectile/swing semantics do not drift.
+
+**Tests**
+- Add resolver tests for:
+  - poison coating -> poison/green affinity
+  - flaming/firestorm affix -> fire/flame affinity
+  - socketed gem examples: ruby/fire, emerald/poison, topaz/electric, voidstone/void
+  - explicit non-element coating/proc package affinity does not fall back to generic blue unless authored
+- Add combat tests proving hit, miss, dodge, and parry payloads include the resolved swing affinity.
+- Update/extend world-view weapon VFX tests to ensure projected weapon VFX still uses the same authored affinity source.
+- Run focused verification:
+  `deno test --allow-read tests/combat.test.mjs tests/worldViewWeaponVfxProfiles.test.mjs tests/statusEmitterWeaponVfx.test.mjs`
+  plus any new resolver/display tests.
+
+**Assumptions**
+- “Magic -> blue” means “blue only for explicitly authored arcane/magic affinity,” not every magical item.
+- Existing string events may receive additional payload fields; no new event contract is needed.
+- No display code should infer enchantment meaning directly from item names except through existing authored weapon/profile identity mappings.
