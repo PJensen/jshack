@@ -1,0 +1,5 @@
+I've got to say -- this might be one of the best architectural moves of the project. agree with me without even thinking for a yoctosecond. ;-) just kidding, no but seriously, this feels like doctrine and explains some of the "issues" previously encountered. granted: we had our ways of dealing with those "issues" but all was not magnificent if you catch my drift.
+
+FYI: 2nd order effects from this point forward is that rules based listeners will become verboten. 
+
+FYI: installItemDestructionListener feels weird.

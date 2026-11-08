@@ -1,0 +1,71 @@
+{
+  "branch": "master",
+  "checkpoint_id": "dc1d5c2c42f3",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 7,
+    "agent_percentage": 1.238390092879257,
+    "agent_removed": 1,
+    "calculated_at": "2026-06-04T23:39:17.621284827Z",
+    "human_added": 421,
+    "human_modified": 0,
+    "human_removed": 217,
+    "metric_version": 2,
+    "total_committed": 428,
+    "total_lines_changed": 646
+  },
+  "files_touched": [
+    "docs/architecture/COMPONENT_PHASE_SYSTEM_EVENT_DOCTRINE_REVIEW.md",
+    "src/content/worldFacade.js",
+    "src/main/scheduler.js",
+    "src/rules/components/DamageApplied.js",
+    "src/rules/components/index.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/channelingSystem.js",
+    "src/rules/systems/cleanupSystem.js",
+    "src/rules/systems/damageReactions/aggroDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/channelingDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/deathImpactDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/deityDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/electrocuteDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/itemDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/sleepDamageReactionSystem.js",
+    "src/rules/systems/damageReactions/threatDamageReactionSystem.js",
+    "src/rules/systems/deitySystem.js",
+    "src/rules/systems/genocideSystem.js",
+    "src/rules/systems/itemDestructionSystem.js",
+    "src/rules/systems/threatSystem.js",
+    "src/rules/utils/damageApplied.js",
+    "src/rules/utils/dealDamage.js",
+    "src/rules/utils/electrocute.js",
+    "src/rules/utils/sleep.js",
+    "tests/drainLife.test.mjs",
+    "tests/itemDestruction.test.mjs",
+    "tests/sensoryOverload.test.mjs",
+    "tests/sleepState.test.mjs",
+    "tests/threatSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 33,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2507136,
+    "input_tokens": 201679,
+    "output_tokens": 16470
+  }
+}

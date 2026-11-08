@@ -1,0 +1,54 @@
+two new arch updates to ecs-js -- events can now be classes for better contracts, install gaurds have been made canonical. naturally this is a huge lift; but see what you can do to explore the terrain, how big of a lift it is.
+
+---
+
+why dont you make two concrete moves; one in each direction to prove a couple simple cases.
+
+migrate one event
+migrate one installer gaurd
+
+NOTE: I do not agree that events are not shared and can ref ecs-js -- that doesnt make sense, we since our aim is to get them under the yoke. ;-)
+
+---
+
+why not stay broadly within one system, surely scoring also had an event  -- catch my drift?
+
+---
+
+gross.
+
+---
+
+try that again, please; I think the system split might be fine.
+
+---
+
+??
+
+---
+
+si?
+
+---
+
+?
+
+---
+
+?
+
+---
+
+?
+
+---
+
+?
+
+---
+
+tell you what, lets make this happen organically
+
+---
+
+lets add this as a critical instruction to AGENTS.md
