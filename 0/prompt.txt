@@ -1,0 +1,3 @@
+Lets make certain that the economy debugging graph is showing whatever time series that best reflect the state of the town economy.
+
+Same graph: The two letter labels are a little hard to understand

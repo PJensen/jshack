@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "d0e338071cfa",
+  "session_id": "019f32ae-01d0-78c3-99f5-1113c7ed3376",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-05T14:43:36.125999894Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/ui/debugGraph.js",
+    "src/display/ui/overlay.js",
+    "src/rules/systems/townSimulationSystem.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "566288c1a5e5",
+  "checkpoint_transcript_start": 376,
+  "transcript_lines_at_start": 376,
+  "token_usage": {
+    "input_tokens": 139345,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1177472,
+    "output_tokens": 2666,
+    "api_call_count": 9
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-05T14:43:36.06078628Z",
+    "agent_lines": 16,
+    "agent_removed": 9,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 16,
+    "total_lines_changed": 25,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
