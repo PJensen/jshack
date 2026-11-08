@@ -1,0 +1,3 @@
+And --- we'll do a scan of the situation broadly speaking to see what else we can turn up -- I'm sure their is a fair bit of this addiitional conversion work and conceptual compression work and canonicalization work to happen.
+
+But I think finishing the three we're targeting and commiting and pushing is the right move to start.

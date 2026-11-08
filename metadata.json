@@ -1,0 +1,68 @@
+{
+  "branch": "master",
+  "checkpoint_id": "fb0cecda2f48",
+  "checkpoints_count": 5,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 2,
+    "agent_percentage": 2.5806451612903225,
+    "agent_removed": 2,
+    "calculated_at": "2026-11-07T20:27:30.494130335Z",
+    "human_added": 78,
+    "human_modified": 0,
+    "human_removed": 73,
+    "metric_version": 2,
+    "total_committed": 80,
+    "total_lines_changed": 155
+  },
+  "files_touched": [
+    "docs/architecture/SPELL_IDENTITY_CONVERSION_TARGETS.md",
+    "src/bridge/schema/worldView.js",
+    "src/display/ui/hud.js",
+    "src/rules/ai/policyFeatures.js",
+    "src/rules/data/combatInteractions.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/intentValidationSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "src/rules/utils/channelInterruptionPolicy.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "src/rules/utils/speedGate.js",
+    "src/rules/utils/spellDamage.js",
+    "tests/classAbilities.test.mjs",
+    "tests/frostNova.test.mjs",
+    "tests/gazeStun.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 94,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 13445120,
+    "input_tokens": 208916,
+    "output_tokens": 41553
+  }
+}
