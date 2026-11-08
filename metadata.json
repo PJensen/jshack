@@ -1,0 +1,32 @@
+{
+  "branch": "master",
+  "checkpoint_id": "cabcd71ab32b",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/main/debug/debugCommands.js",
+    "src/rules/utils/charges.js",
+    "src/rules/utils/effects.js",
+    "src/rules/utils/stasis.js",
+    "tests/dealDamage.test.mjs",
+    "tests/statusEffectApplication.test.mjs",
+    "tests/wandOfStasis.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 26,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1821440,
+    "input_tokens": 121308,
+    "output_tokens": 8936
+  }
+}
