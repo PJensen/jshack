@@ -1,0 +1,71 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "698dfafe352c",
+  "session_id": "019e745b-a59a-78b3-8141-ef56391e3a73",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T16:33:24.619327523Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/content/monsters/special.js",
+    "src/main/wiring/scrollWandWiring.js",
+    "src/rules/components/PolymorphProfile.js",
+    "src/rules/components/index.js",
+    "src/rules/data/monsters.js",
+    "src/rules/utils/polymorphPolicy.js",
+    "tests/polymorphPolicy.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "b289dae8fb60",
+  "checkpoint_transcript_start": 429,
+  "transcript_lines_at_start": 429,
+  "token_usage": {
+    "input_tokens": 90417,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4106752,
+    "output_tokens": 13320,
+    "api_call_count": 24
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T16:33:24.558268933Z",
+    "agent_lines": 304,
+    "agent_removed": 8,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 304,
+    "total_lines_changed": 312,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 273,
+      "agent_lines_removed": 8,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

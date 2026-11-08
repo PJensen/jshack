@@ -1,0 +1,9 @@
+fantastic work -- why dont you move on to #5 and #6  and even parts of #7-- same mindset, same level of quality. PLEASE NOTE: once we have the resistance in place,  we'll want to make a couple  select creatures resistant to it.  Keep cooking!
+
+---
+
+love the profile idea -- I wonder if failure modes can be codified there too -- if you think about it it might work quite nicely. it could be styles of failure, it could be super precise.
+
+one issue I have is that you just invented your own clamp01 -- surely we have a utility for that already.
+
+also: I want you to very clearly document what stability is vs resistance, the number "2" for example is't clear while the % is quite clear.
