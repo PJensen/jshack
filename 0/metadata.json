@@ -1,0 +1,61 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "f290e6efab82",
+  "session_id": "01a17874-72fa-7523-acca-cac8c07a93ac",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-26T13:57:45.350541296Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "docs/architecture/ITEM_EFFECT_LIFECYCLE.md",
+    "src/content/items/boots.js",
+    "src/main/scheduler.js",
+    "src/rules/content/items/breadcrumbBoots.js",
+    "src/rules/data/procPackages.js",
+    "src/rules/systems/movementProcSystem.js",
+    "src/rules/systems/movementSystem.js",
+    "tests/movementProc.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "387814d6571f",
+  "checkpoint_transcript_start": 87,
+  "transcript_lines_at_start": 87,
+  "compact_transcript_start": 15,
+  "token_usage": {
+    "input_tokens": 85066,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3260800,
+    "output_tokens": 10919,
+    "api_call_count": 31
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-26T13:57:45.26897294Z",
+    "agent_lines": 148,
+    "agent_removed": 46,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 148,
+    "total_lines_changed": 194,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
