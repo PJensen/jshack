@@ -1,0 +1,10 @@
+ratatoskr 
+chick
+are BOTH missing labels
+
+the label is above the character glyph
+
+example:
+
+kitty
+f
