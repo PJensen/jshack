@@ -1,0 +1,66 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "f3ff79192f5d",
+  "session_id": "019e73e9-acfc-7662-a61d-be3fe38dc3d8",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T15:30:13.232160455Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/components/ShopClaim.js",
+    "src/rules/components/index.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/utils/shopClaims.js",
+    "src/rules/utils/shopLaw.js",
+    "tests/shopClaim.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "5eec05a49c41",
+  "token_usage": {
+    "input_tokens": 316404,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4011264,
+    "output_tokens": 22320,
+    "api_call_count": 49
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T15:30:13.18223733Z",
+    "agent_lines": 495,
+    "agent_removed": 196,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 495,
+    "total_lines_changed": 691,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+we've been busy building clever systems for tracking clever player exploits and weaving them back into the game systems. the overall objectives seek to encourage the player to exploit the shop and shopkeeper in progressively more clever ways. things like consuming or benefiting from (extracting value) an item in the shop, blinking outside the shop while holding an item, teleporting after picking up many items, polymorphing the shop keeper (not implemented on NPCs), and a host of other explots that we cannot even imagine -- multi-step, etc.
+
+---
+
+we've been busy building clever systems for tracking clever player exploits and weaving them back into the game systems. the overall objectives seek to encourage the player to exploit the shop and shopkeeper in progressively more clever ways. things like consuming or benefiting from (extracting value) an item in the shop, blinking outside the shop while holding an item, teleporting after picking up many items, polymorphing the shop keeper (not implemented on NPCs), and a host of other explots that we cannot even imagine -- multi-step, etc.
+
+the overarching point is that we need to come up with an equally clever way of detecting and silently tracking these forms of exploitation and value extractiong, while folding the consequences back into gameplay.
+
+---
+
+we've been busy building clever systems for tracking clever player exploits and weaving them back into the game systems. the overall objectives seek to encourage the player to exploit the shop and shopkeeper in progressively more clever ways. things like consuming or benefiting from (extracting value) an item in the shop, blinking outside the shop while holding an item, teleporting after picking up many items, polymorphing the shop keeper (not implemented on NPCs), and a host of other explots that we cannot even imagine -- multi-step, etc.
+
+the overarching point is that we need to come up with an equally clever way of detecting and silently tracking these forms of exploitation and value extractiong, while folding the consequences back into gameplay.
+
+at present there is some overlap between shop law and shop debt and these may be consolidated.
+
+your task this morning is to consider consolidation; as well as simplifying the overall model -- without saccraficing continuity, impact, effect, durability and future system feedback and integration.
+
+---
+
+???? 
+
+`recordUnpaidExtraction` for simple shop debts?
+
+I feel you are taking a wrong turn; we may need to revert this -- it's not clean at all.
+
+---
+
+what would you do -- I think I can back `recordShopClaim` since it appears to server the broader purpose.
+
+---
+
+I agree broadly with this design direction. why dont you take a comprehensive crack at it -- really push here.
