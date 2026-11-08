@@ -1,0 +1,2 @@
+FYI: when the dodge mechanic is up, all movement must be disabled.
+FYI: play testing reveals that visible traps do not have the expected disarm behavior.
