@@ -1,0 +1,105 @@
+#  Dungeon Lighting Themes
+the expanding lighting vocabulary much more deliberately.
+
+## Good candidates:
+Crypt rooms: candles/embers, low radius, soft warm pools.
+Hydraulics rooms: cold blue-green pulses near vents/plinths.
+Spider rooms: biolum mushrooms/web motes, dim green-blue breathing light.
+Shrine rooms: holy pulse for good shrines, void/occult absorption for cursed/dark shrines.
+Armory rooms: metal glints from weapon racks, sharper low-radius highlights.
+Kitchen rooms: cooking fire plus ember floor warmth.
+Some of this can be done with existing feature identities and collectLightSources. 
+
+For richer authored behavior, I’d add a component like:
+LightEmitter {
+  radius,
+  color,
+  pattern,
+  softness,
+  kind,          // normal | void (this may not be needed with a null voidStrength)
+  voidStrength, // honestly anything other than null should imply void
+}
+
+Then room generation can place lighting intent as data instead of adding more kind === ... checks in display code.
+
+5. Floor / Volume Later
+The demo’s material and volume ideas are promising, but I would not start there.
+Later additions:
+mist/fog/spore volume tiles
+glowing rune floor
+voidstone floor patches
+reflective wet floors
+cold ice rooms with bluish scatter
+smoke-filled fire rooms
+
+want to start hammering?!
+
+---
+
+No sorry -- this is a display/rules side leak / violation. I suppose I was thinking about using the lighting engine much more robustly across the dungeon.
+
+Think with me -- better options?
+
+---
+
+I would almost rather decorate things with new components and attach lighting tags to those new decorative components, that way our room generatio can subsequently place things thematically.
+
+otherwise, if we go in the above direction, we'll have random unaccounted for light sources popping up randomly.
+
+does that make sense?
+
+you are going to have to be creative to dream up new components to suit these various themes, and maybe even new room types that take advantage.
+
+overall, we need to make the dungeon really come alive -- the lighing engine is just too good to skip out on.
+
+---
+
+I would almost rather decorate things with new components and attach lighting tags to those new decorative components, that way our room generatio can subsequently place things thematically.
+
+otherwise, if we go in the above direction, we'll have random unaccounted for light sources popping up randomly.
+
+does that make sense?
+
+you are going to have to be creative to dream up new components to suit these various themes, and maybe even new room types that take advantage.
+
+overall, we need to make the dungeon really come alive -- the lighing engine is just too good to skip out on.
+
+---
+
+you are missing a whole bunch of dead end rooms too, at any rate, dream up these light component based, tagged light sources and lets start weaving them into dungeon generation.
+
+there is a lot to do here, but these myriad light sources will really help sell the game beyond just torches on repeat.
+
+otherwise. I agree with the various room ideas you have listed, and perhaps, things need not always be dead end rooms.
+
+anyhow -- your objective is to go far and hard. impress us all!
+
+---
+
+stopping you see the problem here:
+
+  [NamedIdentity, { name: "Anvil", identity: "anvil" }],
+  [Material, { kind: "iron" }],
+  [Collider, { solid: true, blocksSight: false }],
+  [ReflectiveSurface, { material: "iron", polish: 0.8 }],
+
+you need not let display leak into rules in this way, make it steel if you need something reflective. come on man, be smart about this.
+
+same here:
+
+  [NamedIdentity, { name: "Furnace", identity: "furnace" }],
+  [Material, { kind: "stone" }],
+  [Collider, { solid: true, blocksSight: false }],
+  [FlameSource, { fuel: "furnace", active: true }],
+  [Interactable, {
+    action: "smeltOre",
+    params: { idleState: "unlit", activeState: "lit", activeDuration: 5 },
+  }],
+
+plenty of components are carrying the detail. know what I'm saying? make sure to look at existing generation, and existing tags, and beyond.
+
+---
+
+you got it -- new decoration components, new ways of looking at existing components, (a triggered shock trap) did you understand what I was saying" new decorations are perfect, but we should INFER from them the light to use with the assistance of tags. this is legimately all about using the things we've got to brew up new archetypes and decorations, not to invent new ways of carrying state around.
+
+make the moves please.

@@ -1,0 +1,51 @@
+{
+  "branch": "master",
+  "checkpoint_id": "911284fc7d06",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 308,
+    "agent_percentage": 99.40298507462687,
+    "agent_removed": 25,
+    "calculated_at": "2026-06-14T20:52:33.067354214Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 309,
+    "total_lines_changed": 335
+  },
+  "files_touched": [
+    "VERSION",
+    "src/bridge/schema/worldView.js",
+    "src/display/lighting/sources/index.js",
+    "src/display/palette/base.js",
+    "src/display/palette/index.js",
+    "src/rules/archetypes/RoomFeatures.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/dungeonAtmosphereLighting.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 77,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 10712832,
+    "input_tokens": 474649,
+    "output_tokens": 32768
+  }
+}
