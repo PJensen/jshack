@@ -1,0 +1,1 @@
+ensure various other shops get locked at night, right now I think only the gem store is locked at night, this means provisioning keys, giving keys to the various shop owners, locking the requisite doors and so on.
