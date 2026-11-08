@@ -1,0 +1,47 @@
+{
+  "branch": "master",
+  "checkpoint_id": "8ac65b57a84e",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 109,
+    "agent_percentage": 98.29059829059828,
+    "agent_removed": 6,
+    "calculated_at": "2026-06-10T21:51:23.339665968Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 110,
+    "total_lines_changed": 117
+  },
+  "files_touched": [
+    "VERSION",
+    "src/rules/data/buildings/abandoned_camp.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/overworldStructures.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 20,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2530816,
+    "input_tokens": 190059,
+    "output_tokens": 7903
+  }
+}

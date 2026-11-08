@@ -1,0 +1,66 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "8ac65b57a84e",
+  "session_id": "019eb370-ca90-7c63-8995-f61329485f16",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-10T21:47:26.157297941Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/rules/data/buildings/abandoned_camp.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/overworldStructures.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "3c87de593f50",
+  "checkpoint_transcript_start": 172,
+  "transcript_lines_at_start": 172,
+  "token_usage": {
+    "input_tokens": 190059,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2530816,
+    "output_tokens": 7903,
+    "api_call_count": 20
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-10T21:47:26.100127525Z",
+    "agent_lines": 109,
+    "agent_removed": 6,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 109,
+    "total_lines_changed": 115,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 100,
+      "agent_lines_removed": 5,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
