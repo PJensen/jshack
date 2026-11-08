@@ -1,0 +1,23 @@
+Dude -- Leech Blade still not migrated to new display approach, still shows proc nodes, please have a look! We'd previously been essentially hiding proc-nodes and adding "Equip: summary text here" - with printf meta if needed.
+
+attached screenshot of the bad item -- I would scan or use agent tools to figure out what the hell is going on.
+
+---
+
+I see -- I'll bet we never covered classical "affix" stuff -- we should form a migration plan and work through it if at all possible.
+
+---
+
+can you explain the conceptual difference between affix and proc node?
+
+---
+
+how is it going?
+
+---
+
+why are my commits just hanging all of a sudden?
+
+---
+
+it's suddenly constant, just happenned today after thousands of commits on this project
