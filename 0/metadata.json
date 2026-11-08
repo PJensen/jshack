@@ -1,0 +1,65 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "23604901bd94",
+  "session_id": "019f3ca5-6b1d-7891-b293-c9ae83073195",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T13:09:44.642354164Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/content/items/spellbooks.js",
+    "src/display/fx/projectileFx.js",
+    "src/display/fx/spiritWispFx.js",
+    "src/display/palette/base.js",
+    "src/display/ui/hud.js",
+    "src/events/FearSpellCast.js",
+    "src/main.js",
+    "src/main/debug/debugCommands.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "tests/fear.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "14d961dcc4aa",
+  "token_usage": {
+    "input_tokens": 130424,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4788736,
+    "output_tokens": 15502,
+    "api_call_count": 52
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T13:09:44.60846283Z",
+    "agent_lines": 378,
+    "agent_removed": 5,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 378,
+    "total_lines_changed": 383,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
