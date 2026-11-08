@@ -1,0 +1,31 @@
+{
+  "branch": "master",
+  "checkpoint_id": "a3a7b53c1d5d",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "tests/barkeepStoryWiring.test.mjs",
+    "tests/carrionShade.test.mjs",
+    "tests/massDeliriumScroll.test.mjs",
+    "tests/monsterAbilities.test.mjs",
+    "tests/monsterAuras.test.mjs",
+    "tests/ratatoskrSystem.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 57,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5631744,
+    "input_tokens": 225357,
+    "output_tokens": 14115
+  }
+}
