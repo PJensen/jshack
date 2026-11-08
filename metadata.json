@@ -1,0 +1,23 @@
+{
+  "branch": "master",
+  "checkpoint_id": "79bcf5479e4f",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION",
+    "src/rules/archetypes/Items.js",
+    "src/rules/content/items/itemHooks.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "tests/cursedHealthPotion.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit"
+}
