@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "cbeb5f5e1533",
+  "session_id": "019e9d60-fcfe-7873-9dfc-3e88f8953e5b",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-10T12:41:42.720307268Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/main/wiring/savegameLoad.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "a948fe9adddc",
+  "token_usage": {
+    "input_tokens": 1433617,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 22667264,
+    "output_tokens": 88616,
+    "api_call_count": 190
+  },
+  "session_metrics": {
+    "turn_count": 19
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-10T12:41:42.422621727Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 224,
+    "human_modified": 2,
+    "human_removed": 0,
+    "total_committed": 224,
+    "total_lines_changed": 238,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}

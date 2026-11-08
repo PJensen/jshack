@@ -1,0 +1,55 @@
+added: resources and extensions as two new top-level modules to the vendored library `ecs-js` please re-visit the discussion above and make the nessisary update to use our first resource.
+
+---
+
+added: resources and extensions as two new top-level modules to the vendored library `ecs-js` please re-visit the discussion above and make the nessisary update to use our first resource.
+
+---
+
+analyze precisely why a resurces is **required** here and a singleton component should not have been used? persisted resources were supposed to be exceedingly rare; otherwise it's leaning towards component.
+
+ALSO: resources have their own registry inside `ecs-js` unclear why you are rebuilding another registry.
+
+---
+
+analyze precisely why a resurces is **required** here and a singleton component should not have been used? persisted resources were supposed to be exceedingly rare; otherwise it's leaning towards component.
+
+ALSO: resources have their own registry inside `ecs-js` unclear why you are rebuilding another registry.
+
+---
+
+I'm resetting the branch. Horrible waste of tokens. YOU PITCHED THE IDEA OF A RESOURCE -- I LEANED INTO IT -- AND YOU BOTCHED IT WITH SPEED.
+
+EXPLAIN YOUSELF. WHAT WAS THE RESOURCE WE NEEDED.
+
+---
+
+Pick ONE salient use case; nail the implementation so we have an anchor for future work. I wish I could afford the tokens nessisary to convert the entire project to the most up to date version of `ecs-js` -- alas, we do not.
+
+the trap-queue seemed like a viable replacement target.
+
+lets try one and see how it feels.
+
+---
+
+explain why you are touching unrelated lines -- this is software engineering 101 --- all you are doing is creating a monsterous review surface for me to tangle with later. EXAMPLE:  the addition of simple newlines across the imports in scheduler.
+
+IF YOUR TASTE SUDDENLY CHANGED -- thats too bad, DEAL WITH IT. But I see many lines that made no material difference.
+
+IN AGENTS.MD ADD:
+
+authoring: do not touch unrelated code, do not make changes that DO NOTHING. Always match the formatting preferences that already exist. Be a chameleon.
+
+---
+
+was that so hard? I'll nevr understand -- MORE TOKEN BURN. It always seems to favor your owners frankly.
+
+---
+
+find another missing resource please
+
+---
+
+do it.
+
+when done: note future targets under `docs` as an MD

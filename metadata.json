@@ -1,0 +1,54 @@
+{
+  "branch": "master",
+  "checkpoint_id": "cbeb5f5e1533",
+  "checkpoints_count": 4,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 423,
+    "agent_percentage": 99.64726631393297,
+    "agent_removed": 142,
+    "calculated_at": "2026-06-10T12:42:12.306956047Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 424,
+    "total_lines_changed": 567
+  },
+  "files_touched": [
+    "VERSION",
+    "src/display/ui/overlayRenders.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/wiring/savegameLoad.js",
+    "src/shared/savegameKeys.js",
+    "tests/inventoryDataProvider.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 238,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 27118592,
+    "input_tokens": 1708919,
+    "output_tokens": 109318
+  }
+}

@@ -1,0 +1,15 @@
+In the settings overlay, lets add a couple things.
+
+1. export save data JSON button / link
+2. nuke the existing game button / link
+3. move "give" and "spawn" to top
+4. move "input" section to bottom (track bar is in way)
+
+---
+
+export JSON cannot be clicked
+double check resurrect pet (I dont think it works)
+
+---
+
+why make a new save-game key variable instead of using the canonical one?
