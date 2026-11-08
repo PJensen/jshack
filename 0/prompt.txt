@@ -1,0 +1,37 @@
+what is the next GREENLIGHT issue?
+
+---
+
+think it can do it?
+
+---
+
+greenlight-fast didn't auto commit and push
+
+---
+
+still a pending story.md out there and likely an open issue to match
+
+---
+
+CLOSE THELOOP! lets get this DONE.
+
+this thing needs to be e2e both paths
+
+---
+
+AND COMMIT THE STORY TWEAK!
+
+---
+
+and PUSH!
+
+---
+
+NOPE -- not the ask -- it's FIX THE LAUNCHER -- DO NOT COMMIT -- LEAVE IT ON IGNORE
+
+SHIP EVERYTHING BUT -- JESUS CHRIST
+
+---
+
+riiiiiight, now greenlight issues (all types) will ship e2e right?!
