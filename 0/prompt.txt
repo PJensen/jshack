@@ -1,0 +1,7 @@
+some play testing notes:
+
+1. far too many creatures are doing battle before I ever arrive. creature infighing across species needs to be cut down, maybe behind a flag
+2. traversing up and down between overworld and dungeon subsequently lets me walk of of the door of any shop with an armful of goods.
+3. shopkeepers should all have little cottages instead of sleeping in their shops. that way they have more interesting behavior as well as opening up stealing from shops at night. 
+
+do you're very best!
