@@ -1,0 +1,1 @@
+one note I have, commit messages are to be all lower case, in fact I'd update agents.md to record precisel this fact, feat: docs: fix: arch: etc
