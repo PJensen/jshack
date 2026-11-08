@@ -1,0 +1,13 @@
+js-hack
+
+shooting at an empty tile does nothing, I think it fires the action, but there is no vfx, certainly no arrow left in the ground, etc.
+
+let me check flaming arrows, bomb arrows, yielded a rectangle on fire, no sound triggered, no in-flight projectile -- otherwise, an as area of denial weapon, it worked remarkably well.
+
+except for the fact that when I hit a forest, the fire didn't spread like a torch might have.
+
+what else -- the fire pulses between each tick (this is VFX work and can be a followup)
+
+---
+
+wow -- it feels like we are almost accelterating in a sense -- we've built up so much architecture, things are becoming easier and easier.

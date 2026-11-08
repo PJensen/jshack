@@ -1,0 +1,68 @@
+{
+  "cli_version": "0.10.2",
+  "checkpoint_id": "ae36b4a5975d",
+  "session_id": "01a17990-0660-7113-ab1c-d7135a963144",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-26T18:56:37.872502851Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/display/fx/fxEntries.js",
+    "src/display/fx/projectileFx.js",
+    "src/rules/systems/hazardSystem.js",
+    "src/rules/systems/rangedAttackSystem.js",
+    "tests/hazardSystem.test.mjs",
+    "tests/rangedAttack.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "39954808e937",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 114206,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3319040,
+    "output_tokens": 9860,
+    "api_call_count": 38
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-26T18:56:37.818223859Z",
+    "agent_lines": 85,
+    "agent_removed": 14,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 85,
+    "total_lines_changed": 99,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 85,
+      "agent_lines_removed": 14,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
