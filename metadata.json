@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "7da73c10effb",
+  "checkpoints_count": 3,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 81,
+    "agent_percentage": 97.59036144578313,
+    "agent_removed": 0,
+    "calculated_at": "2026-10-30T15:34:21.948275849Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 82,
+    "total_lines_changed": 83
+  },
+  "files_touched": [
+    "src/main/input/rulesDispatch.js",
+    "tests/rulesDispatchShootRanged.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 112,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9387776,
+    "input_tokens": 217723,
+    "output_tokens": 35369
+  }
+}
