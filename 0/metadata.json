@@ -1,0 +1,70 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "04242aa1da77",
+  "session_id": "019e7573-5748-7083-a5f6-4909bbbbfa20",
+  "strategy": "manual-commit",
+  "created_at": "2026-05-29T20:49:48.156130069Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/items/scrolls.js",
+    "src/display/ui/wiring/messages/itemMessages.js",
+    "src/main/scheduler.js",
+    "src/rules/data/itemCatalogHooks.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/shopStock.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/aiScrollSystem.js",
+    "src/rules/utils/scrollReading.js",
+    "tests/massDeliriumScroll.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "337a3875ff71",
+  "token_usage": {
+    "input_tokens": 363359,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9642368,
+    "output_tokens": 24216,
+    "api_call_count": 65
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-05-29T20:49:48.093897738Z",
+    "agent_lines": 265,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 22,
+    "total_committed": 265,
+    "total_lines_changed": 287,
+    "agent_percentage": 92.33449477351915,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1108,
+      "user_lines_removed": 22,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/content/items/scrolls.js": 62,
+        "src/rules/data/itemCatalogHooks.js": 8,
+        "src/rules/data/spells.js": 16,
+        "src/rules/scripts/spells.js": 43,
+        "src/rules/utils/scrollReading.js": 114
+      },
+      "user_removed_per_file": {
+        "src/content/items/scrolls.js": 12,
+        "src/rules/data/itemCatalogHooks.js": 9,
+        "src/rules/scripts/spells.js": 1
+      }
+    }
+  ]
+}

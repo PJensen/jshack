@@ -1,0 +1,38 @@
+we made `confused` a while back - I suppose I am wonderng if we can make a `confusion` area-of-effect spell that has a huge area, I'm talking like the full materialization distance, I forget if it was 20 or 40 tiles.
+
+anyhow -- think with me here -- I wanted to take a short detour; I know we have two really cool items that cause mayhem and monsters to start fighing, but I was thinking about this as being different.
+
+personally, I think this is a really nice utility scroll, the damn thing hits over a wide area, lasts for 50+ turns, it's power (duration) is mediated by spell-power * crit of the caster, the casters own statuses and more.
+
+one general observation is that when reading sccrolls I feel like we could do more to make it feel like active effects have a bearing.
+
+in short:
+
+lets plan to create a scroll called the **scroll of mass delerium** epic, that has these aspects, a fumble of this scroll causes a seriously protracted deleriant effect on the reader.
+
+NOTE: monsters that can read might decide to read this wild scroll ;-) -- I cannot recall if we supported monster scroll using -- I think we might've certainly spell casting.
+
+so three things:
+
+the scroll and it's attached mechanics
+examine monster pickups for scrolls
+examine monster reading
+
+---
+
+agreed on all points; but I'll say that to read a scroll, your vision must be of reasonable quality -- and, any messages, you read, etc, should be mediated through your eyesight quality. -- cut the work into vertical slices (I think you have) and lets get hammering.
+
+---
+
+to clarify one thing -- I suppose spell power should NOT boost power. otherwise casters become OP.
+
+---
+
+I think eyesight and mental status has to be the thing -- at any rate, you are safe to continue since removing crit is simple.
+
+* eyesight
+* hunger roll (distracted)
+* confusion
+* wounded roll (hurting, cant focus)
+
+^ these types of things
