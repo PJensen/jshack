@@ -1,0 +1,5 @@
+totally agree on the next milestone, lets keep working through these:
+
+
+
+> Next milestone is the generic carried/equipped trigger topology, which will let us migrate Sun-Vessel’s passive tick cleanly.
