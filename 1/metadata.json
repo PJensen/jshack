@@ -1,0 +1,61 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "42a2662852dc",
+  "session_id": "019f3cd0-917b-7912-a73d-2ec46b44fa94",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T13:52:56.282908992Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/hud.js",
+    "src/main/ui/hudFeeds.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/ui/statusDisplayMetadata.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/validate.js",
+    "src/rules/systems/effectSystem.js",
+    "tests/effects.test.mjs",
+    "tests/interaction.test.mjs",
+    "tests/inventoryDataProvider.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "b18eae531034",
+  "token_usage": {
+    "input_tokens": 211366,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4594816,
+    "output_tokens": 16216,
+    "api_call_count": 43
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T13:52:56.238961326Z",
+    "agent_lines": 186,
+    "agent_removed": 13,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 186,
+    "total_lines_changed": 199,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

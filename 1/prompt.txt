@@ -1,0 +1,50 @@
+I've got this important idea: right now eating the town stew only sets satiated with no clear VIS entry with no clear beneficial effects. what I would like to see happen is as follows:
+
+1. comsuming town stew uses the glyph of town stew as the vis entry
+2. consuming town stew imparts beneficial effects that last several hundred turns
+3. the beneficial effects are oobviously active based on the VIS entry
+
+In the future, most active effects and VIS entries are likely to be treated in this more direct way -- it's the "Town Stew" acting on the consumer, not that town stew adds X number of effects into the effect stack, or VIS entries.
+
+See what I mean?
+
+and the glyph for the VIS entry *is* town stew itself
+
+NOTE: in a future pass, we're liable to migrate a handful of other things to be this 1:1 more direct approach.
+
+Consider:
+
+town stew -> implies -> { town stew net / composite effect}
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# Town Stew Direct Effect Plan
+
+## Summary
+Make Town Stew consumption apply one active composite effect, `town_stew`, for 300 turns. The player sees one VIS badge for Town Stew using the actual `food_stew` glyph/palette identity, while the rules resolve the composite into light HP regeneration and stamina restoration each tick.
+
+## Key Changes
+- Change `food_stew` from generic `EAT_ON_USE` to `createBuffFoodOnUseHook({ key: "town_stew", turnsLeft: 300, potency: 1 })`, preserving normal nutrition/consumption.
+- Extend `EFFECT_DEFS`/`effectSystem` so an effect definition may run multiple tick operations. Existing single-operation effects remain unchanged.
+- Add `town_stew` effect definition:
+  - `keys: ["town_stew"]`
+  - status/VIS key: `town_stew`
+  - tick operations: `heal` and `stamina_restore`
+  - description: Town Stew’s composite nourishing effect.
+- Update status row projection so `town_stew` can carry display metadata from the `food_stew` palette: name `Town Stew`, stew glyph, stew color/glow-derived hue or direct color.
+- Update HUD effect badge rendering to honor row-provided `name`/`glyph`/visual metadata before falling back to the static `VIS` table.
+
+## Tests
+- Add/extend interaction coverage: using `food_stew` succeeds, consumes the item, feeds the actor, and creates exactly one `ActiveEffects` row keyed `town_stew` with roughly 300 turns.
+- Add effect-system coverage: `town_stew` ticks down, projects `Status` as `town_stew`, heals damaged HP, and restores missing stamina without creating separate `regen` or `energized` active rows.
+- Add UI data-provider coverage: character active effects include a `town_stew` row with `Town Stew` display name and the `food_stew` glyph metadata.
+- Run focused tests:
+  - `deno test --allow-read tests/interaction.test.mjs`
+  - `deno test --allow-read tests/effects.test.mjs`
+  - `deno test --allow-read tests/inventoryDataProvider.test.mjs`
+
+## Assumptions
+- “Several hundred turns” means 300 turns for this pass.
+- The composite benefit is light HP regeneration plus stamina restoration, matching the selected “regen + vigor” package.
+- The VIS badge should remain one row keyed `town_stew`; it should not expose internal component benefits as separate rows.

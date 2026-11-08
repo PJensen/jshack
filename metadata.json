@@ -1,0 +1,53 @@
+{
+  "branch": "master",
+  "checkpoint_id": "42a2662852dc",
+  "checkpoints_count": 3,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 186,
+    "agent_percentage": 100,
+    "agent_removed": 13,
+    "calculated_at": "2026-07-07T13:52:59.919227775Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 186,
+    "total_lines_changed": 199
+  },
+  "files_touched": [
+    "src/content/items/economy.js",
+    "src/display/ui/hud.js",
+    "src/main/ui/hudFeeds.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/ui/statusDisplayMetadata.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/validate.js",
+    "src/rules/systems/effectSystem.js",
+    "tests/effects.test.mjs",
+    "tests/interaction.test.mjs",
+    "tests/inventoryDataProvider.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 70,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7310592,
+    "input_tokens": 535255,
+    "output_tokens": 25451
+  }
+}
