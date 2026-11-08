@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "dc43cdd8ae8c",
+  "checkpoints_count": 2,
+  "cli_version": "0.10.2",
+  "combined_attribution": {
+    "agent_lines": 9,
+    "agent_percentage": 100,
+    "agent_removed": 2,
+    "calculated_at": "2026-09-14T14:37:52.928247894Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 9,
+    "total_lines_changed": 11
+  },
+  "files_touched": [
+    "VERSION",
+    "sw.js"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 28,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1730176,
+    "input_tokens": 100837,
+    "output_tokens": 11735
+  }
+}
