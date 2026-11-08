@@ -2,8 +2,10 @@
   "cli_version": "0.10.2",
   "checkpoint_id": "cfa5e0f4a7b3",
   "strategy": "manual-commit",
+  "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "assets/audio/action_stance_changed.mp3",
     "assets/audio/notification_message_notification.mp3",
     "assets/audio/sacred_rune_lock_holy_magic_activation.mp3",

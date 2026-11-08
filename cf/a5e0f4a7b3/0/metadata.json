@@ -3,9 +3,11 @@
   "checkpoint_id": "cfa5e0f4a7b3",
   "session_id": "01a1b673-fb15-7e23-849d-16e9ec42a307",
   "strategy": "manual-commit",
-  "created_at": "2026-11-08T16:18:27.807265926Z",
+  "created_at": "2026-11-08T16:41:56.454506723Z",
+  "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "assets/audio/action_stance_changed.mp3",
     "assets/audio/notification_message_notification.mp3",
     "assets/audio/sacred_rune_lock_holy_magic_activation.mp3",
@@ -21,15 +23,15 @@
     "turn_count": 4
   },
   "initial_attribution": {
-    "calculated_at": "2026-11-08T16:18:27.241343307Z",
-    "agent_lines": 0,
-    "agent_removed": 0,
+    "calculated_at": "2026-11-08T16:41:55.684756288Z",
+    "agent_lines": 1,
+    "agent_removed": 1,
     "human_added": 0,
     "human_modified": 0,
     "human_removed": 0,
-    "total_committed": 0,
-    "total_lines_changed": 0,
-    "agent_percentage": 0,
+    "total_committed": 1,
+    "total_lines_changed": 2,
+    "agent_percentage": 100,
     "metric_version": 2
   }
 }
