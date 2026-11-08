@@ -1,0 +1,9 @@
+I dont see those new mobs as being available for spawning
+
+---
+
+right, but I should be able to spawn in debug console
+
+---
+
+unknown monster war\_drummer
