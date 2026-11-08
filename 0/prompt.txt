@@ -1,0 +1,5 @@
+Next -- we're going to let players tap on the "Town Stew" VIS entry icon (and any others) and have a UX that shows the underlying effect details. We tried this once before, a long time ago, but various z-index issues, and other overlays were interfering with touch detection.
+
+NOTE: intercept tap/touch/click early -- be careful that touching/tapping/clicking the VIS icon does not move the character
+
+NOTE: ideally, it should draw from the stews actual effects, not some hacked, hard to maintain array of written effects like we do elsewhere.

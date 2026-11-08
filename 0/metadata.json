@@ -1,0 +1,59 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "9f1b0c689d52",
+  "session_id": "019f3cd0-917b-7912-a73d-2ec46b44fa94",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-07T13:58:52.825446269Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/ui/hud.js",
+    "src/display/ui/overlayUtils.js",
+    "src/main/ui/hudFeeds.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/ui/statusDisplayMetadata.js",
+    "tests/hudEffectDetailsArchitecture.test.mjs",
+    "tests/inventoryDataProvider.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "975501d49bbe",
+  "checkpoint_transcript_start": 357,
+  "transcript_lines_at_start": 357,
+  "token_usage": {
+    "input_tokens": 93456,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3654016,
+    "output_tokens": 9865,
+    "api_call_count": 21
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-07T13:58:52.778539869Z",
+    "agent_lines": 182,
+    "agent_removed": 16,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 182,
+    "total_lines_changed": 198,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
