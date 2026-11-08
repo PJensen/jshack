@@ -1,0 +1,26 @@
+{
+  "branch": "codex/separate-quest-effects-hud-v2",
+  "checkpoint_id": "a70886d6b644",
+  "checkpoints_count": 2,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "VERSION"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 8,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1382528,
+    "input_tokens": 5625,
+    "output_tokens": 3466
+  }
+}
