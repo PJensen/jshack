@@ -1,0 +1,46 @@
+{
+  "branch": "master",
+  "checkpoint_id": "02c84df13ee2",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 95,
+    "agent_percentage": 100,
+    "agent_removed": 37,
+    "calculated_at": "2026-06-12T20:56:55.255158518Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 95,
+    "total_lines_changed": 132
+  },
+  "files_touched": [
+    "src/rules/data/lootTables.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/lootResolver.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 40,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3193856,
+    "input_tokens": 241724,
+    "output_tokens": 13619
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "02c84df13ee2",
+  "session_id": "019ebd90-eb23-73a0-80c3-ba6903f7d61f",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-12T20:56:49.963427829Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/rules/data/lootTables.js",
+    "src/rules/environment/dungeon/populate.js",
+    "tests/lootResolver.test.mjs",
+    "tests/populate.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "e3b6ee0c0567",
+  "token_usage": {
+    "input_tokens": 115653,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1050752,
+    "output_tokens": 6071,
+    "api_call_count": 15
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-12T20:56:49.931146445Z",
+    "agent_lines": 95,
+    "agent_removed": 37,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 95,
+    "total_lines_changed": 132,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
