@@ -1,0 +1,31 @@
+did you figure this out?
+
+---
+
+yeah -- "stasis" is radically broken. I used "wand\_stasis" and every creture, breaks it almost instantly.
+
+---
+
+I dont think you understand stasis at all -- do you?
+
+---
+
+"stasis" is a permanent change. like, "stasis" as in -- you aint ever going back.
+
+---
+
+it should be a status node with infinite duration -- do not go investing new non-canonical junk please.
+
+---
+
+I mean -- if you think so, it just seems a little awkward is all.
+
+---
+
+right -- that's how we've been operating -- no sense in adding more boilerplate.
+
+---
+
+I'm still not sure this will meaningfully help us -- if stasis is still not working even after all these tweaks and tunes. I DONT GET IT -- we've messed around so much today -- and yet, nothing seems to be working.
+
+port:8181
