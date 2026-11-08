@@ -1,0 +1,21 @@
+build it
+
+---
+
+I am not sure I love what you did by adding quest details to the rift portal -- I would much rather you attach the quest to it as a child node -- maybe it's taste and preference, but I hate to see a domain object like rift get mangled like that.
+
+---
+
+you could flip the relationship too -- the quest could own the portal, etc.
+
+---
+
+if you are going that far -- [RiftQuestLink] -- could have the portalId and the questId, no need for an attach, just glob em together in an entity/archetype, etc. Right?!  Lets think through this clearly.
+
+---
+
+Lets do that -- feels much cleaner.
+
+---
+
+I did like the auto-cleanup factor, best of both worlds perhaps?

@@ -1,0 +1,94 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "03d3181d6c34",
+  "session_id": "019f420e-75a8-70f2-9ab9-5cf5e8705368",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-08T14:31:57.453238286Z",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "save_step_count": 3,
+  "files_touched": [
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/components/RiftPortal.js",
+    "src/rules/components/RiftQuestLink.js",
+    "src/rules/components/RiftState.js",
+    "src/rules/components/index.js",
+    "src/rules/quests/definitions/priestRift.js",
+    "src/rules/utils/riftRuntime.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "c0eb13c2c4fa",
+  "checkpoint_transcript_start": 343,
+  "transcript_lines_at_start": 343,
+  "token_usage": {
+    "input_tokens": 127579,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4412160,
+    "output_tokens": 9272,
+    "api_call_count": 22
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-08T14:31:57.289840947Z",
+    "agent_lines": 12,
+    "agent_removed": 3,
+    "human_added": 20,
+    "human_modified": 16,
+    "human_removed": 0,
+    "total_committed": 48,
+    "total_lines_changed": 51,
+    "agent_percentage": 29.411764705882355,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 40,
+      "agent_lines_removed": 19,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 899,
+      "user_lines_removed": 16,
+      "agent_lines_added": 40,
+      "agent_lines_removed": 19,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283,
+        "src/main/wiring/transitionWiring.js": 2,
+        "src/rules/components/RiftQuestLink.js": 2,
+        "src/rules/utils/riftRuntime.js": 22,
+        "tests/riftDebugCommands.test.mjs": 5,
+        "tests/townDialogQuestIntegration.test.mjs": 3
+      },
+      "user_removed_per_file": {
+        "src/main/wiring/transitionWiring.js": 2,
+        "src/rules/utils/riftRuntime.js": 8,
+        "tests/riftDebugCommands.test.mjs": 3,
+        "tests/townDialogQuestIntegration.test.mjs": 3
+      }
+    }
+  ]
+}

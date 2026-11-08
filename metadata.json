@@ -1,0 +1,52 @@
+{
+  "branch": "master",
+  "checkpoint_id": "03d3181d6c34",
+  "checkpoints_count": 5,
+  "cli_version": "0.7.7",
+  "combined_attribution": {
+    "agent_lines": 64,
+    "agent_percentage": 97.6470588235294,
+    "agent_removed": 19,
+    "calculated_at": "2026-07-08T14:32:19.480471259Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 65,
+    "total_lines_changed": 85
+  },
+  "files_touched": [
+    "VERSION",
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/components/RiftPortal.js",
+    "src/rules/components/RiftQuestLink.js",
+    "src/rules/components/RiftState.js",
+    "src/rules/components/index.js",
+    "src/rules/quests/definitions/priestRift.js",
+    "src/rules/utils/riftRuntime.js",
+    "tests/riftDebugCommands.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 22,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4412160,
+    "input_tokens": 127579,
+    "output_tokens": 9272
+  }
+}
