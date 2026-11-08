@@ -1,0 +1,19 @@
+I'm torn between a new type of interactable that represents a "RuneStone" -- tricky since it overlaps very heavily with the mechanics of a shrine. 
+
+It may be that I want to severely boost the capabilities of a shrine -- when exposed to the sun / moonlight in overworld especially
+
+I was to make a special type of interactable object that has some interesting properties.
+
+it has the following glyph: ᚱ (this aspect is especially optional)  -- if we decde to re-use shrine itself.
+
+## behavior
+
+when interacted with (on a long, days long cooldown): it gives you an interesting status effect -- each are kind of interesting, boosted critical strike % for a day, immune to poision damage for a day, this whole class of things, Ideally we'd make them scripted.
+
+but I've not gone so far as doing content authoring for interactables to make it so clean.
+
+I'm conflicted.
+
+---
+
+do it

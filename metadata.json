@@ -1,0 +1,55 @@
+{
+  "branch": "master",
+  "checkpoint_id": "3088e85cc2b9",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 1,
+    "agent_percentage": 2.941176470588235,
+    "agent_removed": 0,
+    "calculated_at": "2026-06-12T20:13:41.071284295Z",
+    "human_added": 27,
+    "human_modified": 0,
+    "human_removed": 6,
+    "metric_version": 2,
+    "total_committed": 28,
+    "total_lines_changed": 34
+  },
+  "files_touched": [
+    "src/display/palette/base.js",
+    "src/display/palette/index.js",
+    "src/rules/archetypes/RoomFeatures.js",
+    "src/rules/archetypes/index.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/buildings/wayside_shrine.js",
+    "src/rules/environment/dungeon/populate.js"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "/2/prompt.txt",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 113,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 11529856,
+    "input_tokens": 857215,
+    "output_tokens": 50140
+  }
+}

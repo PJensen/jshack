@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "3088e85cc2b9",
+  "session_id": "019eb38b-165a-7b31-8bcc-ee2c1d98f9f1",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-11T01:19:40.374009753Z",
+  "branch": "master",
+  "checkpoints_count": 0,
+  "files_touched": [
+    "src/display/palette/base.js",
+    "src/display/palette/index.js",
+    "src/rules/archetypes/RoomFeatures.js",
+    "src/rules/archetypes/index.js",
+    "src/rules/content/interaction/interactPayloads.js",
+    "src/rules/data/buildings/wayside_shrine.js",
+    "src/rules/environment/dungeon/populate.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "b6a68f7d5b5a",
+  "token_usage": {
+    "input_tokens": 103010,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 853760,
+    "output_tokens": 4141,
+    "api_call_count": 15
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-11T01:19:40.325682026Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}
