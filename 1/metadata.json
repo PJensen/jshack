@@ -1,0 +1,66 @@
+{
+  "cli_version": "0.6.3",
+  "checkpoint_id": "b37f1fafc662",
+  "session_id": "019ee02c-c106-7c70-ba51-8a2dd7d005b8",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-19T15:31:32.654969892Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/display/palette/base.js",
+    "src/main/debug/consoleCommands.js",
+    "src/rules/data/buildings/farm.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/monsters.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/aiFarmAnimalSystem.js",
+    "src/rules/utils/monsterSpawnParams.js",
+    "src/rules/utils/spawnMonsterEntity.js",
+    "tests/aiFarmAnimalSleep.test.mjs",
+    "tests/chickenCatalog.test.mjs",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "63578338f5b8",
+  "checkpoint_transcript_start": 822,
+  "transcript_lines_at_start": 822,
+  "token_usage": {
+    "input_tokens": 183166,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8030976,
+    "output_tokens": 17108,
+    "api_call_count": 72
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-19T15:31:32.448159424Z",
+    "agent_lines": 217,
+    "agent_removed": 103,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 217,
+    "total_lines_changed": 320,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 865,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".github/agents/Dungeon Generation and BSP Expert.agent.md": 582,
+        ".github/agents/VFX Agent.agent.md": 283
+      }
+    }
+  ]
+}

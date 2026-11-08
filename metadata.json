@@ -1,0 +1,64 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b37f1fafc662",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 217,
+    "agent_percentage": 99.37888198757764,
+    "agent_removed": 103,
+    "calculated_at": "2026-06-19T15:32:24.585744124Z",
+    "human_added": 1,
+    "human_modified": 0,
+    "human_removed": 1,
+    "metric_version": 2,
+    "total_committed": 218,
+    "total_lines_changed": 322
+  },
+  "files_touched": [
+    "VERSION",
+    "src/content/define.js",
+    "src/content/monsters/animals.js",
+    "src/display/palette/base.js",
+    "src/main/debug/consoleCommands.js",
+    "src/rules/data/buildings/farm.js",
+    "src/rules/data/lootTables.js",
+    "src/rules/data/monsters.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/interaction/mutations.js",
+    "src/rules/systems/aiFarmAnimalSystem.js",
+    "src/rules/utils/monsterSpawnParams.js",
+    "src/rules/utils/spawnMonsterEntity.js",
+    "tests/aiFarmAnimalSleep.test.mjs",
+    "tests/chickenCatalog.test.mjs",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 81,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8380032,
+    "input_tokens": 295736,
+    "output_tokens": 20909
+  }
+}
