@@ -1,0 +1,30 @@
+Bears audio triggering on repeat especially as a group.
+
+---
+
+I added a formal "action_throw.mp3" wirte it up, I'm re-using an sound -- that was temporary.
+
+---
+
+** wire
+
+---
+
+and what triggers action:throw
+
+---
+
+right, good move, we can split it into weapons and things, this new action_throw is for generic stuff.
+
+---
+
+and I'm saying item:thrown isn't emitted anywhere
+
+---
+
+trace these:
+
+
+throwing a potion
+throwing a sword
+throwing a book
