@@ -1,0 +1,7 @@
+focusing away with genocide open, then re-opening the page hides genocide somehow; without apparent success.
+
+your lock should either be durable, or, detect loss of focus and refund, I dunno -- not 100% clear to me the rescue package here.
+
+---
+
+we need log messages for genocide, we added audio, but there is no funny log message. taming, same thing -- in fact, broaded the scope to start working through messaging especially on things the player actively decided to do.
