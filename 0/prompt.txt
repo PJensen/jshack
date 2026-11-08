@@ -1,0 +1,12 @@
+ouch --- two failing tests
+
+mobile action bar is a single row of 6 action buttons => ./tests/hudActionBarLayout.test.mjs:4:6
+combat hit systems consume stat pipeline resolver (no inline status-name checks) => ./tests/statPipelineArchitectureGuards.test.mjs:23:6
+
+FAILED | 2259 passed | 2 failed (2m4s)
+
+lets address these please
+
+---
+
+NOPE -- that is a test dragging progress backwards
