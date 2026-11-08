@@ -1,0 +1,143 @@
+One thing I've been struggling with is that the dungeon itself goes extremely deep. There are many many dungeon levels, most of which, during testing especially, I never really visit. Here is what I'm thinking about.
+
+1. should we shift our mindset to allow for many mini-dungeons. meaning: many overworld -> dungeon penetrations, each of which has a new concept called { "length", "type" } -- where length is almost like the length of a random walk generating rooms/caverns/halls etc. where type: is essentially biome
+
+2. some of the mini dungeons go deep
+
+3. players ar allowed to mine/dig between dungeons.
+
+What are the implications?
+
+* overworld extents and dungeon extents are matching 1:1
+* no more dungeon constraint minimization
+* sparse matrix type problem since most of the dungeon is empty
+* allowing some dungeons to "go deep" is imperative
+
+Impact on Gameplay
+
+* spreads the content out dramatically
+* allows for various entrances of differing difficulty | biomes | themes which is awesome -- examples include "bear cave", "crypt", "bat cave", "cellar" -- honestly, if you think about it -- this is sort of what it naturally wants to be -- otherwise, we've been essentially trying to force things like rats into an otherwise generic dungeon delving experience.
+* the other major win here is that it allows us to dramatically improve content delivery
+
+What Gets Harder (or More Interesting)
+
+* during generation ensuring that dungeons dont run into each other; though this should be fairly straightforward by saying something like "bat cave" - type: cave, depth: 3 rooms, connectivity: 0.2, biome: cave. density: 0.8, sparsity: 0.8, monsters: ["bats", "flaming_bat"] -- you can almost imagine a really great [Dungeon] or [DungeonEntrance] component that has all of these details bake into it.
+
+* for more generic dungeons, we can do things like stipulate the "end_goal" including things like a boss, loot, a quest objective, or even some constraint, or, even (in the future) conditions that open the dungeon to exploration.
+
+* it means that the monster tier system may need to be careful tuning: monsterTier (and lootTier) may  be a field on the dungeon / entrance component.
+
+* in the future districts can finally come into play
+* in the future the world map can expand, and underworld expands with it.
+
+My Confidence:
+
+Net-net -- I am really confident in this direction. Why don't we plan together to make this happen. I'm very excited to make this turn. Especially since in all of my playthroughs, it feels like something foundational is missing -- like I needed a reason to explore overworld, like I wanted to do smaller, objective style dungeons.
+
+A really good first two entries into this new style of dungeon authorship is as follows.
+
+1. the tavern basement -- a 2-3 room "basement" with a few torches, chests, and tons of rats. (quest: killing rats)
+2. the graveyard crypt -- a 5-6 "crypt" high density dungeon with tons of skeletons, urns, chests, and more (quest: book of the dead)
+
+expanding outward (thinking ahead, not for this iteration)
+
+* mines (NPCs working in the mines mining gems, silver and more)
+* bandit cave
+* tombs of despair (6 level dungeon)
+* cave of doom (5 level dungeon)
+
+FUTURE THINKING: maybe at some future date specialized dungeons are instanced.
+
+---
+
+Just so I'm clear -- there is ONE underworld. I don't see precisely how `currentDungeonId` is actually all that useful -- it seems to only anchor us to the old way of thinking. `dungeonId` itself is just interesting metadata.
+
+Know that a player may decide to mine between two places -- thereby kind of nuking the concept ofa durable dungeonId.
+
+I agree dungeonId makes sense for early generation, but after that -- it becomes much less interesting.
+
+Maybe I anwered your question incorrectly when you asked about authored slice vs full underworld.
+
+/plan still planning.
+
+---
+
+Yes, implement this plan, but know that currentDepth is just your Z, and is very much not *just* compatability. It's your depth into the underworld.
+
+NOTE: some dungeons may continue deeper! Keep that in the back of your mind.
+
+---
+
+PLEASE IMPLEMENT THIS PLAN:
+# One Sparse Underworld Implementation Plan
+
+## Summary
+Implement one continuous underworld, not separate durable dungeons. `currentDepth` remains the canonical vertical coordinate: `0` is overworld, positive values are depth into the underworld. Entrances seed authored underground regions at matching overworld `x/y`, and deeper stairs continue by increasing `currentDepth`.
+
+`dungeonId` should not define topology. Use `templateId` or provenance metadata only for generation, quest targeting, and debugging.
+
+## Core Changes
+- Add entrance-authored underworld metadata.
+  - Create a `DungeonEntrance` component for overworld stair entities.
+  - Fields: `templateId`, `label`, `type`, `length`, `biome`, `monsterTier`, `lootTier`, `questId`, `targetDepth`.
+  - Tavern stair targets `currentDepth: 1` below the tavern.
+  - Graveyard stair targets `currentDepth: 1` below the graveyard.
+- Preserve `DungeonState.currentDepth` as the authoritative Z/depth coordinate.
+  - Do not demote it to compatibility state.
+  - Add `activeTemplateId` or `activeRegionTemplateId` only as generation/provenance metadata.
+  - Future deeper authored dungeons use `currentDepth: 2`, `3`, etc. with the same `x/y` world coordinate space.
+- Refactor floor identity from depth-only to sparse underworld slice keys.
+  - Use keys that include `currentDepth` plus generated chunk/region coordinates.
+  - Floor cache, explored memory, destroyed tiles, wet tiles, and restored entities must not assume all depth-1 entrances share the same generated floor.
+- Generate authored regions by entrance anchor.
+  - Region footprint starts at the entrance’s overworld `x/y` on `currentDepth`.
+  - `length` controls random-walk room/footprint growth.
+  - `type`/`biome` selects profile, monster filters, feature pools, density, and loot tier.
+  - Regions at the same depth can coexist in different sparse `x/y` areas.
+
+## Starter Content
+- Tavern basement:
+  - `templateId: "tavern_basement"`
+  - Depth 1, 2-3 rooms, cellar/basement type.
+  - Rat-heavy monsters, torches, barrels/crates/chests, low loot.
+  - Rat infestation quest targets this template/region, not generic depth 1.
+- Graveyard crypt:
+  - `templateId: "graveyard_crypt"`
+  - Depth 1, 5-6 dense rooms, crypt/catacomb type.
+  - Skeleton-heavy monsters, urns, sarcophagi, chests.
+  - Book quest target spawns here, not generic depth 1.
+- Keep the design open for deeper templates:
+  - Example: tombs/caves/mines may place downward stairs to `currentDepth + 1`.
+  - Deeper continuation remains the same underworld, not a nested dungeon id.
+
+## Transition Behavior
+- Descending an overworld entrance:
+  - Read `DungeonEntrance`.
+  - Load or generate the sparse region at `{ depth: targetDepth, anchorX, anchorY }`.
+  - Place the matching up-stair at the same `x/y` coordinate when possible.
+- Ascending:
+  - From depth 1, return to the matching overworld entrance position.
+  - From deeper levels, decrement `currentDepth` while preserving coordinate identity.
+- Generic stairs without entrance metadata continue using existing depth behavior, but should route through the same coordinate-keyed transition path.
+
+## Tests
+- Add sparse identity tests:
+  - Tavern and graveyard depth-1 regions are distinct despite sharing `currentDepth === 1`.
+  - Revisiting each restores its own entities, explored state, destroyed tiles, and wet tiles.
+- Add transition tests:
+  - Tavern stair descends to tavern basement and ascends back to tavern.
+  - Graveyard stair descends to crypt and ascends back to graveyard.
+  - A deeper authored region can produce stairs to `currentDepth + 1`.
+- Add content/quest tests:
+  - Rat quest content appears only in tavern basement.
+  - Book quest content appears only in graveyard crypt.
+  - Monster/theme filters match basement and crypt expectations.
+- Run:
+  - `deno task check`
+  - `deno test --allow-read --no-check`
+
+## Assumptions
+- `currentDepth` is the real Z/depth coordinate.
+- There is one underworld coordinate space.
+- `templateId` is useful for generation and quest semantics, but mining can erase any meaningful boundary between authored regions.
+- This implementation should prioritize the coordinate foundation first, then layer the two starter regions on top.
