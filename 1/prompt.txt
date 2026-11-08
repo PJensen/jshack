@@ -1,0 +1,73 @@
+what did we say about necromancer intrinsics?
+
+---
+
+we don't even have intrinsics -- but they seem like an awesome thing *to* have
+
+---
+
+some of these are not really intrinsics are they? or are they?
+
+---
+
+I would pick ONE that is unavoidably strong
+
+---
+
+nope -- hate it
+
+---
+
+meh -- also mid.
+
+---
+
+resource economy
+
+---
+
+it's interesting -- I would scan the repository for additional possible intrinsics before we go off cooking up new arch for a singlular class.
+
+---
+
+traits -- are the closest thing -- Nethack has "intrinsics" but I feel like js-hack wants "traits"
+
+---
+
+pitch our first handful of traits -- explain how traiits are aquired presently
+
+---
+
+meh -- it seems like a starting trait would be ideal.
+
+---
+
+seems a bit weak, since the corpse could be a rat, could be an anything -- what else could we do? ideas?
+
+---
+
+they're all interesting -- but I like none of them, I feel like the trait is simpler, like undead are easier to control, or -- allows for the ability to resurect one additional corpse, or, resurrected corposes can wield weapons, or, have more Hl corpse, or, resurrected corposes can wield weapons, or, have more HP etc.
+
+---
+
+ohhhh, empowered dead seems super game breaing -- are we sure there are not already limits?
+
+second: sumoning right now does not even consume a corpse lol -- just mana.
+
+---
+
+ahhh, we need "resurrection" ;-) righ?!
+
+---
+
+yaaaaaaaas. lets create the early spell -- lets leave summon skeleton available as it always has been, and, lets make this resurrection ability
+
+NOTE: it's got to be smart about monster power-level and potentially fizzle if we try and resurrect a full on boss, or potentially have a shortt lifetime.
+
+---
+
+I wouldn't reject, personally, I'd just make them short lived
+
+---
+
+NOTE: when a resurrected ally corpse dies, they must become a pile of bones, or something like that -- else -- players could continually resurrect things -- lol.
