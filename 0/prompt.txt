@@ -1,0 +1,7 @@
+can you give me a debug command that shows the work status of all NPCs please -- I'm working to explain certain issues and it's hard without somekind of insight into what's actually happening.
+
+id, woodcutter, x, y, status
+
+command shape:
+
+npc-work-status -- something like that
