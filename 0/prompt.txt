@@ -1,0 +1,17 @@
+I just added 3 new audio fies, portal created, portal idle, portal destroyed, I'm 90% sure you know what to do with these. portal idle should be at about 60% volume so as not to overwhelm the rest of the scene and be proximity attenuated like most other point sources.
+
+---
+
+hey -- you messed up returns, previously returns were just stairs and I was fine with that, once you are in overworld, the way the portal closes is by completing the quest -- I committed a portion of your prior work, (e.g.) there was never a "return poral" per se, at least none I see in game. want me to stash the current?
+
+---
+
+for some reason I do not see the return stairs, or a return portal ... hmm, I tested rift returns not long ago, and now they appear to have regressed.
+
+we could:
+
+1. use an up stair to return
+2. use a normal "portal" to return back to the rift opening
+3. use the same rift looking portal as the return
+
+option #3 might actually be my preference the more I think about it, do what is easy.
