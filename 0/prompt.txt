@@ -1,0 +1,10 @@
+do it -- 
+
+honor interactable re-design as best as you can
+honor cloud domain as best as you can
+
+both were very recent improvements. make it so! start building!
+
+---
+
+the number key 9 is bound to moving the camera to the nearest stairway, just make sure that when the mailbox is open we can enter phone numbers!

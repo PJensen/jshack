@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "5e8bd11e3013",
+  "checkpoints_count": 2,
+  "cli_version": "0.7.7",
+  "files_touched": [
+    "src/main/debug/sceneControls.js",
+    "src/rules/environment/dungeon/townPlacement.js",
+    "tests/overworldStructures.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 15,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2669696,
+    "input_tokens": 195728,
+    "output_tokens": 4232
+  }
+}
