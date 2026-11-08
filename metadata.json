@@ -1,0 +1,27 @@
+{
+  "branch": "master",
+  "checkpoint_id": "1c0a3c7e57fb",
+  "checkpoints_count": 1,
+  "cli_version": "0.10.2",
+  "files_touched": [
+    "src/display/ui/overlay.js",
+    "tests/dialogAndCharacterKeyboard.test.mjs"
+  ],
+  "sessions": [
+    {
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 18,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 939264,
+    "input_tokens": 69514,
+    "output_tokens": 4989
+  }
+}
