@@ -1,0 +1,13 @@
+back to our original task -- what was your suggestions again
+
+---
+
+honestly -- I would only do things that make live easier for coding agents; and not people
+
+---
+
+love it -- those commands are perfect, what we need to do then is to surface them to the agent via AGENTS.md -- speculate with me on what other commansd would be super useful for agents to work inside of this project.
+
+---
+
+okay -- start building these tools; it's clear that MCP is too much overhead for what we're trying to achieve. the tools folder seems the perfect place to keep these tools. just make sure that each tool is surfaced through AGENTS.md -- it might be time to make AGENTS.md more compact also
