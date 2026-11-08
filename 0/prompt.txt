@@ -1,0 +1,13 @@
+Look how amazing these WOW items looks and behave.
+
+---
+
+mostly I'm interested in the underlying architecture that can support such myriad item use, and persistent effects. as well as visuals -- think about it, we've got a metric ton already.
+
+---
+
+Boosted you to SOL 6.1 plan it out!
+
+---
+
+Approved! We've got like thousands of tests already as well ;-) have fun!
