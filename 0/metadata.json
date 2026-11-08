@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.7.7",
+  "checkpoint_id": "e076e0f901d8",
+  "session_id": "019f1421-192d-74e1-9ea5-ade099ddf1cc",
+  "strategy": "manual-commit",
+  "created_at": "2026-06-29T16:19:38.899180603Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/cloud/mailbox/client.js",
+    "src/cloud/wiring/mailboxWiring.js",
+    "src/content/interactables/index.js",
+    "src/content/interactables/mailbox/index.js",
+    "src/display/palette/base.js",
+    "src/display/ui/mailboxOverlay.js",
+    "src/display/ui/overlay.js",
+    "src/events/MailboxOpenRequested.js",
+    "src/main.js",
+    "src/rules/archetypes/Overworld.js",
+    "src/rules/archetypes/index.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/environment/dungeon/townPlacement.js",
+    "tests/mailbox.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.5",
+  "turn_id": "808eaa49f20a",
+  "checkpoint_transcript_start": 327,
+  "transcript_lines_at_start": 327,
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-06-29T16:19:38.82099793Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 0,
+    "total_lines_changed": 0,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
