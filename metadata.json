@@ -1,0 +1,61 @@
+{
+  "branch": "master",
+  "checkpoint_id": "c8e7e1d9cf45",
+  "checkpoints_count": 1,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 14,
+    "agent_percentage": 8.522727272727272,
+    "agent_removed": 1,
+    "calculated_at": "2026-06-01T18:05:27.321196721Z",
+    "human_added": 120,
+    "human_modified": 0,
+    "human_removed": 41,
+    "metric_version": 2,
+    "total_committed": 134,
+    "total_lines_changed": 176
+  },
+  "files_touched": [
+    "src/main/wiring/transitionWiring.js",
+    "src/rules/environment/dungeon/floorPlan.js",
+    "src/rules/environment/dungeon/index.js",
+    "src/rules/environment/dungeon/populate.js",
+    "src/rules/environment/dungeon/transition.js",
+    "tests/floor.test.mjs",
+    "tests/transition.test.mjs"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 78,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9289728,
+    "input_tokens": 433792,
+    "output_tokens": 24643
+  }
+}
