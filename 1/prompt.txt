@@ -1,0 +1,1 @@
+when scroll of genocide pops its modal, lock game input until interaction is completed.

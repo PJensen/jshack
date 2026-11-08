@@ -1,0 +1,57 @@
+{
+  "branch": "master",
+  "checkpoint_id": "b033c5dce01a",
+  "checkpoints_count": 2,
+  "cli_version": "0.6.3",
+  "combined_attribution": {
+    "agent_lines": 0,
+    "agent_percentage": 0,
+    "agent_removed": 0,
+    "calculated_at": "2026-06-18T19:10:40.091863869Z",
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "metric_version": 2,
+    "total_committed": 0,
+    "total_lines_changed": 0
+  },
+  "files_touched": [
+    "assets/audio/fairy_glow.mp3",
+    "assets/audio/magic_unlock.mp3",
+    "assets/audio/wand_sparkle.mp3"
+  ],
+  "sessions": [
+    {
+      "content_hash": "/0/content_hash.txt",
+      "metadata": "/0/metadata.json",
+      "prompt": "/0/prompt.txt",
+      "transcript": "/0/full.jsonl"
+    },
+    {
+      "content_hash": "/1/content_hash.txt",
+      "metadata": "/1/metadata.json",
+      "prompt": "/1/prompt.txt",
+      "transcript": "/1/full.jsonl"
+    },
+    {
+      "content_hash": "/2/content_hash.txt",
+      "metadata": "/2/metadata.json",
+      "prompt": "",
+      "transcript": "/2/full.jsonl"
+    },
+    {
+      "content_hash": "/3/content_hash.txt",
+      "metadata": "/3/metadata.json",
+      "prompt": "",
+      "transcript": "/3/full.jsonl"
+    }
+  ],
+  "strategy": "manual-commit",
+  "token_usage": {
+    "api_call_count": 9,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 149888,
+    "input_tokens": 107945,
+    "output_tokens": 2823
+  }
+}
