@@ -371,9 +371,9 @@ export function initHUD() {
   minimap.height = 180;
   Object.assign(minimap.style, {
     position: 'static', alignSelf: 'flex-start', marginTop: '2px',
-    width: '180px', height: '180px', display: 'none',
+    width: 'min(180px, 36vw)', height: 'min(180px, 36vw)', display: 'none',
     border: '1px solid rgba(190,210,230,0.38)', borderRadius: '8px',
-    background: 'rgba(8,12,20,0.84)', boxShadow: '0 5px 18px rgba(0,0,0,0.35)',
+    background: 'rgba(8,12,20,0.56)', boxShadow: '0 5px 18px rgba(0,0,0,0.35)',
     pointerEvents: 'none', zIndex: 902, imageRendering: 'pixelated',
   });
   const minimapCtx = minimap.getContext('2d');
@@ -393,7 +393,7 @@ export function initHUD() {
       19: '#88714d', 20: '#665843', 21: '#777777',
     };
     minimapCtx.clearRect(0, 0, minimap.width, minimap.height);
-    minimapCtx.fillStyle = 'rgba(8,12,20,0.92)';
+    minimapCtx.fillStyle = 'rgba(8,12,20,0.64)';
     minimapCtx.fillRect(0, 0, minimap.width, minimap.height);
     for (let i = 0; i < tiles.length; i++) {
       const tile = Number(tiles[i] || -1) | 0;
