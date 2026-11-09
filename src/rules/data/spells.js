@@ -242,6 +242,7 @@ export const SPELL_DEFS = {
     manaCost: 6,
     minIntelligence: 0,
     range: 8,
+    castTime: 2,
     script: 'fear',
     targeting: 'enemy',
     description: 'Plant a deathly vision in a foe, forcing it to run from you.',
