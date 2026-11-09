@@ -669,8 +669,40 @@ export function aiChaseSystem(world) {
       // Player is adjacent; fall through to normal attack/move logic.
     }
 
+    const canTraverseTile = world.has(id, Flying) ? isFlyable : isWalkable;
     const dxt = targetX - (pos.x | 0);
     const dyt = targetY - (pos.y | 0);
+
+    // Chebyshev distance treats a diagonal tile as melee range, but the bump
+    // resolver only accepts orthogonal adjacency.  When a packmate occupies
+    // the direct approach tile, a greedy diagonal chase can therefore spend
+    // every turn trying to walk into its ally and never attack.  Step onto a
+    // free orthogonally-adjacent tile first so the next turn becomes a real
+    // melee bump.
+    if (Math.abs(dxt) === 1 && Math.abs(dyt) === 1) {
+      let meleeApproach = null;
+      for (const dir of CARDINAL_DIRS) {
+        const nx = (pos.x | 0) + dir.dx;
+        const ny = (pos.y | 0) + dir.dy;
+        const remaining = Math.abs(targetX - nx) + Math.abs(targetY - ny);
+        if (remaining !== 1) continue;
+        if (!isStepTraversable(world, id, nx, ny, targetX, targetY, canTraverseTile)) continue;
+        meleeApproach = dir;
+        break;
+      }
+      if (meleeApproach) {
+        proposeTacticalIntent(world, id, {
+          kind: "pursue",
+          source: "chase",
+          targetId: selectedTargetId,
+          targetX,
+          targetY,
+          dx: meleeApproach.dx,
+          dy: meleeApproach.dy,
+        });
+        return;
+      }
+    }
 
     // Reached last-known position without finding the player; give up sooner.
     if (dxt === 0 && dyt === 0 && aggro.alertLevel !== AGGRO_LEVELS.hunting) {
@@ -717,7 +749,6 @@ export function aiChaseSystem(world) {
       return;
     }
 
-    const canTraverseTile = world.has(id, Flying) ? isFlyable : isWalkable;
     const canOpenDoors = monsterCanOpenDoors(world, id);
 
     const ax = Math.abs(dxt);

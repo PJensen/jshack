@@ -15,6 +15,7 @@ import { buildBlocksVisionMap, blockedCallback } from "../../../../src/rules/uti
 import { rebuildSpatialIndex } from "../../../../src/rules/utils/spatialIndex.js";
 import { hasLOS } from "../../../../src/shared/math/gridLOS.js";
 import { isWalkable } from "../../../../src/rules/environment/dungeon/tileMap.js";
+import { findNextCardinalStep } from "../../../../src/rules/utils/gridPathfind.js";
 
 installContent();
 
@@ -54,7 +55,7 @@ function clearNearbyEnemies(world, center) {
   }
 }
 
-function findGoblinPositions(world, center) {
+function findGoblinPositions(world, center, playerId) {
   const occupied = new Set();
   for (const [, pos] of world.query(Position)) occupied.add(`${pos.x},${pos.y}`);
   const blocked = blockedCallback(buildBlocksVisionMap(world));
@@ -67,6 +68,13 @@ function findGoblinPositions(world, center) {
         const y = center.y + dy;
         if (!isWalkable(x, y) || occupied.has(`${x},${y}`)) continue;
         if (!hasLOS(center.x, center.y, x, y, blocked)) continue;
+        if (!findNextCardinalStep(world, center.x, center.y, x, y, playerId, {
+          goalRadius: 0,
+          maxNodes: 512,
+          isPassable: isWalkable,
+          passThroughDoors: true,
+          searchPadding: 12,
+        })) continue;
         candidates.push({ x, y });
         if (candidates.length === 3) return candidates;
       }
@@ -117,20 +125,32 @@ function snapshot(world, playerId, goblins) {
 }
 
 async function runScenario({ name, classId, action }) {
-  const runtime = await createGameRuntime({ seed: SEED, classId, startDepth: 2 });
+  const runtime = await createGameRuntime({ seed: SEED, classId, startDepth: 1 });
   const world = runtime.world;
   const player = runtime.getPlayer();
   const playerPos = world.get(player.id, Position);
   clearNearbyEnemies(world, playerPos);
-  const spawnPositions = findGoblinPositions(world, playerPos);
+  const spawnPositions = findGoblinPositions(world, playerPos, player.id);
   const goblins = spawnPositions.map((pos) => spawnMonsterEntity(world, { ...goblinParams(), ...pos }));
   rebuildSpatialIndex(world);
   const trace = [];
   const damage = [];
   const abilities = [];
+  const melee = [];
+  const bumps = [];
   world.on("damaged", (event) => {
     if (event?.target === player.id || goblins.includes(event?.target)) {
       damage.push({ target: event.target, amount: event.amount });
+    }
+  });
+  world.on("bump:attack", (event) => {
+    if (goblins.includes(event?.attacker) || event?.target === player.id) {
+      bumps.push({ attacker: event.attacker, target: event.target });
+    }
+  });
+  world.on("combat:melee:attack", (event) => {
+    if (goblins.includes(event?.attacker) || event?.defender === player.id) {
+      melee.push({ attacker: event.attacker, target: event.defender });
     }
   });
   for (const eventName of ["monster:ability:windup", "monster:castSpellIntent", "castSpell", "spell:blind"]) {
@@ -143,13 +163,30 @@ async function runScenario({ name, classId, action }) {
     const targetId = nearestAlive(world, player.id, goblins);
     const targetPos = targetId ? world.get(targetId, Position) : null;
     action(runtime, player.id, targetId, targetPos, turn);
-    trace.push({ ...snapshot(world, player.id, goblins), damage: damage.splice(0), abilities: abilities.splice(0) });
+    trace.push({
+      ...snapshot(world, player.id, goblins),
+      damage: damage.splice(0),
+      abilities: abilities.splice(0),
+      bumps: bumps.splice(0),
+      melee: melee.splice(0),
+    });
     const playerVit = world.get(player.id, Vitality);
     if (!playerVit || playerVit.hp <= 0) break;
     if (trace.at(-1).goblins.every((g) => !g.alive)) break;
   }
 
   const final = trace.at(-1);
+  const allDamage = trace.flatMap((row) => row.damage || []);
+  const playerDamage = allDamage
+    .filter((event) => event.target === player.id)
+    .reduce((sum, event) => sum + Number(event.amount || 0), 0);
+  const goblinDamage = allDamage
+    .filter((event) => goblins.includes(event.target))
+    .reduce((sum, event) => sum + Number(event.amount || 0), 0);
+  const meleeEvents = trace.flatMap((row) => row.melee || []);
+  const firstContactTurn = trace.find((row) => row.goblins.some((g) => (
+    g.alive && g.x != null && distance(row.player, { x: g.x, y: g.y }) <= 1
+  )))?.step || null;
   return {
     name,
     classId,
@@ -159,6 +196,11 @@ async function runScenario({ name, classId, action }) {
     goblinsAlive: final.goblins.filter((g) => g.alive).length,
     goblinHp: final.goblins.map((g) => g.hp),
     goblinAggro: final.goblins.map((g) => g.aggro),
+    firstContactTurn,
+    playerDamage,
+    goblinDamage,
+    meleeAttempts: meleeEvents.length,
+    meleeActors: [...new Set(meleeEvents.map((event) => event.attacker))],
     trace: Deno.args.includes("--trace") ? trace : undefined,
   };
 }
