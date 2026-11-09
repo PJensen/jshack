@@ -1275,7 +1275,8 @@ REGISTRY['heal'] = function healScript(world, actor, spell, intent) {
         if (p.x === (tx | 0) && p.y === (ty | 0)) {
           const fac = /** @type any */ (world.get(id, Faction));
           const ct = world.get(id, CreatureType);
-          if (!fac || fac.key === 'ally' || id === actor || ct?.type === CREATURE_TYPES.undead) {
+          const actorFaction = world.get(actor, Faction);
+          if (!fac || fac.key === actorFaction?.key || fac.key === 'ally' || id === actor || ct?.type === CREATURE_TYPES.undead) {
             targetId = id;
             targetPos = { x: p.x, y: p.y };
             break;

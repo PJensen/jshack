@@ -42,6 +42,24 @@ Deno.test("new intelligent skeleton casters have spell loadouts", () => {
   assert(!warlock.packSense, "warlock should aggro and cast while solo");
 });
 
+Deno.test("new humanoid roles have authored loadouts", () => {
+  const shaman = getMonster("goblin_shaman");
+  const priest = getMonster("goblin_priest");
+  const geomancer = getMonster("kobold_geomancer");
+
+  assert(shaman && priest && geomancer, "new humanoid roles should be registered");
+  assert(shaman.learnedSpellIds.includes("entangle"), "goblin shaman should know entangle");
+  assert(shaman.learnedSpellIds.includes("fireball"), "goblin shaman should know fireball");
+  assert(priest.learnedSpellIds.includes("heal"), "goblin priest should know heal");
+  assert(priest.tags.includes("healer"), "goblin priest should be tagged as a healer");
+  assert(geomancer.learnedSpellIds.includes("earthshatter"), "kobold geomancer should know earthshatter");
+  for (const monster of [shaman, priest, geomancer]) {
+    assert(monster.wielding?.length > 0, `${monster.id} should have a weapon loadout`);
+    assert(monster.equipped?.length > 0, `${monster.id} should have an equipment loadout`);
+    assert(monster.maxMana > 0, `${monster.id} should have a mana pool`);
+  }
+});
+
 Deno.test("skeletal_agony_warlock acquires LOS aggro while solo", () => {
   loadFlatFloor();
   try {
@@ -110,6 +128,50 @@ Deno.test("castSpellOnLOS queues cast intent and respects cooldown", () => {
   world.remove(actor, CastSpellIntent);
   callback(ctx);
   assert(!world.has(actor, CastSpellIntent), "cooldown should block immediate recast");
+});
+
+Deno.test("castSpellOnLOS can select the most injured same-faction ally", () => {
+  const world = new World({ seed: 0xA11CE });
+
+  const actor = world.create();
+  world.add(actor, Position, { x: 1, y: 1 });
+  world.add(actor, Faction, { key: "enemy" });
+  world.add(actor, Vitality, { hp: 20, maxHp: 20 });
+  world.add(actor, Mana, { maxMana: 50, mana: 50, manaRegen: 0.2, regenCooldown: 0 });
+
+  const injured = world.create();
+  world.add(injured, Position, { x: 4, y: 1 });
+  world.add(injured, Faction, { key: "enemy" });
+  world.add(injured, Vitality, { hp: 5, maxHp: 20 });
+
+  const healthy = world.create();
+  world.add(healthy, Position, { x: 3, y: 1 });
+  world.add(healthy, Faction, { key: "enemy" });
+  world.add(healthy, Vitality, { hp: 19, maxHp: 20 });
+
+  const callback = castSpellOnLOS({
+    spellId: "heal",
+    targeting: "ally",
+    maxRange: 6,
+    chance: 1,
+    cooldownTurns: 5,
+    telegraphTurns: 1,
+  });
+  const ctx = new SeenCallbackContext(world, {
+    actor,
+    target: healthy,
+    canActThisTurn: true,
+    hasQueuedMove: false,
+  });
+  callback(ctx);
+  assert(!world.has(actor, CastSpellIntent), "telegraphed heal should wait before casting");
+  world.step = 1;
+  callback(ctx);
+
+  assert(world.has(actor, CastSpellIntent), "healer should queue a cast intent");
+  assertEquals(world.get(actor, CastSpellIntent).targetId, injured);
+  assertEquals(world.get(actor, CastSpellIntent).x, 4);
+  assertEquals(world.get(actor, CastSpellIntent).y, 1);
 });
 
 Deno.test("stasis blocks direct LOS ability callbacks before intent validation", () => {

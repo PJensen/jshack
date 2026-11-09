@@ -537,7 +537,7 @@ export function gazeOnLOS(exposureTurns = 8) {
  *   spellId: string,
  *   abilityId?: string,
  *   abilityName?: string,
- *   targeting?: "enemy"|"self",
+ *   targeting?: "enemy"|"self"|"ally",
  *   minRange?: number,
  *   maxRange?: number,
  *   cooldownTurns?: number,
@@ -552,7 +552,10 @@ export function castSpellOnLOS(opts) {
   const spellId = String(opts?.spellId || "").trim();
   const abilityId = String(opts?.abilityId || spellId || "").trim();
   const abilityName = String(opts?.abilityName || abilityId || spellId || "").trim();
-  const targeting = String(opts?.targeting || "enemy") === "self" ? "self" : "enemy";
+  const requestedTargeting = String(opts?.targeting || "enemy");
+  const targeting = requestedTargeting === "self" || requestedTargeting === "ally"
+    ? requestedTargeting
+    : "enemy";
   const minRange = Math.max(0, Number.isFinite(opts?.minRange) ? (Number(opts.minRange) | 0) : 0);
   const maxRangeOpt = Number.isFinite(opts?.maxRange) ? (Number(opts.maxRange) | 0) : -1;
   const cooldownTurns = Math.max(0, Number.isFinite(opts?.cooldownTurns) ? (Number(opts.cooldownTurns) | 0) : 8);
@@ -580,12 +583,36 @@ export function castSpellOnLOS(opts) {
     if (spellCastOnCooldown(ctx.world, ctx.actor, spellId, cooldownTurns)) return;
 
     const actorPos = ctx.actorPos;
-    const targetPos = ctx.targetPos;
+    let selectedTarget = ctx.target | 0;
+    let targetPos = ctx.targetPos;
+    if (targeting === "ally") {
+      const faction = String(ctx.world.get(ctx.actor, Faction)?.key || "").trim();
+      if (!faction || !actorPos) return;
+      const candidates = [];
+      for (const [id, pos, fac, vit] of ctx.world.query(Position, Faction, Vitality)) {
+        if (id === ctx.actor || !pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
+        if (String(fac.key || "").trim() !== faction) continue;
+        const maxHp = Math.max(1, Number(vit.maxHp || 0));
+        const hp = Number(vit.hp || 0);
+        if (hp >= maxHp) continue;
+        const distance = chebyshev(actorPos, pos);
+        candidates.push({ id, pos, fraction: hp / maxHp, distance });
+      }
+      candidates.sort((a, b) => (
+        a.fraction - b.fraction
+        || a.distance - b.distance
+        || a.id - b.id
+      ));
+      const ally = candidates[0];
+      if (!ally) return;
+      selectedTarget = ally.id | 0;
+      targetPos = { x: ally.pos.x | 0, y: ally.pos.y | 0 };
+    }
     const maxRange = maxRangeOpt >= 0
       ? Math.max(minRange, maxRangeOpt)
       : Math.max(minRange, Number(spell.range || 8) | 0);
 
-    if (!windupReady && targeting !== "self") {
+    if (!windupReady && (targeting !== "self" || maxRangeOpt >= 0 || minRange > 0)) {
       if (!actorPos || !targetPos) return;
       const dist = chebyshev(actorPos, targetPos);
       if (dist < minRange || dist > maxRange) return;
@@ -626,15 +653,16 @@ export function castSpellOnLOS(opts) {
 
     if (telegraphTurns > 0 && !windupReady) {
       const readyStep = now + telegraphTurns;
+      const windupTarget = targeting === "ally" ? selectedTarget : (ctx.target | 0);
       windupStore.set(windupKey, {
         readyStep,
-        targetId: (ctx.target | 0) > 0 ? (ctx.target | 0) : 0,
+        targetId: windupTarget > 0 ? windupTarget : 0,
         targetX: actorPos ? (targetPos?.x ?? actorPos.x) | 0 : 0,
         targetY: actorPos ? (targetPos?.y ?? actorPos.y) | 0 : 0,
       });
       ctx.emit("monster:ability:windup", {
         actor: ctx.actor,
-        targetId: (ctx.target | 0) > 0 ? (ctx.target | 0) : 0,
+        targetId: windupTarget > 0 ? windupTarget : 0,
         abilityId,
         abilityName,
         spellId,
@@ -648,9 +676,12 @@ export function castSpellOnLOS(opts) {
     const castIntent = { spellId };
     if (targeting !== "self") {
       const pendingTargetId = Number(pendingWindup?.targetId || 0) | 0;
-      const chosenTarget = pendingTargetId > 0 ? pendingTargetId : (ctx.target | 0);
+      const chosenTarget = pendingTargetId > 0 ? pendingTargetId : selectedTarget;
       if (chosenTarget > 0) castIntent.targetId = chosenTarget;
-      if (Number.isFinite(pendingWindup?.targetX) && Number.isFinite(pendingWindup?.targetY)) {
+      if (targeting === "ally" && targetPos) {
+        castIntent.x = targetPos.x | 0;
+        castIntent.y = targetPos.y | 0;
+      } else if (Number.isFinite(pendingWindup?.targetX) && Number.isFinite(pendingWindup?.targetY)) {
         castIntent.x = Number(pendingWindup.targetX) | 0;
         castIntent.y = Number(pendingWindup.targetY) | 0;
       }
