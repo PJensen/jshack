@@ -1,0 +1,1 @@
+crashing the entire game when using it; not sure I agree integrating with world lighting is the right move.
