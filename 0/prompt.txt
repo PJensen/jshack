@@ -1,0 +1,9 @@
+that newest quest, when the new quest tracker direction tired to find it just pointed right back to the quest giver and not the location itself.
+
+the new quest we just made today.
+
+whereas the barkeen quest worked nicely
+
+---
+
+???? did you read what you just did? you just leaked context in the wrong spot!
