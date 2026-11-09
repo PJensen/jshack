@@ -37,6 +37,7 @@ import { Vitality }     from "../components/Vitality.js";
 import { MoveIntent }   from "../components/Intents/MoveIntent.js";
 import { FlyIntent } from "../components/Intents/FlyIntent.js";
 import { RangedAttackIntent } from "../components/Intents/RangedAttackIntent.js";
+import { proposeTacticalIntent } from "../ai/tacticalIntent.js";
 import {
   AggroState,
   AGGRO_LEVELS,
@@ -655,7 +656,10 @@ export function aiChaseSystem(world) {
     // Ambushers (floating eye, carrion shade, mimic) stay still until the
     // player walks into melee range, then strike.
     if (def?.ambush && aggro.alertLevel === AGGRO_LEVELS.hunting) {
-      if (chebyshevScalar(pos.x, pos.y, playerPos.x, playerPos.y) > 1) return; // hold position — don't move yet
+      if (chebyshevScalar(pos.x, pos.y, playerPos.x, playerPos.y) > 1) {
+        proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: playerId });
+        return;
+      }
       // Player is adjacent; fall through to normal attack/move logic.
     }
 
@@ -695,13 +699,17 @@ export function aiChaseSystem(world) {
             });
           } catch {}
           try { world.add(id, RangedAttackIntent, { targetId: rangedTargetId }); } catch {}
+          proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: rangedTargetId });
           return;
         }
       }
     }
 
     // ── Chase / retreat: step on dominant axis ──────────────────────
-    if (dxt === 0 && dyt === 0) return;
+    if (dxt === 0 && dyt === 0) {
+      proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: selectedTargetId });
+      return;
+    }
 
     const canTraverseTile = world.has(id, Flying) ? isFlyable : isWalkable;
     const canOpenDoors = monsterCanOpenDoors(world, id);
@@ -712,9 +720,10 @@ export function aiChaseSystem(world) {
     if (ax >= ay) { dx = Math.sign(dxt); dy = 0; } else { dy = Math.sign(dyt); dx = 0; }
 
     // ── Tactical spread: intel > 3 enemies avoid stacking approach angles ──
+    let tacticalKind = aggro.retreating ? "retreat" : "pursue";
     if (!aggro.retreating && intel > 3 && aggro.alertLevel === AGGRO_LEVELS.hunting) {
       const spreadDir = choosePackSpreadDir(world, id, pos, targetX, targetY, def, canTraverseTile);
-      if (spreadDir) { dx = spreadDir.dx; dy = spreadDir.dy; }
+      if (spreadDir) { dx = spreadDir.dx; dy = spreadDir.dy; tacticalKind = "flank"; }
     }
 
     if (!aggro.retreating && isSmartPathingMonster(brain, def)) {
@@ -750,14 +759,18 @@ export function aiChaseSystem(world) {
         // Kite: hold at shoot distance (≥ 3 tiles) and let spell/ranged fire.
         // Flee only when the player closes to melee range.
         if (dist < 3) { dx = -dx; dy = -dy; }
-        else { return; }
+        else {
+          proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: rangedTargetId });
+          return;
+        }
 
       } else if (intel >= 8) {
         // Chokepoint defense: path to the nearest corridor tile and hold.
         // neighborCount in [1,2] = real corridor; 0 = unloaded/test environment, skip.
         const neighborCount = walkableNeighborCount(pos.x | 0, pos.y | 0, canTraverseTile);
         if (neighborCount >= 1 && neighborCount <= 2) {
-          return; // already in a chokepoint — hold and fight
+          proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: selectedTargetId });
+          return;
         }
         const chokeDir = findNearestChokepointDir(world, id, pos, canTraverseTile, canOpenDoors);
         if (chokeDir) { dx = chokeDir.dx | 0; dy = chokeDir.dy | 0; }
@@ -801,6 +814,19 @@ export function aiChaseSystem(world) {
       }
     }
 
-    try { world.add(id, MoveIntent, { dx, dy }); } catch {}
+    proposeTacticalIntent(world, id, {
+      kind: tacticalKind,
+      source: "chase",
+      targetId: selectedTargetId,
+      targetX,
+      targetY,
+      dx,
+      dy,
+    });
+    // Preserve the direct aiChaseSystem contract while tactical resolution is
+    // phased in; the resolver re-projects this same authoritative objective.
+    if (!world.has(id, MoveIntent)) {
+      world.add(id, MoveIntent, { dx, dy });
+    }
   });
 }

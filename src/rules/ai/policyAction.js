@@ -10,10 +10,8 @@
 // Integration contract:
 //   • Called AFTER aiChaseSystem has run.
 //   • If entity already has CastSpellIntent the hook already decided — skip.
-//   • Movement direction: preserve an existing MoveIntent from aiChaseSystem;
-//     otherwise apply the policy-chosen direction.
-//   • Spell cast:  remove MoveIntent + add CastSpellIntent + mark cooldown.
-//   • Wait (8):    remove MoveIntent (monster holds its position this turn).
+//   • Movement and wait: propose objectives when chase did not already decide.
+//   • Spell cast: add CastSpellIntent + mark cooldown.
 //   • Ranged (13): leave existing RangedAttackIntent if present; otherwise pass.
 
 import { MoveIntent }        from '../components/Intents/MoveIntent.js';
@@ -21,6 +19,7 @@ import { CastSpellIntent }   from '../components/Intents/CastSpellIntent.js';
 import { RangedAttackIntent } from '../components/Intents/RangedAttackIntent.js';
 import { Mana }              from '../components/Mana.js';
 import { isAiOnCooldown, startAiCooldown } from '../utils/aiCooldowns.js';
+import { proposeTacticalIntent } from './tacticalIntent.js';
 
 // Must match the key used by castSpellOnLOS so cooldowns are shared.
 const SPELL_CAST_COOLDOWN_KEY = Symbol.for("jshack:ai:castSpellOnLOS:cooldown");
@@ -71,10 +70,6 @@ export function applyAction(world, actorId, targetId, actionIdx, learnedSpells) 
       const hasMana = !mana || mana.mana >= 8;
 
       if (!onCooldown && hasMana) {
-        // Remove any movement intent before casting
-        if (world.has(actorId, MoveIntent)) {
-          try { world.remove(actorId, MoveIntent); } catch {}
-        }
         try {
           world.add(actorId, CastSpellIntent, { spellId, targetId, x: null, y: null });
           startAiCooldown(world, SPELL_CAST_COOLDOWN_KEY, slot, POLICY_SPELL_COOLDOWN);
@@ -85,16 +80,14 @@ export function applyAction(world, actorId, targetId, actionIdx, learnedSpells) 
       }
     }
 
-    // Spell unavailable — fall back to move toward target (actionIdx 4 = S approximation;
-    // actual direction is computed in the fallback block below by the caller, but we can
-    // return ACTION_WAIT so existing MoveIntent from aiChaseSystem is preserved).
+    // Spell unavailable — preserve the existing objective or movement decision.
     return ACTION_WAIT; // don't override movement, let chase-system move stand
   }
 
   // ── Wait / hold (8) ─────────────────────────────────────────────────────────
   if (actionIdx === ACTION_WAIT) {
-    if (world.has(actorId, MoveIntent)) {
-      try { world.remove(actorId, MoveIntent); } catch {}
+    if (!world.has(actorId, MoveIntent)) {
+      proposeTacticalIntent(world, actorId, { kind: 'hold', source: 'policy' });
     }
     return ACTION_WAIT;
   }
@@ -112,12 +105,14 @@ export function applyAction(world, actorId, targetId, actionIdx, learnedSpells) 
   // ── Movement (0-7) ──────────────────────────────────────────────────────────
   if (actionIdx >= 0 && actionIdx <= 7) {
     const dir = MOVE_DIRS[actionIdx];
-    if (world.has(actorId, MoveIntent)) {
-      return actionIdx;
+    if (!world.has(actorId, MoveIntent)) {
+      proposeTacticalIntent(world, actorId, {
+        kind: 'pursue',
+        source: 'policy',
+        dx: dir.dx,
+        dy: dir.dy,
+      });
     }
-    try {
-      world.add(actorId, MoveIntent, { dx: dir.dx, dy: dir.dy });
-    } catch {}
     return actionIdx;
   }
 

@@ -28,6 +28,11 @@ the resulting `MoveIntent`/attack intents before applying movement. This isolate
 policy overrides from combat randomness and keeps chase-versus-policy comparisons
 replayable.
 
+For tactical-objective probes, record `TacticalIntent` after `aiChaseSystem` and
+`aiPolicySystem`, then run `tacticalIntentSystem` before the intents phase. Verify
+that higher-priority chase objectives survive policy proposals, that `hold` does
+not create `WaitIntent`, and that a valid `CastSpellIntent` remains canonical.
+
 ## Evidence workflow
 
 1. Start with a fixed seed and a short run that isolates the behavior.
