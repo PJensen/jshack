@@ -488,12 +488,20 @@ export const SPELL_CAST_SOUND_EVENTS = Object.freeze([
 ]);
 
 export const CHANNELING_LOOP_SOUND_ID = "spell:channeling";
+export const CHANNELING_ACTIVITY_SOUND_ID_BY_KIND = Object.freeze({
+  eating: "channeling:eating",
+  fishing: "channeling:fishing",
+});
 export const CHANNELING_LOOP_OPTIONS = Object.freeze({
   volume: 0.42,
   fadeIn: 0.12,
   fadeOut: 0.18,
   bus: "spells",
   crossfade: 0.18,
+});
+export const CHANNELING_ACTIVITY_LOOP_OPTIONS = Object.freeze({
+  ...CHANNELING_LOOP_OPTIONS,
+  bus: "ambient:loop",
 });
 
 export const DUNGEON_LOOP_SOUND_ID = "ambient:dungeon";
@@ -587,8 +595,7 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   ];
   preload([...new Set(warmupIds.filter(Boolean).flatMap(resolveUrls))]).catch?.(() => {});
 
-  const channelingLoopUrl = resolve(CHANNELING_LOOP_SOUND_ID)?.url;
-  let channelingLoopActive = false;
+  let activeChannelingLoopUrl = null;
   const craftingLoopUrlsByKind = new Map(Object.entries(CRAFTING_MENU_LOOP_BY_KIND)
     .map(([kind, soundId]) => [kind, resolveUrls(soundId)]));
   let activeCraftingLoopKind = "";
@@ -599,22 +606,26 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   const creatureAlertSoundAt = new Map();
   const kittyHappySoundAt = new Map();
 
-  function startChannelingLoop(actor) {
-    if (!channelingLoopUrl || !isPlayer(actor) || channelingLoopActive) return;
-    channelingLoopActive = true;
-    startLoop(channelingLoopUrl, {
-      volume: CHANNELING_LOOP_OPTIONS.volume,
-      fadeIn: CHANNELING_LOOP_OPTIONS.fadeIn,
-      bus: CHANNELING_LOOP_OPTIONS.bus,
-      crossfade: CHANNELING_LOOP_OPTIONS.crossfade,
-    });
+  function startChannelingLoop(actor, channelId = "", spellId = "") {
+    if (!isPlayer(actor)) return;
+    const kind = String(channelId || (String(spellId || '').toLowerCase() === 'fishing' ? 'fishing' : '')).toLowerCase();
+    const activitySoundId = CHANNELING_ACTIVITY_SOUND_ID_BY_KIND[kind];
+    const loopUrl = resolve(activitySoundId || CHANNELING_LOOP_SOUND_ID)?.url;
+    if (!loopUrl || activeChannelingLoopUrl === loopUrl) return;
+    if (activeChannelingLoopUrl) {
+      stopLoop(activeChannelingLoopUrl, { fadeOut: CHANNELING_LOOP_OPTIONS.fadeOut });
+    }
+    activeChannelingLoopUrl = loopUrl;
+    const options = activitySoundId ? CHANNELING_ACTIVITY_LOOP_OPTIONS : CHANNELING_LOOP_OPTIONS;
+    startLoop(loopUrl, options);
   }
 
   function stopChannelingLoop(actor) {
-    if (!channelingLoopUrl || !channelingLoopActive) return;
+    if (!activeChannelingLoopUrl) return;
     if (actor != null && !isPlayer(actor)) return;
-    channelingLoopActive = false;
-    stopLoop(channelingLoopUrl, { fadeOut: CHANNELING_LOOP_OPTIONS.fadeOut });
+    const loopUrl = activeChannelingLoopUrl;
+    activeChannelingLoopUrl = null;
+    stopLoop(loopUrl, { fadeOut: CHANNELING_LOOP_OPTIONS.fadeOut });
   }
 
   function stopCraftingMenuLoop(kind = "") {
@@ -1287,9 +1298,10 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   // separately via the 'damaged' handler above when the spell
   // actually hits after travel time.
 
-  world.on('channeling:start', ({ actor, channelId }) => {
-    if (String(channelId || '') === 'eating' || String(channelId || '') === 'fishing') return;
-    startChannelingLoop(actor);
+  world.on('channeling:start', ({ actor, spellId, channelId }) => {
+    const id = String(channelId || '').toLowerCase();
+    const resolvedId = id || (String(spellId || '').toLowerCase() === 'fishing' ? 'fishing' : '');
+    startChannelingLoop(actor, resolvedId, spellId);
   });
 
   world.on('channeling:complete', ({ actor }) => {

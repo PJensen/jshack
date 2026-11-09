@@ -244,6 +244,8 @@ Deno.test("sounds registry wires quiet spell assets with usable defaults", () =>
   const agony = resolve("spell:agony");
   const cleave = resolve("spell:cleave");
   const channeling = resolve("spell:channeling");
+  const eatingChanneling = resolve("channeling:eating");
+  const fishingChanneling = resolve("channeling:fishing");
 
   assertExists(agony);
   assertExists(cleave);
@@ -255,6 +257,12 @@ Deno.test("sounds registry wires quiet spell assets with usable defaults", () =>
   assertEquals(cleave.bus, "spells");
   assertEquals(channeling.file, "spell_channeling.mp3");
   assertEquals(channeling.bus, "spells");
+  assertExists(eatingChanneling);
+  assertExists(fishingChanneling);
+  assertEquals(eatingChanneling.file, "channeling_eating_loop.mp3");
+  assertEquals(fishingChanneling.file, "channeling_fishing_loop.mp3");
+  assertEquals(eatingChanneling.bus, "ambient:loop");
+  assertEquals(fishingChanneling.bus, "ambient:loop");
 });
 
 Deno.test("sounds registry caps deafened playback with a short fade", () => {

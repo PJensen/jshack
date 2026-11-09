@@ -103,6 +103,9 @@ export function installChannelingController(world, getActorId) {
   function startLoop(spellId, mode = "cast", manaPerTick = 0, channelId = "", channelLabel = "") {
     try { setInputLock('channeling', true); } catch {}
 
+    const resolvedChannelId = channelId || (String(spellId || '').toLowerCase() === 'fishing' ? 'fishing' : '');
+    const resolvedChannelLabel = channelLabel || (resolvedChannelId === 'fishing' ? 'Fishing' : '');
+
     // Dispatch UI start event so the HUD can show the channeling overlay
     const spell = getSpell(spellId || '');
     const spellName = spell?.name || spellId || 'Spell';
@@ -112,8 +115,8 @@ export function installChannelingController(world, getActorId) {
     const mana = actorId ? world.get(actorId, Mana) : null;
     uiEvent('ui:channeling:start', {
       spellId,
-      channelId,
-      channelLabel,
+      channelId: resolvedChannelId,
+      channelLabel: resolvedChannelLabel,
       spellName,
       castTime,
       mode,

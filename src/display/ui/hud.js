@@ -2450,8 +2450,9 @@ function createChannelingOverlay() {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     const name = String(e?.detail?.spellName || 'Spell');
-    const channelId = String(e?.detail?.channelId || '');
-    const channelLabel = String(e?.detail?.channelLabel || '');
+    const spellId = String(e?.detail?.spellId || '');
+    const channelId = String(e?.detail?.channelId || (spellId.toLowerCase() === 'fishing' ? 'fishing' : ''));
+    const channelLabel = String(e?.detail?.channelLabel || (channelId === 'fishing' ? 'Fishing' : ''));
     channelMode = String(e?.detail?.mode || 'cast');
     castTime = Math.max(1, Number(e?.detail?.castTime || 1));
     sustainManaPerTick = Math.max(0, Number(e?.detail?.manaPerTick || 0));

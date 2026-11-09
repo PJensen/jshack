@@ -250,6 +250,10 @@ const SOUNDS = {
   "c":      { file: "spell_agony.mp3",     bus: "spells" },
   "spell:channeling": { file: "spell_channeling.mp3", bus: "spells" },
 
+  // ── Timed activity channels ────────────────────
+  "channeling:eating": { file: "channeling_eating_loop.mp3", bus: "ambient:loop" },
+  "channeling:fishing": { file: "channeling_fishing_loop.mp3", bus: "ambient:loop" },
+
   // ── UI / Misc ───────────────────────────────────
   "level:up":         { file: "quest_complete.mp3",   bus: "ui", maxVoices: 1 },
 
