@@ -15,6 +15,7 @@ import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
 import { WaitIntent } from "../src/rules/components/Intents/WaitIntent.js";
 import { TacticalIntent } from "../src/rules/components/TacticalIntent.js";
 import { proposeTacticalIntent } from "../src/rules/ai/tacticalIntent.js";
+import { tacticalArbitrationSystem } from "../src/rules/systems/tacticalArbitrationSystem.js";
 import { tacticalIntentSystem } from "../src/rules/systems/tacticalIntentSystem.js";
 
 Deno.test("chase objective wins over a later policy movement proposal", () => {
@@ -34,6 +35,7 @@ Deno.test("chase objective wins over a later policy movement proposal", () => {
     dy: 1,
   });
 
+  tacticalArbitrationSystem(world);
   assertEquals(world.get(actor, TacticalIntent).kind, "flank");
   tacticalIntentSystem(world);
   assertEquals(world.get(actor, MoveIntent), {
@@ -49,6 +51,7 @@ Deno.test("hold is explicit and does not become a guarded wait", () => {
   const actor = world.create();
   proposeTacticalIntent(world, actor, { kind: "hold", source: "chase" });
 
+  tacticalArbitrationSystem(world);
   tacticalIntentSystem(world);
 
   assert(!world.has(actor, MoveIntent));
@@ -62,6 +65,7 @@ Deno.test("hold coexists with a canonical spell action", () => {
   world.add(actor, CastSpellIntent, { spellId: "phase_strike", targetId: 9 });
   proposeTacticalIntent(world, actor, { kind: "hold", source: "chase" });
 
+  tacticalArbitrationSystem(world);
   tacticalIntentSystem(world);
 
   assert(world.has(actor, CastSpellIntent));
@@ -75,6 +79,7 @@ Deno.test("expired tactical objectives are discarded without projecting an actio
   proposeTacticalIntent(world, actor, { kind: "pursue", source: "chase", dx: 1, dy: 0 });
   world.step = 1;
 
+  tacticalArbitrationSystem(world);
   tacticalIntentSystem(world);
 
   assert(!world.has(actor, TacticalIntent));

@@ -35,6 +35,7 @@ import { castSpellSystem } from "../rules/systems/castSpellSystem.js";
 import { aiChaseSystem, installAggroFromStealthOffenseListener } from "../rules/systems/aiChaseSystem.js";
 import { aiPolicySystem } from "../rules/systems/aiPolicySystem.js";
 import { tacticalIntentSystem } from "../rules/systems/tacticalIntentSystem.js";
+import { tacticalArbitrationSystem } from "../rules/systems/tacticalArbitrationSystem.js";
 import { aiTownfolkSystem, installTownfolkDoorListener, installBellListener } from "../rules/systems/aiTownfolkSystem.js";
 import { socialAggroSystem } from "../rules/systems/socialAggroSystem.js";
 import { aiScurrySystem } from "../rules/systems/aiScurrySystem.js";
@@ -217,10 +218,8 @@ export function configureWorld(world) {
   registerSystem(aiTownfolkSystem, 'ai');
   registerSystem(socialAggroSystem, 'ai');
   registerSystem(aiChaseSystem, 'ai');
-  // Policy proposes a tactical objective after chase has made its decision.
-  // The tactical resolver arbitrates and projects the objective below.
+  // Policy proposes a tactical candidate after chase has made its decision.
   registerSystem(aiPolicySystem, 'ai', { after: [aiChaseSystem] });
-  registerSystem(tacticalIntentSystem, 'ai', { after: [aiChaseSystem, aiPolicySystem] });
   // Weapon pickup after chase so the monster's hunt state is settled first.
   registerSystem(aiWeaponPickupSystem, 'ai');
   registerSystem(aiScrollPickupSystem, 'ai');
@@ -230,6 +229,10 @@ export function configureWorld(world) {
   registerSystem(summonedBehaviorSystem, 'ai');
   registerSystem(petCommandSystem, 'ai');
   registerSystem(petBehaviorSystem, 'ai');
+
+  // Phase: tactics (candidate arbitration and objective projection)
+  registerSystem(tacticalArbitrationSystem, 'tactics');
+  registerSystem(tacticalIntentSystem, 'tactics', { after: [tacticalArbitrationSystem] });
 
   // Phase: intents (intent consumers + steering)
   registerSystem(intentValidationSystem, 'intents', {
@@ -349,7 +352,7 @@ export function configureWorld(world) {
   // Keep spatial index in sync after structural changes
   registerSystem(spatialIndexSystem, 'cleanup');
 
-  const baseScheduler = composeScheduler('ai', 'intents', 'effects', 'scripts', 'cleanup');
+  const baseScheduler = composeScheduler('ai', 'tactics', 'intents', 'effects', 'scripts', 'cleanup');
   const profEnabled = shouldProfileRules();
   if (!profEnabled) {
     world.setScheduler(baseScheduler);
@@ -357,8 +360,8 @@ export function configureWorld(world) {
   }
 
   // Build profiled scheduler: measure per system and per phase using high-res timer
-  /** @type {Array<'ai'|'intents'|'effects'|'scripts'|'cleanup'>} */
-  const phases = ['ai', 'intents', 'effects', 'scripts', 'cleanup'];
+  /** @type {Array<'ai'|'tactics'|'intents'|'effects'|'scripts'|'cleanup'>} */
+  const phases = ['ai', 'tactics', 'intents', 'effects', 'scripts', 'cleanup'];
   /** @type {Record<string, Function[]>} */
   const phaseSystems = Object.create(null);
   for (const ph of phases) phaseSystems[ph] = getOrderedSystems(ph);

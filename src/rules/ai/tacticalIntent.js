@@ -3,6 +3,8 @@ import {
   TACTICAL_KINDS,
   TACTICAL_SOURCES,
 } from "../components/TacticalIntent.js";
+import { TacticalProposal } from "../components/TacticalProposal.js";
+import { Owner } from "../components/Owner.js";
 
 const SOURCE_PRIORITY = Object.freeze({
   [TACTICAL_SOURCES.chase]: 40,
@@ -25,12 +27,10 @@ export function proposeTacticalIntent(world, actorId, proposal = {}) {
   if (!Object.prototype.hasOwnProperty.call(SOURCE_PRIORITY, source)) return false;
 
   const priority = normalizeInt(proposal.priority, SOURCE_PRIORITY[source]);
-  const existing = world.get(actorId, TacticalIntent);
-  if (existing && existing.expiresAtStep > (world.step | 0)) {
-    if (existing.priority >= priority) return false;
-  }
-
-  const next = {
+  if (!world.isAlive(actorId)) return false;
+  const proposalId = world.create();
+  world.add(proposalId, Owner, { ownerId: actorId });
+  world.add(proposalId, TacticalProposal, {
     kind,
     source,
     priority,
@@ -40,8 +40,6 @@ export function proposeTacticalIntent(world, actorId, proposal = {}) {
     dx: normalizeInt(proposal.dx),
     dy: normalizeInt(proposal.dy),
     expiresAtStep: (world.step | 0) + Math.max(1, normalizeInt(proposal.duration, 1)),
-  };
-  if (existing) world.set(actorId, TacticalIntent, next);
-  else world.add(actorId, TacticalIntent, next);
+  });
   return true;
 }

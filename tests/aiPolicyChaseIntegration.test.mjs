@@ -2,6 +2,7 @@ import { assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
 import { tacticalIntentSystem } from "../src/rules/systems/tacticalIntentSystem.js";
+import { tacticalArbitrationSystem } from "../src/rules/systems/tacticalArbitrationSystem.js";
 import { applyAction } from "../src/rules/ai/policyAction.js";
 
 Deno.test("policy movement preserves an existing chase intent", () => {
@@ -11,6 +12,7 @@ Deno.test("policy movement preserves an existing chase intent", () => {
 
   applyAction(world, actor, 0, 3, []);
 
+  tacticalArbitrationSystem(world);
   tacticalIntentSystem(world);
   const intent = world.get(actor, MoveIntent);
   assertEquals({ dx: intent.dx, dy: intent.dy }, { dx: -1, dy: 0 });
@@ -22,6 +24,7 @@ Deno.test("policy movement still applies when chase produced no intent", () => {
 
   applyAction(world, actor, 0, 3, []);
 
+  tacticalArbitrationSystem(world);
   tacticalIntentSystem(world);
   const intent = world.get(actor, MoveIntent);
   assertEquals({ dx: intent.dx, dy: intent.dy }, { dx: 1, dy: 1 });

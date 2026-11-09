@@ -758,9 +758,9 @@ export function aiChaseSystem(world) {
       } else if (isKiter) {
         // Kite: hold at shoot distance (≥ 3 tiles) and let spell/ranged fire.
         // Flee only when the player closes to melee range.
-        if (dist < 3) { dx = -dx; dy = -dy; }
+        if (dist < 3) { dx = -dx; dy = -dy; tacticalKind = "kite"; }
         else {
-          proposeTacticalIntent(world, id, { kind: "hold", source: "chase", targetId: rangedTargetId });
+          proposeTacticalIntent(world, id, { kind: "kite", source: "chase", targetId: rangedTargetId });
           return;
         }
 
@@ -779,7 +779,7 @@ export function aiChaseSystem(world) {
       } else if (def?.packSense && intel >= 4 && intel <= 6) {
         // Rally: regroup with the nearest non-retreating hunting ally.
         const rallyDir = chooseRallyDir(world, id, pos, ni, def, canTraverseTile, canOpenDoors);
-        if (rallyDir) { dx = rallyDir.dx | 0; dy = rallyDir.dy | 0; }
+        if (rallyDir) { dx = rallyDir.dx | 0; dy = rallyDir.dy | 0; tacticalKind = "rally"; }
         else { dx = -dx; dy = -dy; }
 
       } else {
