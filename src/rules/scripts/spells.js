@@ -1326,6 +1326,105 @@ REGISTRY['heal'] = function healScript(world, actor, spell, intent) {
   world.emit('spell:heal', { actor, targetId, at: targetPos, amount: actualHeal });
 };
 
+function resolveHealingTarget(world, actor, spell, intent) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return null;
+  const targetId = Number(intent?.targetId || 0) | 0;
+  const target = targetId > 0 ? targetId : actor;
+  const tpos = /** @type any */ (world.get(target, Position));
+  const vit = /** @type any */ (world.get(target, Vitality));
+  const actorFaction = String(world.get(actor, Faction)?.key || '');
+  const targetFaction = String(world.get(target, Faction)?.key || '');
+  const range = Math.max(1, Number(spell?.range || 6) | 0);
+  if (!tpos || !vit || (vit.hp | 0) <= 0) return null;
+  if (target !== actor && (!actorFaction || actorFaction !== targetFaction)) return null;
+  if (chebyshev(apos, tpos) > range) return null;
+  return { target, pos: { x: tpos.x | 0, y: tpos.y | 0 }, vit };
+}
+
+function applyRenewalEffect(world, actor, target, spell, amount, turns) {
+  const ae = ensureActiveEffects(world, target);
+  if (!ae) return;
+  upsertTimedEffect(ae.effects, {
+    key: 'renewal',
+    turnsLeft: turns,
+    potency: amount,
+    stacks: 1,
+    startedAtTurn: world.step,
+    sourceId: actor,
+    spellId: spell?.id || 'renewal',
+  });
+}
+
+REGISTRY['renewal'] = function renewalScript(world, actor, spell, intent) {
+  const resolved = resolveHealingTarget(world, actor, spell, intent);
+  if (!resolved) {
+    world.emit('spell:renewal', { actor, targetId: Number(intent?.targetId || actor) | 0, amount: 0, reason: 'invalid_target' });
+    return;
+  }
+  const brain = /** @type any */ (world.get(actor, Brain));
+  const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
+  const immediate = 5 + intBonus;
+  const total = 15 + intBonus * 2;
+  const healed = applyHealing(world, {
+    target: resolved.target,
+    amount: immediate,
+    source: actor,
+    cause: 'spell:renewal',
+  }).amount;
+  applyRenewalEffect(world, actor, resolved.target, spell, total, 5);
+  world.emit('spell:renewal', {
+    actor,
+    targetId: resolved.target,
+    at: resolved.pos,
+    amount: healed,
+    overTime: total,
+    turns: 5,
+  });
+};
+
+REGISTRY['sacred_restoration'] = function sacredRestorationScript(world, actor, spell, intent) {
+  const resolved = resolveHealingTarget(world, actor, spell, intent);
+  if (!resolved) {
+    world.emit('spell:sacred_restoration', { actor, targetId: Number(intent?.targetId || actor) | 0, amount: 0, reason: 'invalid_target' });
+    return;
+  }
+  const brain = /** @type any */ (world.get(actor, Brain));
+  const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
+  const amount = 42 + intBonus * 3;
+  const healed = applyHealing(world, {
+    target: resolved.target,
+    amount,
+    source: actor,
+    cause: 'spell:sacred_restoration',
+  }).amount;
+  world.emit('spell:sacred_restoration', { actor, targetId: resolved.target, at: resolved.pos, amount: healed });
+};
+
+REGISTRY['lifebloom'] = function lifebloomScript(world, actor, spell, _intent) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return;
+  const actorFaction = String(world.get(actor, Faction)?.key || '');
+  const radius = Math.max(1, Number(spell?.radius || 3) | 0);
+  const amount = 5 + Math.max(0, Math.floor((Number(world.get(actor, Brain)?.intelligence || 10) - 10) / 3));
+  const affected = [];
+  for (const [id, pos, fac, vit] of world.query(Position, Faction, Vitality)) {
+    if (!pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
+    if (String(fac.key || '') !== actorFaction) continue;
+    if (chebyshev(apos, pos) > radius) continue;
+    const healed = applyHealing(world, { target: id, amount, source: actor, cause: 'spell:lifebloom' }).amount;
+    if (healed > 0) affected.push({ id, amount: healed });
+  }
+  world.emit('spell:lifebloom', {
+    actor,
+    at: { x: apos.x | 0, y: apos.y | 0 },
+    radius,
+    amount,
+    affected,
+    tick: !!_intent?._channelTick,
+  });
+};
+
 // Flash Heal — high-cost, self-only instant heal.
 REGISTRY['flash_heal'] = function flashHealScript(world, actor, spell, intent) {
   const apos = /** @type any */ (world.get(actor, Position));

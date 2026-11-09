@@ -33,6 +33,8 @@
  * @property {number} [minIntelligence]
  * @property {number} [range]   // max casting range in tiles
  * @property {number} [castTime] // turns to channel before casting (0 or omitted = instant)
+ * @property {boolean} [breakOnDamage] // incoming damage interrupts a cast/channel
+ * @property {number} [damageSetbackTurns] // incoming damage delays a cast/channel instead of cancelling it
  * @property {boolean} [channeling] // true = sustained realtime channel until cancelled
  * @property {number} [manaPerTick] // mana drained each channel tick when channeling
  * @property {number} [staminaPerTick] // stamina drained each channel tick when channeling
@@ -322,6 +324,59 @@ export const SPELL_DEFS = {
       { kind: 'utility', note: 'Consumes roughly a quarter of a cleric\'s starting mana' },
       { kind: 'utility', note: 'Restores 22% of max HP (minimum 1)' },
       { kind: 'damage', element: 'holy', amount: '2 base to adjacent hostile creatures; INT-scaled, can crit' },
+    ],
+  },
+  renewal: {
+    id: 'renewal',
+    name: 'Renewal',
+    symbol: '\u273F',       // ✿
+    schools: ['healing', 'nature', 'restoration'],
+    manaCost: 9,
+    minIntelligence: 0,
+    range: 6,
+    script: 'renewal',
+    targeting: 'target',
+    description: 'Set a patient weave of living magic into a wounded ally.',
+    effects: [
+      { kind: 'utility', note: 'Heals an ally immediately, then restores health over 5 turns' },
+      { kind: 'utility', note: 'The ongoing renewal is replaced, not stacked' },
+    ],
+  },
+  sacred_restoration: {
+    id: 'sacred_restoration',
+    name: 'Sacred Restoration',
+    symbol: '\u2727',       // ✧
+    schools: ['healing', 'holy', 'restoration'],
+    manaCost: 18,
+    minIntelligence: 0,
+    range: 7,
+    castTime: 5,
+    breakOnDamage: true,
+    breakOnMove: true,
+    script: 'sacred_restoration',
+    targeting: 'target',
+    description: 'Gather a deep reservoir of healing light and pour it into one battered ally.',
+    effects: [
+      { kind: 'utility', note: 'Large single-target heal after a 5-turn cast' },
+      { kind: 'utility', note: 'Incoming damage or movement interrupts the cast' },
+    ],
+  },
+  lifebloom: {
+    id: 'lifebloom',
+    name: 'Lifebloom',
+    symbol: '\u2740',       // ❀
+    schools: ['healing', 'nature', 'restoration'],
+    manaCost: 4,
+    manaPerTick: 4,
+    channeling: true,
+    minIntelligence: 0,
+    radius: 3,
+    script: 'lifebloom',
+    targeting: 'self',
+    description: 'Raise a living chorus that mends every nearby ally while you hold the note.',
+    effects: [
+      { kind: 'utility', note: 'Sustained area heal around the caster' },
+      { kind: 'utility', note: 'The channel ends when mana runs out or the caster is interrupted' },
     ],
   },
   smite: {

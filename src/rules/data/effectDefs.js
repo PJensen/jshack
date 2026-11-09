@@ -60,6 +60,13 @@ export const EFFECT_DEFS = [
     description: "Regenerating health each turn.",
   },
   {
+    id: "renewal",
+    keys: ["renewal"],
+    operation: "heal",
+    statuses: ["renewal"],
+    description: "A restorative weave closes wounds each turn.",
+  },
+  {
     id: "town_stew",
     keys: ["town_stew"],
     operation: "none",

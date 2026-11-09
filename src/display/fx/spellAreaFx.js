@@ -2774,6 +2774,14 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       }
     });
 
+    const healingBurst = (at, radius = 1.4) => {
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+      _flashHealFx.push(new RadialFx({ x: at.x, y: at.y, radius, ttl: 0.48 }));
+    };
+    world.on('spell:renewal', ({ at }) => healingBurst(at, 1.15));
+    world.on('spell:sacred_restoration', ({ at }) => healingBurst(at, 1.8));
+    world.on('spell:lifebloom', ({ at, radius }) => healingBurst(at, Math.max(1.5, Number(radius || 3))));
+
     // Mark of Death — dark purple implosion on target
     world.on('spell:mark_of_death', ({ at }) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;

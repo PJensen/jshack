@@ -25,6 +25,9 @@ _book('book_verdant_ward',  'Spellbook of Verdant Ward',  'rare',   'Grants the 
 _book('book_harmony_ward',  'Spellbook of Harmony Ward',  'rare',   'Grants the ability to cast Harmony Ward.');
 _book('book_shadow_veil',   'Spellbook of Shadow Veil',   'rare',   'Grants the ability to cast Shadow Veil.');
 _book('book_flash_heal',    'Spellbook of Flash Heal',    'rare',   'Grants the ability to cast Flash Heal.');
+_book('book_renewal',   'Spellbook of Renewal',   'rare',   'Grants the ability to cast Renewal.');
+_book('book_sacred_restoration', 'Spellbook of Sacred Restoration', 'epic', 'Grants the ability to cast Sacred Restoration.');
+_book('book_lifebloom', 'Spellbook of Lifebloom', 'epic', 'Grants the ability to channel Lifebloom.');
 _book('book_smite',         'Spellbook of Smite',         'magic',  'Grants the ability to call down holy judgment on enemies.');
 _book('book_summon_skeleton','Spellbook of Summon Skeleton','epic', 'Grants the ability to rip a skeleton from the earth to fight at your side.');
 _book('book_resurrection',  'Spellbook of Resurrection',  'epic', 'Grants the ability to raise an eligible corpse as a temporary undead ally.');

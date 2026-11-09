@@ -30,6 +30,8 @@ export const Channeling = defineComponent("Channeling", {
   y: null,
   breakOnNoLos: false,
   breakOnMove: false,
+  breakOnDamage: false,
+  damageSetbackTurns: 0,
   anchorX: null,
   anchorY: null,
 });

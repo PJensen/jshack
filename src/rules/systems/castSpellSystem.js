@@ -343,6 +343,8 @@ export function castSpellSystem(world) {
           y: intent.y ?? null,
           breakOnNoLos: !!resolvedSpell.breakOnNoLos,
           breakOnMove: !!resolvedSpell.breakOnMove,
+          breakOnDamage: !!resolvedSpell.breakOnDamage,
+          damageSetbackTurns: Math.max(0, Number(resolvedSpell.damageSetbackTurns || 0) | 0),
           anchorX: casterPos ? (casterPos.x | 0) : null,
           anchorY: casterPos ? (casterPos.y | 0) : null,
         });

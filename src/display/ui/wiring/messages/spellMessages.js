@@ -179,6 +179,11 @@ export function installSpellMessages(ctx) {
     else { log('Your concentration breaks. The channeled energy disperses.', 'system'); }
   });
 
+  world.on('channeling:setback', ({ actor, spellId, turns }) => {
+    if (nameOfEntity(actor) !== 'You') return;
+    log(`${_spell(spellId).text} stutters under the impact. (${turns || 1} turn setback.)`, 'system');
+  });
+
   world.on('intent:blocked', ({ actor, reason }) => {
     if (nameOfEntity(actor) !== 'You') return;
     if (reason === 'stunned') { log('Your body won\u2019t obey. All you can do is wait for the ringing to stop.', 'system'); return; }
@@ -197,6 +202,21 @@ export function installSpellMessages(ctx) {
     if (reason === 'full_health' || Number(amount || 0) <= 0) {
       log('Healing light washes over you and finds nothing to mend.', 'system');
     }
+  });
+
+  world.on('spell:renewal', ({ actor, reason, amount }) => {
+    if (nameOfEntity(actor) !== 'You') return;
+    if (reason === 'invalid_target' || Number(amount || 0) <= 0) log('The restorative weave finds no willing wound.', 'system');
+  });
+
+  world.on('spell:sacred_restoration', ({ actor, reason, amount }) => {
+    if (nameOfEntity(actor) !== 'You') return;
+    if (reason === 'invalid_target' || Number(amount || 0) <= 0) log('The sacred restoration finds no wound to close.', 'system');
+  });
+
+  world.on('channeling:cancelled', ({ actor, spellId, reason }) => {
+    if (nameOfEntity(actor) !== 'You' || reason !== 'damage_interrupt') return;
+    if (spellId === 'sacred_restoration') log('A blow breaks your concentration. The sacred restoration scatters.', 'system');
   });
 
   world.on('spell:heal', ({ actor, reason, amount }) => {

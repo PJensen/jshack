@@ -133,7 +133,7 @@ const AUDIO_SECTIONS = [
       "book_blink",       "book_blizzard",    "book_bloodthirst", "book_cheap_shot", "book_cleave",
       "book_consecrate",  "book_corpses",     "book_dead",        "book_divine_shield","book_drain_life",
       "book_earthshatter","book_entangle",    "book_evocation",   "book_fireball",   "book_firestorm",
-      "book_flash_heal",  "book_frost",       "book_gridbugs",    "book_harmony_ward","book_heal",
+      "book_flash_heal",  "book_renewal", "book_sacred_restoration", "book_lifebloom", "book_frost", "book_gridbugs",    "book_harmony_ward","book_heal",
       "book_hearthstone", "book_homecoming",  "book_holy_strike", "book_ignite_weapons","book_iron_flesh",
       "book_kitty",       "book_leech_spores","book_lightning",   "book_mark_of_death","book_meteor",
       "book_natures_touch","book_phase_strike","book_plague_swarm","book_poison_blade","book_primal_roar",
