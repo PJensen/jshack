@@ -252,6 +252,8 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   const _flashHealFx = [];
   /** @type {Array<{x:number,y:number,vx:number,vy:number,rot:number,rotVel:number,life:number,maxLife:number,size:number,hue:number}>} */
   const _renewalLeaves = [];
+  /** @type {Map<number, { x:number, y:number, radius:number, ttl:number, phase:number, moteClock:number }>} */
+  const _lifebloomChannels = new Map();
 
   // --- Phase Strike state ---
   /** @type {PhaseStrikeFx[]} */
@@ -481,6 +483,17 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       leaf.y += leaf.vy * dt;
       leaf.vy -= 0.035 * dt;
       leaf.rot += leaf.rotVel * dt;
+    }
+    for (const [actorId, channel] of _lifebloomChannels) {
+      channel.ttl -= dt;
+      channel.moteClock -= dt;
+      if (channel.ttl <= 0) {
+        _lifebloomChannels.delete(actorId);
+        continue;
+      }
+      if (!fx?.pool || channel.moteClock > 0) continue;
+      channel.moteClock = 0.055 + Math.random() * 0.055;
+      spawnLifebloomMotes({ x: channel.x, y: channel.y }, channel.radius, 1);
     }
     for (let i = _phaseStrikeFx.length - 1; i >= 0; i--) {
       _phaseStrikeFx[i].tick(dt);
@@ -1118,6 +1131,35 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
           ctx.stroke();
         }
       }
+    }
+    ctx.restore();
+  }
+
+  // --- Draw: Lifebloom channel ---
+  /** @param {CanvasRenderingContext2D} ctx */
+  function drawLifebloom(ctx) {
+    if (!_lifebloomChannels.size) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const now = getFxTime();
+    for (const channel of _lifebloomChannels.values()) {
+      const fade = Math.min(1, channel.ttl / 0.24);
+      const pulse = 0.5 + 0.5 * Math.sin(now * 5.5 + channel.phase);
+      const outer = channel.radius * (0.92 + pulse * 0.035);
+      const glow = ctx.createRadialGradient(channel.x, channel.y, 0, channel.x, channel.y, outer);
+      glow.addColorStop(0, `rgba(210,255,170,${(0.09 * fade).toFixed(3)})`);
+      glow.addColorStop(0.62, `rgba(120,235,145,${(0.07 * fade).toFixed(3)})`);
+      glow.addColorStop(1, 'rgba(80,210,130,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(channel.x, channel.y, outer, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(175,255,155,${(0.22 * fade + pulse * 0.08 * fade).toFixed(3)})`;
+      ctx.lineWidth = 0.055;
+      ctx.beginPath();
+      ctx.arc(channel.x, channel.y, outer * 0.96, 0, Math.PI * 2);
+      ctx.stroke();
     }
     ctx.restore();
   }
@@ -2823,6 +2865,33 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       _flashHealFx.push(new RadialFx({ x: at.x, y: at.y, radius, ttl: 0.48 }));
     };
 
+    // Lifebloom — pale healing motes rise from the ground across the whole area.
+    const spawnLifebloomMotes = (at, radius = 3) => {
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+      const scale = PERF.quality === 'low' ? 0.6 : (PERF.quality === 'high' ? 1.25 : 1);
+      const count = Math.max(8, Math.round(16 * scale));
+      const r = Math.max(1, Number(radius) || 3);
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.sqrt(Math.random()) * r;
+        const life = 0.42 + Math.random() * 0.38;
+        fx.pool.spawn(new Particle({
+          x: at.x + Math.cos(angle) * dist,
+          y: at.y + Math.sin(angle) * dist,
+          vx: (Math.random() - 0.5) * 0.16,
+          vy: -(0.32 + Math.random() * 0.52),
+          ay: -0.025,
+          life,
+          size0: 0.035 + Math.random() * 0.045,
+          size1: 0.008,
+          r: 175 + ((Math.random() * 45) | 0),
+          g: 235 + ((Math.random() * 20) | 0),
+          b: 150 + ((Math.random() * 55) | 0),
+          a0: 0.58 + Math.random() * 0.25,
+        }));
+      }
+    };
+
     // Renewal — each HoT tick emits leaf-shaped motes from the healed target.
     const spawnRenewalLeaves = (at) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
@@ -2853,7 +2922,54 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       spawnRenewalLeaves(at);
     });
     world.on('spell:sacred_restoration', ({ at }) => healingBurst(at, 1.8));
-    world.on('spell:lifebloom', ({ at, radius }) => healingBurst(at, Math.max(1.5, Number(radius || 3))));
+    world.on('channeling:start', ({ actor, spellId }) => {
+      if (String(spellId || '') !== 'lifebloom') return;
+      const id = Number(actor || 0) | 0;
+      const pos = typeof getPosition === 'function' ? getPosition(id) : null;
+      if (!(id > 0) || !pos) return;
+      _lifebloomChannels.set(id, {
+        x: pos.x,
+        y: pos.y,
+        radius: 3,
+        ttl: Number.POSITIVE_INFINITY,
+        phase: Math.random() * Math.PI * 2,
+        moteClock: 0,
+      });
+    });
+    world.on('spell:lifebloom', ({ actor, at, radius }) => {
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+      const r = Math.max(1.5, Number(radius || 3));
+      const id = Number(actor || 0) | 0;
+      if (!(id > 0)) return;
+      const current = _lifebloomChannels.get(id);
+      if (current) {
+        current.x = at.x;
+        current.y = at.y;
+        current.radius = r;
+        current.ttl = Math.max(current.ttl, 0.28);
+        return;
+      }
+      _lifebloomChannels.set(id, {
+        x: at.x,
+        y: at.y,
+        radius: r,
+        ttl: 0.28,
+        phase: Math.random() * Math.PI * 2,
+        moteClock: 0,
+      });
+    });
+
+    const fadeLifebloom = (actor) => {
+      const id = Number(actor || 0) | 0;
+      const current = _lifebloomChannels.get(id);
+      if (current) current.ttl = Math.min(current.ttl, 0.24);
+    };
+    world.on('channeling:cancelled', ({ actor, spellId }) => {
+      if (String(spellId || '') === 'lifebloom') fadeLifebloom(actor);
+    });
+    world.on('channeling:complete', ({ actor, spellId }) => {
+      if (String(spellId || '') === 'lifebloom') fadeLifebloom(actor);
+    });
 
     // Mark of Death — dark purple implosion on target
     world.on('spell:mark_of_death', ({ at }) => {
@@ -3553,6 +3669,15 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       const f = _flashHealFx[i];
       out.push({ x: f.x, y: f.y, radius: 4 * f.alpha, color: [255, 240, 180] });
     }
+    for (const channel of _lifebloomChannels.values()) {
+      const fade = Math.min(1, channel.ttl / 0.24);
+      out.push({
+        x: channel.x,
+        y: channel.y,
+        radius: channel.radius * (0.9 + 0.1 * fade),
+        color: [145, 255, 165],
+      });
+    }
     for (let i = 0; i < _smiteFx.length; i++) {
       const s = _smiteFx[i];
       out.push({ x: s.x, y: s.y, radius: 5 * s.alpha, color: [255, 240, 180] });
@@ -3581,5 +3706,5 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     return out;
   }
 
-  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawRenewalLeaves, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners };
+  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawLifebloom, drawRenewalLeaves, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners };
 }

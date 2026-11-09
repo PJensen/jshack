@@ -47,6 +47,9 @@ export function drawWorldEffects({ bctx, worldView, glyphAtlas, boltFx, spellAre
   if (typeof spellAreaFx.drawFlashHeal === "function") {
     spellAreaFx.drawFlashHeal(bctx);
   }
+  if (typeof spellAreaFx.drawLifebloom === "function") {
+    spellAreaFx.drawLifebloom(bctx);
+  }
   if (typeof spellAreaFx.drawRenewalLeaves === "function") {
     spellAreaFx.drawRenewalLeaves(bctx);
   }
