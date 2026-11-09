@@ -9,9 +9,14 @@ import { Player } from "../src/rules/components/Player.js";
 import { CastSpellIntent } from '../src/rules/components/Intents/CastSpellIntent.js';
 import { Status } from "../src/rules/components/Status.js";
 import { castSpellSystem } from '../src/rules/systems/castSpellSystem.js';
+import { channelingSystem } from '../src/rules/systems/channelingSystem.js';
+import { Channeling } from '../src/rules/components/Channeling.js';
 
 function scheduler(world) {
-  try { castSpellSystem(world); } catch (e) { console.error('cast system error', e); }
+  try {
+    channelingSystem(world);
+    castSpellSystem(world);
+  } catch (e) { console.error('cast system error', e); }
 }
 
 Deno.test("casting a spell costs mana and emits events", () => {
@@ -62,6 +67,9 @@ Deno.test("castSpellSystem accepts legacy prefixed spell ids", () => {
 
   const manaAfter = world.get(player, Mana);
   assert(manaAfter.mana === 16, "flash_heal mana cost should be applied from prefixed id");
+  assert(world.has(player, Channeling), "flash_heal should begin its one-turn cast");
+  assert(!castEvents.some((e) => e.spellId === "flash_heal"), "flash_heal should not resolve before its cast completes");
+  world.tick(1);
   assert(castEvents.some((e) => e.spellId === "flash_heal"), "prefixed id should resolve to canonical spell id");
   assert(brain.learnedSpellIds[0] === "flash_heal", "learned spell ids should migrate to canonical ids");
 });
