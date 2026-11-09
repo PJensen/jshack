@@ -589,6 +589,19 @@ export function castSpellOnLOS(opts) {
       const faction = String(ctx.world.get(ctx.actor, Faction)?.key || "").trim();
       if (!faction || !actorPos) return;
       const candidates = [];
+      const actorVitality = ctx.world.get(ctx.actor, Vitality);
+      if (actorVitality && (actorVitality.hp | 0) > 0) {
+        const actorMaxHp = Math.max(1, Number(actorVitality.maxHp || 0));
+        const actorHp = Number(actorVitality.hp || 0);
+        if (actorHp < actorMaxHp) {
+          candidates.push({
+            id: ctx.actor,
+            pos: actorPos,
+            fraction: actorHp / actorMaxHp,
+            distance: 0,
+          });
+        }
+      }
       for (const [id, pos, fac, vit] of ctx.world.query(Position, Faction, Vitality)) {
         if (id === ctx.actor || !pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
         if (String(fac.key || "").trim() !== faction) continue;

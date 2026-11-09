@@ -51,6 +51,7 @@ Deno.test("new humanoid roles have authored loadouts", () => {
   assert(shaman.learnedSpellIds.includes("entangle"), "goblin shaman should know entangle");
   assert(shaman.learnedSpellIds.includes("fireball"), "goblin shaman should know fireball");
   assert(priest.learnedSpellIds.includes("heal"), "goblin priest should know heal");
+  assert(priest.learnedSpellIds.includes("renewal"), "goblin priest should know renewal");
   assert(priest.tags.includes("healer"), "goblin priest should be tagged as a healer");
   assert(geomancer.learnedSpellIds.includes("earthshatter"), "kobold geomancer should know earthshatter");
   for (const monster of [shaman, priest, geomancer]) {
@@ -172,6 +173,35 @@ Deno.test("castSpellOnLOS can select the most injured same-faction ally", () => 
   assertEquals(world.get(actor, CastSpellIntent).targetId, injured);
   assertEquals(world.get(actor, CastSpellIntent).x, 4);
   assertEquals(world.get(actor, CastSpellIntent).y, 1);
+});
+
+Deno.test("castSpellOnLOS ally healing can fall back to the caster", () => {
+  const world = new World({ seed: 0xA11CF });
+  const actor = world.create();
+  world.add(actor, Position, { x: 1, y: 1 });
+  world.add(actor, Faction, { key: "enemy" });
+  world.add(actor, Vitality, { hp: 5, maxHp: 20 });
+  world.add(actor, Mana, { maxMana: 50, mana: 50, manaRegen: 0.2, regenCooldown: 0 });
+
+  const callback = castSpellOnLOS({
+    spellId: "renewal",
+    targeting: "ally",
+    maxRange: 6,
+    chance: 1,
+    cooldownTurns: 5,
+    telegraphTurns: 1,
+  });
+  const ctx = new SeenCallbackContext(world, {
+    actor,
+    target: actor,
+    canActThisTurn: true,
+    hasQueuedMove: false,
+  });
+  callback(ctx);
+  world.step = 1;
+  callback(ctx);
+
+  assertEquals(world.get(actor, CastSpellIntent).targetId, actor);
 });
 
 Deno.test("stasis blocks direct LOS ability callbacks before intent validation", () => {
