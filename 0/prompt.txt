@@ -1,0 +1,32 @@
+what is newest quest?
+
+---
+
+Who gives the quest?
+
+---
+
+I feel like we need 
+
+a. a minimap
+b. an active quest direction to move in
+
+historically I was against both of these, but, for new players, I can see their utility.
+
+---
+
+all approved
+
+NOTE: I culd not find the rootbound grotto in three playthroyghs -- and so here we are.
+
+---
+
+:8000/src/display/ui….js?v=0.9.1156:1577 Uncaught SyntaxError: Identifier 'target' has already been declared
+
+---
+
+I like what you did with the tiny arrows -- but I dont see a mini-map. Hold here while I think.
+
+---
+
+Oh I do see it! super cool! I see it -- lets move it below the active quest bar.
