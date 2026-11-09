@@ -33,7 +33,7 @@ Deno.test("renewal applies immediate healing and a timed heal-over-time effect",
   assertEquals(world.get(target, Vitality).hp, 5, "renewal should not heal immediately");
   const effect = world.get(target, ActiveEffects)?.effects?.find((entry) => entry.key === "renewal");
   assert(effect, "renewal should leave a timed effect");
-  assertEquals(effect.potency, 3, "baseline renewal should heal 3 HP per tick");
+  assertEquals(effect.potency, 2, "baseline renewal should heal 2 HP per tick");
   const before = world.get(target, Vitality).hp;
   effectSystem(world);
   assert(world.get(target, Vitality).hp > before, "renewal should tick through effectSystem");

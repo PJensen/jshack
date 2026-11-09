@@ -1364,7 +1364,7 @@ REGISTRY['renewal'] = function renewalScript(world, actor, spell, intent) {
   }
   const brain = /** @type any */ (world.get(actor, Brain));
   const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
-  const perTick = 3 + intBonus;
+  const perTick = 2 + Math.floor(intBonus / 2);
   applyRenewalEffect(world, actor, resolved.target, spell, perTick, 5);
   world.emit('spell:renewal', {
     actor,
