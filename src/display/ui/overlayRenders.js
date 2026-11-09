@@ -635,6 +635,7 @@ export function renderQuestJournal(panel, quests) {
       });
       header.setAttribute('aria-expanded', q.questId === expandedQuestId ? 'true' : 'false');
       header.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('ui:setActiveQuest', { detail: { questId: q.questId } }));
         setExpandedQuest(q.questId === expandedQuestId ? '' : q.questId);
       });
 

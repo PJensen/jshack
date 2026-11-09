@@ -80,12 +80,23 @@ export function createHudFeeds(world, deps) {
   let lastSpellResourceSig = "";
   let lastCalendarDay = -1;
   let lastQuestTrackerSig = "";
+  let activeQuestId = "";
   let lastMinimapSig = "";
   let lastMinimapStateKey = "";
   let _lastSpellBarSig = '';
   let _lastPinnedSpellBarSig = '';
   /** @type {Set<string>} */
   let _prevKnownSpells = new Set();
+
+  if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    window.addEventListener("ui:setActiveQuest", (event) => {
+      const requestedQuestId = String(event?.detail?.questId || "");
+      if (requestedQuestId === activeQuestId) return;
+      activeQuestId = requestedQuestId;
+      lastQuestTrackerSig = "";
+      updateQuestTrackerHUD();
+    });
+  }
 
   const CLOCK_HOURS = Object.freeze([
     "\uD83D\uDD5B", // 12
@@ -209,6 +220,10 @@ export function createHudFeeds(world, deps) {
 
   function pickFocusedQuestTrackerEntry(entries) {
     const active = Array.isArray(entries) ? entries.slice() : [];
+    if (activeQuestId) {
+      const requested = active.find((entry) => entry.questId === activeQuestId);
+      if (requested) return requested;
+    }
     active.sort((a, b) => b.priority - a.priority || b.sortKey - a.sortKey || a.title.localeCompare(b.title));
     return active[0] || null;
   }

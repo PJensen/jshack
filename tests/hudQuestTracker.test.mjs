@@ -104,6 +104,16 @@ Deno.test("hud quest tracker prioritizes accepted measurable progress quests", (
     assert(String(detail.focused.rewardPreview || "").includes("Mirror Bow"));
     assert(String(detail.focused.rewardPreview || "").includes("wall-side impacts"));
     assertEquals("moreCount" in detail, false);
+
+    const selectedPayloads = [];
+    const onSelectedUpdate = (ev) => selectedPayloads.push(ev?.detail || null);
+    window.addEventListener("ui:updateQuestTracker", onSelectedUpdate);
+    window.dispatchEvent(new CustomEvent("ui:setActiveQuest", {
+      detail: { questId: STARTER_PRIEST_FETCH_QUEST_ID },
+    }));
+    window.removeEventListener("ui:updateQuestTracker", onSelectedUpdate);
+
+    assertEquals(selectedPayloads.at(-1)?.focused?.questId, STARTER_PRIEST_FETCH_QUEST_ID);
   } finally {
     restoreWindow();
   }
