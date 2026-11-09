@@ -1,0 +1,1 @@
+fear should be cost at least two ticks to cast.
