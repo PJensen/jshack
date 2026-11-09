@@ -4,6 +4,8 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { createHudFeeds } from "../src/main/ui/hudFeeds.js";
 import { Player } from "../src/rules/components/Player.js";
 import { Position } from "../src/rules/components/Position.js";
+import { DungeonState } from "../src/rules/components/DungeonState.js";
+import { DungeonEntrance } from "../src/rules/components/DungeonEntrance.js";
 import { installQuestRuntime, instantiateQuest, STARTER_PRIEST_FETCH_QUEST_ID } from "../src/rules/quests/runtime.js";
 import { RAT_INFESTATION_QUEST_ID } from "../src/rules/quests/definitions/ratInfestation.js";
 import { QuestVars } from "../src/rules/components/QuestVars.js";
@@ -42,6 +44,11 @@ Deno.test("hud quest tracker prioritizes accepted measurable progress quests", (
     const player = world.create();
     world.add(player, Player, {});
     world.add(player, Position, { x: 3, y: 4 });
+    const dungeon = world.create();
+    world.add(dungeon, DungeonState, { currentDepth: 0, activeTemplateId: "overworld" });
+    const entrance = world.create();
+    world.add(entrance, Position, { x: 12, y: 9 });
+    world.add(entrance, DungeonEntrance, { questId: RAT_INFESTATION_QUEST_ID, label: "Tavern Cellar" });
 
     const ratQuest = instantiateQuest(world, RAT_INFESTATION_QUEST_ID, {
       player,
@@ -89,6 +96,9 @@ Deno.test("hud quest tracker prioritizes accepted measurable progress quests", (
     assertEquals(detail.focused.target, 5);
     assertEquals(detail.focused.icon, "🐀");
     assertEquals(detail.focused.summary, "Clear the tavern cellar");
+    assertEquals(detail.focused.targetPosition.label, "Tavern Cellar");
+    assertEquals(detail.focused.targetPosition.x, 12);
+    assertEquals(detail.focused.targetPosition.y, 9);
     assert(String(detail.focused.rewardPreview || "").includes("Mirror Bow"));
     assert(String(detail.focused.rewardPreview || "").includes("wall-side impacts"));
     assertEquals("moreCount" in detail, false);

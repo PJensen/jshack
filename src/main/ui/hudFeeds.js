@@ -7,6 +7,8 @@ import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { inventoryItems } from "../../rules/utils/inventoryFacade.js";
 import { getAffixName } from "../../rules/data/affixes.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
+import { DungeonEntrance } from "../../rules/components/DungeonEntrance.js";
+import { Position } from "../../rules/components/Position.js";
 import { CalendarState } from "../../rules/components/CalendarState.js";
 import { getCalendarDate, TURNS_PER_DAY } from "../../rules/data/calendar.js";
 import { Hunger } from "../../rules/components/Hunger.js";
@@ -33,6 +35,8 @@ import { REQUIRED_RAT_KILLS } from "../../rules/quests/definitions/ratInfestatio
 import { questRewardPreviewText } from "./questRewards.js";
 import { enrichStatusRowDisplay } from "./statusDisplayMetadata.js";
 import { buildEffectRows } from "./effectRows.js";
+import { getTile } from "../../rules/environment/dungeon/tileMap.js";
+import { isExplored } from "../../rules/environment/dungeon/exploredMap.js";
 
 export function formatClockLabel12Hour(turn) {
   const safeTurn = Math.max(0, Number(turn || 0) | 0);
@@ -76,6 +80,8 @@ export function createHudFeeds(world, deps) {
   let lastSpellResourceSig = "";
   let lastCalendarDay = -1;
   let lastQuestTrackerSig = "";
+  let lastMinimapSig = "";
+  let lastMinimapStateKey = "";
   let _lastSpellBarSig = '';
   let _lastPinnedSpellBarSig = '';
   /** @type {Set<string>} */
@@ -206,12 +212,117 @@ export function createHudFeeds(world, deps) {
     return active[0] || null;
   }
 
+  function positionOf(entityId) {
+    const pos = entityId > 0 ? world.get(entityId, Position) : null;
+    return pos ? { x: Number(pos.x) | 0, y: Number(pos.y) | 0 } : null;
+  }
+
+  function buildQuestTarget(questId, node, bindings, playerPos, currentDepth) {
+    const decorate = (target) => target ? { ...target, from: { ...playerPos }, samePlane: Number(target.plane || 0) === currentDepth } : null;
+    const giverId = Number(bindings?.giver || 0) | 0;
+    if (node === "report") {
+      const pos = positionOf(giverId);
+      return decorate(pos ? { ...pos, label: "Return to the quest giver", plane: 0, kind: "giver" } : null);
+    }
+
+    const entranceMatches = [];
+    for (const [id, entrance, pos] of world.query(DungeonEntrance, Position)) {
+      if (String(entrance?.questId || "") !== questId) continue;
+      entranceMatches.push({
+        x: Number(pos.x) | 0,
+        y: Number(pos.y) | 0,
+        label: String(entrance?.label || "Quest entrance"),
+        plane: 0,
+        kind: "entrance",
+        entityId: id,
+      });
+    }
+
+    if (node === "hunt") {
+      const wanted = questId === "side.rootbound_grotto"
+        ? new Set(["goblin_mosscaller", "kobold_cairnkeeper", "orc_bloodspeaker", "druid"])
+        : questId === "starter.rat_infestation" ? new Set(["rat"]) : null;
+      if (wanted && currentDepth > 0) {
+        let best = null;
+        let bestDistance = Infinity;
+        for (const [id, ident, pos] of world.query(NamedIdentity, Position)) {
+          if (!wanted.has(String(ident?.identity || ""))) continue;
+          const distance = Math.abs((Number(pos.x) | 0) - playerPos.x) + Math.abs((Number(pos.y) | 0) - playerPos.y);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            best = { x: Number(pos.x) | 0, y: Number(pos.y) | 0, label: "Quest target", plane: currentDepth, kind: "target", entityId: id };
+          }
+        }
+        if (best) return decorate(best);
+      }
+    }
+
+    if (entranceMatches.length > 0 && currentDepth === 0) return decorate(entranceMatches[0]);
+    const giverPos = positionOf(giverId);
+    return decorate(giverPos ? { ...giverPos, label: "Quest giver", plane: 0, kind: "giver" } : null);
+  }
+
+  function buildMinimap(playerPos, currentDepth) {
+    if (!playerPos) return null;
+    const radius = 28;
+    const width = radius * 2 + 1;
+    const x0 = playerPos.x - radius;
+    const y0 = playerPos.y - radius;
+    const tiles = new Array(width * width).fill(-1);
+    for (let y = 0; y < width; y++) {
+      for (let x = 0; x < width; x++) {
+        const wx = x0 + x;
+        const wy = y0 + y;
+        if (isExplored(wx, wy)) tiles[y * width + x] = Number(getTile(wx, wy) || 0) | 0;
+      }
+    }
+    const markers = [];
+    for (const [, entrance, pos] of world.query(DungeonEntrance, Position)) {
+      if (currentDepth !== 0 || !isExplored(pos.x, pos.y)) continue;
+      if (pos.x < x0 || pos.x > x0 + radius * 2 || pos.y < y0 || pos.y > y0 + radius * 2) continue;
+      markers.push({ x: Number(pos.x) | 0, y: Number(pos.y) | 0, kind: "entrance", label: String(entrance?.label || "Dungeon entrance") });
+    }
+    return { x0, y0, width, tiles, markers, player: { ...playerPos }, depth: currentDepth };
+  }
+
+  function updateMinimapHUD() {
+    const pe = playerEntity(world);
+    const playerPos = pe ? positionOf(pe.id) : null;
+    let currentDepth = 0;
+    for (const [, dungeon] of world.query(DungeonState)) {
+      currentDepth = Number(dungeon?.currentDepth || 0) | 0;
+      break;
+    }
+    const stateKey = `${world.step | 0}:${currentDepth}:${playerPos?.x ?? ""},${playerPos?.y ?? ""}`;
+    if (stateKey === lastMinimapStateKey) return;
+    lastMinimapStateKey = stateKey;
+    const minimap = buildMinimap(playerPos, currentDepth);
+    const sig = JSON.stringify(minimap);
+    if (sig === lastMinimapSig) return;
+    lastMinimapSig = sig;
+    try { window.dispatchEvent(new CustomEvent("ui:updateMinimap", { detail: { minimap } })); }
+    catch (e) { console.debug("[hudFeeds] dispatch ui:updateMinimap:", e); }
+  }
+
   function updateQuestTrackerHUD() {
     const pe = playerEntity(world);
     if (!pe) return;
 
     const active = listEligibleQuestTrackerEntries(pe.id);
     const focused = pickFocusedQuestTrackerEntry(active);
+    let currentDepth = 0;
+    for (const [, dungeon] of world.query(DungeonState)) {
+      currentDepth = Number(dungeon?.currentDepth || 0) | 0;
+      break;
+    }
+    const playerPos = positionOf(pe.id);
+    if (focused && playerPos) {
+      for (const [, def, state, vars, bindings] of world.query(QuestDefRef, QuestState, QuestVars, QuestBindings)) {
+        if (def?.id !== focused.questId || Number(bindings?.player || 0) !== pe.id) continue;
+        focused.targetPosition = buildQuestTarget(focused.questId, focused.node, bindings, playerPos, currentDepth);
+        break;
+      }
+    }
     const sig = JSON.stringify({
       focused: focused ? {
         questId: focused.questId,
@@ -220,6 +331,7 @@ export function createHudFeeds(world, deps) {
         target: focused.target,
         summary: focused.summary,
         rewardPreview: focused.rewardPreview,
+        targetPosition: focused.targetPosition || null,
       } : null,
     });
     if (sig === lastQuestTrackerSig) return;
@@ -236,6 +348,7 @@ export function createHudFeeds(world, deps) {
             summary: focused.summary,
             rewardPreview: focused.rewardPreview,
             icon: focused.icon,
+            targetPosition: focused.targetPosition || null,
           } : null,
         },
       }));
@@ -648,5 +761,6 @@ export function createHudFeeds(world, deps) {
     updateActiveSpellHUD,
     updateCalendarHUD,
     updateQuestTrackerHUD,
+    updateMinimapHUD,
   };
 }

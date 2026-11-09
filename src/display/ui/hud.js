@@ -365,6 +365,56 @@ function formatDayPhase(phase) {
 
 export function initHUD() {
   const root = ensureRoot();
+  const minimap = document.createElement('canvas');
+  minimap.id = 'hud-minimap';
+  minimap.width = 180;
+  minimap.height = 180;
+  Object.assign(minimap.style, {
+    position: 'static', alignSelf: 'flex-start', marginTop: '2px',
+    width: '180px', height: '180px', display: 'none',
+    border: '1px solid rgba(190,210,230,0.38)', borderRadius: '8px',
+    background: 'rgba(8,12,20,0.84)', boxShadow: '0 5px 18px rgba(0,0,0,0.35)',
+    pointerEvents: 'none', zIndex: 902, imageRendering: 'pixelated',
+  });
+  const minimapCtx = minimap.getContext('2d');
+  window.addEventListener('ui:updateMinimap', (ev) => {
+    const data = ev?.detail?.minimap;
+    if (!data || !minimapCtx) {
+      minimap.style.display = 'none';
+      return;
+    }
+    const width = Math.max(1, Number(data.width || 1) | 0);
+    const tiles = Array.isArray(data.tiles) ? data.tiles : [];
+    const cell = minimap.width / width;
+    const colors = {
+      1: '#8d98a5', 2: '#3b4654', 3: '#b58a58', 4: '#62d3b0', 5: '#6aa7e8',
+      6: '#647c4b', 7: '#315d82', 8: '#68717c', 9: '#466347', 10: '#718957',
+      11: '#78945c', 12: '#536e42', 15: '#254d73', 17: '#4e88a2', 18: '#9a3d3d',
+      19: '#88714d', 20: '#665843', 21: '#777777',
+    };
+    minimapCtx.clearRect(0, 0, minimap.width, minimap.height);
+    minimapCtx.fillStyle = 'rgba(8,12,20,0.92)';
+    minimapCtx.fillRect(0, 0, minimap.width, minimap.height);
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = Number(tiles[i] || -1) | 0;
+      if (tile < 0) continue;
+      minimapCtx.fillStyle = colors[tile] || '#59616c';
+      minimapCtx.fillRect((i % width) * cell, Math.floor(i / width) * cell, Math.ceil(cell), Math.ceil(cell));
+    }
+    const x0 = Number(data.x0 || 0) | 0;
+    const y0 = Number(data.y0 || 0) | 0;
+    for (const marker of Array.isArray(data.markers) ? data.markers : []) {
+      minimapCtx.fillStyle = '#ffd85a';
+      minimapCtx.fillRect((marker.x - x0) * cell, (marker.y - y0) * cell, Math.max(2, cell), Math.max(2, cell));
+    }
+    if (data.player) {
+      minimapCtx.fillStyle = '#ffffff';
+      minimapCtx.beginPath();
+      minimapCtx.arc((data.player.x - x0 + 0.5) * cell, (data.player.y - y0 + 0.5) * cell, Math.max(2, cell * 0.42), 0, Math.PI * 2);
+      minimapCtx.fill();
+    }
+    minimap.style.display = 'block';
+  });
   const bar = document.createElement('div');
   Object.assign(bar.style, {
     position: 'fixed', left: '8px', right: '8px', bottom: 'calc(var(--jshack-ticker-height, 30px) + 8px + env(safe-area-inset-bottom, 0px))',
@@ -568,6 +618,7 @@ export function initHUD() {
   topRightHud.appendChild(vitals);
   topRightHud.appendChild(effectsHud);
   topRightHud.appendChild(questRow);
+  topRightHud.appendChild(minimap);
   root.appendChild(topRightHud);
   vitalsBars.draw();
 
@@ -1406,8 +1457,8 @@ export function initHUD() {
     const focused = e?.detail?.focused || null;
     if (focused) {
       const current = Math.max(0, Number(focused?.progress || 0) | 0);
-      const target = Math.max(0, Number(focused?.target || 0) | 0);
-      questControl.textContent = target > 0 ? `\uD83D\uDCDC Quests ${current}/${target}` : '\uD83D\uDCDC Quests';
+      const targetCount = Math.max(0, Number(focused?.target || 0) | 0);
+      questControl.textContent = targetCount > 0 ? `\uD83D\uDCDC Quests ${current}/${targetCount}` : '\uD83D\uDCDC Quests';
     } else {
       questControl.textContent = '\uD83D\uDCDC  Quests';
     }
@@ -1486,6 +1537,28 @@ export function initHUD() {
       overflowWrap: 'anywhere',
     });
 
+    const target = focused?.targetPosition;
+    const from = target?.from;
+    const targetHint = document.createElement('div');
+    let targetText = '';
+    if (target && target.samePlane === true && from) {
+      const dx = Math.sign((Number(target.x) | 0) - (Number(from.x) | 0));
+      const dy = Math.sign((Number(target.y) | 0) - (Number(from.y) | 0));
+      const arrows = { '-1,-1': '↖', '0,-1': '↑', '1,-1': '↗', '-1,0': '←', '1,0': '→', '-1,1': '↙', '0,1': '↓', '1,1': '↘' };
+      const distance = Math.max(Math.abs((Number(target.x) | 0) - (Number(from.x) | 0)), Math.abs((Number(target.y) | 0) - (Number(from.y) | 0)));
+      targetText = `${arrows[`${dx},${dy}`] || '•'} ${target.label || 'Objective'}${distance > 0 ? ` · ${distance}` : ''}`;
+    } else if (target?.label) {
+      targetText = String(target.label);
+    }
+    targetHint.textContent = targetText;
+    Object.assign(targetHint.style, {
+      display: targetText ? 'block' : 'none',
+      fontSize: '10px',
+      lineHeight: '1.1',
+      color: '#ffd85a',
+      overflowWrap: 'anywhere',
+    });
+
     const reward = document.createElement('div');
     const rewardText = String(focused?.rewardPreview || '').trim();
     reward.textContent = rewardText ? `Reward: ${rewardText}` : '';
@@ -1501,8 +1574,8 @@ export function initHUD() {
 
     const progress = document.createElement('div');
     const current = Math.max(0, Number(focused?.progress || 0) | 0);
-    const target = Math.max(0, Number(focused?.target || 0) | 0);
-    progress.textContent = target > 0 ? `${current}/${target}` : '';
+    const targetCount = Math.max(0, Number(focused?.target || 0) | 0);
+    progress.textContent = targetCount > 0 ? `${current}/${targetCount}` : '';
     Object.assign(progress.style, {
       minWidth: '36px',
       textAlign: 'right',
@@ -1514,6 +1587,7 @@ export function initHUD() {
 
     textWrap.appendChild(title);
     textWrap.appendChild(summary);
+    textWrap.appendChild(targetHint);
     textWrap.appendChild(reward);
     card.appendChild(icon);
     card.appendChild(textWrap);
