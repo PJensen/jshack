@@ -81,6 +81,9 @@ export const RootboundGrottoQuest = registerQuest({
   id: ROOTBOUND_GROTTO_QUEST_ID,
   title: "The Rootbound Grotto",
   version: 1,
+  tracker: {
+    destinationTemplateId: ROOTBOUND_GROTTO_TEMPLATE_ID,
+  },
   journal: {
     flavorText: "The herbs are growing in patterns no human planted. Something below the Strange Grove is teaching wounded creatures how to live through anything.",
     rewardItemIds: [REWARD_ITEM_ID],

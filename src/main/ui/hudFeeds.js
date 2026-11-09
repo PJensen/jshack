@@ -181,6 +181,7 @@ export function createHudFeeds(world, deps) {
       questId,
       title,
       node,
+      destinationTemplateId: String(questDef?.tracker?.destinationTemplateId || ""),
       progress,
       target,
       summary,
@@ -217,7 +218,7 @@ export function createHudFeeds(world, deps) {
     return pos ? { x: Number(pos.x) | 0, y: Number(pos.y) | 0 } : null;
   }
 
-  function buildQuestTarget(questId, node, bindings, playerPos, currentDepth) {
+  function buildQuestTarget(questId, node, bindings, playerPos, currentDepth, destinationTemplateId = "") {
     const decorate = (target) => target ? { ...target, from: { ...playerPos }, samePlane: Number(target.plane || 0) === currentDepth } : null;
     const giverId = Number(bindings?.giver || 0) | 0;
     if (node === "report") {
@@ -227,7 +228,9 @@ export function createHudFeeds(world, deps) {
 
     const entranceMatches = [];
     for (const [id, entrance, pos] of world.query(DungeonEntrance, Position)) {
-      if (String(entrance?.questId || "") !== questId) continue;
+      const entranceQuestId = String(entrance?.questId || "");
+      const entranceTemplateId = String(entrance?.templateId || "");
+      if (entranceQuestId !== questId && entranceTemplateId !== destinationTemplateId) continue;
       entranceMatches.push({
         x: Number(pos.x) | 0,
         y: Number(pos.y) | 0,
@@ -319,7 +322,7 @@ export function createHudFeeds(world, deps) {
     if (focused && playerPos) {
       for (const [, def, state, vars, bindings] of world.query(QuestDefRef, QuestState, QuestVars, QuestBindings)) {
         if (def?.id !== focused.questId || Number(bindings?.player || 0) !== pe.id) continue;
-        focused.targetPosition = buildQuestTarget(focused.questId, focused.node, bindings, playerPos, currentDepth);
+        focused.targetPosition = buildQuestTarget(focused.questId, focused.node, bindings, playerPos, currentDepth, focused.destinationTemplateId);
         break;
       }
     }
@@ -329,6 +332,7 @@ export function createHudFeeds(world, deps) {
         node: focused.node,
         progress: focused.progress,
         target: focused.target,
+        destinationTemplateId: focused.destinationTemplateId,
         summary: focused.summary,
         rewardPreview: focused.rewardPreview,
         targetPosition: focused.targetPosition || null,
@@ -345,6 +349,7 @@ export function createHudFeeds(world, deps) {
             title: focused.title,
             progress: focused.progress,
             target: focused.target,
+            destinationTemplateId: focused.destinationTemplateId,
             summary: focused.summary,
             rewardPreview: focused.rewardPreview,
             icon: focused.icon,
