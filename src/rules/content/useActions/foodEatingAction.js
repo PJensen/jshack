@@ -1,6 +1,5 @@
 import { Channeling } from "../../components/Channeling.js";
 import { ItemInfo } from "../../components/ItemInfo.js";
-import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
 import { executeInteraction } from "../../interaction/runtime/actionRuntime.js";
 import { usePipeline } from "../../interaction/verbs/usePipeline.js";
@@ -11,8 +10,7 @@ export const FOOD_EATING_TURNS = 5;
 export const FOOD_EATING_ACTION_ID = "food_eating";
 
 function isFood(world, itemId) {
-  if (String(world.get(itemId, ItemInfo)?.type || "").toLowerCase() !== "food") return false;
-  return !String(world.get(itemId, NamedIdentity)?.identity || "").toLowerCase().startsWith("corpse_");
+  return String(world.get(itemId, ItemInfo)?.type || "").toLowerCase() === "food";
 }
 
 function completeFoodEating(world, actorId, channel) {

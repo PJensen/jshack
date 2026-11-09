@@ -8,6 +8,8 @@ import { DerivedExpression } from "../src/rules/components/DerivedExpression.js"
 import { Traits } from "../src/rules/components/Traits.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { resolveCanonicalStats } from "../src/rules/utils/canonicalStats.js";
@@ -21,6 +23,7 @@ function eatCorpse(world, player, corpse) {
   addToInventory(world, player, corpse);
   world.add(player, UseIntent, { itemId: corpse, targetId: player });
   useItemSystem(world);
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
 }
 
 function countAdaptations(world, player, statKey) {

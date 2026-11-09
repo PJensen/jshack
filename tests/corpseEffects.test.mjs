@@ -8,6 +8,8 @@ import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Hunger } from "../src/rules/components/Hunger.js";
 import { Traits } from "../src/rules/components/Traits.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
 
 function makeRatCorpse(world) {
@@ -24,6 +26,7 @@ function eatCorpse(world, player, corpse) {
   addToInventory(world, player, corpse);
   world.add(player, UseIntent, { itemId: corpse, targetId: player });
   useItemSystem(world);
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
 }
 
 // ── Iron Stomach progression ──────────────────────────────────────

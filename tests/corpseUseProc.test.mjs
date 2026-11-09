@@ -5,6 +5,7 @@ import { createCorpse } from "../src/rules/archetypes/Food.js";
 import { Inventory } from "../src/rules/components/Inventory.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { Consumable } from "../src/rules/components/Consumable.js";
+import { Channeling } from "../src/rules/components/Channeling.js";
 import { resolveCanonicalStats } from "../src/rules/utils/canonicalStats.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { Hunger } from "../src/rules/components/Hunger.js";
@@ -13,8 +14,15 @@ import { Pet } from "../src/rules/components/Pet.js";
 import { Devotion } from "../src/rules/components/Devotion.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
 import { deitySystem, getDeityInstance, initDeity } from "../src/rules/systems/deitySystem.js";
 import { addToInventory, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
+
+function finishEating(world, actor) {
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
+  assertEquals(world.has(actor, Channeling), false, "eating should complete");
+}
 
 Deno.test("eating eel corpse grants electric resistance", () => {
   const world = new World({ seed: 0xC0FFEE });
@@ -36,6 +44,9 @@ Deno.test("eating eel corpse grants electric resistance", () => {
   const beforeOhms = Number(beforeStats.electricOhms || 0);
   world.add(player, UseIntent, { itemId: eelCorpse, targetId: player });
   useItemSystem(world);
+  assertEquals(world.isAlive(eelCorpse), true, "corpse should remain during eating");
+  assertEquals(world.has(player, Channeling), true, "corpse eating should use the shared eating channel");
+  finishEating(world, player);
 
   const afterStats = resolveCanonicalStats(world, player);
   const afterOhms = Number(afterStats.electricOhms || 0);
@@ -60,6 +71,7 @@ Deno.test("eating bat corpse can apply disease effect", () => {
 
   world.add(player, UseIntent, { itemId: batCorpse, targetId: player });
   useItemSystem(world);
+  finishEating(world, player);
 
   const ae = world.get(player, ActiveEffects);
   assert(ae && Array.isArray(ae.effects), "player should gain active effects");
@@ -94,6 +106,7 @@ Deno.test("eat cancellation prevents nutrition/effects and does not consume item
 
   world.add(player, UseIntent, { itemId: cursedMeal, targetId: player });
   useItemSystem(world);
+  finishEating(world, player);
 
   assert(world.isAlive(cursedMeal), "cancelled eat should not destroy item");
   assert(inventoryContains(world, player, cursedMeal), "cancelled eat should keep item in inventory");
@@ -143,6 +156,7 @@ Deno.test("eating your own pet corpse is horrifying and spikes wrath without ins
 
   world.add(player, UseIntent, { itemId: kittyCorpse, targetId: player });
   useItemSystem(world);
+  finishEating(world, player);
   deitySystem(world); // resolve new desecration load into deity mood
 
   const vit = world.get(player, Vitality);

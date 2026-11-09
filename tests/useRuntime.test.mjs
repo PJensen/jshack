@@ -8,6 +8,7 @@ import { ItemInfo } from "../src/rules/components/ItemInfo.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
 import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
 import { installFishingAction } from "../src/rules/content/useActions/fishingAction.js";
 import { harvestRegrowthSystem } from "../src/rules/systems/harvestRegrowthSystem.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
@@ -69,6 +70,7 @@ Deno.test("use runtime resolves corpse consumable payload object and can cancel"
 
   world.add(actor, UseIntent, { itemId: corpse, targetId: actor });
   useItemSystem(world);
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
 
   assertEquals(results.length, 1);
   assertEquals(results[0].verb, "use");

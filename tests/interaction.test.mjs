@@ -4,6 +4,8 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { Interactable } from "../src/rules/components/Interactable.js";
 import { InteractIntent } from "../src/rules/components/Intents/InteractIntent.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
 import { DoorState } from "../src/rules/components/DoorState.js";
 import { DoorLock } from "../src/rules/components/DoorLock.js";
 import { Collider } from "../src/rules/components/Collider.js";
@@ -1620,6 +1622,7 @@ Deno.test("cooked buff food feeds actor and applies long duration effect", () =>
 
   world.add(actor, UseIntent, { itemId: stew, targetId: actor });
   useItemSystem(world);
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
 
   assert(results[0]?.ok === true, "buff food use should succeed");
   const regen = world.get(actor, ActiveEffects)?.effects?.find((effect) => effect.key === "regen");
@@ -1642,6 +1645,7 @@ Deno.test("town stew feeds actor and applies one direct composite effect", () =>
 
   world.add(actor, UseIntent, { itemId: stew, targetId: actor });
   useItemSystem(world);
+  for (let turn = 0; turn < FOOD_EATING_TURNS; turn++) channelingSystem(world);
 
   assert(results[0]?.ok === true, "town stew use should succeed");
   assert(!inventoryContains(world, actor, stew), "town stew should be consumed");
