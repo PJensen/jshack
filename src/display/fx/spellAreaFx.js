@@ -250,6 +250,8 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   // --- Flash Heal state ---
   /** @type {RadialFx[]} */
   const _flashHealFx = [];
+  /** @type {Array<{x:number,y:number,vx:number,vy:number,rot:number,rotVel:number,life:number,maxLife:number,size:number,hue:number}>} */
+  const _renewalLeaves = [];
 
   // --- Phase Strike state ---
   /** @type {PhaseStrikeFx[]} */
@@ -467,6 +469,18 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     for (let i = _flashHealFx.length - 1; i >= 0; i--) {
       _flashHealFx[i].tick(dt);
       if (_flashHealFx[i].expired) _flashHealFx.splice(i, 1);
+    }
+    for (let i = _renewalLeaves.length - 1; i >= 0; i--) {
+      const leaf = _renewalLeaves[i];
+      leaf.life -= dt;
+      if (leaf.life <= 0) {
+        _renewalLeaves.splice(i, 1);
+        continue;
+      }
+      leaf.x += leaf.vx * dt;
+      leaf.y += leaf.vy * dt;
+      leaf.vy -= 0.035 * dt;
+      leaf.rot += leaf.rotVel * dt;
     }
     for (let i = _phaseStrikeFx.length - 1; i >= 0; i--) {
       _phaseStrikeFx[i].tick(dt);
@@ -1104,6 +1118,36 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
           ctx.stroke();
         }
       }
+    }
+    ctx.restore();
+  }
+
+  // --- Draw: Renewal leaves ---
+  /** @param {CanvasRenderingContext2D} ctx */
+  function drawRenewalLeaves(ctx) {
+    if (!_renewalLeaves.length) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (const leaf of _renewalLeaves) {
+      const progress = 1 - leaf.life / leaf.maxLife;
+      const alpha = Math.min(1, leaf.life / 0.18) * Math.min(1, (1 - progress) * 4) * 0.9;
+      const green = leaf.hue > 0.5 ? 205 : 165;
+      ctx.save();
+      ctx.translate(leaf.x, leaf.y);
+      ctx.rotate(leaf.rot);
+      ctx.fillStyle = `rgba(${35 + ((leaf.hue * 35) | 0)},${green},${45 + ((leaf.hue * 45) | 0)},${alpha.toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(0, -leaf.size * 0.72);
+      ctx.quadraticCurveTo(leaf.size * 0.82, -leaf.size * 0.20, 0, leaf.size * 0.72);
+      ctx.quadraticCurveTo(-leaf.size * 0.82, -leaf.size * 0.20, 0, -leaf.size * 0.72);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(170,255,125,${(alpha * 0.75).toFixed(3)})`;
+      ctx.lineWidth = Math.max(0.018, leaf.size * 0.10);
+      ctx.beginPath();
+      ctx.moveTo(0, -leaf.size * 0.55);
+      ctx.lineTo(0, leaf.size * 0.55);
+      ctx.stroke();
+      ctx.restore();
     }
     ctx.restore();
   }
@@ -2779,32 +2823,34 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       _flashHealFx.push(new RadialFx({ x: at.x, y: at.y, radius, ttl: 0.48 }));
     };
 
-    // Renewal — green leaf-like motes emanate from the healed target.
-    world.on('spell:renewal', ({ at }) => {
+    // Renewal — each HoT tick emits leaf-shaped motes from the healed target.
+    const spawnRenewalLeaves = (at) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
       const scale = PERF.quality === 'low' ? 0.65 : (PERF.quality === 'high' ? 1.2 : 1);
-      const count = Math.max(10, Math.round(22 * scale));
+      const count = Math.max(6, Math.round(12 * scale));
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.45;
         const speed = 0.28 + Math.random() * 0.62;
-        fx.pool.spawn(new Particle({
+        const life = 0.48 + Math.random() * 0.42;
+        _renewalLeaves.push({
           x: at.x + (Math.random() - 0.5) * 0.16,
           y: at.y + (Math.random() - 0.5) * 0.16,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - (0.18 + Math.random() * 0.18),
-          ay: -0.035,
-          life: 0.48 + Math.random() * 0.42,
-          size0: 0.055 + Math.random() * 0.045,
-          size1: 0.012,
-          r: 45 + ((Math.random() * 55) | 0),
-          g: 165 + ((Math.random() * 75) | 0),
-          b: 45 + ((Math.random() * 55) | 0),
-          a0: 0.88,
           rot: Math.random() * Math.PI * 2,
           rotVel: (Math.random() - 0.5) * 3.5,
-        }));
+          life,
+          maxLife: life,
+          size: 0.13 + Math.random() * 0.08,
+          hue: Math.random(),
+        });
       }
-      healingBurst(at, 1.15);
+    };
+    world.on('healed', ({ id, target, cause }) => {
+      if (String(cause || '') !== 'renewal') return;
+      const entityId = Number(target || id || 0) | 0;
+      const at = typeof getPosition === 'function' ? getPosition(entityId) : null;
+      spawnRenewalLeaves(at);
     });
     world.on('spell:sacred_restoration', ({ at }) => healingBurst(at, 1.8));
     world.on('spell:lifebloom', ({ at, radius }) => healingBurst(at, Math.max(1.5, Number(radius || 3))));
@@ -3535,5 +3581,5 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     return out;
   }
 
-  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners };
+  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawRenewalLeaves, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners };
 }
