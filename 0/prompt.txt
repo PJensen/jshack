@@ -1,0 +1,31 @@
+I'll find an eating and fishing sound :-)
+
+---
+
+fishing identity not working as intended
+
+it says "Channeling Fishing" (purple)
+
+please re-check things.
+
+---
+
+rename action to channeling
+process both of those two new MP3 files as we have been processing all files (size, silence trim, etc)
+wireup channeling audio for fishing and eating
+
+---
+
+clarifying: rename those two new mp3s from action_ to channeling_
+
+---
+
+whao be careful -- lots of uncommitted shit
+
+---
+
+I only added two sounds files.
+
+---
+
+I would single target those two files personally :-)
