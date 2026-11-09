@@ -11,6 +11,7 @@ import { BaseStats } from "../src/rules/components/BaseStats.js";
 import { Status } from "../src/rules/components/Status.js";
 import { Traits } from "../src/rules/components/Traits.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
+import { Channeling } from "../src/rules/components/Channeling.js";
 import { DoorState } from "../src/rules/components/DoorState.js";
 import { Collider } from "../src/rules/components/Collider.js";
 import { Faction } from "../src/rules/components/Faction.js";
@@ -50,6 +51,30 @@ Deno.test("WorldView projects town NPC names for actor nameplates", () => {
   assertEquals(rec.isNpc, true);
   assertEquals(rec.displayName, "Marta the Mason");
   assertEquals(rec.showHealthBar, false, "friendly NPC nameplates should not require hostile health bars");
+});
+
+Deno.test("WorldView projects monster cast bars from channeling state", () => {
+  resetFloor();
+  const world = new World({ seed: 0xCA57 });
+
+  const player = world.create();
+  world.add(player, Player, {});
+  world.add(player, Position, { x: 10, y: 10 });
+  world.add(player, NamedIdentity, { name: "Hero", identity: "player" });
+  world.add(player, Facing, { dx: 1, dy: 0 });
+  world.add(player, BaseStats, { perception: 5 });
+  world.add(player, Faction, { key: "player" });
+
+  const priest = world.create();
+  world.add(priest, Position, { x: 11, y: 10 });
+  world.add(priest, NamedIdentity, { name: "Goblin Priest", identity: "goblin_priest" });
+  world.add(priest, Vitality, { hp: 20, maxHp: 20 });
+  world.add(priest, Faction, { key: "enemy" });
+  world.add(priest, Channeling, { spellId: "heal", mode: "cast", turnsRemaining: 2, turnsTotal: 3 });
+
+  const rec = buildWorldView(world).entities.find((entity) => entity.id === priest);
+  assert(rec, "casting monster should be visible");
+  assertEquals(rec.castBar, { mode: "cast", spellId: "heal", turnsRemaining: 2, turnsTotal: 3 });
 });
 
 Deno.test("WorldView projects authored nameplate labels for tagged neutral creatures", () => {

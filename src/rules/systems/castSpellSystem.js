@@ -329,6 +329,15 @@ export function castSpellSystem(world) {
     // Cast time: begin channeling instead of immediate cast
     const castTime = Number(resolvedSpell.castTime || 0) | 0;
     if (castTime > 0 && !fromChanneling) {
+      if (!world.has(actor, Player)) {
+        world.emit("monster:ability:cast", {
+          actor,
+          targetId: Number(intent?.targetId || 0) | 0,
+          abilityId: resolvedSpell.id,
+          abilityName: String(resolvedSpell.name || resolvedSpell.id || "ability"),
+          spellId: resolvedSpell.id,
+        });
+      }
       const casterPos = world.get(actor, Position);
       const channelTargetId = intent.targetId || actor;
       try {
@@ -420,6 +429,15 @@ export function castSpellSystem(world) {
     }
 
     // Run scripted behavior (pure rules)
+    if (!fromChanneling && !world.has(actor, Player)) {
+      world.emit("monster:ability:cast", {
+        actor,
+        targetId: Number(intent?.targetId || 0) | 0,
+        abilityId: resolvedSpell.id,
+        abilityName: String(resolvedSpell.name || resolvedSpell.id || "ability"),
+        spellId: resolvedSpell.id,
+      });
+    }
     const runtimeSpell = (echoRepeat || spellPowerScale !== 1)
       ? { ...resolvedSpell, powerScale: spellPowerScale }
       : resolvedSpell;

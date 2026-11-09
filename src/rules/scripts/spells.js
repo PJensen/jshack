@@ -1568,7 +1568,7 @@ REGISTRY['smite'] = function smiteScript(world, actor, spell, intent) {
     missTo: smiteMissed ? resolveMissTo(world, actor, target.id, { x: apos.x, y: apos.y }, smiteAt, 'spell:smite', 0x5a17) : undefined,
   });
 
-  // Dazzle: anyone with LOS to the impact gets a brief vision reduction (the flash).
+  // Dazzle: anyone with LOS to the impact is practically blind briefly (the flash).
   {
     const SCAN = 12;
     let playerDazzled = false;
@@ -1578,9 +1578,7 @@ REGISTRY['smite'] = function smiteScript(world, actor, spell, intent) {
       const dy = (epos.y | 0) - (target.y | 0);
       if (Math.abs(dx) > SCAN || Math.abs(dy) > SCAN) continue;
       if (!hasLOS(epos.x | 0, epos.y | 0, target.x | 0, target.y | 0, isBlocked)) continue;
-      const curVision = getEffectiveVisionRange(world, eid);
-      const rampOut = (world.rand() < 0.5) ? 2 : 3;
-      blind(world, eid, Math.max(1, curVision - 2), 0, 0, rampOut, undefined, eid === target.id ? { stack: true } : {});
+      blind(world, eid, 0, 0, 2, 4, undefined, eid === target.id ? { stack: true } : {});
       if (world.has(eid, Player)) playerDazzled = true;
     }
     if (playerDazzled) {

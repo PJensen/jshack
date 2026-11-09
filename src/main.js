@@ -1950,6 +1950,8 @@ const deathLootArcFx = createDeathLootArcFx({
   getFxTime: () => _fxTime,
   isWalkable,
 });
+/** @type {Map<number, { startStep:number, turns:number, abilityName:string }>} */
+const _monsterAbilityWindups = new Map();
 world.on("damaged", ({ target, amount, projectileDelay }) => {
   const tid = Number(target || 0) | 0;
   const d = Number(projectileDelay || 0);
@@ -1960,6 +1962,14 @@ world.on("damaged", ({ target, amount, projectileDelay }) => {
   } else if (tid > 0 && dmg > 0) {
     triggerHitTint(tid);
   }
+});
+world.on("monster:ability:windup", ({ actor, abilityName, turns }) => {
+  const id = Number(actor || 0) | 0;
+  const total = Math.max(1, Number(turns || 0) | 0);
+  if (id > 0) _monsterAbilityWindups.set(id, { startStep: world.step | 0, turns: total, abilityName: String(abilityName || "") });
+});
+world.on("monster:ability:cast", ({ actor }) => {
+  _monsterAbilityWindups.delete(Number(actor || 0) | 0);
 });
 
 // (Death loot arc physics extracted to display/fx/deathLootArcFx.js)
@@ -3375,6 +3385,7 @@ const _roofParticleStamp = new Map();
 const _roofSmokeParticleStamp = new Map();
 /** @type {Array<{ id:number, pos:{x:number,y:number}, hp:number, maxHp:number, isPet?:boolean }>} */
 const _healthBarsToDraw = [];
+const _castBarsToDraw = [];
 const _groundLootLabels = [];
 const _monsterLabels = [];
 const _memoryGlyphByKind = new Map();
@@ -4821,6 +4832,42 @@ function drawEntityHealthBar(ctx, e) {
   ctx.restore();
 }
 
+function entityCastBar(e) {
+  const windup = _monsterAbilityWindups.get(e.id);
+  if (windup) {
+    const elapsed = Math.max(0, (world.step | 0) - windup.startStep);
+    if (elapsed >= windup.turns) {
+      _monsterAbilityWindups.delete(e.id);
+    } else {
+      return { progress: clamp01(elapsed / windup.turns), color: '#ffb347' };
+    }
+  }
+  const cast = e.castBar;
+  if (!cast) return null;
+  const total = Math.max(1, Number(cast.turnsTotal || 0) | 0);
+  const remaining = Math.max(0, Number(cast.turnsRemaining || 0) | 0);
+  return { progress: clamp01((total - remaining) / total), color: '#c084fc' };
+}
+
+/** @param {CanvasRenderingContext2D} ctx @param {{ pos:{x:number,y:number}, progress:number, color:string, _sizeScale?:number }} e */
+function drawEntityCastBar(ctx, e) {
+  const ss = e._sizeScale || 1;
+  const width = 0.68 * ss;
+  const height = 0.055;
+  const x = e.pos.x - (width * 0.5);
+  const y = e.pos.y - (0.34 * ss);
+  const pad = 0.01;
+  ctx.save();
+  ctx.fillStyle = e.color === '#ffb347' ? 'rgba(92,54,18,0.82)' : 'rgba(52,28,82,0.82)';
+  ctx.fillRect(x, y, width, height);
+  ctx.fillStyle = e.color;
+  ctx.fillRect(x + pad, y + pad, Math.max(0, (width - pad * 2) * e.progress), Math.max(0.01, height - pad * 2));
+  ctx.strokeStyle = e.color;
+  ctx.lineWidth = 0.014;
+  ctx.strokeRect(x, y, width, height);
+  ctx.restore();
+}
+
 // Reusable Set for per-entity tag checks in the render loop (avoids alloc per frame)
 const _renderTagSet = new Set();
 
@@ -5046,6 +5093,7 @@ function render(worldView) {
   _stackMeta.clear(); // "x,y" -> topItemId
   _stackSeqMeta.clear(); // "x,y" -> best stackSeq seen
   _healthBarsToDraw.length = 0;
+  _castBarsToDraw.length = 0;
   _groundLootLabels.length = 0;
   _monsterLabels.length = 0;
   flyingFx.syncWorldView(worldView);
@@ -5229,6 +5277,10 @@ function render(worldView) {
     }
     if (shouldShowHealthBar(renderEntity, _fxTime)) {
       _healthBarsToDraw.push({ ...renderEntity, _sizeScale: sizeScale });
+    }
+    if (!worldView.player || renderEntity.id !== worldView.player.id) {
+      const castBar = entityCastBar(renderEntity);
+      if (castBar) _castBarsToDraw.push({ ...renderEntity, ...castBar, _sizeScale: sizeScale });
     }
 
     // Actor name labels — hostile actors, pets, town NPCs, and tagged named actors.
@@ -5687,6 +5739,9 @@ function render(worldView) {
 
   for (let i = 0; i < _healthBarsToDraw.length; i++) {
     drawEntityHealthBar(bctx, _healthBarsToDraw[i]);
+  }
+  for (let i = 0; i < _castBarsToDraw.length; i++) {
+    drawEntityCastBar(bctx, _castBarsToDraw[i]);
   }
   pruneHealthBarState();
 

@@ -388,6 +388,7 @@ export const SPELL_DEFS = {
     symbol: '\u2726', // ✦
     schools: ['holy', 'destruction'],
     manaCost: 6,
+    castTime: 2,
     minIntelligence: 0,
     range: 8,
     script: 'smite',

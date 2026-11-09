@@ -316,19 +316,12 @@ function installFloatTextListeners({ world, ftext, fx, getPosition, isVisibleAt,
 
   // ── Monster abilities ───────────────────────────────────────────────
 
-  world.on('monster:ability:windup', ({ actor, abilityName, at }) => {
+  world.on('monster:ability:windup', ({ actor, at }) => {
     if (!_throttle(`windup:${actor}`, 2000)) return;
     const pos = (at && Number.isFinite(at.x) && Number.isFinite(at.y))
       ? { x: Number(at.x), y: Number(at.y) }
       : getPosition(Number(actor || 0));
     if (!pos || !canShowAt(pos.x, pos.y)) return;
-    const label = String(abilityName || 'ABILITY').trim().toUpperCase();
-    ftext.addStatus(pos.x, pos.y - 0.35, `${label}!`, {
-      color: '#ffb347',
-      life: 0.9,
-      scaleStart: 1.2,
-      scaleEnd: 1.0,
-    });
     for (let i = 0; i < 8; i++) {
       const angle = (Math.PI * 2 * i) / 8;
       const speed = 0.22 + Math.random() * 0.25;

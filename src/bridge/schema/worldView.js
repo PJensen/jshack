@@ -22,6 +22,7 @@ import { PlasmaCloud } from "../../rules/components/PlasmaCloud.js";
 import { HazardArea } from "../../rules/components/HazardArea.js";
 import { Trap } from "../../rules/components/Trap.js";
 import { Vitality } from '../../rules/components/Vitality.js';
+import { Channeling } from '../../rules/components/Channeling.js';
 import { Faction } from '../../rules/components/Faction.js';
 import { Pet } from '../../rules/components/Pet.js';
 import { PetState } from '../../rules/components/PetState.js';
@@ -80,7 +81,7 @@ import {
 } from "../../rules/environment/dungeon/perceptionMemory.js";
 
 // Reuse view/record objects across frames to reduce allocations/GC churn.
-/** @typedef {{ id:number, kind:string, pos:{x:number,y:number}, tags:string[], layer:number, hp:number, maxHp:number, isPet:boolean, isNpc?:boolean, displayName?:string, showHealthBar:boolean, showNameLabel?:boolean, facing:{dx:number,dy:number}|null, aggroLevel:string, aggroTargetId:number, aggroTargetReason:string, threatState:string, targetLocked:boolean, weaponVfx:any[]|null, itemScale:number, rotation:number, visualOff:{dx:number,dy:number}, entranceBadge?:{level:number,floors:number,color:string} }} EntityView */
+/** @typedef {{ id:number, kind:string, pos:{x:number,y:number}, tags:string[], layer:number, hp:number, maxHp:number, isPet:boolean, isNpc?:boolean, displayName?:string, showHealthBar:boolean, castBar?:{ mode:string, spellId:string, turnsRemaining:number, turnsTotal:number }|null, showNameLabel?:boolean, facing:{dx:number,dy:number}|null, aggroLevel:string, aggroTargetId:number, aggroTargetReason:string, threatState:string, targetLocked:boolean, weaponVfx:any[]|null, itemScale:number, rotation:number, visualOff:{dx:number,dy:number}, entranceBadge?:{level:number,floors:number,color:string} }} EntityView */
 /** @typedef {{ id:number, x:number, y:number }} SolidView */
 /** @typedef {{ x:number, y:number, kind:string, alpha:number, burning?:boolean, smoking?:boolean }} RoofTileView */
 /** @typedef {{ id:number, profile:string, pos:{x:number,y:number}, interior:boolean }} AudioEmitterView */
@@ -804,6 +805,7 @@ function projectCombatUi(world, id, rec, playerFactionKey) {
 	rec.maxHp = 0;
 	rec.isPet = false;
 	rec.isNpc = false;
+	rec.castBar = null;
 	rec.displayName = String(world.get(id, NamedIdentity)?.name || "").trim();
 	rec.showHealthBar = false;
 	rec.showNameLabel = rec.tags.includes("nameplate");
@@ -815,6 +817,15 @@ function projectCombatUi(world, id, rec, playerFactionKey) {
 	const hp = Math.max(0, Math.min(maxHp, vit.hp | 0));
 	rec.hp = hp;
 	rec.maxHp = maxHp;
+	const channel = /** @type {any} */ (world.get(id, Channeling));
+	if (channel) {
+		rec.castBar = {
+			mode: String(channel.mode || "cast"),
+			spellId: String(channel.spellId || channel.itemActionId || ""),
+			turnsRemaining: Math.max(0, Number(channel.turnsRemaining || 0) | 0),
+			turnsTotal: Math.max(0, Number(channel.turnsTotal || 0) | 0),
+		};
+	}
 
 	const factionKey = String(world.get(id, Faction)?.key || '').trim().toLowerCase();
 	const isPet = world.has(id, Pet) || factionKey === 'pet';

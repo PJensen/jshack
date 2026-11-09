@@ -259,10 +259,10 @@ function torchFlicker(t, id) {
  * @param {{quality?: string, fxTime?: number}} opts
  * @returns {LightDef[]}
  */
-// ---- Smooth eye-light radius (frame-interpolated between turns) ----------
+// ---- Smooth eye-light radius during recovery ------------------------------
 // The rules layer updates visionRange once per turn (integer ticks), so blind
 // recovery produces a staircase: 2 → 3 → 4 → ...  We lerp toward the target
-// each frame so the lighting circle grows/shrinks smoothly in sub-tile space.
+// each frame. Blindness onset snaps inward so the player loses vision immediately.
 let _eyeRadiusCurrent = -1;   // < 0 = uninitialised
 let _eyeRadiusTarget  = 0;
 const EYE_LERP_SPEED  = 3.0;  // tiles/sec — fast enough to track, slow enough to read
@@ -296,7 +296,9 @@ export function collectLightSources(view, opts = {}) {
     _eyeRadiusTarget = vr;
     if (_eyeRadiusCurrent < 0) _eyeRadiusCurrent = vr;
     const diff = _eyeRadiusTarget - _eyeRadiusCurrent;
-    if (Math.abs(diff) < 0.01) {
+    if (diff < 0) {
+      _eyeRadiusCurrent = _eyeRadiusTarget;
+    } else if (diff < 0.01) {
       _eyeRadiusCurrent = _eyeRadiusTarget;
     } else {
       _eyeRadiusCurrent += Math.sign(diff) * Math.min(Math.abs(diff), EYE_LERP_SPEED * dt);

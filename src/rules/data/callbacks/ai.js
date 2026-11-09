@@ -713,14 +713,6 @@ export function castSpellOnLOS(opts) {
       spellId,
       targetId: Number(castIntent.targetId || 0) | 0,
     });
-    ctx.emit("monster:ability:cast", {
-      actor: ctx.actor,
-      targetId: Number(castIntent.targetId || 0) | 0,
-      abilityId,
-      abilityName,
-      spellId,
-      telegraphed: !!pendingWindup,
-    });
     if (consumeTurn) ctx.setHandled(true);
   };
 }

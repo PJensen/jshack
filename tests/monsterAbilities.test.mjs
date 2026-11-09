@@ -3,6 +3,7 @@ import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { AggroState, AGGRO_LEVELS } from "../src/rules/components/AggroState.js";
 import { CastSpellIntent } from "../src/rules/components/Intents/CastSpellIntent.js";
+import { Brain } from "../src/rules/components/Brain.js";
 import { Collider } from "../src/rules/components/Collider.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
@@ -19,6 +20,7 @@ import { getMonster } from "../src/rules/data/monsters.js";
 import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
+import { castSpellSystem } from "../src/rules/systems/castSpellSystem.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
 import { hasEffect } from "../src/rules/utils/statusFacade.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
@@ -38,6 +40,7 @@ Deno.test("castSpellOnLOS supports telegraphed monster abilities", () => {
 
   const actor = world.create();
   world.add(actor, Position, { x: 1, y: 1 });
+  world.add(actor, Brain, { learnedSpellIds: ["boar_charge"], visionRange: 8, intelligence: 10 });
   world.add(actor, Faction, { key: "enemy" });
   world.add(actor, Vitality, { hp: 20, maxHp: 20 });
 
@@ -72,6 +75,8 @@ Deno.test("castSpellOnLOS supports telegraphed monster abilities", () => {
   world.step = (world.step | 0) + 1;
   callback(ctx);
   assert(world.has(actor, CastSpellIntent));
+  assertEquals(casts.length, 0, "cast event waits for castSpellSystem to begin the spell");
+  castSpellSystem(world);
   assertEquals(casts.length, 1);
 });
 
