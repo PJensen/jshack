@@ -255,6 +255,33 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   /** @type {Map<number, { x:number, y:number, radius:number, ttl:number, phase:number, moteClock:number }>} */
   const _lifebloomChannels = new Map();
 
+  // Lifebloom — pale healing motes rise from the ground across the whole area.
+  const spawnLifebloomMotes = (at, radius = 3) => {
+    if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+    const scale = PERF.quality === 'low' ? 0.6 : (PERF.quality === 'high' ? 1.25 : 1);
+    const count = Math.max(8, Math.round(16 * scale));
+    const r = Math.max(1, Number(radius) || 3);
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.sqrt(Math.random()) * r;
+      const life = 0.42 + Math.random() * 0.38;
+      fx.pool.spawn(new Particle({
+        x: at.x + Math.cos(angle) * dist,
+        y: at.y + Math.sin(angle) * dist,
+        vx: (Math.random() - 0.5) * 0.16,
+        vy: -(0.32 + Math.random() * 0.52),
+        ay: -0.025,
+        life,
+        size0: 0.035 + Math.random() * 0.045,
+        size1: 0.008,
+        r: 175 + ((Math.random() * 45) | 0),
+        g: 235 + ((Math.random() * 20) | 0),
+        b: 150 + ((Math.random() * 55) | 0),
+        a0: 0.58 + Math.random() * 0.25,
+      }));
+    }
+  };
+
   // --- Phase Strike state ---
   /** @type {PhaseStrikeFx[]} */
   const _phaseStrikeFx = [];
@@ -493,7 +520,7 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       }
       if (!fx?.pool || channel.moteClock > 0) continue;
       channel.moteClock = 0.055 + Math.random() * 0.055;
-      spawnLifebloomMotes({ x: channel.x, y: channel.y }, channel.radius, 1);
+      spawnLifebloomMotes({ x: channel.x, y: channel.y }, channel.radius);
     }
     for (let i = _phaseStrikeFx.length - 1; i >= 0; i--) {
       _phaseStrikeFx[i].tick(dt);
@@ -2865,33 +2892,6 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       _flashHealFx.push(new RadialFx({ x: at.x, y: at.y, radius, ttl: 0.48 }));
     };
 
-    // Lifebloom — pale healing motes rise from the ground across the whole area.
-    const spawnLifebloomMotes = (at, radius = 3) => {
-      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
-      const scale = PERF.quality === 'low' ? 0.6 : (PERF.quality === 'high' ? 1.25 : 1);
-      const count = Math.max(8, Math.round(16 * scale));
-      const r = Math.max(1, Number(radius) || 3);
-      for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.sqrt(Math.random()) * r;
-        const life = 0.42 + Math.random() * 0.38;
-        fx.pool.spawn(new Particle({
-          x: at.x + Math.cos(angle) * dist,
-          y: at.y + Math.sin(angle) * dist,
-          vx: (Math.random() - 0.5) * 0.16,
-          vy: -(0.32 + Math.random() * 0.52),
-          ay: -0.025,
-          life,
-          size0: 0.035 + Math.random() * 0.045,
-          size1: 0.008,
-          r: 175 + ((Math.random() * 45) | 0),
-          g: 235 + ((Math.random() * 20) | 0),
-          b: 150 + ((Math.random() * 55) | 0),
-          a0: 0.58 + Math.random() * 0.25,
-        }));
-      }
-    };
-
     // Renewal — each HoT tick emits leaf-shaped motes from the healed target.
     const spawnRenewalLeaves = (at) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
@@ -3668,15 +3668,6 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     for (let i = 0; i < _flashHealFx.length; i++) {
       const f = _flashHealFx[i];
       out.push({ x: f.x, y: f.y, radius: 4 * f.alpha, color: [255, 240, 180] });
-    }
-    for (const channel of _lifebloomChannels.values()) {
-      const fade = Math.min(1, channel.ttl / 0.24);
-      out.push({
-        x: channel.x,
-        y: channel.y,
-        radius: channel.radius * (0.9 + 0.1 * fade),
-        color: [145, 255, 165],
-      });
     }
     for (let i = 0; i < _smiteFx.length; i++) {
       const s = _smiteFx[i];
