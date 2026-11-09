@@ -640,11 +640,21 @@ defineMonster('druid', {
   speed: 2,
   wielding: ['staff_oak'],
   equipped: ["leather_armor", "sandals_hemp", "belt_leather"],
-  learnedSpellIds: ['entangle', 'thorn_burst', 'verdant_ward'],
+  learnedSpellIds: ['entangle', 'thorn_burst', 'verdant_ward', 'lifebloom'],
   maxMana: 40,
   manaRegen: 0.15,
   hooks: {
     whileLOS: [
+      castSpellOnLOS({
+        spellId: 'lifebloom',
+        abilityId: 'druid_lifebloom',
+        abilityName: 'Lifebloom',
+        targeting: 'self',
+        cooldownTurns: 18,
+        chance: 0.35,
+        maxAlliesInRadius: 1,
+        allyRadius: 3,
+      }),
       castSpellOnLOS({
         spellId: 'verdant_ward',
         abilityId: 'druid_verdant_ward',
@@ -673,7 +683,7 @@ defineMonster('druid', {
       }),
     ],
   },
-  specials: ['Casts Entangle (stun + poison)', 'Casts Thorn Burst (nature + poison 30%)', 'Verdant Ward (regen + stoneskin)'],
+  specials: ['Channels Lifebloom for nearby allies', 'Casts Entangle (stun + poison)', 'Casts Thorn Burst (nature + poison 30%)', 'Verdant Ward (regen + stoneskin)'],
   description: 'A robed figure with bark-like skin and eyes like green flame. Thorny vines twist at their command.',
   lootTable: 'drop:caster',
 });

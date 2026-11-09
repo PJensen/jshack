@@ -53,8 +53,11 @@ Deno.test("new humanoid roles have authored loadouts", () => {
   assert(priest.learnedSpellIds.includes("heal"), "goblin priest should know heal");
   assert(priest.learnedSpellIds.includes("renewal"), "goblin priest should know renewal");
   assert(priest.tags.includes("healer"), "goblin priest should be tagged as a healer");
-  assert(geomancer.learnedSpellIds.includes("earthshatter"), "kobold geomancer should know earthshatter");
-  for (const monster of [shaman, priest, geomancer]) {
+  assert(!priest.learnedSpellIds.includes("lifebloom"), "goblin priest should stay a targeted healer");
+  assert(geomancer && geomancer.learnedSpellIds.includes("earthshatter"), "kobold geomancer should know earthshatter");
+  const druid = getMonster("druid");
+  assert(druid && druid.learnedSpellIds.includes("lifebloom"), "forest druid should know lifebloom");
+  for (const monster of [shaman, priest, geomancer, druid]) {
     assert(monster.wielding?.length > 0, `${monster.id} should have a weapon loadout`);
     assert(monster.equipped?.length > 0, `${monster.id} should have an equipment loadout`);
     assert(monster.maxMana > 0, `${monster.id} should have a mana pool`);
