@@ -1,0 +1,21 @@
+I feel like mini-map should have some transparency in case of cramped UX on mobile.
+
+---
+
+I would crank more opacy honestly
+
+---
+
+?? other way
+
+---
+
+I feel like it could be more transparent still.
+
+---
+
+the pixelated content itself appears full strength
+
+---
+
+undo that last edit, lets make the mini-map smaller on mobile.
