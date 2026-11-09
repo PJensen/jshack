@@ -1,0 +1,7 @@
+FYI: still off by one turn from when the spell or effect lands.
+
+It goes:
+
+SMITE!
+tick
+spell lands
