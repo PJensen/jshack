@@ -17,6 +17,8 @@ regression check.
 | Simulate the real scheduler and WorldView | `headless-runner` | `deno task headless --seed 12648430 --turns 100 --report-every 25` |
 | Replay a deterministic action schedule | `headless-runner` | `deno task headless --actions-file path/to/actions.json` |
 | Play through the JSONL agent contract | `agent-player` | `deno task agent:play --seed 12648430 --class outlaw` |
+| Compare a controlled three-goblin encounter | `three-goblin-probe` | `deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/three-goblin-probe.mjs` |
+| Exercise a generated-dungeon encounter | `actual-goblin-probe` | `deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/actual-goblin-probe.mjs` |
 | Resume or inspect an agent trace | `agent-player` | `deno task agent:play --resume traces/agent-last-run.json` |
 | Find hot scheduler phases/systems | `profile-hot-systems` | `deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/profile-hot-systems.mjs --scenario live_wait --ticks 120` |
 | Measure deferred-command growth | `tick-lifetime-benchmark` | `deno run --allow-read .agents/skills/runtime-tools/scripts/tick-lifetime-benchmark.mjs --ticks 3000` |

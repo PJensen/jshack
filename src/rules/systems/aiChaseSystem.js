@@ -216,6 +216,8 @@ function chooseRallyDir(world, id, pos, ni, def, canTraverseTile, canOpenDoors) 
  * within 45° of a nearby hunting enemy's current approach vector.  Applies to
  * any enemy with intel > 3, regardless of species — a goblin and a troll closing
  * from the same angle will naturally split without any explicit coordination.
+ * Keep the spread to the final approach; at long range, lateral movement can
+ * repeatedly avoid reducing distance and turn a hunt into an orbit.
  *
  * @param {any} world
  * @param {number} id
@@ -227,6 +229,9 @@ function chooseRallyDir(world, id, pos, ni, def, canTraverseTile, canOpenDoors) 
  * @returns {{dx:number,dy:number}|null}
  */
 function choosePackSpreadDir(world, id, pos, targetX, targetY, def, canTraverseTile) {
+  const distanceToTarget = chebyshevScalar(pos.x | 0, pos.y | 0, targetX, targetY);
+  if (distanceToTarget > 3) return null;
+
   const searchRadius = Math.max(1, (def?.packRadius ?? 8) | 0);
 
   // Collect approach vectors from any nearby hunting enemy (any species).
@@ -265,6 +270,7 @@ function choosePackSpreadDir(world, id, pos, targetX, targetY, def, canTraverseT
     const nx = (pos.x | 0) + dir.dx;
     const ny = (pos.y | 0) + dir.dy;
     if (!isStepTraversable(world, id, nx, ny, targetX, targetY, canTraverseTile)) continue;
+    if (chebyshevScalar(nx, ny, targetX, targetY) >= distanceToTarget) continue;
 
     // Base score: how well this direction points toward the target.
     let score = dir.dx * selfNx + dir.dy * selfNy;
