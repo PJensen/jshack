@@ -648,7 +648,7 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
         return true;
       }
       const dist = chebyshevScalar(tx, ty, px, py);
-      if (!(dist > 0)) {
+      if (!(dist > 0) && pending.allowSelfTarget !== true) {
         log(`${pending.spellName} needs another tile.`);
         return true;
       }

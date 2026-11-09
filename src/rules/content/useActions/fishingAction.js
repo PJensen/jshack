@@ -327,14 +327,15 @@ function resolveFishingChannel(world, actor, ch) {
 // Targeting config consumed by main.js to open the tile targeter.
 export const FISHING_TARGETING = {
   name: 'Fishing',
-  fallbackRange: 6,
-  requiresLOS: true,
+  unlimitedRange: true,
+  requiresLOS: false,
   requiresVisible: false,
+  allowSelfTarget: true,
   validateTarget(x, y) {
     return isFishableTile(getTile(x | 0, y | 0)) ? null : 'Fishing must target a water tile.';
   },
   describePrompt(range) {
-    return `Choose water for Fishing (range ${range}). Tap a water tile or use arrow keys + Enter. Esc to cancel.`;
+    return 'Choose water for Fishing. Tap a water tile or use arrow keys + Enter. Esc to cancel.';
   },
   onConfirm(world, actorId, itemId, x, y) {
     world.emit('fishing:cast:request', { actor: actorId, itemId, turns: 12, x, y });

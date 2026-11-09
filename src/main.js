@@ -1823,7 +1823,9 @@ function tryOpenItemChannelTargeter(itemId) {
   const pe = playerEntity(world);
   if (!pe?.id) return true;
   const cfg = action.targeting;
-  const range = Math.max(1, Number(cfg.fallbackRange || 6) | 0);
+  const range = cfg.unlimitedRange === true
+    ? 0
+    : Math.max(1, Number(cfg.fallbackRange || 6) | 0);
   targeting.cancelAll();
   targeting.openSpellTargeting({
     spellName: cfg.name || identity,
@@ -2555,8 +2557,8 @@ addEventListener('ui:requestUse', (ev) => {
   const itemId = e?.detail?.itemId;
   if (!Number.isInteger(itemId)) return;
   const abilityId = String(e?.detail?.abilityId || '');
-  if (requestItemAbility(itemId, abilityId)) return;
   if (tryOpenItemChannelTargeter(itemId)) return;
+  if (requestItemAbility(itemId, abilityId)) return;
   const action = { type: 'rules.useItem', payload: { itemId, abilityId } };
   const rulesHandler = makeRulesDispatcher(world, () => (playerEntity(world)?.id || 0));
   rulesHandler(action);
