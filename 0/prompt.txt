@@ -1,0 +1,7 @@
+We've been working on healing VFX today, we added an AOE healing spell a momennt ago, along with `renewal` healing over time single-target spell.
+
+What I'd liket to do is to make VFX for the brand new healing AOE spell. I was thinking about light particles coming up from the ground around the healin radius.
+
+---
+
+it's channeled you know that right?
