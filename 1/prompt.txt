@@ -1,0 +1,13 @@
+how is eating corpses different front eating anything else?
+
+NOTE: I am not talking about monsters eating stuff on the ground
+
+---
+
+I wouldn't even say "could" I think they should share the mechanic -- eating a soup and having it take time, followed by eating a corpse INSTANTLY feels very wrong to me.
+
+WARNING: no compatability hacks please! we're failing forwards.
+
+---
+
+explain these changes please --  I don't fully understand why you are touching abilities.

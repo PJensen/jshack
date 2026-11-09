@@ -3,10 +3,16 @@
   "checkpoint_id": "01M713PCQYZT4PEGZDNREPR11B",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 4,
   "files_touched": [
     "VERSION",
-    "src/rules/systems/castSpellSystem.js"
+    "src/rules/content/useActions/foodEatingAction.js",
+    "src/rules/systems/castSpellSystem.js",
+    "tests/corpseBuffs.test.mjs",
+    "tests/corpseEffects.test.mjs",
+    "tests/corpseUseProc.test.mjs",
+    "tests/interaction.test.mjs",
+    "tests/useRuntime.test.mjs"
   ],
   "sessions": [
     {
@@ -15,14 +21,21 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 3937,
+    "input_tokens": 125688,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 1054336,
-    "output_tokens": 1762,
-    "api_call_count": 5,
+    "cache_read_tokens": 3669504,
+    "output_tokens": 10478,
+    "api_call_count": 36,
     "subagent_tokens_complete": true
   },
   "redaction": {
