@@ -360,6 +360,45 @@ export const UNDERWORLD_REGION_TEMPLATES = {
       },
     },
   },
+  rootbound_grotto: {
+    templateId: "rootbound_grotto",
+    label: "Rootbound Grotto",
+    type: "grotto",
+    floors: 3,
+    biome: "mushroom_cave",
+    monsterTier: 1,
+    lootTier: 2,
+    questId: "side.rootbound_grotto",
+    targetDepth: 1,
+    roomTarget: 6,
+    content: {
+      monsters: [
+        { id: "goblin_mosscaller", count: 4 },
+        { id: "kobold_cairnkeeper", count: 3 },
+        { id: "orc_bloodspeaker", count: 1 },
+        { id: "druid", count: 1 },
+      ],
+      traps: [],
+      features: ["mushrooms", "mushrooms", "glowcap_patch", "statue", "fountain", "runestone"],
+      chests: [{ lootTable: "chest:epic" }],
+    },
+    profile: {
+      ...CAVE_PROFILE,
+      id: "rootbound_grotto",
+      theme: "grotto",
+      minLeafSize: 7,
+      minRoomSize: 3,
+      maxRoomSize: 8,
+      roomSparsity: 0.08,
+      hallwayMonsterCap: 3,
+      monsterFilter: (def) => [
+        "goblin_mosscaller",
+        "kobold_cairnkeeper",
+        "orc_bloodspeaker",
+        "druid",
+      ].includes(String(def?.id || "")),
+    },
+  },
 };
 
 export function getUnderworldRegionTemplate(templateId) {

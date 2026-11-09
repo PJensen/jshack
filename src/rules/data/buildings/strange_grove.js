@@ -115,5 +115,11 @@ export default {
       "kind": "web",
       "params": { "landmark": "strange_grove" },
     },
+    {
+      "dx": 0,
+      "dy": 3,
+      "kind": "stair_down",
+      "params": { "landmark": "strange_grove", "entranceTemplateId": "rootbound_grotto" },
+    },
   ],
 };

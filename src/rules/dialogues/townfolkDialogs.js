@@ -5,6 +5,7 @@ import { STARTER_PRIEST_FETCH_QUEST_ID, getQuestRecord } from "../quests/runtime
 import { RAT_INFESTATION_QUEST_ID, REQUIRED_RAT_KILLS } from "../quests/definitions/ratInfestation.js";
 import { canTurnInStarterFetch } from "../quests/definitions/graveyardWatch.js";
 import { canAcceptPriestRift, ensurePriestRiftQuest, PRIEST_RIFT_QUEST_ID } from "../quests/definitions/priestRift.js";
+import { ensureRootboundGrottoQuest, ROOTBOUND_GROTTO_QUEST_ID } from "../quests/definitions/rootboundGrotto.js";
 import { canTurnInRunContract, RUN_CONTRACT_QUEST_ID } from "../quests/definitions/runContract.js";
 import { getTownState, getWeather } from "../utils/townStateAccess.js";
 import { Vitality } from "../components/Vitality.js";
@@ -327,6 +328,11 @@ function runContractQuest(world, actorId) {
   return getQuestRecord(world, RUN_CONTRACT_QUEST_ID, actorId);
 }
 
+function rootboundGrottoQuest(world, actorId, giverId) {
+  ensureRootboundGrottoQuest(world, { playerId: actorId, giverId });
+  return getQuestRecord(world, ROOTBOUND_GROTTO_QUEST_ID, actorId);
+}
+
 for (const def of Object.values(TOWNFOLK)) {
   if (def.role === "priest" || def.role === "barkeep" || def.role === "mason" || def.role === "enchantress") continue;
   registerDialog({
@@ -342,6 +348,72 @@ for (const def of Object.values(TOWNFOLK)) {
     },
   });
 }
+
+registerDialog({
+  id: "townfolk:herbalist",
+  start: "root",
+  nodes: {
+    root: {
+      text: (ctx) => {
+        const quest = rootboundGrottoQuest(ctx.world, ctx.actorId, ctx.targetId);
+        const state = quest?.state;
+        if (!state) return ambientTownfolkText(TOWNFOLK.herbalist, ctx);
+        if (String(state.status || "") === "complete") {
+          return "The roots have gone quiet. Keep that book dry; some knowledge only grows underground.";
+        }
+        if (String(state.node || "") === "offer") {
+          return "The Strange Grove has opened beneath itself. Something down there is teaching wounded creatures to survive. Go into the Rootbound Grotto and break the circle before it spreads into the living forest.";
+        }
+        if (String(state.node || "") === "hunt") {
+          return "The Rootbound Grotto lies beneath the Strange Grove. Find one of its healers and stop the lesson at its source.";
+        }
+        if (String(state.node || "") === "report") {
+          return "You broke the rootbound circle? Then take this. The book may teach you what the creatures below already know.";
+        }
+        return ambientTownfolkText(TOWNFOLK.herbalist, ctx);
+      },
+      choices: [
+        {
+          id: "accept_rootbound_grotto",
+          label: "I'll go beneath the grove.",
+          visible: (ctx) => String(rootboundGrottoQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "offer",
+          emits: [{
+            name: "dialog:accepted",
+            payload: (ctx) => ({
+              questId: ROOTBOUND_GROTTO_QUEST_ID,
+              playerId: ctx.actorId,
+              speakerId: ctx.targetId,
+            }),
+          }],
+          to: "accept_ack",
+        },
+        {
+          id: "report_rootbound_grotto",
+          label: "The rootbound circle is broken.",
+          visible: (ctx) => String(rootboundGrottoQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "report",
+          emits: [{
+            name: "dialog:reported",
+            payload: (ctx) => ({
+              questId: ROOTBOUND_GROTTO_QUEST_ID,
+              playerId: ctx.actorId,
+              speakerId: ctx.targetId,
+            }),
+          }],
+          to: "report_ack",
+        },
+        { id: "leave", label: "Goodbye.", close: true },
+      ],
+    },
+    accept_ack: {
+      text: "The stair is beneath the Strange Grove. Find one of the healers below and do not let it finish its work.",
+      choices: [{ id: "leave", label: "I'll return.", close: true }],
+    },
+    report_ack: {
+      text: "Good. Take the Lifebloom book and the gold. If the grove starts breathing again, come find me before you go below.",
+      choices: [{ id: "leave", label: "Goodbye.", close: true }],
+    },
+  },
+});
 
 registerDialog({
   id: "townfolk:mason",
