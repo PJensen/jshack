@@ -44,20 +44,29 @@ Deno.test("new intelligent skeleton casters have spell loadouts", () => {
 
 Deno.test("new humanoid roles have authored loadouts", () => {
   const shaman = getMonster("goblin_shaman");
+  const mosscaller = getMonster("goblin_mosscaller");
   const priest = getMonster("goblin_priest");
   const geomancer = getMonster("kobold_geomancer");
+  const cairnkeeper = getMonster("kobold_cairnkeeper");
+  const bloodspeaker = getMonster("orc_bloodspeaker");
 
-  assert(shaman && priest && geomancer, "new humanoid roles should be registered");
+  assert(shaman && mosscaller && priest && geomancer && cairnkeeper && bloodspeaker, "new humanoid roles should be registered");
   assert(shaman.learnedSpellIds.includes("entangle"), "goblin shaman should know entangle");
   assert(shaman.learnedSpellIds.includes("fireball"), "goblin shaman should know fireball");
+  assert(mosscaller.learnedSpellIds.includes("renewal"), "goblin mosscaller should know renewal");
+  assert(mosscaller.tags.includes("healer"), "goblin mosscaller should be tagged as a healer");
   assert(priest.learnedSpellIds.includes("heal"), "goblin priest should know heal");
   assert(priest.learnedSpellIds.includes("renewal"), "goblin priest should know renewal");
   assert(priest.tags.includes("healer"), "goblin priest should be tagged as a healer");
   assert(!priest.learnedSpellIds.includes("lifebloom"), "goblin priest should stay a targeted healer");
   assert(geomancer && geomancer.learnedSpellIds.includes("earthshatter"), "kobold geomancer should know earthshatter");
+  assert(cairnkeeper.learnedSpellIds.includes("heal"), "kobold cairnkeeper should know heal");
+  assert(cairnkeeper.tags.includes("healer"), "kobold cairnkeeper should be tagged as a healer");
+  assert(bloodspeaker.learnedSpellIds.includes("heal"), "orc bloodspeaker should know heal");
+  assert(bloodspeaker.tags.includes("healer"), "orc bloodspeaker should be tagged as a healer");
   const druid = getMonster("druid");
   assert(druid && druid.learnedSpellIds.includes("lifebloom"), "forest druid should know lifebloom");
-  for (const monster of [shaman, priest, geomancer, druid]) {
+  for (const monster of [shaman, mosscaller, priest, geomancer, cairnkeeper, bloodspeaker, druid]) {
     assert(monster.wielding?.length > 0, `${monster.id} should have a weapon loadout`);
     assert(monster.equipped?.length > 0, `${monster.id} should have an equipment loadout`);
     assert(monster.maxMana > 0, `${monster.id} should have a mana pool`);
