@@ -1,4 +1,6 @@
 import { UseIntent } from "../components/Intents/UseIntent.js";
+import { startFoodEating } from "../content/useActions/foodEatingAction.js";
+import { ItemInfo } from "../components/ItemInfo.js";
 import { executeInteraction } from "../interaction/runtime/actionRuntime.js";
 import { usePipeline } from "../interaction/verbs/usePipeline.js";
 /** @typedef {import('../../lib/ecs-js/index.js').World} World */
@@ -15,6 +17,12 @@ import { usePipeline } from "../interaction/verbs/usePipeline.js";
 export function useItemSystem(world) {
   for (const [actor, intent] of world.query(UseIntent)) {
     const itemId = intent.itemId | 0;
+    if (String(world.get(itemId, ItemInfo)?.type || "").toLowerCase() === "food") {
+      if (startFoodEating(world, actor, itemId)) {
+        try { world.remove(actor, UseIntent); } catch {}
+        continue;
+      }
+    }
     let result = null;
     try {
       result = executeInteraction(world, {
