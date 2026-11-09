@@ -1,0 +1,44 @@
+lets give it to one of new new healer mobs :-)
+
+---
+
+ehhh -- that's a lot for one mob lol.  was thinking about new healer identities.
+
+---
+
+I checked the recorded design history. The explicitly named new healer monster was:
+
+- `goblin_priest` — targeted healer/support caster.
+
+The other newly named monsters were role peers, not healers:
+
+- `goblin_shaman` — elemental/control caster
+- `goblin_doomslayer` — melee threat
+- `goblin_menace` — disruption/pursuit
+- `kobold_geomancer` — terrain/control caster
+
+So I was wrong to claim we had a larger named healer roster. We had discussed expanding into healer variants, but we had not actually settled additional healer identities beyond `goblin_priest`.
+
+
+
+^^ these guys
+
+---
+
+what's happening is were over committing to one healter mob, lets expand the roster with thematic humanoid variants, for anything where it fits, NOTE: healer bandit would not make sense.
+
+---
+
+approved.
+
+---
+
+and --- what *new* healers did we make?
+
+---
+
+that was the whole point of my ask
+
+---
+
+keep what you did too
