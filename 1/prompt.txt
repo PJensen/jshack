@@ -1,0 +1,31 @@
+when monsters are casting spells and abilitie, much like we have a little health bar, I feel like we should have a little cast bar.
+
+---
+
+Okay -- so, I spawned a goblin priest, and I heard casting sounds, but I never saw any indication of what had actually happened.
+
+---
+
+it seems like it's a turn late, shows a black bar, I wonder if smite should be a two turn cost for a sec, make it so.
+
+---
+
+smite blinded me for 2, but, I can still "see" the world -- it used to narrow our vision field pretty significantly.
+
+---
+
+also, we get the "SMITE" float-text *before* the cast. <-- a good followup item.
+
+also -- vision range still seems huge -- but what do I know.
+
+---
+
+I dunno something strange here -- Iknow when I get electrocuted shit works the way I expected, maybe I need practically blind for a moment.
+
+---
+
+and you've still got the "SMITE" float text happening BEFORE casting starts.
+
+---
+
+and this should fix an entire class of issues correct?

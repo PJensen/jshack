@@ -3,9 +3,20 @@
   "checkpoint_id": "01M712S91EZ0GBFPHN9T031MV5",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 4,
+  "checkpoints_count": 10,
   "files_touched": [
-    "src/main.js"
+    "VERSION",
+    "src/bridge/schema/worldView.js",
+    "src/display/lighting/sources/index.js",
+    "src/display/ui/wiring/floatTextWiring.js",
+    "src/main.js",
+    "src/rules/data/callbacks/ai.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/castSpellSystem.js",
+    "tests/monsterAbilities.test.mjs",
+    "tests/smite.test.mjs",
+    "tests/worldViewPerceptionChannels.test.mjs"
   ],
   "sessions": [
     {
@@ -14,8 +25,23 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
+  "token_usage": {
+    "input_tokens": 212335,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9238784,
+    "output_tokens": 28719,
+    "api_call_count": 71,
+    "subagent_tokens_complete": true
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
