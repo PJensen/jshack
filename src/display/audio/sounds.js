@@ -136,7 +136,7 @@ const SOUNDS = {
   "spell:firestorm":     { file: "spell_fire.mp3",          bus: "spells" },
   "spell:blastwave":     { file: "spell_earthshatter_1.mp3", bus: "spells" },
   "spell:heal":          { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2 },
-  "spell:renewal":       { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2, randomPitch: 18 },
+  "spell:renewal":       { file: "sacred_rune_lock_holy_magic_activation.mp3", bus: "spells", maxVoices: 2 },
   "spell:sacred_restoration": { file: "healing_magic_1.mp3", bus: "spells", maxVoices: 2, randomPitch: 8 },
   "spell:lifebloom":     { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2, randomPitch: 28 },
   "spell:flash_heal":    { file: "healing_magic_1.mp3",     bus: "spells", maxVoices: 2 },

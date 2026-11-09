@@ -2778,7 +2778,34 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
       _flashHealFx.push(new RadialFx({ x: at.x, y: at.y, radius, ttl: 0.48 }));
     };
-    world.on('spell:renewal', ({ at }) => healingBurst(at, 1.15));
+
+    // Renewal — green leaf-like motes emanate from the healed target.
+    world.on('spell:renewal', ({ at }) => {
+      if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+      const scale = PERF.quality === 'low' ? 0.65 : (PERF.quality === 'high' ? 1.2 : 1);
+      const count = Math.max(10, Math.round(22 * scale));
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.45;
+        const speed = 0.28 + Math.random() * 0.62;
+        fx.pool.spawn(new Particle({
+          x: at.x + (Math.random() - 0.5) * 0.16,
+          y: at.y + (Math.random() - 0.5) * 0.16,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - (0.18 + Math.random() * 0.18),
+          ay: -0.035,
+          life: 0.48 + Math.random() * 0.42,
+          size0: 0.055 + Math.random() * 0.045,
+          size1: 0.012,
+          r: 45 + ((Math.random() * 55) | 0),
+          g: 165 + ((Math.random() * 75) | 0),
+          b: 45 + ((Math.random() * 55) | 0),
+          a0: 0.88,
+          rot: Math.random() * Math.PI * 2,
+          rotVel: (Math.random() - 0.5) * 3.5,
+        }));
+      }
+      healingBurst(at, 1.15);
+    });
     world.on('spell:sacred_restoration', ({ at }) => healingBurst(at, 1.8));
     world.on('spell:lifebloom', ({ at, radius }) => healingBurst(at, Math.max(1.5, Number(radius || 3))));
 
