@@ -75,8 +75,9 @@ function effectKeyToType(key) {
  * @param {number} potency
  * @param {number} stacks
  * @param {string} key - effect key for damage type mapping
+ * @param {number} [sourceId] - originating entity for healing modifiers
  */
-function applyEffectOperation(world, id, vit, operation, potency, stacks, key) {
+function applyEffectOperation(world, id, vit, operation, potency, stacks, key, sourceId = id) {
     if (!vit) return;
     const amount = Math.max(0, potency * stacks);
 
@@ -91,7 +92,7 @@ function applyEffectOperation(world, id, vit, operation, potency, stacks, key) {
     }
 
     if (operation === 'heal') {
-        applyHealing(world, { target: id, amount, source: id, cause: key || 'effect' });
+        applyHealing(world, { target: id, amount, source: sourceId, cause: key || 'effect' });
         return;
     }
 
@@ -402,7 +403,7 @@ export function effectSystem(world, dt = 1) {
                     const operation = String(operations[oi] || 'none');
                     const handledBySpellDamage = (operation === 'damage') && applySpellEffectDamage(world, id, e);
                     if (!handledBySpellDamage) {
-                        applyEffectOperation(world, id, vit, operation, potency, stacks, key);
+                        applyEffectOperation(world, id, vit, operation, potency, stacks, key, Number(e.sourceId || id) | 0);
                     }
                 }
                 for (let i = 0; i < (def?.statuses || []).length; i++) {

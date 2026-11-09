@@ -30,7 +30,7 @@ Deno.test("renewal applies immediate healing and a timed heal-over-time effect",
 
   runSpellScript(world, caster, { id: "renewal", script: "renewal", range: 6 }, { targetId: target });
 
-  assert(world.get(target, Vitality).hp > 5);
+  assertEquals(world.get(target, Vitality).hp, 5, "renewal should not heal immediately");
   const effect = world.get(target, ActiveEffects)?.effects?.find((entry) => entry.key === "renewal");
   assert(effect, "renewal should leave a timed effect");
   const before = world.get(target, Vitality).hp;
@@ -83,4 +83,26 @@ Deno.test("cast damage can be authored as a setback instead of a break", () => {
   channelingDamageReactionSystem(world);
   assert(world.has(caster, Channeling));
   assertEquals(world.get(caster, Channeling).turnsRemaining, 3);
+});
+
+Deno.test("healing spell strength uses the caster's intelligence", () => {
+  const world = new World({ seed: 15 });
+  const low = actor(world, 0, 0, 1, 40);
+  const high = actor(world, 0, 0, 1, 40);
+  world.add(low, Brain, { intelligence: 10 });
+  world.add(high, Brain, { intelligence: 18 });
+
+  const flashEvents = [];
+  world.on("spell:flash_heal", (event) => flashEvents.push(event));
+  runSpellScript(world, low, { id: "flash_heal", script: "flash_heal" }, {});
+  runSpellScript(world, high, { id: "flash_heal", script: "flash_heal" }, {});
+  assert(flashEvents[1].amount > flashEvents[0].amount, "Flash Heal should scale with caster INT");
+
+  const lowTarget = actor(world, 2, 0, 1, 40);
+  const highTarget = actor(world, 2, 0, 1, 40);
+  runSpellScript(world, low, { id: "renewal", script: "renewal", range: 6 }, { targetId: lowTarget });
+  runSpellScript(world, high, { id: "renewal", script: "renewal", range: 6 }, { targetId: highTarget });
+  const lowEffect = world.get(lowTarget, ActiveEffects).effects.find((entry) => entry.key === "renewal");
+  const highEffect = world.get(highTarget, ActiveEffects).effects.find((entry) => entry.key === "renewal");
+  assert(highEffect.potency > lowEffect.potency, "Renewal should snapshot caster INT into its HoT");
 });

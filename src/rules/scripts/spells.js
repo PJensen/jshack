@@ -1364,21 +1364,14 @@ REGISTRY['renewal'] = function renewalScript(world, actor, spell, intent) {
   }
   const brain = /** @type any */ (world.get(actor, Brain));
   const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
-  const immediate = 5 + intBonus;
-  const total = 15 + intBonus * 2;
-  const healed = applyHealing(world, {
-    target: resolved.target,
-    amount: immediate,
-    source: actor,
-    cause: 'spell:renewal',
-  }).amount;
-  applyRenewalEffect(world, actor, resolved.target, spell, total, 5);
+  const perTick = 15 + intBonus * 2;
+  applyRenewalEffect(world, actor, resolved.target, spell, perTick, 5);
   world.emit('spell:renewal', {
     actor,
     targetId: resolved.target,
     at: resolved.pos,
-    amount: healed,
-    overTime: total,
+    amount: 0,
+    overTime: perTick,
     turns: 5,
   });
 };
@@ -1439,7 +1432,12 @@ REGISTRY['flash_heal'] = function flashHealScript(world, actor, spell, intent) {
 
   const maxHp = flashHpCap;
   const spellLevel = getFlashHealSpellLevel(world, actor, spell, intent);
-  const amount = Math.max(FLASH_HEAL_TUNING.minimumHeal, Math.floor(maxHp * FLASH_HEAL_TUNING.healFraction));
+  const brain = /** @type any */ (world.get(actor, Brain));
+  const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
+  const amount = Math.max(
+    FLASH_HEAL_TUNING.minimumHeal,
+    Math.floor(maxHp * FLASH_HEAL_TUNING.healFraction) + intBonus,
+  );
 
   const actualHeal = applyHealing(world, {
     target: actor,
