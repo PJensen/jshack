@@ -1,0 +1,48 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M70B6T7MZB0D769V3T8D007P",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/rules/ai/policyAction.js",
+    "src/rules/ai/tacticalIntent.js",
+    "src/rules/components/TacticalIntent.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/tacticalIntentSystem.js",
+    "tests/aiPolicyChaseIntegration.test.mjs",
+    "tests/tacticalIntent.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 135695,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5576704,
+    "output_tokens": 21971,
+    "api_call_count": 55,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}

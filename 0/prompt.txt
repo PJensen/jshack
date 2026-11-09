@@ -1,0 +1,59 @@
+I wanted to turn up TTK a bit, I wanted combat to feel a bit more like taking on 2-3 at a time of anything is a risk. I dunno how we can realistically do that, without making the thing feel like a grind -- tricky. Open to ideas.
+
+---
+
+too litteral, I think it means singletons are just hard.
+
+---
+
+I agree with the above -- I think we have a health tuning variable, but not a damage tuning variable. lets at least try something, I wanna check things out. And point well taken about monster abilities.
+
+---
+
+e2e pkz
+
+---
+
+I would stash it, look at #186 before we make a move here.
+
+---
+
+create the stash
+
+---
+
+okay -- now re-visit 186 please
+
+---
+
+try it out:
+
+
+
+The next move should be a deterministic goblin-group probe comparing:
+
+1. chase only;
+2. chase plus policy;
+3. standing still;
+4. retreating into a corridor;
+5. using a disabling or ranged option.
+
+---
+
+approved, one small feature/gameplay tweak to try and address this
+
+---
+
+commit and push this rung please :-) this sounds good
+
+---
+
+#186 has been significantly updated, I realized something critical overnigh. Have a look at the issue and report back to me please.
+
+---
+
+Correct! That's right! I think we're going to leave damage scalar stashed for the time being.
+
+---
+
+Approving the new direction and the work outlined in #186 -- please proceed! This make take a bit; but honestly; I think it's very much worth the effort. What's happening is that ownership was becoming less clear and two systems were effectively fighting, and worse, the semantics were weakening considerably -- the absense of a move, the presence of a move -- forced to carry metadata; all were strong indications of a missing component.

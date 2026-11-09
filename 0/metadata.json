@@ -1,0 +1,49 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M70B6T7MZB0D769V3T8D007P",
+  "session_id": "01a1bd5e-d95a-7651-b7db-e61a0f31fb1d",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-09T14:25:47.202047719Z",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/main/scheduler.js",
+    "src/rules/ai/policyAction.js",
+    "src/rules/ai/tacticalIntent.js",
+    "src/rules/components/TacticalIntent.js",
+    "src/rules/systems/aiChaseSystem.js",
+    "src/rules/systems/tacticalIntentSystem.js",
+    "tests/aiPolicyChaseIntegration.test.mjs",
+    "tests/tacticalIntent.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "0b58fa40fb2f",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 135695,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5576704,
+    "output_tokens": 21971,
+    "api_call_count": 55,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 12
+  }
+}
