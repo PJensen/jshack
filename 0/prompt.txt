@@ -1,0 +1,176 @@
+I wanted to turn up TTK a bit, I wanted combat to feel a bit more like taking on 2-3 at a time of anything is a risk. I dunno how we can realistically do that, without making the thing feel like a grind -- tricky. Open to ideas.
+
+---
+
+too litteral, I think it means singletons are just hard.
+
+---
+
+I agree with the above -- I think we have a health tuning variable, but not a damage tuning variable. lets at least try something, I wanna check things out. And point well taken about monster abilities.
+
+---
+
+e2e pkz
+
+---
+
+I would stash it, look at #186 before we make a move here.
+
+---
+
+create the stash
+
+---
+
+okay -- now re-visit 186 please
+
+---
+
+try it out:
+
+
+
+The next move should be a deterministic goblin-group probe comparing:
+
+1. chase only;
+2. chase plus policy;
+3. standing still;
+4. retreating into a corridor;
+5. using a disabling or ranged option.
+
+---
+
+approved, one small feature/gameplay tweak to try and address this
+
+---
+
+commit and push this rung please :-) this sounds good
+
+---
+
+#186 has been significantly updated, I realized something critical overnigh. Have a look at the issue and report back to me please.
+
+---
+
+Correct! That's right! I think we're going to leave damage scalar stashed for the time being.
+
+---
+
+Approving the new direction and the work outlined in #186 -- please proceed! This make take a bit; but honestly; I think it's very much worth the effort. What's happening is that ownership was becoming less clear and two systems were effectively fighting, and worse, the semantics were weakening considerably -- the absense of a move, the presence of a move -- forced to carry metadata; all were strong indications of a missing component.
+
+---
+
+explain how the other various intents are wired up, and if there is any obvious weakness in the current situatiojn.
+
+---
+
+It's super unclear why you are saying you don't know `who` created it when it is very plainly `ownedBy` and entity. In fact, if we find that `ecs-js` needs an `ownedBy` method -- we can consider making that small frakework adjustment.
+
+Second: I'm worried about what youre saying about ownership conflicts -- suspicious.
+
+Third: if we find we need a new scheduler phase, so be it -- we've stacked a lot of things into the `ai` phase -- it seems overloaded if you ask me. But what do I know.
+
+
+Think also about how:
+
+`flank`, `hold`, `kite`, `pursue`, `retreat`, and `rally`.
+
+And if they're implemented.
+
+---
+
+okay -- giving you clearance to proceed cleaning these things up; if you like I can have Astra review the siutation as it sits.
+
+
+
+Indeed; here is Astra
+
+
+
+\~\~
+
+
+
+This is a productive exchange. You pushed Codex away from inventing architectural problems and toward understanding the actual ECS machinery.
+
+I particularly agree with your instinct about separating the overloaded `ai` phase into decision-making and tactical resolution. That gives the architecture a meaningful boundary instead of relying on increasingly delicate system ordering.
+
+But there's one architectural issue I'd challenge before proceeding.
+
+### `TacticalIntent` is not the same thing as a tactical proposal
+
+You've established that `world.add()` replaces an existing component.
+
+Suppose chase proposes `flank` and the neural policy proposes `kite`. If both write to the actor's singleton `TacticalIntent`, the second proposal overwrites the first before arbitration even happens.
+
+We've recreated the original problem, just one level higher.
+
+The distinction should be:
+
+Tactical decision producers
+
+Chase · Neural policy · Contextual behaviors
+
+Candidate evaluation / arbitration
+
+Evaluate priorities, constraints, and existing objectives
+
+Selected TacticalIntent
+
+One authoritative objective per actor
+
+Canonical action intents
+
+Move · CastSpell · RangedAttack · etc.
+
+That doesn't necessarily require another component or complicated proposal framework. A deterministic decision function could evaluate candidates and write the selected objective once.
+
+### Two other considerations
+
+The six tactical objectives aren't all equivalent. Pursue and retreat are broad movement strategies. Flank and rally imply relationships with other actors. Kite represents range management, while hold represents a positional constraint. Their lifetimes and invalidation rules will differ. A common component is sensible, but it shouldn't obscure those distinctions.
+
+A new `tactics` phase is justified if it establishes real ordering guarantees. Not simply because `ai` contains 18 systems. The boundary should ensure every relevant proposal is available before selection and all canonical action intents are emitted before validation.
+
+And I strongly agree with your objection to calling ECS component replacement an ownership conflict. Entity ownership, decision authority, and proposal provenance are separate concerns.
+
+One visibility qualification: the tactical implementation described by Codex isn't yet visible in the GitHub snapshot I can access, so I'm evaluating the architecture in your transcript rather than claiming I've verified those local changes.
+
+My position: Keep the direction. Add the explicit distinction between candidate objectives and selected objective. That's the one place where the proposed architecture could accidentally reproduce the exact defect we're trying to eliminate.
+
+
+
+\~\~
+
+
+
+Keen to hear your thoughts.
+
+---
+
+This is a substantially cleaner architecture. You've separated proposal ownership, tactical decision authority, and action execution. That's the boundary we were looking for.
+The use of child entities is particularly appropriate for ECS. Multiple producers can submit independent proposals without overwriting one another, while the actor retains a single authoritative `TacticalIntent`.
+The dedicated `tactics` phase also gives arbitration a real scheduler boundary rather than making it an ordering convention inside `ai`.
+Three things I'd watch:
+1\. Proposal lifetime. Transient proposals must be consumed and cleaned up reliably, including when an actor dies, loses eligibility, or skips a turn. No stale tactical objectives should leak into subsequent decisions.
+2\. Tie-breaking. Priority followed by proposal entity ID is deterministic, but entity allocation order can implicitly determine tactical behavior. That's acceptable if intentional; the test suite should make it visible.
+3\. Legacy action projection. The remaining direct `MoveIntent` write is the critical cleanup. Until it's gone, chase and tactical resolution can still influence the same action through different paths.
+The six-objective vocabulary also looks sensible. I'd retain it without further abstraction until actual encounters demonstrate something missing.
+The reported 42 passing tests, static checks, and headless run are encouraging, though I haven't independently executed them.
+My recommendation: Remove the compatibility `MoveIntent`, migrate the direct chase tests to exercise `ai → tactics → intents`, and then stop architectural work long enough to playtest.
+We now need to establish whether three goblins actually fight differently—not merely whether their tactical components are correct.
+That's the point of #186.
+
+\~\~
+Lets think about how we test systematically; playtesting is useful; but also kind of tricky if you think about it.
+
+\~\~\~
+
+NOTE: tactical proposals are interesting; they could also show something visually; but that may be TBD for the future.
+
+---
+
+we may already have a play-test harness we can run.
+
+---
+
+WARN: these started appearing in tests, almost a DRY violation. BUt they're justs tests -- maybe we don't care.
