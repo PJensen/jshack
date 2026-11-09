@@ -11,7 +11,7 @@ import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { AggroState, AGGRO_LEVELS, SEARCH_TURNS_HUNTING_GRACE } from "../src/rules/components/AggroState.js";
 import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
-import { aiChaseSystem } from "../src/rules/systems/aiChaseSystem.js";
+import { aiChaseSystem } from "./helpers/runChaseTactics.mjs";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll as clearTileMap, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 

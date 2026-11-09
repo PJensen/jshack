@@ -13,7 +13,7 @@ import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
 import { LOOT_TABLES } from "../src/rules/data/lootTables.js";
 import { getMonster } from "../src/rules/data/monsters.js";
 import { pickMonster } from "../src/rules/environment/dungeon/tables.js";
-import { aiChaseSystem } from "../src/rules/systems/aiChaseSystem.js";
+import { aiChaseSystem } from "./helpers/runChaseTactics.mjs";
 import { dealDamage } from "../src/rules/utils/dealDamage.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";

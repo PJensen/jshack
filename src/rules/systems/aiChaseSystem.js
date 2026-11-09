@@ -823,10 +823,5 @@ export function aiChaseSystem(world) {
       dx,
       dy,
     });
-    // Preserve the direct aiChaseSystem contract while tactical resolution is
-    // phased in; the resolver re-projects this same authoritative objective.
-    if (!world.has(id, MoveIntent)) {
-      world.add(id, MoveIntent, { dx, dy });
-    }
   });
 }

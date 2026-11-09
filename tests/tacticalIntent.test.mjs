@@ -86,6 +86,28 @@ Deno.test("expired tactical objectives are discarded without projecting an actio
   assert(!world.has(actor, MoveIntent));
 });
 
+Deno.test("stale proposals for dead actors are consumed", () => {
+  const world = new World({ seed: 186 });
+  const actor = world.create();
+  proposeTacticalIntent(world, actor, { kind: "pursue", source: "chase", dx: 1, dy: 0 });
+  world.destroy(actor);
+
+  tacticalArbitrationSystem(world);
+
+  assertEquals([...world.query(TacticalIntent)].length, 0);
+});
+
+Deno.test("equal-priority proposals use stable proposal allocation order", () => {
+  const world = new World({ seed: 186 });
+  const actor = world.create();
+  proposeTacticalIntent(world, actor, { kind: "flank", source: "chase", dx: -1, dy: 0, priority: 40 });
+  proposeTacticalIntent(world, actor, { kind: "pursue", source: "chase", dx: 1, dy: 0, priority: 40 });
+
+  tacticalArbitrationSystem(world);
+
+  assertEquals(world.get(actor, TacticalIntent).kind, "flank");
+});
+
 Deno.test("configured scheduler resolves chase objective before movement", () => {
   clearAll();
   const tiles = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);

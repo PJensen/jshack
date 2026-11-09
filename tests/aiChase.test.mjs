@@ -11,7 +11,8 @@ import { Brain } from '../src/rules/components/Brain.js';
 import { Vitality } from '../src/rules/components/Vitality.js';
 import { Flying } from '../src/rules/components/Flying.js';
 import { DungeonState } from '../src/rules/components/DungeonState.js';
-import { aiChaseSystem, installAggroFromStealthOffenseListener } from '../src/rules/systems/aiChaseSystem.js';
+import { aiChaseSystem as proposeChase, installAggroFromStealthOffenseListener } from '../src/rules/systems/aiChaseSystem.js';
+import { aiChaseSystem } from "./helpers/runChaseTactics.mjs";
 import { putActorToSleep } from '../src/rules/utils/sleep.js';
 import { clearAll, isWalkable, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR, TILE_WALL } from "../src/rules/environment/dungeon/constants.js";
@@ -755,7 +756,7 @@ Deno.test("spider onSeen self-throw is cooldown-gated for 3 turns", () => {
     });
 
     world.step = 0;
-    aiChaseSystem(world);
+    proposeChase(world);
     assertEquals(thrown.length, 1, "spider should jump on first seen trigger");
 
     // Block LOS so spider loses track and its alertLevel decays.
@@ -764,7 +765,7 @@ Deno.test("spider onSeen self-throw is cooldown-gated for 3 turns", () => {
     setTile(7, 5, TILE_WALL);
 
     world.step = 1;
-    aiChaseSystem(world);
+    proposeChase(world);
     assertEquals(thrown.length, 1, "losing LOS should not trigger self-throw");
 
     // Restore LOS — spider is alerted (not unaware), so !wasHunting = false, no re-trigger.
@@ -773,7 +774,7 @@ Deno.test("spider onSeen self-throw is cooldown-gated for 3 turns", () => {
     setTile(7, 5, TILE_FLOOR);
 
     world.step = 2;
-    aiChaseSystem(world);
+    proposeChase(world);
     assertEquals(thrown.length, 1, "cooldown should block re-jump before 3 turns");
 
     // Break LOS again to reset state back toward unaware.
@@ -782,7 +783,7 @@ Deno.test("spider onSeen self-throw is cooldown-gated for 3 turns", () => {
     setTile(7, 5, TILE_WALL);
 
     world.step = 3;
-    aiChaseSystem(world);
+    proposeChase(world);
     assertEquals(thrown.length, 1, "second LOS break should only reset seen state");
 
     // Restore LOS at step 4, cooldown (3 turns from step 0) has expired.

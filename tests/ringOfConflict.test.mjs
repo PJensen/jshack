@@ -9,7 +9,7 @@ import { MoveIntent } from '../src/rules/components/Intents/MoveIntent.js';
 import { Vitality } from '../src/rules/components/Vitality.js';
 import { AggroState, AGGRO_LEVELS, SEARCH_TURNS_HUNTING_GRACE } from '../src/rules/components/AggroState.js';
 import { ItemInfo } from '../src/rules/components/ItemInfo.js';
-import { aiChaseSystem } from '../src/rules/systems/aiChaseSystem.js';
+import { aiChaseSystem } from "./helpers/runChaseTactics.mjs";
 import { areFactionsHostile } from '../src/rules/utils/factionHostility.js';
 import { hasEquippedTag } from '../src/rules/utils/equipTags.js';
 
