@@ -1,0 +1,1 @@
+player should be able to choose fishing target (on water is only constraint)
