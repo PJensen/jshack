@@ -1,0 +1,72 @@
+Q: can monsters drink potions?
+
+---
+
+I wonder if it should be interuptable?
+
+---
+
+I mean it would really change the calculus
+
+---
+
+FYI: player *and* monster drink
+
+---
+
+scan the landscape, lets see wht it would take, is it a set number of turns, is it unique per, etc.
+
+you must remin still, 
+you must not be interupted
+
+etc.
+
+none of this "instant potion over powered shit"
+
+---
+
+list potions, lets think about the implications of what we're proposing.
+
+---
+
+what about eating and food -- honestly, maybe eating and food is the channeled thing. You've got to sit and sit -- potions, the more I think about it can and should be quaffed. :-)
+
+---
+
+right -- I mean -- else there is very little conceptual different between eatinng and potions.
+
+
+
+- eating -- conveys benefits of the food
+
+
+
+I'm approving this broadly -- lets leave potions alone for now.
+
+
+
+please list all food items while were thinking about it.
+
+---
+
+okay great, lets take a spin on food broadly, food is an "over time" behavior from now on.
+
+NOTE: I feel like corpse eating is really no dfferent -- maybe you can explain why we have two eating pathways.
+
+---
+
+okay great, lets take a spin on food broadly, food is an "over time" behavior from now on. :-) this is 100% the right move -- 
+
+NOTE: corpse eating is wildy out of scope here.
+
+---
+
+NOTE: a note on aesthetics, I would consider allowing channeling to have distinct identities -- right?
+
+"Eating" (bgcolor: green, forecolor: white)
+
+feel me?
+
+Maybe it's early.
+
+NOTE: number of turns should be like 4-5 turns I think, maybe more.
