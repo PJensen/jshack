@@ -60,6 +60,7 @@ export function installChannelingController(world, getActorId) {
         world.emit?.('channeling:cancelled', {
           actor: actorId,
           spellId: ch?.spellId || '',
+          channelId: ch?.channelId || '',
           reason: 'player_cancel',
         });
       } catch {}
@@ -99,7 +100,7 @@ export function installChannelingController(world, getActorId) {
     }, TICK_INTERVAL_MS);
   }
 
-  function startLoop(spellId, mode = "cast", manaPerTick = 0) {
+  function startLoop(spellId, mode = "cast", manaPerTick = 0, channelId = "", channelLabel = "") {
     try { setInputLock('channeling', true); } catch {}
 
     // Dispatch UI start event so the HUD can show the channeling overlay
@@ -111,6 +112,8 @@ export function installChannelingController(world, getActorId) {
     const mana = actorId ? world.get(actorId, Mana) : null;
     uiEvent('ui:channeling:start', {
       spellId,
+      channelId,
+      channelLabel,
       spellName,
       castTime,
       mode,
@@ -137,10 +140,10 @@ export function installChannelingController(world, getActorId) {
   }
 
   // Listen for channeling events on the player
-  world.on('channeling:start', ({ actor, spellId, mode, manaPerTick }) => {
+  world.on('channeling:start', ({ actor, spellId, mode, manaPerTick, channelId, channelLabel }) => {
     const actorId = getActorId();
     if (actor !== actorId) return; // Only auto-tick for the player
-    startLoop(spellId, mode, manaPerTick);
+    startLoop(spellId, mode, manaPerTick, channelId, channelLabel);
   });
 
   world.on('channeling:tick', ({ actor, spellId, mode, turnsRemaining, turnsTotal, manaPerTick, manaRemaining, manaMax }) => {

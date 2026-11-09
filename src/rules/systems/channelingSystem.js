@@ -46,6 +46,7 @@ export function applyDrainLifeDamageInterrupt(world, { target, source, amount, c
   world.emit("channeling:cancelled", {
     actor,
     spellId: "drain_life",
+    channelId: "",
     reason: "damage_interrupt",
   });
 
@@ -60,7 +61,7 @@ export function channelingSystem(world) {
     const vit = world.get(id, Vitality);
     if (vit && (vit.hp | 0) <= 0) {
       try { world.remove(id, Channeling); } catch {}
-      world.emit('channeling:cancelled', { actor: id, spellId: ch.spellId, reason: 'dead' });
+      world.emit('channeling:cancelled', { actor: id, spellId: ch.spellId, channelId: ch.channelId || '', reason: 'dead' });
       continue;
     }
 
@@ -70,6 +71,7 @@ export function channelingSystem(world) {
       world.emit('channeling:cancelled', {
         actor: id,
         spellId: ch.spellId,
+        channelId: ch.channelId || '',
         reason: interruption,
       });
       continue;
@@ -83,6 +85,7 @@ export function channelingSystem(world) {
         world.emit('channeling:cancelled', {
           actor: id,
           spellId: ch.spellId,
+          channelId: ch.channelId || '',
           reason: 'caster_moved',
         });
         continue;
@@ -100,6 +103,7 @@ export function channelingSystem(world) {
           world.emit('channeling:cancelled', {
             actor: id,
             spellId: ch.spellId,
+            channelId: ch.channelId || '',
             reason: 'los_break',
           });
           continue;
@@ -111,7 +115,7 @@ export function channelingSystem(world) {
       const spell = getSpell(String(ch.spellId || ""));
       if (!spell) {
         try { world.remove(id, Channeling); } catch {}
-        world.emit("channeling:cancelled", { actor: id, spellId: ch.spellId, reason: "invalid_spell" });
+        world.emit("channeling:cancelled", { actor: id, spellId: ch.spellId, channelId: ch.channelId || '', reason: "invalid_spell" });
         continue;
       }
 
@@ -143,7 +147,7 @@ export function channelingSystem(world) {
           have,
           costKind: resource === "stamina" ? "stamina" : resource === "life" ? "life" : "mana",
         });
-        world.emit("channeling:cancelled", { actor: id, spellId: spell.id, reason: "oom" });
+        world.emit("channeling:cancelled", { actor: id, spellId: spell.id, channelId: ch.channelId || '', reason: "oom" });
         continue;
       }
 
@@ -170,6 +174,7 @@ export function channelingSystem(world) {
       world.emit("channeling:tick", {
         actor: id,
         spellId: spell.id,
+        channelId: ch.channelId || '',
         mode: "sustain",
         manaPerTick: resource === "mana" ? perTick : 0,
         staminaPerTick: resource === "stamina" ? perTick : 0,
@@ -190,7 +195,7 @@ export function channelingSystem(world) {
       if (itemAction) {
         try { world.remove(id, Channeling); } catch {}
         itemAction.onComplete(world, id, ch);
-        world.emit('channeling:complete', { actor: id, spellId: ch.spellId || ch.itemActionId, mode: 'item_use' });
+        world.emit('channeling:complete', { actor: id, spellId: ch.spellId || ch.itemActionId, channelId: ch.channelId || '', mode: 'item_use' });
         continue;
       }
 
@@ -205,12 +210,13 @@ export function channelingSystem(world) {
 
       try { world.remove(id, Channeling); } catch {}
       try { world.add(id, CastSpellIntent, castData); } catch {}
-      world.emit('channeling:complete', { actor: id, spellId: ch.spellId });
+      world.emit('channeling:complete', { actor: id, spellId: ch.spellId, channelId: ch.channelId || '' });
     } else {
       // Still channeling — emit progress for UI
       world.emit('channeling:tick', {
         actor: id,
         spellId: ch.spellId,
+        channelId: ch.channelId || '',
         mode: 'cast',
         turnsRemaining: ch.turnsRemaining,
         turnsTotal: ch.turnsTotal,

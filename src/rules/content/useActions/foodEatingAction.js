@@ -50,6 +50,7 @@ function completeFoodEating(world, actorId, channel) {
 }
 
 export function startFoodEating(world, actorId, itemId) {
+  installFoodEatingAction();
   const actor = Number(actorId || 0) | 0;
   const item = Number(itemId || 0) | 0;
   if (!(actor > 0) || !(item > 0) || !world.isAlive(item)) return false;
@@ -63,6 +64,7 @@ export function startFoodEating(world, actorId, itemId) {
       turnsRemaining: FOOD_EATING_TURNS,
       turnsTotal: FOOD_EATING_TURNS,
       spellId: "food_eating",
+      channelId: "eating",
       itemActionId: FOOD_EATING_ACTION_ID,
       targetId: item,
       breakOnMove: true,
@@ -77,6 +79,8 @@ export function startFoodEating(world, actorId, itemId) {
   world.emit("channeling:start", {
     actor,
     spellId: "food_eating",
+    channelId: "eating",
+    channelLabel: "Eating",
     mode: "food",
     castTime: FOOD_EATING_TURNS,
     itemId: item,

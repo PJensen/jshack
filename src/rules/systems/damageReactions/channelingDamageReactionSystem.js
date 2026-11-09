@@ -14,6 +14,7 @@ export function channelingDamageReactionSystem(world) {
       world.emit("channeling:setback", {
         actor,
         spellId: channel.spellId,
+        channelId: channel.channelId || "",
         reason: "damage_setback",
         turns: setbackTurns,
         source: Number(damage.source || 0) | 0,
@@ -25,6 +26,7 @@ export function channelingDamageReactionSystem(world) {
     world.emit("channeling:cancelled", {
       actor,
       spellId: channel.spellId,
+      channelId: channel.channelId || "",
       reason: "damage_interrupt",
       source: Number(damage.source || 0) | 0,
     });

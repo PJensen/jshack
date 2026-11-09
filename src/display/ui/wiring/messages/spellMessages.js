@@ -132,8 +132,16 @@ export function installSpellMessages(ctx) {
   });
 
   // === Channeling events ===
-  world.on('channeling:start', ({ actor, spellId }) => {
+  world.on('channeling:start', ({ actor, spellId, channelId }) => {
     if (nameOfEntity(actor) !== 'You') return;
+    if (String(channelId || '') === 'eating') {
+      log('You settle in and begin eating.', 'system');
+      return;
+    }
+    if (String(channelId || '') === 'fishing') {
+      log('You settle in and begin fishing.', 'system');
+      return;
+    }
     if (String(spellId || '').toLowerCase() === 'fishing') return;
     const sp = _spell(spellId);
     if (_playerHas('confused')) { _log(`You sway on your feet and fumble into ${sp.text}... was this the right spell?`, `You sway on your feet and fumble into ${sp.html}... was this the right spell?`, 'system'); return; }
@@ -162,8 +170,17 @@ export function installSpellMessages(ctx) {
     else log(confused ? `The spell writhes in your grip \u2014 almost... almost! (${elapsed}/${turnsTotal || '?'})` : `Almost there \u2014 the spell strains to release! (${elapsed}/${turnsTotal || '?'})`, 'system');
   });
 
-  world.on('channeling:cancelled', ({ actor, spellId, reason }) => {
+  world.on('channeling:cancelled', ({ actor, spellId, channelId, reason }) => {
     if (nameOfEntity(actor) !== 'You') return;
+    if (String(channelId || '') === 'eating') {
+      log(reason === 'caster_moved' ? 'You move and stop eating.' : 'You stop eating.', 'system');
+      return;
+    }
+    if (String(channelId || '') === 'fishing') {
+      if (reason === 'caster_moved') log('You move and the line goes slack.', 'system');
+      else log('You stop fishing.', 'system');
+      return;
+    }
     if (String(spellId || '').toLowerCase() === 'fishing') {
       if (reason === 'caster_moved') log('You move and the line goes slack.', 'system');
       else log('You stop fishing.', 'system');

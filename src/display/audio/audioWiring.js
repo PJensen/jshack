@@ -1287,7 +1287,8 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   // separately via the 'damaged' handler above when the spell
   // actually hits after travel time.
 
-  world.on('channeling:start', ({ actor }) => {
+  world.on('channeling:start', ({ actor, channelId }) => {
+    if (String(channelId || '') === 'eating' || String(channelId || '') === 'fishing') return;
     startChannelingLoop(actor);
   });
 

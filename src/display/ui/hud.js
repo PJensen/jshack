@@ -2411,15 +2411,52 @@ function createChannelingOverlay() {
   let castTime = 0;
   let channelMode = 'cast';
   let sustainManaPerTick = 0;
+  const defaultTheme = {
+    border: '#3b2d52',
+    shadow: '0 0 16px rgba(120,60,200,0.2)',
+    bar: 'linear-gradient(90deg, #7b3fbe, #b070ff)',
+    cancelBorder: '#5a3a7a',
+    cancelBackground: '#2a1a3a',
+    cancelColor: '#e6d6ff',
+  };
+  const eatingTheme = {
+    border: '#3d8a52',
+    shadow: '0 0 16px rgba(60,180,90,0.22)',
+    bar: 'linear-gradient(90deg, #2f9e44, #74c69d)',
+    cancelBorder: '#3d8a52',
+    cancelBackground: '#17351f',
+    cancelColor: '#eaffef',
+  };
+  const fishingTheme = {
+    border: '#327a9b',
+    shadow: '0 0 16px rgba(50,150,190,0.22)',
+    bar: 'linear-gradient(90deg, #1971c2, #74c0fc)',
+    cancelBorder: '#327a9b',
+    cancelBackground: '#123447',
+    cancelColor: '#e4f7ff',
+  };
+  function applyChannelTheme(channelId) {
+    const id = String(channelId || '');
+    const theme = id === 'eating' ? eatingTheme : id === 'fishing' ? fishingTheme : defaultTheme;
+    el.style.borderColor = theme.border;
+    el.style.boxShadow = theme.shadow;
+    barInner.style.background = theme.bar;
+    cancelBtn.style.borderColor = theme.cancelBorder;
+    cancelBtn.style.background = theme.cancelBackground;
+    cancelBtn.style.color = theme.cancelColor;
+  }
 
   window.addEventListener('ui:channeling:start', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     const name = String(e?.detail?.spellName || 'Spell');
+    const channelId = String(e?.detail?.channelId || '');
+    const channelLabel = String(e?.detail?.channelLabel || '');
     channelMode = String(e?.detail?.mode || 'cast');
     castTime = Math.max(1, Number(e?.detail?.castTime || 1));
     sustainManaPerTick = Math.max(0, Number(e?.detail?.manaPerTick || 0));
-    label.textContent = `Channeling ${name}...`;
+    applyChannelTheme(channelId);
+    label.textContent = channelLabel ? `${channelLabel}...` : `Channeling ${name}...`;
     if (channelMode === 'sustain') {
       const manaRemaining = Math.max(0, Number(e?.detail?.manaRemaining || 0));
       const manaMax = Math.max(1, Number(e?.detail?.manaMax || manaRemaining || 1));
@@ -2455,6 +2492,7 @@ function createChannelingOverlay() {
   });
 
   window.addEventListener('ui:channeling:end', () => {
+    applyChannelTheme('');
     el.style.display = 'none';
   });
 

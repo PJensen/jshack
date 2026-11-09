@@ -9,6 +9,8 @@ import { UseIntent } from '../src/rules/components/Intents/UseIntent.js';
 import { getCatalogItem } from '../src/rules/data/itemCatalog.js';
 import { materializeDrop, resolveLootTable } from '../src/rules/data/lootResolver.js';
 import { useItemSystem } from '../src/rules/systems/useItemSystem.js';
+import { channelingSystem } from '../src/rules/systems/channelingSystem.js';
+import { FOOD_EATING_TURNS } from '../src/rules/content/useActions/foodEatingAction.js';
 import { effectSystem } from '../src/rules/systems/effectSystem.js';
 import { createItemById } from '../src/rules/utils/itemFactory.js';
 import { addToInventory } from '../src/rules/utils/inventoryFacade.js';
@@ -54,8 +56,13 @@ function setup() {
     off();
     assert(result?.ok, result?.reason);
   };
+  const eat = (itemId) => {
+    world.add(actor, UseIntent, { itemId, targetId: actor });
+    useItemSystem(world);
+    for (let i = 0; i < FOOD_EATING_TURNS; i++) channelingSystem(world);
+  };
   const turns = (count) => { for (let i = 0; i < count; i++) world.tick(1); };
-  return { world, actor, target, take, use, turns };
+  return { world, actor, target, take, use, eat, turns };
 }
 
 Deno.test('all seven new items roll from ordinary tier loot and materialize with their authored glyphs', () => {
@@ -143,9 +150,9 @@ Deno.test('soups feed normally and their composite effects outlive the eaten bow
     ['food_moonmilk_chowder', 24, 56, 14, 0],
     ['food_witchlight_broth', 12, 36, 38, 0],
   ]) {
-    const { world, actor, take, use, turns } = setup();
+    const { world, actor, take, eat, turns } = setup();
     const bowl = take(id);
-    use(bowl);
+    eat(bowl);
     assert(!world.isAlive(bowl), `${id} must be eaten`);
     assertEquals(world.get(actor, Hunger).hunger, 500 - getCatalogItem(id)._contentFood.consumable.effectParams.nutrition);
     assertEquals(buildEffectRows(world, actor).map((row) => row.glyph), ['♨']);
@@ -158,11 +165,11 @@ Deno.test('soups feed normally and their composite effects outlive the eaten bow
 });
 
 Deno.test('a second pilgrim bowl refreshes one supper instead of duplicating recovery', () => {
-  const { world, actor, take, use, turns } = setup();
-  use(take('food_pilgrim_stew'));
+  const { world, actor, take, eat, turns } = setup();
+  eat(take('food_pilgrim_stew'));
   turns(5);
   const instanceId = snapshotEffectInstances(world, actor)[0].instanceId;
-  use(take('food_pilgrim_stew'));
+  eat(take('food_pilgrim_stew'));
   assertEquals(snapshotEffectInstances(world, actor).map((row) => [row.instanceId, row.turns]), [[instanceId, 60]]);
   turns(5);
   assertEquals(world.get(actor, Vitality).hp, 42);

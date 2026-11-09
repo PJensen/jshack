@@ -243,6 +243,7 @@ function requestFishingCast(world, actor, itemId, opts = {}) {
       turnsRemaining: turns,
       turnsTotal: turns,
       spellId: "fishing",
+      channelId: "fishing",
       itemActionId: "fishing_rod",
       targetId: spotId || itemId,
       x: water.x,
@@ -252,7 +253,7 @@ function requestFishingCast(world, actor, itemId, opts = {}) {
       anchorY: pos ? (pos.y | 0) : null,
     });
   } catch {}
-  world.emit("channeling:start", { actor, spellId: "fishing", castTime: turns, mode: "fish", itemId, x: water.x, y: water.y });
+  world.emit("channeling:start", { actor, spellId: "fishing", channelId: "fishing", channelLabel: "Fishing", castTime: turns, mode: "fish", itemId, x: water.x, y: water.y });
   world.emit("fishing:cast", { actor, itemId, x: water.x, y: water.y, turns, spotId });
   return true;
 }
