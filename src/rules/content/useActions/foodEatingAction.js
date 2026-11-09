@@ -7,7 +7,7 @@ import { usePipeline } from "../../interaction/verbs/usePipeline.js";
 import { inventoryContains } from "../../utils/inventoryFacade.js";
 import { defineUseAction } from "./useActionRegistry.js";
 
-export const FOOD_EATING_TURNS = 4;
+export const FOOD_EATING_TURNS = 5;
 export const FOOD_EATING_ACTION_ID = "food_eating";
 
 function isFood(world, itemId) {
