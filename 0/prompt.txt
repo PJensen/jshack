@@ -1,0 +1,1 @@
+when a quest is completed the quest giver shall have a yellow (same color as available exclaimation point) question mark above their head indicating that the quest can be turned in. `?`
