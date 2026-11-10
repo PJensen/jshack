@@ -54,7 +54,7 @@ import { Traits } from "../../rules/components/Traits.js";
 import { getQuestDef } from "../../rules/quests/registry.js";
 import { buildPalette } from "../../display/palette/index.js";
 import { getItemHooksByIdentity } from "../../rules/content/items/itemHooks.js";
-import { questRewardDetailText } from "./questRewards.js";
+import { listQuestRewardItems, questRewardDetailText } from "./questRewards.js";
 import { defineExtension } from "../../lib/ecs-js/index.js";
 import { buildEffectRows } from "./effectRows.js";
 
@@ -1005,6 +1005,13 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
         summary: String(vars?.data?.objective || ''),
         flavorText: questJournalFlavorText(questDef, vars?.data, def.id),
         rewardText,
+        rewardItems: listQuestRewardItems(questDef, vars?.data).map((item) => ({
+          itemId: item.itemId,
+          name: item.name,
+          description: item.description,
+          count: item.count,
+        })),
+        rewardGold: Math.max(0, Number(vars?.data?.rewardGold || questDef?.journal?.rewardGold || 0) | 0),
         completionText,
         progress: Math.max(0, Number(vars?.data?.progress || 0) | 0),
         target: Math.max(0, Number(vars?.data?.target || 0) | 0),

@@ -169,6 +169,7 @@ import { pickRandomSeed } from "./shared/utils/funSeeds.js";
 import { ensureStarterQuests, getQuestRecord } from "./rules/quests/runtime.js";
 import { ensureStarterFetchQuestItem } from "./rules/quests/definitions/graveyardWatch.js";
 import { ensureRootboundGrottoQuest } from "./rules/quests/definitions/rootboundGrotto.js";
+import { ensureFarmerMillRunQuest } from "./rules/quests/definitions/farmerMillRun.js";
 import {
   acceptNoticeBoardOffer,
   buildNoticeBoardPayload,
@@ -1192,6 +1193,7 @@ async function _finalizeNewGame(classData) {
 
   ensureStarterQuests(world);
   ensureRootboundGrottoQuest(world, { playerId: pe.id });
+  ensureFarmerMillRunQuest(world, { playerId: pe.id });
   ensureRunContractQuest(world, { playerId: pe.id });
   ensureLocalGeneratedQuest(world);
   ensureStarterFetchQuestItem(world);

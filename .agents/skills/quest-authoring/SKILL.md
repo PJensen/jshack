@@ -87,6 +87,16 @@ For quest-specific runtime hooks:
 - Death objectives should inspect `DeathApplied` and run after canonical monster-death hooks.
 - New event contracts must use concrete `EcsEvent` classes; do not introduce string-only event contracts.
 
+Multi-leg quests may reuse an existing event name at different nodes (for
+example, `dialog:reported` when reporting to two different NPCs). The quest
+compiler must preserve every node's edge for that event; add a regression test
+when introducing a repeated event route.
+
+Reward authoring should expose structured metadata in `journal.rewardItemIds`
+or `journal.rewardItems` plus `journal.rewardGold`. For a choice, set
+`journal.rewardChoice` and let the journal render each item from catalog data;
+do not duplicate item names in prose or silently grant every listed option.
+
 ## Dialogue integration
 
 Townfolk roles may receive a generic dialog automatically. If a role becomes a quest giver:

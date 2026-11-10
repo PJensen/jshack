@@ -25,14 +25,37 @@ export function describeQuestRewardItem(itemId) {
 }
 
 /**
+ * @param {any} questDef
+ * @param {any} vars
+ * @returns {Array<{itemId:string,name:string,description:string,count:number}>}
+ */
+export function listQuestRewardItems(questDef, vars) {
+  const authored = Array.isArray(questDef?.journal?.rewardItems)
+    ? questDef.journal.rewardItems.filter((item) => item?.itemId)
+    : [];
+  const ids = authored.length > 0
+    ? authored.map((item) => String(item.itemId || ""))
+    : listQuestRewardItemIds(questDef, vars);
+  return ids.map((id, index) => ({
+    ...describeQuestRewardItem(id),
+    count: Math.max(1, Number(authored[index]?.count || vars?.rewardItemCounts?.[id] || 1) | 0),
+  }));
+}
+
+/**
  * Compact single-line text for HUD surfaces.
  * @param {any} questDef
  * @param {any} vars
  * @returns {string}
  */
 export function questRewardPreviewText(questDef, vars) {
-  const items = listQuestRewardItemIds(questDef, vars).map(describeQuestRewardItem);
-  if (items.length <= 0) return String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
+  const explicit = String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
+  const items = listQuestRewardItems(questDef, vars);
+  if (items.length <= 0) return explicit;
+  if (questDef?.journal?.rewardChoice === true) {
+    const labels = items.map((item) => `${item.count > 1 ? `${item.count}x ` : ""}${item.name}`);
+    return `Choose one: ${labels.join(", ")}`;
+  }
   if (items.length === 1) {
     const item = items[0];
     return item.description ? `${item.name} - ${item.description}` : item.name;
@@ -47,20 +70,27 @@ export function questRewardPreviewText(questDef, vars) {
  * @returns {string}
  */
 export function questRewardDetailText(questDef, vars) {
+  const explicit = String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
   const parts = [];
-  for (const item of listQuestRewardItemIds(questDef, vars).map(describeQuestRewardItem)) {
-    parts.push(item.description ? `${item.name} - ${item.description}` : item.name);
+  for (const item of listQuestRewardItems(questDef, vars)) {
+    const label = item.count > 1 ? `${item.count}x ${item.name}` : item.name;
+    parts.push(item.description ? `${label} - ${item.description}` : label);
   }
 
-  const rewardGold = Math.max(0, Number(vars?.rewardGold || 0) | 0);
+  const rewardGold = Math.max(0, Number(vars?.rewardGold || questDef?.journal?.rewardGold || 0) | 0);
   if (rewardGold > 0) parts.push(`${rewardGold} gold`);
+
+  if (questDef?.journal?.rewardChoice === true && parts.length > 0) {
+    const itemParts = listQuestRewardItems(questDef, vars)
+      .map((item) => `${item.count > 1 ? `${item.count}x ` : ""}${item.name}`);
+    const goldParts = parts.filter((part) => /^\d+ gold$/.test(part));
+    return `Choose one: ${itemParts.join(", ")}${goldParts.length > 0 ? `; plus ${goldParts[0]}` : ""}`;
+  }
 
   const rewardItems = Array.isArray(questDef?.journal?.rewardItems)
     ? questDef.journal.rewardItems
     : [];
-  const itemNames = new Set(listQuestRewardItemIds(questDef, vars)
-    .map(describeQuestRewardItem)
-    .map((item) => item.name.toLowerCase()));
+  const itemNames = new Set(listQuestRewardItems(questDef, vars).map((item) => item.name.toLowerCase()));
   for (const item of rewardItems) {
     const label = String(item?.label || "").trim();
     if (!label) continue;
@@ -69,7 +99,6 @@ export function questRewardDetailText(questDef, vars) {
     parts.push(count > 1 ? `${count}x ${label}` : label);
   }
 
-  const explicit = String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
   if (parts.length <= 0 && explicit) return explicit;
   if (parts.length > 0) return parts.join(" and ");
   return "No reward recorded.";

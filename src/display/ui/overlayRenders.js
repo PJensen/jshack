@@ -561,7 +561,7 @@ function questNodeLabel(node, status) {
 
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
- * @param {Array<{questId:string, title:string, status:string, node:string, t0:number, summary?:string, flavorText?:string, rewardText?:string, completionText?:string, progress?:number, target?:number, checklist?:Array<{text?:string, done?:boolean}>}>} quests
+ * @param {Array<{questId:string, title:string, status:string, node:string, t0:number, summary?:string, flavorText?:string, rewardText?:string, rewardItems?:Array<{itemId?:string,name?:string,description?:string,count?:number}>, rewardGold?:number, completionText?:string, progress?:number, target?:number, checklist?:Array<{text?:string, done?:boolean}>}>} quests
  */
 export function renderQuestJournal(panel, quests) {
   const el = /** @type {HTMLDivElement} */ (/** @type {any} */ (panel)._inner);
@@ -715,7 +715,7 @@ export function renderQuestJournal(panel, quests) {
           { label: 'Objective', value: String(q.summary || '') },
           { label: 'Details', value: String(q.flavorText || '') },
           { label: 'Completion', value: String(q.completionText || '') },
-          { label: 'Reward', value: String(q.rewardText || '') },
+          { label: 'Reward', value: q.rewardItems?.length || Number(q.rewardGold || 0) > 0 ? '' : String(q.rewardText || '') },
         ].filter((entry) => entry.value);
 
         for (const section of sections) {
@@ -743,6 +743,51 @@ export function renderQuestJournal(panel, quests) {
           });
           block.appendChild(valueEl);
           body.appendChild(block);
+        }
+
+        const rewardItems = Array.isArray(q.rewardItems) ? q.rewardItems : [];
+        const rewardGold = Math.max(0, Number(q.rewardGold || 0) | 0);
+        if (rewardItems.length > 0 || rewardGold > 0) {
+          const rewardBlock = document.createElement('div');
+          Object.assign(rewardBlock.style, { marginTop: '10px' });
+
+          const rewardLabel = document.createElement('div');
+          rewardLabel.textContent = 'Reward';
+          Object.assign(rewardLabel.style, {
+            fontSize: '10px', color: '#ad9f8d', textTransform: 'uppercase',
+            letterSpacing: '0.08em', marginBottom: '3px',
+          });
+          rewardBlock.appendChild(rewardLabel);
+
+          for (const item of rewardItems) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
+            button.title = String(item.description || item.name || item.itemId || 'Reward item');
+            Object.assign(button.style, {
+              display: 'block', padding: '3px 0', border: '0', background: 'transparent',
+              color: '#ffd85a', cursor: 'pointer', fontSize: '12px', textAlign: 'left',
+              textDecoration: 'underline',
+            });
+            button.addEventListener('click', () => {
+              const detail = button.nextElementSibling;
+              if (detail) detail.remove();
+              else {
+                const description = document.createElement('div');
+                description.textContent = String(item.description || 'No further description.');
+                Object.assign(description.style, { fontSize: '11px', lineHeight: '1.4', color: '#dbe9f6', margin: '0 0 4px 8px' });
+                button.after(description);
+              }
+            });
+            rewardBlock.appendChild(button);
+          }
+          if (rewardGold > 0) {
+            const gold = document.createElement('div');
+            gold.textContent = `$${rewardGold}g`;
+            Object.assign(gold.style, { color: '#ffd85a', fontSize: '12px', padding: '3px 0' });
+            rewardBlock.appendChild(gold);
+          }
+          body.appendChild(rewardBlock);
         }
 
         const checklist = Array.isArray(q.checklist) ? q.checklist : [];

@@ -43,7 +43,12 @@ export function compileQuest(id) {
     for (const [eventName, rawEdges] of Object.entries(on)) {
       if (!Array.isArray(rawEdges) || rawEdges.length <= 0) continue;
       eventNames.add(eventName);
-      const list = edgesByEvent.get(eventName) || [];
+      // A multi-leg quest may intentionally reuse an event at several nodes
+      // (for example, reporting to two different quest givers). Clone the
+      // prior route before appending because compiled route lists are frozen.
+      const list = edgesByEvent.has(eventName)
+        ? Array.from(edgesByEvent.get(eventName))
+        : [];
       for (const edge of rawEdges) {
         list.push(Object.freeze({
           from: nodeId,

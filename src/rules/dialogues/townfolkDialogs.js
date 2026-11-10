@@ -7,6 +7,7 @@ import { canTurnInStarterFetch } from "../quests/definitions/graveyardWatch.js";
 import { canAcceptPriestRift, ensurePriestRiftQuest, PRIEST_RIFT_QUEST_ID } from "../quests/definitions/priestRift.js";
 import { ensureRootboundGrottoQuest, ROOTBOUND_GROTTO_QUEST_ID } from "../quests/definitions/rootboundGrotto.js";
 import { canTurnInRunContract, RUN_CONTRACT_QUEST_ID } from "../quests/definitions/runContract.js";
+import { ensureFarmerMillRunQuest, FARMER_MILL_RUN_QUEST_ID, FARMER_MILL_RUN_REWARD_IDS } from "../quests/definitions/farmerMillRun.js";
 import { getTownState, getWeather } from "../utils/townStateAccess.js";
 import { Vitality } from "../components/Vitality.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
@@ -324,6 +325,11 @@ function barkeepQuest(world, actorId) {
   return getQuestRecord(world, RAT_INFESTATION_QUEST_ID, actorId);
 }
 
+function farmerMillRunQuest(world, actorId, giverId = 0) {
+  ensureFarmerMillRunQuest(world, { playerId: actorId, giverId });
+  return getQuestRecord(world, FARMER_MILL_RUN_QUEST_ID, actorId);
+}
+
 function runContractQuest(world, actorId) {
   return getQuestRecord(world, RUN_CONTRACT_QUEST_ID, actorId);
 }
@@ -348,6 +354,69 @@ for (const def of Object.values(TOWNFOLK)) {
     },
   });
 }
+
+registerDialog({
+  id: "townfolk:farmer",
+  start: "root",
+  nodes: {
+    root: {
+      text: (ctx) => {
+        const quest = farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId);
+        const state = quest?.state;
+        const vars = quest?.vars?.data || {};
+        if (!state) return ambientTownfolkText(TOWNFOLK.farmer, ctx);
+        if (String(state.status || "") === "complete") {
+          return "The mill's turning and the tavern's fed. That's a good day's work. Keep those seeds planted.";
+        }
+        if (String(state.node || "") === "offer") {
+          return "I've got wheat ready in the field, but the tavern needs flour. Harvest a sheaf, grind it at the mill, and take the flour to the barkeep. Then come back and I'll make it worth your while.";
+        }
+        if (String(state.node || "") === "harvest") return "Take a ripe sheaf from the field, then bring it to the millstone.";
+        if (String(state.node || "") === "mill") return "The wheat needs grinding. The windmill is just beyond the fields.";
+        if (String(state.node || "") === "barkeep") return "The barkeep is waiting on that flour. Take it straight to the tavern kitchen.";
+        if (String(state.node || "") === "return") return "You got the flour delivered? Good. Choose one of these rewards for carrying the work through town.";
+        if (String(state.node || "") === "reward") return "Pick one: Mirror Bow, Iron Hatchet, or Vigor Potion.";
+        return ambientTownfolkText(TOWNFOLK.farmer, ctx);
+      },
+      choices: [
+        {
+          id: "accept_farmer_mill_run",
+          label: "I'll carry the flour to the tavern.",
+          visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "offer",
+          emits: [{ name: "dialog:accepted", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
+          to: "accept_ack",
+        },
+        {
+          id: "report_farmer_mill_run",
+          label: "The flour is delivered.",
+          visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "return",
+          emits: [{ name: "dialog:reported", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
+          to: "reward",
+        },
+        ...FARMER_MILL_RUN_REWARD_IDS.map((rewardId) => ({
+          id: `farmer_reward_${rewardId}`,
+          label: rewardId === "bow_mirror" ? "Take the Mirror Bow." : rewardId === "tool_hatchet" ? "Take the Iron Hatchet." : "Take the Vigor Potion.",
+          visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "reward",
+          emits: [{ name: "quest:reward_selected", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId, rewardId }) }],
+          to: "reward_ack",
+        })),
+        { id: "leave", label: "Goodbye.", close: true },
+      ],
+    },
+    accept_ack: {
+      text: "The ripe wheat is in the field. The millstone will do the rest; just remember where the flour is meant to go.",
+      choices: [{ id: "leave", label: "I'll get moving.", close: true }],
+    },
+    reward: {
+      text: "The farmer wipes flour from his hands and nods toward the shelves.",
+      choices: [{ id: "leave", label: "Let me choose.", to: "root" }],
+    },
+    reward_ack: {
+      text: "A fair trade. The next loaf is partly yours.",
+      choices: [{ id: "leave", label: "Thank you.", close: true }],
+    },
+  },
+});
 
 registerDialog({
   id: "townfolk:herbalist",
@@ -556,6 +625,10 @@ registerDialog({
   nodes: {
     root: {
       text: (ctx) => {
+        const farmerQuest = farmerMillRunQuest(ctx.world, ctx.actorId);
+        if (String(farmerQuest?.state?.node || "") === "barkeep") {
+          return "The farmer's flour? Hand it over and I'll put it straight to work in the kitchen.";
+        }
         const quest = barkeepQuest(ctx.world, ctx.actorId);
         const state = quest?.state;
         if (!state) return barkeepAmbientText(ctx, "What'll it be?");
@@ -583,6 +656,16 @@ registerDialog({
         return barkeepAmbientText(ctx, "What'll it be?");
       },
       choices: [
+        {
+          id: "turn_in_farmer_flour",
+          label: "Deliver the farmer's flour.",
+          visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId)?.state?.node || "") === "barkeep",
+          emits: [{
+            name: "dialog:reported",
+            payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }),
+          }],
+          to: "farmer_flour_ack",
+        },
         {
           id: "accept_rat_quest",
           label: "I'll clear them out.",
@@ -685,6 +768,10 @@ registerDialog({
       choices: [
         { id: "leave", label: "Cheers.", close: true },
       ],
+    },
+    farmer_flour_ack: {
+      text: "That'll make a fine batch of bread. Tell the farmer the town appreciates the work.",
+      choices: [{ id: "leave", label: "I'll let him know.", close: true }],
     },
   },
 });
