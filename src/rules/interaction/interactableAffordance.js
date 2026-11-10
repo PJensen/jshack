@@ -24,6 +24,13 @@ export function resolveInteractableAffordance(world, targetId) {
   if (!action) return null;
   const definition = getAuthoredInteractable(action);
   const affordance = definition?.affordance;
+  if (!affordance && action === "talkToNPC" && String(inter.params?.dialogId || "").trim()) {
+    return normalizeAffordance({
+      title: "Talk",
+      label: "Talk",
+      hint: String(inter.params?.dialogue || "Speak with this character."),
+    }, action, id);
+  }
   if (!affordance) return null;
   const raw = typeof affordance === "function" ? affordance(world, id) : affordance;
   return normalizeAffordance(raw, action, id);

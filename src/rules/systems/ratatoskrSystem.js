@@ -20,8 +20,8 @@ import { toMonsterSpawnParams } from "../utils/monsterSpawnParams.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import { findActiveEncounter } from "../utils/encounters.js";
 
-const APPEAR_MIN_TURNS = 45;
-const APPEAR_SPREAD_TURNS = 90;
+const APPEAR_MIN_TURNS = 900;
+const APPEAR_SPREAD_TURNS = 1200;
 const NEAR_RADIUS_MIN = 4;
 const NEAR_RADIUS_MAX = 9;
 const VANISH_MIN_TURNS = 4;

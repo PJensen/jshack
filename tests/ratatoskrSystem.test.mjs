@@ -22,6 +22,7 @@ import { toMonsterSpawnParams } from "../src/rules/utils/monsterSpawnParams.js";
 import { inventoryContains, inventoryItems } from "../src/rules/utils/inventoryFacade.js";
 import { spawnMonsterEntity } from "../src/rules/utils/spawnMonsterEntity.js";
 import { effectStrength } from "../src/rules/utils/statusFacade.js";
+import { resolveInteractableAffordance } from "../src/rules/interaction/interactableAffordance.js";
 import "../src/rules/dialogues/ratatoskrDialog.js";
 
 function loadFloor() {
@@ -57,13 +58,14 @@ function setupWorld() {
 
 Deno.test("ratatoskrSystem makes Ratatoskr conversational and teleports him near the player", () => {
   const { world, player, ratatoskr } = setupWorld();
-  world.step = 50;
+  world.step = 180;
 
   ratatoskrSystem(world);
 
   const inter = world.get(ratatoskr, Interactable);
   assertEquals(inter?.action, "talkToNPC");
   assertEquals(inter?.params?.dialogId, "norse:ratatoskr");
+  assertEquals(resolveInteractableAffordance(world, ratatoskr)?.label, "Talk");
   assert(world.has(ratatoskr, ShopInventory), "Ratatoskr should carry commerce terms for dialog-gated cache opens");
 
   const pos = world.get(ratatoskr, Position);
@@ -168,4 +170,5 @@ Deno.test("Ratatoskr vanishes several turns after interaction in a puff", () => 
   assert(!world.has(ratatoskr, Position), "Ratatoskr should be offstage after vanishing");
   assertEquals(teleports.at(-1)?.source, "ratatoskr");
   assertEquals(puffs.at(-1)?.source, "ratatoskr");
+  assert((state.nextAppearTurn | 0) >= (world.step | 0) + 900, "Ratatoskr should reappear rarely");
 });
