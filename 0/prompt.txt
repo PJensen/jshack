@@ -1,0 +1,9 @@
+question: can electricity ignite a gas spore cloud -- my answer based on testing is "no"
+
+---
+
+I feel it should.
+
+---
+
+Approved.
