@@ -1,0 +1,20 @@
+approved for integration:-)
+
+
+
+- spell bar
+- item tooltip an dquick chip
+
+
+
+holding on status effects for now
+
+
+
+"satiated"
+
+"stunned"
+
+
+
+do not exist as part of these sprite sheets.
