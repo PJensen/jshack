@@ -3,10 +3,11 @@
   "checkpoint_id": "01M734DGQYYM2NSVE4PVR2P3TE",
   "session_id": "01a1c642-bc3c-75b1-81e9-77ebf17b9d67",
   "strategy": "manual-commit",
-  "created_at": "2026-11-10T16:24:50.166215537Z",
+  "created_at": "2026-11-10T16:24:54.523525227Z",
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "tools/nightly-fix-tests.sh"
   ],
   "agent": "Codex",
