@@ -1,0 +1,25 @@
+I added `assets/icons/sheet.png` and `assets/icons/manifest.js` -- how hard would it be to make those the new icons at least in the spell/ability bar?
+
+NOTE: we may need to compress that image a bit, maybe a JPEG withoout quality loss, dunno -- it's a thought.
+
+NOTE: it might be worthwhile do do the same thing for the VIS entries instead of leaning into unicode. especially now that spell identity is largely corrected and unique per spell.
+
+FYI: I am attempting items off to the side!
+
+Let me know what you think -- and if there are things we can do to make this a success. It's a whole new layer of visual identity that I think would really aide in immersion.
+
+I started with spells because they were the area with the least visual identity, lots of conceptual overlap.
+
+NOTE: this does NOT mean that the in game display is sacraficed, far from it, only that menu, bars, inventory, tooltips show this new visual revolution.
+
+Please hold while the other manifests and sheets come online. You can at least explore JPEG compression or PNG compression -- unless you tell me that 2.6MB is acceptable for 100 spells and abilities -- I don't know that it is.
+
+---
+
+added `items` folder following the same approach. :-)
+
+why don't you tweak this to webp so the game can be fast if at all possible -- I've kept a backup.
+
+---
+
+I told you I backed it up -- I'd drop the png
