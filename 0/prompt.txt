@@ -1,0 +1,15 @@
+ratatoskr is no longer interactable -- what happened? he appears in game, but I can no longer speak with him.
+
+NOTE: tihs should be a rarer appearance
+
+---
+
+commit and push please
+
+---
+
+I would bump the rarity of this encounter way up 180 and 240 turns is nothing.
+
+---
+
+I would commit and push end to end.
