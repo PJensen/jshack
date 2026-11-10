@@ -1,0 +1,16 @@
+quest reward should be a canonical screen, not dialog options!
+
+completed quest flavor text
+completed quest reward selector
+gold
+complete button
+
+** think about world of warcraft mentally here
+
+---
+
+NOTE: this is almost certainly a bespoke window, centered on quest completion, esc closes, complete closes, select reward, closing without selecting a reward asks playerb to select reward (red text)
+
+---
+
+NOTE: inventoryDataProvider is almost certainlythe wrong spot for this longer range -- but I can appreciate keeping things roughly in line to tart. Continue down the pathway you're already on -- lets see how it looks before we re-factor it.
