@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "tools/nightly-fix-tests.sh"
   ],
   "sessions": [
@@ -16,6 +17,13 @@
       "prompt": ""
     }
   ],
+  "token_usage": {
+    "input_tokens": 776,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 57216,
+    "output_tokens": 190,
+    "api_call_count": 1
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
