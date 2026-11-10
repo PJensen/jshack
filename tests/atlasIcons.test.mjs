@@ -2,6 +2,7 @@ import { assert, assertEquals, assertStringIncludes } from "jsr:@std/assert";
 import {
   ITEM_ICON_ATLAS,
   SPELL_ICON_ATLAS,
+  STATUS_ICON_ATLAS,
   applyAtlasIcon,
 } from "../src/display/ui/atlasIcons.js";
 
@@ -19,8 +20,9 @@ function stubElement() {
 Deno.test("icon atlases point at WebP sheets and preserve status fallbacks", () => {
   assert(SPELL_ICON_ATLAS.entries.has("lightning"));
   assert(ITEM_ICON_ATLAS.entries.has("scroll_identify"));
-  assert(!SPELL_ICON_ATLAS.entries.has("satiated"));
-  assert(!SPELL_ICON_ATLAS.entries.has("stunned"));
+  assert(STATUS_ICON_ATLAS.entries.has("satiated"));
+  assert(STATUS_ICON_ATLAS.entries.has("stunned"));
+  assert(STATUS_ICON_ATLAS.entries.has("unknown"));
   assert(SPELL_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/spells/sheet.webp"));
   assert(ITEM_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/items/sheet.webp"));
 });

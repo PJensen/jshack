@@ -9,7 +9,7 @@ import { GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { createPinnedItemSlots } from './pinnedItemSlots.js';
 import { createMobileSpellRadial } from './mobileRadial.js';
 import { createPinnedSpellDock } from './spellDock.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS, STATUS_ICON_ATLAS } from './atlasIcons.js';
 
 const HUD_BUTTON_BG = 'linear-gradient(180deg, #2a2f35 0%, #1f2329 100%)';
 const HUD_BUTTON_ACTIVE_BG = 'linear-gradient(180deg, #3a3328 0%, #2a231c 100%)';
@@ -2052,7 +2052,7 @@ function ensureEffectsStack(container) {
     });
   }
 
-  function createBadge(spec, total) {
+  function createBadge(spec, total, iconId) {
     const hue = Number.isFinite(Number(spec.hue)) ? Number(spec.hue) : 210;
     const glyphColor = spec.glyphColor || shadowColor(hue);
     const el = document.createElement('div');
@@ -2073,7 +2073,7 @@ function ensureEffectsStack(container) {
     el.title = `${spec.name} \u2022 ${total} turns`;
 
     const glyph = document.createElement('div');
-    glyph.textContent = spec.glyph;
+    applyAtlasIcon(glyph, STATUS_ICON_ATLAS, iconId, spec.glyph, 34);
     Object.assign(glyph.style, { fontSize: scaledPx(28), lineHeight: '1', filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))', color: glyphColor });
 
     const label = document.createElement('div');
@@ -2139,7 +2139,7 @@ function ensureEffectsStack(container) {
       const spec = masked ? MASKED_SPEC : (rowSpec || VIS[key] || spellFallback || { name: key.replace(/^./, c => c.toUpperCase()), glyph: '\u2728', hue: 210 });
       let rec = byKey.get(badgeKey);
       if (!rec) {
-        const { el, overlay, ticksEl, stacksEl } = createBadge(spec, turns || 1);
+        const { el, overlay, ticksEl, stacksEl } = createBadge(spec, turns || 1, masked ? 'unknown' : key);
         rec = { el, overlay, ticksEl, stacksEl, total: Math.max(1, turns || 1), status: s };
         installBadgeInputGuards(el, () => rec.status);
         byKey.set(badgeKey, rec);

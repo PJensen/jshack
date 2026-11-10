@@ -1,8 +1,10 @@
 import spellManifest from "../../../assets/icons/spells/manifest.js";
 import itemManifest from "../../../assets/icons/items/manifest.js";
+import statusManifest from "../../../assets/icons/statuses/manifest.js";
 
 const SPELL_SHEET_URL = new URL("../../../assets/icons/spells/sheet.webp", import.meta.url).href;
 const ITEM_SHEET_URL = new URL("../../../assets/icons/items/sheet.webp", import.meta.url).href;
+const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();
@@ -22,6 +24,7 @@ function buildAtlas(manifest, sheetUrl) {
 
 export const SPELL_ICON_ATLAS = buildAtlas(spellManifest, SPELL_SHEET_URL);
 export const ITEM_ICON_ATLAS = buildAtlas(itemManifest, ITEM_SHEET_URL);
+export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
 
 /**
  * Apply a WebP atlas icon to an existing text-fallback element.
