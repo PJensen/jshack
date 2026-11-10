@@ -1,7 +1,0 @@
-and does it automatically commit and push the fixes? and do the whole dance that the greenlight tools do?
-
-git pull, etc?
-
----
-
-I would let it commit and push, in fact, I would have it commit and push deterministically if greenlight runner did the same.
