@@ -330,7 +330,7 @@ export function initOverlays() {
   /** Hide all character-menu panels (mutual exclusivity). */
   function hideCharMenuPanels() {
     hide(inv); hide(char); hide(equip);
-    hide(settingsPanel); hide(questJournal); hide(townBoard);
+    hide(settingsPanel); hide(questJournal); hide(questReward); hide(townBoard);
   }
 
   window.addEventListener('ui:openInventory', (ev) => {

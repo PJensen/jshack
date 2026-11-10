@@ -916,9 +916,13 @@ export function renderQuestReward(panel, quest) {
 
   const selected = String((/** @type {any} */ (panel))._selectedReward || '');
   const items = Array.isArray(quest?.rewardItems) ? quest.rewardItems : [];
-  const choiceIds = [...new Set(items.map((item) => String(item.choiceId || item.itemId || '')))].filter(Boolean);
+  // Bonus rewards are intentionally not selectable. They have no choiceId;
+  // using their itemId as a fallback makes them look like choices and sends
+  // an invalid rewardId when the player selects one.
+  const choiceItems = items.filter((item) => String(item.choiceId || '').trim());
+  const choiceIds = [...new Set(choiceItems.map((item) => String(item.choiceId || '')))].filter(Boolean);
   for (const choiceId of choiceIds) {
-    const choiceItems = items.filter((item) => String(item.choiceId || item.itemId || '') === choiceId);
+    const selectedChoiceItems = choiceItems.filter((item) => String(item.choiceId || '') === choiceId);
     const row = document.createElement('div');
     Object.assign(row.style, {
       width: '100%', padding: '9px 12px', margin: '6px 0', textAlign: 'left',
@@ -928,8 +932,8 @@ export function renderQuestReward(panel, quest) {
     });
     const select = document.createElement('button');
     select.type = 'button';
-    select.textContent = String(choiceItems[0]?.choiceLabel || '').trim()
-      || choiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
+    select.textContent = String(selectedChoiceItems[0]?.choiceLabel || '').trim()
+      || selectedChoiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
     Object.assign(select.style, {
       display: 'block', width: '100%', padding: '2px 0 7px', textAlign: 'left',
       border: '0', background: 'transparent', color: '#ffd85a', font: 'inherit', cursor: 'pointer',
@@ -939,7 +943,7 @@ export function renderQuestReward(panel, quest) {
       renderQuestReward(panel, quest);
     });
     row.appendChild(select);
-    for (const item of choiceItems) {
+    for (const item of selectedChoiceItems) {
       const inspect = document.createElement('button');
       inspect.type = 'button';
       inspect.setAttribute('aria-label', `Show tooltip for ${String(item.name || item.itemId || 'reward item')}`);
@@ -961,6 +965,19 @@ export function renderQuestReward(panel, quest) {
     panel.appendChild(row);
   }
 
+  for (const item of items.filter((entry) => !String(entry.choiceId || '').trim())) {
+    const bonus = document.createElement('div');
+    Object.assign(bonus.style, {
+      display: 'flex', alignItems: 'center', gap: '7px', padding: '3px 0',
+      color: '#dbe9f6', fontSize: '13px',
+    });
+    appendRewardIcon(bonus, item, 24);
+    bonus.appendChild(document.createTextNode(
+      `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Bonus reward')}`,
+    ));
+    panel.appendChild(bonus);
+  }
+
   const gold = Math.max(0, Number(quest?.rewardGold || 0) | 0);
   if (gold > 0) {
     const goldLine = document.createElement('div');
@@ -979,13 +996,7 @@ export function renderQuestReward(panel, quest) {
   const close = document.createElement('button');
   close.type = 'button'; close.textContent = 'Close';
   Object.assign(close.style, { minHeight: '42px', padding: '8px 14px', borderRadius: '999px', border: UI.BORDER, background: 'transparent', color: '#b6c4d6', font: 'inherit', cursor: 'pointer' });
-  close.addEventListener('click', () => {
-    if (!selected) {
-      warning.style.display = 'block';
-      return;
-    }
-    window.dispatchEvent(new CustomEvent('ui:closeQuestReward'));
-  });
+  close.addEventListener('click', () => window.dispatchEvent(new CustomEvent('ui:closeQuestReward')));
   actions.appendChild(close);
   const complete = document.createElement('button');
   complete.type = 'button'; complete.textContent = 'Complete'; complete.disabled = !selected;
