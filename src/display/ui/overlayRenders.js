@@ -791,7 +791,7 @@ export function renderQuestJournal(panel, quests) {
             const button = document.createElement('button');
             button.type = 'button';
             button.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
-            button.title = String(item.description || item.name || item.itemId || 'Reward item');
+            button.setAttribute('aria-label', `Show tooltip for ${String(item.name || item.itemId || 'reward item')}`);
             Object.assign(button.style, {
               display: 'block', padding: '3px 0', border: '0', background: 'transparent',
               color: '#ffd85a', cursor: 'pointer', fontSize: '12px', textAlign: 'left',
