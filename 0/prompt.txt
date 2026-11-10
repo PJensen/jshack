@@ -1,0 +1,5 @@
+we said earlier this morning that quest rewards should show their canonical item tooltips -- but I still see these weird descriptions for quest reward tooltips -- lets fix this; especially since we already have easy ways for displaying item chips and beyond.
+
+---
+
+right, commit and push
