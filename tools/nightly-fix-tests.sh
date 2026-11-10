@@ -43,7 +43,6 @@ fi
 
 /home/pjensen/.local/bin/codex exec \
   --cd "$repo_dir" \
-  --sandbox workspace-write \
   --approve-for-me \
   "Work on JSHack's failing tests using exactly: deno test --allow-read --allow-write --no-check
 
