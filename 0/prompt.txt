@@ -1,0 +1,18 @@
+Do you understand how to make a new quest? What about a multi-leg quest? What about a quest who's completion opens the way to another.
+
+---
+
+if it cannot be done, fine -- we can do those other bmprovements -- but you see my point; a multi-leg quest would be great, I don't know exactly how it's structured -- but the overarching rule is "no hacking" no dumb one-offs.
+
+also -- we need to give actual gear to motivate people to do quests -- in fact, we should come up with a way of showing the reward ahead of time, (e.g.) in the quest entry itself, 
+
+Reward: [Mirror Bow] <-- clickable
+Reward: $85g
+
+---
+
+Personally, I would use commits like checkpoint rungs on a ladder
+
+---
+
+I would commit rung before going too far on the next rung.

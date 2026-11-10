@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M731ZX7P6TQ6WX6Y9NK4D1QZ",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/display/ui/overlayRenders.js",
+    "src/main.js",
+    "src/main/scheduler.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/ui/questRewards.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/quests/definitions/farmerMillRun.js",
+    "src/rules/quests/definitions/rootboundGrotto.js",
+    "src/rules/quests/registry.js",
+    "tests/farmerMillRunQuest.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 166058,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 7041664,
+    "output_tokens": 26048,
+    "api_call_count": 59,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
