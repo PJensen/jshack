@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "src/rules/interaction/interactableAffordance.js",
     "src/rules/systems/ratatoskrSystem.js",
     "tests/ratatoskrSystem.test.mjs"
@@ -18,13 +19,6 @@
       "prompt": ""
     }
   ],
-  "token_usage": {
-    "input_tokens": 463,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 88064,
-    "output_tokens": 184,
-    "api_call_count": 1
-  },
   "redaction": {
     "replacements": 0,
     "layers": {
