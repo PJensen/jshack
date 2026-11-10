@@ -23,6 +23,7 @@ Choose the route before searching broadly:
 | Find proc-package gear missing authored Equip mechanics | `proc-gear-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/proc-gear-audit.mjs --unconverted` |
 | Compare same-slot gear and flag obvious strength outliers | `item-strength-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/item-strength-audit.mjs --outliers --format csv` |
 | Understand event producers and consumers | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary --top 40` |
+| Validate a quest-backed dungeon | `quest-content-audit` | `deno task audit:quests` |
 | Inspect one event contract | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event EVENT` |
 | Map scheduler registration and phases | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary` |
 | Find unregistered or untested systems | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --unregistered` or `--missing-tests` |
@@ -76,6 +77,8 @@ generic `NamedIdentity` reaching the bridge.
   files. Listener installers and dynamic references can be intentionally absent
   from static registration results.
 - Keep tool changes deterministic, import-safe, and usable with `--allow-read`.
+- `quest-content-audit` checks quest tracker/template parity, authored landmark
+  entrances, and explicit monster IDs using the existing content fields.
 - Extend existing tools when a question recurs; do not add a one-off grep script
   for a query they can already answer.
 - When a new recurring workflow is proven, update this skill with the route and
@@ -95,5 +98,6 @@ deno task guard:tools
 deno task audit:health
 deno task audit:events
 deno task audit:systems
+deno task audit:quests
 ```
 

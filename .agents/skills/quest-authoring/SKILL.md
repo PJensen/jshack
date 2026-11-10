@@ -62,6 +62,8 @@ When a landmark should lead to a special dungeon:
 4. Give the template an explicit `questId` when it is quest-owned.
 5. Use explicit `content.monsters` entries when the quest must guarantee a particular encounter.
 6. Add a restrictive `monsterFilter` so unrelated random monsters do not dilute the authored identity.
+7. Run `deno task audit:quests` to validate the existing quest, destination,
+   entrance, and authored monster fields.
 
 Do not invent feature or trap IDs. Confirm them in `populate.js` or existing templates first.
 
@@ -120,6 +122,8 @@ Common failure modes:
 - Adding abilities to an existing mob instead of creating a distinct identity.
 - Creating a dungeon that does not guarantee the quest encounter.
 - Forgetting to import the quest before quest-runtime installation.
+- Instantiating a quest only from its dialogue instead of seeding it during run
+  setup, which prevents the quest-giver marker and journal discovery from appearing.
 - Letting a generic townfolk dialog hide the quest-specific dialog.
 - Referencing nonexistent dungeon features, traps, monsters, or landmark IDs.
 - Adding a healer to a faction whose identity does not support it.

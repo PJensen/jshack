@@ -22,9 +22,16 @@ const ROOTBOUND_HEALERS = new Set([
 const REWARD_ITEM_ID = "book_lifebloom";
 const REWARD_GOLD = 180;
 
+function currentHerbalistId(world) {
+  for (const [id, identity] of world.query(NamedIdentity)) {
+    if (String(identity?.identity || "") === "townfolk_herbalist") return id;
+  }
+  return 0;
+}
+
 export function ensureRootboundGrottoQuest(world, { playerId, giverId } = {}) {
-  const player = Number(playerId || 0) | 0;
-  const giver = Number(giverId || 0) | 0;
+  const player = Number(playerId || firstPlayerId(world) || 0) | 0;
+  const giver = Number(giverId || currentHerbalistId(world) || 0) | 0;
   if (!(player > 0) || !(giver > 0)) return 0;
   const existing = getQuestRecord(world, ROOTBOUND_GROTTO_QUEST_ID, player);
   if (existing) return existing.id | 0;

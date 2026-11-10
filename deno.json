@@ -23,6 +23,7 @@
     "audit:item-strength": "deno run --allow-read .agents/skills/agent-tools/scripts/item-strength-audit.mjs",
     "audit:proc-gear": "deno run --allow-read .agents/skills/agent-tools/scripts/proc-gear-audit.mjs",
     "audit:health": "deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs",
+    "audit:quests": "deno run --allow-read .agents/skills/agent-tools/scripts/quest-content-audit.mjs",
     "coverage": "deno test --no-check --allow-read --coverage=coverage/ && deno coverage coverage/ --lcov --output=coverage.lcov",
     "bench": "deno bench --no-check --allow-read tests/perf/*.bench.mjs",
     "headless": "deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/headless-runner.mjs",

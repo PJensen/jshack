@@ -65,6 +65,10 @@ Deeper docs:
   existing formatting and keep diffs limited to the requested functional edits.
 - **Search before writing.** Extend existing patterns. Do exactly what was
   asked; no opportunistic content wiring or unrelated cleanup.
+- **New authored content targets new runs.** Do not add migrations or repair
+  paths for existing saved runs when adding quests, landmarks, dungeon
+  entrances, or other authored world content. New content is expected to
+  appear in newly generated runs; validate the fresh-run path instead.
 - **Capture skills incrementally.** When a task reveals a reusable tool,
   process, authoring path, verification command, or failure mode, record the
   proven practice in the smallest relevant `.agents/skills/` guide as part of
@@ -166,11 +170,15 @@ before deleting.
 deno run --allow-read .agents/skills/agent-tools/scripts/agent-target.mjs damaged --limit 80
 deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs goblin --limit 80
 deno run --allow-read .agents/skills/agent-tools/scripts/content-id-audit.mjs potion_water --limit 80
+deno task audit:quests
 ```
 
 `agent-target` is a ranked code search for events/functions/files/tests.
 `content-id-audit` follows item, monster, spell, material, loot, visual, and
 test references by ID.
+
+`audit:quests` validates authored quest destinations using canonical fields:
+tracker target, landmark entrance, and explicit monster IDs.
 
 ### Agent tool ownership
 
