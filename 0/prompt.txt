@@ -1,0 +1,7 @@
+quest log should not show quests you do not know about.
+quest log should have two tabs (Active, Completed)
+town notice board should show contracts only. (otherwise, same semantics as exist now, Accept, Accepted, etc)
+
+---
+
+bring this end to end, commit and push -- keep the work simple and canonical if possible.
