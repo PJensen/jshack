@@ -1,0 +1,72 @@
+I love the goblin priest monster we made -- we made a new quest and dungeon to show it off, but there are a handful of issues with it.
+
+
+
+1. I've never found it
+2. The accepted active quest points back to the quest-giver still
+
+
+
+The basement rats and graveyard quests both work in both regards -- I cannot explain why the new quest and dungeon are acting strange, cant be found, etc. We did something different.
+
+
+
+Also -- I swear the quest giver for that quest is missing the quest exlaimation ponit above it's head.
+
+
+
+Have a peek -- let me know what you find.
+
+---
+
+this is NOT a rift quest -- it's the brand new quest we just made.
+
+---
+
+I dont care about existing runs -- in fact, we should record that fact forever after in AGENTS.md please.
+
+Othewise, yes we should be fixing `rootbound grotto` -- install it.
+
+Interesting callout on Rifts, but, I would expect that it behaves a litle differentl -- (e.g.) once the rift is open, point to the rift itself, once inside, track the objective -- but -- this is absolutely secondary to our first task of fixing rootbound grotto -- in fact, we should ensure via tooling that this never  happens again.
+
+Maybe it's a quest creator skill update
+Maybe it's a deterministic tool that is along for the ride.
+
+Something is needed.
+
+---
+
+WARN: I did not ask for goblin priest.
+
+---
+
+We'll make a goblin_cave seperately; once we've corrected quest authoring, and rootbound_grotto especially.
+
+---
+
+It's like you're hacking one-offs.
+
+
+
+I see this:
+
+
+```css
+    authoring: {
+      requiredMonsterIds: [
+        "goblin_mosscaller",
+        "kobold_cairnkeeper",
+        "orc_bloodspeaker",
+        "druid",
+      ],
+      startupEnsurer: "ensureRootboundGrottoQuest",
+    },
+```
+
+
+
+and I see it nowhere else -- if it's cannon let me know.
+
+---
+
+Right that's against the rules, you were absolutely hacking something in. Not good. Please stay within cannon.
