@@ -14,10 +14,11 @@ import { spawnMonsterEntity } from "../../utils/spawnMonsterEntity.js";
 import { attachEntityToCurrentFloor } from "../../utils/floorEntities.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
 import { isWalkable } from "../../environment/dungeon/tileMap.js";
-import { emit, incVar, setVar } from "../actions.js";
+import { emit, grantSelectedReward, incVar, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { getQuestRecord } from "../runtime.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
+import { selectedQuestRewardItemIds } from "../rewardOptions.js";
 
 export const RAT_INFESTATION_QUEST_ID = "starter.rat_infestation";
 export const REQUIRED_RAT_KILLS = 5;
@@ -210,10 +211,14 @@ export const RatInfestationQuest = registerQuest({
   version: 1,
   journal: {
     flavorText: "The barkeep is tired of hearing claws in the cellar walls. He wants the infestation culled before the tavern loses its stores.",
-    rewardItemIds: REWARD_ITEM_IDS,
-    rewardItems: [
-      { label: "a hot stew from the barkeep", count: 1 },
+    rewardChoice: true,
+    rewardGold: REWARD_GOLD,
+    rewardChoices: [
+      { id: "bow_mirror", label: "Mirror Bow", items: [{ itemId: "bow_mirror" }] },
+      { id: "ratward_ring", label: "Ratward Ring", items: [{ itemId: "ring_poison_resist" }] },
+      { id: "venom_ward", label: "Venom Ward Binding", items: [{ itemId: "scroll_enchant_venom_ward" }] },
     ],
+    rewardBonusItems: [{ itemId: "food_stew", count: 1, label: "a hot stew from the barkeep" }],
   },
   vars: {
     accepted: false,
@@ -391,45 +396,45 @@ export const RatInfestationQuest = registerQuest({
                 && Number(ctx.payload?.speakerId || 0) > 0;
             },
             actions: [
-              setVar("reported", true),
-              setVar("rewardGranted", true),
-              setVar("completionText", (ctx) => {
-                if (String(ctx.vars?.resolution || "") === "genocide") {
-                  return "The cellar fell silent after rat-kind was erased from the run.";
-                }
-                return "The tavern cellar is clear, at least for now.";
-              }),
-              (ctx) => {
-                const playerId = Number(ctx.bind.player || 0) | 0;
-                if (playerId > 0) {
-                  for (const rewardItemId of REWARD_ITEM_IDS) {
-                    const rewardId = createItemById(ctx.world, rewardItemId);
-                    if (rewardId > 0) addToInventory(ctx.world, playerId, rewardId);
-                  }
-                  const goldId = createItemById(ctx.world, "gold", { count: REWARD_GOLD });
-                  if (goldId > 0) addToInventory(ctx.world, playerId, goldId);
-                  const stewId = createItemById(ctx.world, "food_stew");
-                  if (stewId > 0) addToInventory(ctx.world, playerId, stewId);
-                }
-              },
-              emit("quest:completed", (ctx) => ({
+              setVar("objective", "Choose your reward."),
+              emit("quest:advanced", (ctx) => ({
                 questId: RAT_INFESTATION_QUEST_ID,
                 playerId: ctx.bind.player,
                 giverId: ctx.bind.giver,
-                title: "Rat Infestation",
-                rewardGold: REWARD_GOLD,
-                rewardItemIds: REWARD_ITEM_IDS,
-                resolution: String(ctx.vars?.resolution || "culled_rats"),
-                worldOutcome: String(ctx.vars?.worldOutcome || "rats_culled"),
-                at: (() => {
-                  const p = ctx.world.get(Number(ctx.bind.player || 0) | 0, Position);
-                  return p ? { x: Number(p.x) | 0, y: Number(p.y) | 0 } : null;
-                })(),
+                objective: "Choose your reward.",
               })),
             ],
-            to: "complete",
+            to: "reward",
           },
         ],
+      },
+    },
+    reward: {
+      on: {
+        "quest:reward_selected": [{
+          guard: (ctx) => Number(ctx.payload?.playerId || 0) === Number(ctx.bind.player || 0)
+            && String(ctx.payload?.questId || "") === RAT_INFESTATION_QUEST_ID
+            && isSelectedReward(ctx),
+          actions: [
+            setVar("reported", true),
+            setVar("rewardGranted", true),
+            grantSelectedReward(),
+            setVar("completionText", (ctx) => String(ctx.vars?.resolution || "") === "genocide"
+              ? "The cellar fell silent after rat-kind was erased from the run."
+              : "The tavern cellar is clear, at least for now."),
+            emit("quest:completed", (ctx) => ({
+              questId: RAT_INFESTATION_QUEST_ID,
+              playerId: ctx.bind.player,
+              giverId: ctx.bind.giver,
+              title: "Rat Infestation",
+              rewardGold: REWARD_GOLD,
+              rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId),
+              resolution: String(ctx.vars?.resolution || "culled_rats"),
+              worldOutcome: String(ctx.vars?.worldOutcome || "rats_culled"),
+            })),
+          ],
+          to: "complete",
+        }],
       },
     },
     complete: {

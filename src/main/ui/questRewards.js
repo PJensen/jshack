@@ -1,4 +1,6 @@
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
+import { getGem } from "../../rules/data/gems.js";
+import { listQuestRewardBonusItems, listQuestRewardOptions } from "../../rules/quests/rewardOptions.js";
 
 /**
  * @param {any} questDef
@@ -6,9 +8,7 @@ import { getCatalogItem } from "../../rules/data/itemCatalog.js";
  * @returns {string[]}
  */
 export function listQuestRewardItemIds(questDef, vars) {
-  const raw = Array.isArray(vars?.rewardItemIds)
-    ? vars.rewardItemIds
-    : (Array.isArray(questDef?.journal?.rewardItemIds) ? questDef.journal.rewardItemIds : []);
+  const raw = listQuestRewardOptions(questDef, vars).flatMap((choice) => choice.items.map((item) => item.itemId));
   return raw.map((id) => String(id || "").trim()).filter(Boolean);
 }
 
@@ -19,11 +19,12 @@ export function listQuestRewardItemIds(questDef, vars) {
 export function describeQuestRewardItem(itemId) {
   const id = String(itemId || "").trim();
   const def = id ? getCatalogItem(id) : null;
-  const name = String(def?.name || id || "Reward").trim();
-  const description = String(def?.description || "").trim();
-  const rarity = Number(def?.rarity || 0) | 0;
+  const gem = !def && id ? getGem(id) : null;
+  const name = String(def?.name || gem?.name || id || "Reward").trim();
+  const description = String(def?.description || (gem ? `${gem.socketable ? "Socketable " : ""}${gem.appearance}.` : "")).trim();
+  const rarity = Number(def?.rarity || (gem?.value >= 2500 ? 4 : gem?.value >= 800 ? 3 : 1)) | 0;
   const rarityName = String(def?.rarityName || (["common", "uncommon", "rare", "epic", "legendary"][rarity] || "common"));
-  const type = String(def?.type || "item");
+  const type = String(def?.type || (gem ? "gem" : "item"));
   const slot = String(def?.slot || (type === "ranged" ? "ranged" : type === "weapon" ? "weapon" : ""));
   return {
     itemId: id,
@@ -58,16 +59,18 @@ export function describeQuestRewardItem(itemId) {
  * @returns {Array<{itemId:string,name:string,description:string,count:number}>}
  */
 export function listQuestRewardItems(questDef, vars) {
-  const authored = Array.isArray(questDef?.journal?.rewardItems)
-    ? questDef.journal.rewardItems.filter((item) => item?.itemId)
-    : [];
-  const ids = authored.length > 0
-    ? authored.map((item) => String(item.itemId || ""))
-    : listQuestRewardItemIds(questDef, vars);
-  return ids.map((id, index) => ({
-    ...describeQuestRewardItem(id),
-    count: Math.max(1, Number(authored[index]?.count || vars?.rewardItemCounts?.[id] || 1) | 0),
-  }));
+  const choiceItems = listQuestRewardOptions(questDef, vars).flatMap((choice) => choice.items.map((item) => ({
+    ...describeQuestRewardItem(item.itemId),
+    count: item.count,
+    choiceId: choice.id,
+    choiceLabel: choice.label,
+  })));
+  return choiceItems.concat(listQuestRewardBonusItems(questDef, vars).map((item) => ({
+    ...describeQuestRewardItem(item.itemId),
+    count: item.count,
+    choiceId: "",
+    choiceLabel: "",
+  })));
 }
 
 /**
@@ -78,10 +81,14 @@ export function listQuestRewardItems(questDef, vars) {
  */
 export function questRewardPreviewText(questDef, vars) {
   const explicit = String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
+  const options = listQuestRewardOptions(questDef, vars);
   const items = listQuestRewardItems(questDef, vars);
   if (items.length <= 0) return explicit;
   if (questDef?.journal?.rewardChoice === true) {
-    const labels = items.map((item) => `${item.count > 1 ? `${item.count}x ` : ""}${item.name}`);
+    const labels = options.map((choice) => choice.label || choice.items.map((item) => {
+      const detail = describeQuestRewardItem(item.itemId);
+      return `${item.count > 1 ? `${item.count}x ` : ""}${detail.name}`;
+    }).join(" + "));
     return `Choose one: ${labels.join(", ")}`;
   }
   if (items.length === 1) {
@@ -100,7 +107,9 @@ export function questRewardPreviewText(questDef, vars) {
 export function questRewardDetailText(questDef, vars) {
   const explicit = String(vars?.rewardText || questDef?.journal?.rewardText || "").trim();
   const parts = [];
-  for (const item of listQuestRewardItems(questDef, vars)) {
+  const itemRows = listQuestRewardItems(questDef, vars)
+    .filter((item) => questDef?.journal?.rewardChoice !== true || item.choiceId);
+  for (const item of itemRows) {
     const label = item.count > 1 ? `${item.count}x ${item.name}` : item.name;
     parts.push(item.description ? `${label} - ${item.description}` : label);
   }
@@ -109,10 +118,17 @@ export function questRewardDetailText(questDef, vars) {
   if (rewardGold > 0) parts.push(`${rewardGold} gold`);
 
   if (questDef?.journal?.rewardChoice === true && parts.length > 0) {
-    const itemParts = listQuestRewardItems(questDef, vars)
-      .map((item) => `${item.count > 1 ? `${item.count}x ` : ""}${item.name}`);
+    const itemParts = listQuestRewardOptions(questDef, vars).map((choice) => choice.label || choice.items.map((item) => {
+      const detail = describeQuestRewardItem(item.itemId);
+      return `${item.count > 1 ? `${item.count}x ` : ""}${detail.name}`;
+    }).join(" + "));
     const goldParts = parts.filter((part) => /^\d+ gold$/.test(part));
-    return `Choose one: ${itemParts.join(", ")}${goldParts.length > 0 ? `; plus ${goldParts[0]}` : ""}`;
+    const bonusParts = listQuestRewardBonusItems(questDef, vars).map((item) => {
+      const detail = describeQuestRewardItem(item.itemId);
+      return `${item.count > 1 ? `${item.count}x ` : ""}${item.label || detail.name}`;
+    });
+    const suffix = [...goldParts, ...bonusParts].join(" and ");
+    return `Choose one: ${itemParts.join(", ")}${suffix ? `; plus ${suffix}` : ""}`;
   }
 
   const rewardItems = Array.isArray(questDef?.journal?.rewardItems)

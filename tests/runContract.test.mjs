@@ -125,6 +125,12 @@ Deno.test("run contract is accepted from and turned in to the mason in its autho
 
   setDepth(world, dsId, 0);
   world.emit("dialog:reported", { questId: RUN_CONTRACT_QUEST_ID, playerId, speakerId: masonId });
+  world.emit("quest:reward_selected", {
+    questId: RUN_CONTRACT_QUEST_ID,
+    playerId,
+    speakerId: masonId,
+    rewardId: spec.rewardChoices[0].id,
+  });
 
   quest = getQuestRecord(world, RUN_CONTRACT_QUEST_ID, playerId);
   assertEquals(quest.state.status, "complete");
@@ -133,4 +139,5 @@ Deno.test("run contract is accepted from and turned in to the mason in its autho
   assertEquals(inventoryHasIdentity(world, playerId, spec.relicItemId, 1), false);
   assert(Array.isArray(quest.vars.data.checklist), "quest checklist should be preserved");
   assertEquals(quest.vars.data.checklist.every((entry) => entry.done === true), true);
+  assert(inventoryHasIdentity(world, playerId, spec.rewardChoices[0].items[0].itemId, 1));
 });

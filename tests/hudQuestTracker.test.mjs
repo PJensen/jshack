@@ -102,7 +102,7 @@ Deno.test("hud quest tracker prioritizes accepted measurable progress quests", (
     assertEquals(detail.focused.targetPosition.x, 12);
     assertEquals(detail.focused.targetPosition.y, 9);
     assert(String(detail.focused.rewardPreview || "").includes("Mirror Bow"));
-    assert(String(detail.focused.rewardPreview || "").includes("wall-side impacts"));
+    assert(String(detail.focused.rewardPreview || "").includes("Venom Ward Binding"));
     assertEquals("moreCount" in detail, false);
 
     const selectedPayloads = [];

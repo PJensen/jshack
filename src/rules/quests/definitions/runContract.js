@@ -14,12 +14,13 @@ import { createRng } from "../../utils/rng.js";
 import { spawnMonsterEntity } from "../../utils/spawnMonsterEntity.js";
 import { consumeInventoryIdentity, inventoryHasIdentity } from "../../utils/townEconomy.js";
 import { addToInventory } from "../../utils/inventoryFacade.js";
-import { emit, setVar } from "../actions.js";
+import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { ensureQuestRuntimeEventRoutes, findQuestEntity, getQuestRecord, instantiateQuest } from "../runtime.js";
 import { isWalkable } from "../../environment/dungeon/tileMap.js";
 import { getUnderworldRegionTemplate } from "../../environment/dungeon/underworldRegions.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
+import { selectedQuestRewardItemIds } from "../rewardOptions.js";
 
 export const RUN_CONTRACT_QUEST_ID = "run.contract";
 
@@ -183,7 +184,33 @@ function currentPlayerId(world) {
 }
 
 function rewardGoldForDepth(depth) {
-  return clampInt(140 + (Number(depth || 1) | 0) * 28, 180, 420);
+  return clampInt(180 + (Number(depth || 1) | 0) * 40, 240, 420);
+}
+
+function rewardChoicesForRelic(relicItemId) {
+  const choices = {
+    relic_ember_censer: [
+      { id: "flameward_ring", label: "Flameward Ring", items: [{ itemId: "ring_fire_resist" }] },
+      { id: "fire_binding", label: "Firestorm Binding", items: [{ itemId: "scroll_enchant_fire" }] },
+      { id: "ruby_socket", label: "Ruby Socket Stone", items: [{ itemId: "gem_ruby" }] },
+    ],
+    relic_glass_heart: [
+      { id: "heartward_ring", label: "Heartward Ring", items: [{ itemId: "ring_health" }] },
+      { id: "fortified_binding", label: "Fortified Binding", items: [{ itemId: "scroll_enchant_fortified" }] },
+      { id: "diamond_socket", label: "Diamond Socket Stone", items: [{ itemId: "gem_diamond" }] },
+    ],
+    relic_pale_idol: [
+      { id: "graveward_ring", label: "Graveward Ring", items: [{ itemId: "ring_poison_resist" }] },
+      { id: "venomward_binding", label: "Venom Ward Binding", items: [{ itemId: "scroll_enchant_venom_ward" }] },
+      { id: "obsidian_socket", label: "Obsidian Socket Stone", items: [{ itemId: "gem_obsidian" }] },
+    ],
+    relic_stone_tongue: [
+      { id: "arcana_ring", label: "Ring of Arcana", items: [{ itemId: "ring_arcana" }] },
+      { id: "frost_binding", label: "Frost Binding", items: [{ itemId: "scroll_enchant_frost" }] },
+      { id: "amethyst_socket", label: "Amethyst Socket Stone", items: [{ itemId: "gem_amethyst" }] },
+    ],
+  };
+  return choices[String(relicItemId || "")] || choices.relic_glass_heart;
 }
 
 export function buildRunContractSpec(world, opts = {}) {
@@ -208,6 +235,7 @@ export function buildRunContractSpec(world, opts = {}) {
     relicTitle: String(relic.title),
     relicObjectiveNoun: String(relic.objectiveNoun || relic.title),
     rewardGold: rewardGoldForDepth(bossDepth),
+    rewardChoices: rewardChoicesForRelic(relic.itemId),
     bossHpMult: Number(bossBase.hpMult || 1.5),
     bossAcc: Number(bossBase.acc || 0),
     bossDmg: Number(bossBase.dmg || 0),
@@ -369,6 +397,7 @@ export const RunContractQuest = registerQuest({
   version: 1,
   journal: {
     flavorText: "A standing contract from town leadership: kill the marked threat, recover its relic, and bring home something the whole settlement can point to.",
+    rewardChoice: true,
   },
   vars: {
     accepted: false,
@@ -472,34 +501,42 @@ export const RunContractQuest = registerQuest({
               },
               setVar("relicDelivered", true),
               setVar("progress", 2),
-              setVar("objective", (ctx) => buildObjectiveText(ctx.vars, {
-                ...ctx.vars,
-                bossKilled: true,
-                relicRecovered: true,
-                relicDelivered: true,
-              })),
               setVar("checklist", (ctx) => buildChecklist(ctx.vars, {
                 ...ctx.vars,
                 bossKilled: true,
                 relicRecovered: true,
                 relicDelivered: true,
               })),
-              (ctx) => {
-                const reward = Math.max(0, Number(ctx.vars?.rewardGold || 0) | 0);
-                if (!(reward > 0)) return;
-                const goldId = createItemById(ctx.world, "gold", { count: reward });
-                if (!(goldId > 0)) return;
-                if (addToInventory(ctx.world, Number(ctx.bind.player || 0) | 0, goldId)) return;
-                const pos = ctx.world.get(Number(ctx.bind.player || 0) | 0, Position);
-                if (!pos) return;
-                ctx.world.add(goldId, Position, { x: pos.x | 0, y: pos.y | 0 });
-                ctx.world.emit("item:dropped", { itemId: goldId, count: reward, at: { x: pos.x | 0, y: pos.y | 0 } });
-              },
+              setVar("objective", "Choose your town reward."),
+              emit("quest:advanced", (ctx) => ({
+                questId: RUN_CONTRACT_QUEST_ID,
+                playerId: ctx.bind.player,
+                objective: "Choose your town reward.",
+              })),
+            ],
+            to: "reward",
+          },
+        ],
+      },
+    },
+    reward: {
+      on: {
+        "quest:reward_selected": [
+          {
+            guard: (ctx) => (
+              Number(ctx.payload?.playerId || 0) === Number(ctx.bind.player || 0)
+              && String(ctx.payload?.questId || "") === RUN_CONTRACT_QUEST_ID
+              && isSelectedReward(ctx)
+            ),
+            actions: [
+              grantSelectedReward(),
+              setVar("objective", "The town has reclaimed the trophy."),
               emit("quest:completed", (ctx) => ({
                 questId: RUN_CONTRACT_QUEST_ID,
                 playerId: ctx.bind.player,
                 title: "The Town Wants a Trophy",
                 rewardGold: Math.max(0, Number(ctx.vars?.rewardGold || 0) | 0),
+                rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId),
                 at: (() => {
                   const p = ctx.world.get(Number(ctx.bind.player || 0) | 0, Position);
                   return p ? { x: Number(p.x) | 0, y: Number(p.y) | 0 } : null;
@@ -525,7 +562,7 @@ export function ensureRunContractQuest(world, opts = {}) {
   for (const [id, ni] of world.query(NamedIdentity)) {
     if (String(ni?.identity || "") === "townfolk_mason") { giverId = id; break; }
   }
-  ensureQuestRuntimeEventRoutes(world, ["dialog:accepted", "runContract:bossKilled", "item:pickup", "dialog:reported"]);
+  ensureQuestRuntimeEventRoutes(world, ["dialog:accepted", "runContract:bossKilled", "item:pickup", "dialog:reported", "quest:reward_selected"]);
 
   const existing = findQuestEntity(world, RUN_CONTRACT_QUEST_ID, playerId);
   if (existing > 0) {

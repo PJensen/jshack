@@ -408,6 +408,10 @@ Deno.test("barkeep rat quest turn-in grants promised Mirror Bow reward", () => {
   const sessionId = opened.at(-1).sessionId;
   world.emit("dialog:choose", { sessionId, choiceId: "turn_in_rats" });
   world.tick(0);
+  const rewardChoice = opened.at(-1).choices.find((choice) => choice.id === "rat_reward_0");
+  assert(rewardChoice, "rat quest should present themed reward choices");
+  world.emit("dialog:choose", { sessionId, choiceId: rewardChoice.id });
+  world.tick(0);
 
   assert(inventoryHasIdentity(world, player, "bow_mirror", 1), "turn-in should grant the promised Mirror Bow");
   assert(inventoryHasIdentity(world, player, "gold", 150), "turn-in should grant boosted gold");
@@ -462,6 +466,8 @@ Deno.test("barkeep rat quest genocide turn-in records the world outcome", () => 
 
   const sessionId = opened.at(-1).sessionId;
   world.emit("dialog:choose", { sessionId, choiceId: "turn_in_rats" });
+  world.tick(0);
+  world.emit("dialog:choose", { sessionId, choiceId: "rat_reward_0" });
   world.tick(0);
 
   assert(inventoryHasIdentity(world, player, "bow_mirror", 1), "genocide turn-in should still grant the promised Mirror Bow");

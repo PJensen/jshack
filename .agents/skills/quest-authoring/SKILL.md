@@ -95,7 +95,14 @@ when introducing a repeated event route.
 Reward authoring should expose structured metadata in `journal.rewardItemIds`
 or `journal.rewardItems` plus `journal.rewardGold`. For a choice, set
 `journal.rewardChoice` and let the journal render each item from catalog data;
-do not duplicate item names in prose or silently grant every listed option.
+do not duplicate item names in prose or silently grant every listed option. For
+balanced themed choices, use `journal.rewardChoices` with an `id`, display
+`label`, and `items` package. Use `journal.rewardBonusItems` for a guaranteed
+side reward shared by every choice. The canonical `grantSelectedReward()` path
+creates both the selected package and bonus items, while
+`selectedQuestRewardItemIds()` keeps completion events accurate for multi-item
+packages. Validate every authored item with the canonical item factory; this
+also covers rings, gems, and generated enchantment scrolls.
 
 ## Dialogue integration
 

@@ -5,17 +5,16 @@ import { Position } from "../../components/Position.js";
 import { QuestState } from "../../components/QuestState.js";
 import { QuestVars } from "../../components/QuestVars.js";
 import { RunObjectiveTarget } from "../../components/RunObjectiveTarget.js";
-import { createItemById } from "../../utils/itemFactory.js";
-import { addToInventory } from "../../utils/inventoryFacade.js";
 import { attachEntityToCurrentFloor } from "../../utils/floorEntities.js";
 import { isWalkable } from "../../environment/dungeon/tileMap.js";
 import { getMonster } from "../../data/monsters.js";
 import { spawnMonsterEntity } from "../../utils/spawnMonsterEntity.js";
 import { activeRiftRecord, createRift } from "../../utils/riftRuntime.js";
-import { emit, setVar } from "../actions.js";
+import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { ensureQuestRuntimeEventRoutes, findQuestEntity, getQuestRecord, instantiateQuest, STARTER_PRIEST_FETCH_QUEST_ID } from "../runtime.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
+import { selectedQuestRewardItemIds } from "../rewardOptions.js";
 
 export const PRIEST_RIFT_QUEST_ID = "starter.priest_rift";
 export const PRIEST_RIFT_TEMPLATE_ID = "priest_rift_crypt";
@@ -23,7 +22,6 @@ export const PRIEST_RIFT_LEVELS = 3;
 
 const PRIEST_RIFT_HOOKS_KEY = Symbol.for("jshack:quests:priestRift");
 const REWARD_GOLD = 260;
-const REWARD_ITEM_ID = "potion_holy_water";
 const BOSS_CANDIDATES = Object.freeze(["dark_acolyte", "wraith", "lich", "skeleton"]);
 const SPAWN_OFFSETS = Object.freeze([
   Object.freeze([0, 0]),
@@ -297,6 +295,13 @@ export const PriestRiftQuest = registerQuest({
   version: 1,
   journal: {
     flavorText: "The returned funerary book did not end Father Tovin's worries. It showed him where the next wound would open.",
+    rewardChoice: true,
+    rewardChoices: [
+      { id: "book_smite", label: "Spellbook of Smite", items: [{ itemId: "book_smite" }] },
+      { id: "ring_arcana", label: "Ring of Arcana", items: [{ itemId: "ring_arcana" }] },
+      { id: "cursebreaker", label: "Cursebreaker's Kit", items: [{ itemId: "scroll_remove_curse" }, { itemId: "potion_holy_water", count: 2 }] },
+    ],
+    rewardGold: REWARD_GOLD,
   },
   vars: {
     accepted: false,
@@ -347,31 +352,39 @@ export const PriestRiftQuest = registerQuest({
               && ctx.vars?.bossKilled === true
             ),
             actions: [
-              setVar("reported", true),
-              (ctx) => {
-                const playerId = Number(ctx.bind.player || 0) | 0;
-                if (!(playerId > 0)) return;
-                const goldId = createItemById(ctx.world, "gold", { count: REWARD_GOLD });
-                if (goldId > 0) addToInventory(ctx.world, playerId, goldId);
-                const rewardId = createItemById(ctx.world, REWARD_ITEM_ID);
-                if (rewardId > 0) addToInventory(ctx.world, playerId, rewardId);
-              },
-              emit("quest:completed", (ctx) => ({
-                questId: PRIEST_RIFT_QUEST_ID,
-                playerId: ctx.bind.player,
-                giverId: ctx.bind.giver,
-                title: "The Rift Below",
-                rewardGold: REWARD_GOLD,
-                rewardItemIds: [REWARD_ITEM_ID],
-                at: (() => {
-                  const p = ctx.world.get(Number(ctx.bind.player || 0) | 0, Position);
-                  return p ? { x: Number(p.x) | 0, y: Number(p.y) | 0 } : null;
-                })(),
-              })),
+              setVar("objective", "Choose your reward."),
+              emit("quest:advanced", (ctx) => ({ questId: PRIEST_RIFT_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, objective: "Choose your reward." })),
             ],
-            to: "complete",
+            to: "reward",
           },
         ],
+      },
+    },
+    reward: {
+      on: {
+        "quest:reward_selected": [{
+          guard: (ctx) => Number(ctx.payload?.playerId || 0) === Number(ctx.bind.player || 0)
+            && Number(ctx.payload?.speakerId || 0) === Number(ctx.bind.giver || 0)
+            && String(ctx.payload?.questId || "") === PRIEST_RIFT_QUEST_ID
+            && isSelectedReward(ctx),
+          actions: [
+            setVar("reported", true),
+            grantSelectedReward(),
+            emit("quest:completed", (ctx) => ({
+              questId: PRIEST_RIFT_QUEST_ID,
+              playerId: ctx.bind.player,
+              giverId: ctx.bind.giver,
+              title: "The Rift Below",
+              rewardGold: REWARD_GOLD,
+              rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId),
+              at: (() => {
+                const p = ctx.world.get(Number(ctx.bind.player || 0) | 0, Position);
+                return p ? { x: Number(p.x) | 0, y: Number(p.y) | 0 } : null;
+              })(),
+            })),
+          ],
+          to: "complete",
+        }],
       },
     },
     complete: {

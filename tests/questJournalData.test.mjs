@@ -60,7 +60,7 @@ Deno.test("quest journal payload includes flavor, reward, and completion details
   assert(String(quests[0]?.flavorText || "").includes("barkeep"), "flavor text should be journal-ready");
   assertEquals(
     String(quests[0]?.rewardText || ""),
-    "Mirror Bow - A polished bow that throws wall-side impacts into nearby hostiles. and 75 gold and a hot stew from the barkeep",
+    "Choose one: Mirror Bow, Ratward Ring, Venom Ward Binding; plus 75 gold and a hot stew from the barkeep",
   );
   assertEquals(String(quests[0]?.completionText || ""), "Clear the tavern cellar of rats.");
   assertEquals(Number(quests[0]?.progress || 0), 3);

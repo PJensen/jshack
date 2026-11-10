@@ -1,13 +1,14 @@
 import { TOWNFOLK } from "../data/townfolk.js";
 import { getDistrictBulletin } from "../utils/townInterpretationVirtuals.js";
 import { registerDialog } from "./registry.js";
+import { getQuestDef } from "../quests/registry.js";
 import { STARTER_PRIEST_FETCH_QUEST_ID, getQuestRecord } from "../quests/runtime.js";
 import { RAT_INFESTATION_QUEST_ID, REQUIRED_RAT_KILLS } from "../quests/definitions/ratInfestation.js";
 import { canTurnInStarterFetch } from "../quests/definitions/graveyardWatch.js";
 import { canAcceptPriestRift, ensurePriestRiftQuest, PRIEST_RIFT_QUEST_ID } from "../quests/definitions/priestRift.js";
 import { ensureRootboundGrottoQuest, ROOTBOUND_GROTTO_QUEST_ID } from "../quests/definitions/rootboundGrotto.js";
 import { canTurnInRunContract, RUN_CONTRACT_QUEST_ID } from "../quests/definitions/runContract.js";
-import { ensureFarmerMillRunQuest, FARMER_MILL_RUN_QUEST_ID, FARMER_MILL_RUN_REWARD_IDS } from "../quests/definitions/farmerMillRun.js";
+import { ensureFarmerMillRunQuest, FARMER_MILL_RUN_QUEST_ID } from "../quests/definitions/farmerMillRun.js";
 import { getTownState, getWeather } from "../utils/townStateAccess.js";
 import { Vitality } from "../components/Vitality.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
@@ -334,6 +335,17 @@ function runContractQuest(world, actorId) {
   return getQuestRecord(world, RUN_CONTRACT_QUEST_ID, actorId);
 }
 
+function runContractRewardChoice(world, actorId, index) {
+  const choices = runContractQuest(world, actorId)?.vars?.data?.rewardChoices;
+  return Array.isArray(choices) ? choices[index] || null : null;
+}
+
+function questRewardChoice(world, actorId, questId, index) {
+  const quest = getQuestRecord(world, questId, actorId);
+  const choices = quest?.vars?.data?.rewardChoices || getQuestDef(questId)?.journal?.rewardChoices;
+  return Array.isArray(choices) ? choices[index] || null : null;
+}
+
 function rootboundGrottoQuest(world, actorId, giverId) {
   ensureRootboundGrottoQuest(world, { playerId: actorId, giverId });
   return getQuestRecord(world, ROOTBOUND_GROTTO_QUEST_ID, actorId);
@@ -375,7 +387,9 @@ registerDialog({
         if (String(state.node || "") === "mill") return "The wheat needs grinding. The windmill is just beyond the fields.";
         if (String(state.node || "") === "barkeep") return "The barkeep is waiting on that flour. Take it straight to the tavern kitchen.";
         if (String(state.node || "") === "return") return "You got the flour delivered? Good. Choose one of these rewards for carrying the work through town.";
-        if (String(state.node || "") === "reward") return "Pick one: Mirror Bow, Iron Hatchet, or Vigor Potion.";
+        if (String(state.node || "") === "reward") {
+          return `Pick one: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index)?.label || "reward")).join(", ")}.`;
+        }
         return ambientTownfolkText(TOWNFOLK.farmer, ctx);
       },
       choices: [
@@ -393,11 +407,11 @@ registerDialog({
           emits: [{ name: "dialog:reported", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
           to: "reward",
         },
-        ...FARMER_MILL_RUN_REWARD_IDS.map((rewardId) => ({
-          id: `farmer_reward_${rewardId}`,
-          label: rewardId === "bow_mirror" ? "Take the Mirror Bow." : rewardId === "tool_hatchet" ? "Take the Iron Hatchet." : "Take the Vigor Potion.",
-          visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "reward",
-          emits: [{ name: "quest:reward_selected", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId, rewardId }) }],
+        ...[0, 1, 2].map((index) => ({
+          id: `farmer_reward_${index}`,
+          label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index)?.label || "Unavailable"),
+          visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index),
+          emits: [{ name: "quest:reward_selected", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId, rewardId: questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index)?.id || "" }) }],
           to: "reward_ack",
         })),
         { id: "leave", label: "Goodbye.", close: true },
@@ -437,7 +451,7 @@ registerDialog({
           return "The Rootbound Grotto lies beneath the Strange Grove. Find one of its healers and stop the lesson at its source.";
         }
         if (String(state.node || "") === "report") {
-          return "You broke the rootbound circle? Then take this. The book may teach you what the creatures below already know.";
+          return "You broke the rootbound circle? Then choose one gift from what grew beneath it.";
         }
         return ambientTownfolkText(TOWNFOLK.herbalist, ctx);
       },
@@ -468,7 +482,7 @@ registerDialog({
               speakerId: ctx.targetId,
             }),
           }],
-          to: "report_ack",
+          to: "rootbound_reward_offer",
         },
         { id: "leave", label: "Goodbye.", close: true },
       ],
@@ -478,8 +492,26 @@ registerDialog({
       choices: [{ id: "leave", label: "I'll return.", close: true }],
     },
     report_ack: {
-      text: "Good. Take the Lifebloom book and the gold. If the grove starts breathing again, come find me before you go below.",
+      text: "Good. The grove can breathe again. Spend the gift wisely, and come find me if the roots stir.",
       choices: [{ id: "leave", label: "Goodbye.", close: true }],
+    },
+    rootbound_reward_offer: {
+      text: (ctx) => `The herbalist offers one of three gifts from the grove: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
+      choices: [0, 1, 2].map((index) => ({
+        id: `rootbound_reward_${index}`,
+        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.label || "Unavailable"),
+        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index),
+        emits: [{
+          name: "quest:reward_selected",
+          payload: (ctx) => ({
+            questId: ROOTBOUND_GROTTO_QUEST_ID,
+            playerId: ctx.actorId,
+            speakerId: ctx.targetId,
+            rewardId: questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.id || "",
+          }),
+        }],
+        to: "report_ack",
+      })),
     },
   },
 });
@@ -502,6 +534,12 @@ registerDialog({
         }
         if (String(state.node || "") === "return" && canTurnInRunContract(ctx.world, ctx.actorId)) {
           return `You have ${String(vars.relicTitle || "the trophy")}. Hand it over and I'll see the reward paid.`;
+        }
+        if (String(state.node || "") === "reward") {
+          return `The ${String(vars.relicTitle || "trophy")} is secured. Choose the reward that best serves the next descent.`;
+        }
+        if (String(state.node || "") === "reward") {
+          return `The ${String(vars.relicTitle || "trophy")} is secured. Choose the reward that best serves the next descent.`;
         }
         if (String(state.node || "") === "recover") {
           return `The beast is dead. Search its remains for ${String(vars.relicTitle || "the trophy")}, then bring it to me.`;
@@ -538,7 +576,7 @@ registerDialog({
               speakerId: ctx.targetId,
             }),
           }],
-          to: "report_ack",
+          to: "reward_offer",
         },
         { id: "leave", label: "Goodbye.", close: true },
       ],
@@ -553,6 +591,24 @@ registerDialog({
     report_ack: {
       text: "This will hang where everyone can see it. Here's your pay — the town keeps its word.",
       choices: [{ id: "leave", label: "Goodbye.", close: true }],
+    },
+    reward_offer: {
+      text: (ctx) => `The trophy is secured. Choose one: ${[0, 1, 2].map((index) => String(runContractRewardChoice(ctx.world, ctx.actorId, index)?.label || "reward")).join(", ")}.`,
+      choices: [0, 1, 2].map((index) => ({
+        id: `run_contract_reward_${index}`,
+        label: (ctx) => String(runContractRewardChoice(ctx.world, ctx.actorId, index)?.label || "Unavailable"),
+        visible: (ctx) => !!runContractRewardChoice(ctx.world, ctx.actorId, index),
+        emits: [{
+          name: "quest:reward_selected",
+          payload: (ctx) => ({
+            questId: RUN_CONTRACT_QUEST_ID,
+            playerId: ctx.actorId,
+            speakerId: ctx.targetId,
+            rewardId: runContractRewardChoice(ctx.world, ctx.actorId, index)?.id || "",
+          }),
+        }],
+        to: "report_ack",
+      })),
     },
   },
 });
@@ -709,7 +765,7 @@ registerDialog({
               }),
             },
           ],
-          to: "report_ack",
+          to: "rat_reward_offer",
         },
         {
           id: "progress",
@@ -769,6 +825,24 @@ registerDialog({
         { id: "leave", label: "Cheers.", close: true },
       ],
     },
+    rat_reward_offer: {
+      text: (ctx) => `The barkeep lays out three answers to the infestation: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
+      choices: [0, 1, 2].map((index) => ({
+        id: `rat_reward_${index}`,
+        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.label || "Unavailable"),
+        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index),
+        emits: [{
+          name: "quest:reward_selected",
+          payload: (ctx) => ({
+            questId: RAT_INFESTATION_QUEST_ID,
+            playerId: ctx.actorId,
+            speakerId: ctx.targetId,
+            rewardId: questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.id || "",
+          }),
+        }],
+        to: "report_ack",
+      })),
+    },
     farmer_flour_ack: {
       text: "That'll make a fine batch of bread. Tell the farmer the town appreciates the work.",
       choices: [{ id: "leave", label: "I'll let him know.", close: true }],
@@ -797,6 +871,9 @@ registerDialog({
         }
         if (String(riftState?.node || "") === "return") {
           return "You came back with the rift's silence on you. Tell me it is done.";
+        }
+        if (String(riftState?.node || "") === "reward") {
+          return "The rift is closed. Choose the church's answer to what you faced below.";
         }
         const state = quest?.state;
         if (!state) return priestAmbientText(ctx, "May the gods watch over you.");
@@ -849,7 +926,7 @@ registerDialog({
               }),
             },
           ],
-          to: "rift_report_ack",
+          to: "rift_reward_offer",
         },
         {
           id: "accept_priest_fetch",
@@ -939,6 +1016,24 @@ registerDialog({
       choices: [
         { id: "leave", label: "Goodbye.", close: true },
       ],
+    },
+    rift_reward_offer: {
+      text: (ctx) => `The church offers one of three answers to the rift: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
+      choices: [0, 1, 2].map((index) => ({
+        id: `rift_reward_${index}`,
+        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.label || "Unavailable"),
+        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index),
+        emits: [{
+          name: "quest:reward_selected",
+          payload: (ctx) => ({
+            questId: PRIEST_RIFT_QUEST_ID,
+            playerId: ctx.actorId,
+            speakerId: ctx.targetId,
+            rewardId: questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.id || "",
+          }),
+        }],
+        to: "rift_report_ack",
+      })),
     },
   },
 });

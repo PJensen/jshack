@@ -86,6 +86,8 @@ export const GraveyardWatchQuest = registerQuest({
   version: 1,
   journal: {
     flavorText: "Father Tovin sent you below the graveyard chapel after a funerary volume that should never have been left in the dark this long.",
+    rewardItemIds: [REWARD_ITEM_ID],
+    rewardGold: REWARD_GOLD,
   },
   vars: {
     accepted: false,

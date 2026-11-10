@@ -2,13 +2,12 @@ import { DeathApplied } from "../../components/DeathApplied.js";
 import { DungeonState } from "../../components/DungeonState.js";
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
-import { createItemById } from "../../utils/itemFactory.js";
-import { addToInventory } from "../../utils/inventoryFacade.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
-import { emit, setVar } from "../actions.js";
+import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { getQuestRecord, instantiateQuest } from "../runtime.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
+import { selectedQuestRewardItemIds } from "../rewardOptions.js";
 
 export const ROOTBOUND_GROTTO_QUEST_ID = "side.rootbound_grotto";
 export const ROOTBOUND_GROTTO_TEMPLATE_ID = "rootbound_grotto";
@@ -19,7 +18,6 @@ const ROOTBOUND_HEALERS = new Set([
   "orc_bloodspeaker",
   "druid",
 ]);
-const REWARD_ITEM_ID = "book_lifebloom";
 const REWARD_GOLD = 180;
 
 function currentHerbalistId(world) {
@@ -93,7 +91,12 @@ export const RootboundGrottoQuest = registerQuest({
   },
   journal: {
     flavorText: "The herbs are growing in patterns no human planted. Something below the Strange Grove is teaching wounded creatures how to live through anything.",
-    rewardItemIds: [REWARD_ITEM_ID],
+    rewardChoice: true,
+    rewardChoices: [
+      { id: "book_lifebloom", label: "Spellbook of Lifebloom", items: [{ itemId: "book_lifebloom" }] },
+      { id: "verdant_ward", label: "Verdant Ward Kit", items: [{ itemId: "gem_emerald" }, { itemId: "scroll_enchant_venom_ward" }] },
+      { id: "greenbriar", label: "Greenbriar Recovery Kit", items: [{ itemId: "ring_health" }, { itemId: "potion_vigor", count: 2 }] },
+    ],
     rewardGold: REWARD_GOLD,
   },
   vars: {
@@ -150,26 +153,28 @@ export const RootboundGrottoQuest = registerQuest({
               && Number(ctx.payload?.speakerId || 0) === Number(ctx.bind.giver || 0)
               && String(ctx.payload?.questId || "") === ROOTBOUND_GROTTO_QUEST_ID,
             actions: [
-              setVar("rewardGranted", true),
-              (ctx) => {
-                const playerId = Number(ctx.bind.player || 0) | 0;
-                const reward = createItemById(ctx.world, REWARD_ITEM_ID);
-                if (reward > 0) addToInventory(ctx.world, playerId, reward);
-                const gold = createItemById(ctx.world, "gold", { count: REWARD_GOLD });
-                if (gold > 0) addToInventory(ctx.world, playerId, gold);
-              },
-              emit("quest:completed", (ctx) => ({
-                questId: ROOTBOUND_GROTTO_QUEST_ID,
-                playerId: ctx.bind.player,
-                giverId: ctx.bind.giver,
-                title: "The Rootbound Grotto",
-                rewardGold: REWARD_GOLD,
-                rewardItemIds: [REWARD_ITEM_ID],
-              })),
+              setVar("objective", "Choose your reward."),
+              emit("quest:advanced", (ctx) => ({ questId: ROOTBOUND_GROTTO_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, objective: "Choose your reward." })),
             ],
-            to: "complete",
+            to: "reward",
           },
         ],
+      },
+    },
+    reward: {
+      on: {
+        "quest:reward_selected": [{
+          guard: (ctx) => Number(ctx.payload?.playerId || 0) === Number(ctx.bind.player || 0)
+            && Number(ctx.payload?.speakerId || 0) === Number(ctx.bind.giver || 0)
+            && String(ctx.payload?.questId || "") === ROOTBOUND_GROTTO_QUEST_ID
+            && isSelectedReward(ctx),
+          actions: [
+            setVar("rewardGranted", true),
+            grantSelectedReward(),
+            emit("quest:completed", (ctx) => ({ questId: ROOTBOUND_GROTTO_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, title: "The Rootbound Grotto", rewardGold: REWARD_GOLD, rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId) })),
+          ],
+          to: "complete",
+        }],
       },
     },
     complete: { terminal: true, on: {} },

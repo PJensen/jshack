@@ -4,6 +4,7 @@ import { firstPlayerId } from "../../utils/worldAccess.js";
 import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { getQuestRecord, instantiateQuest } from "../runtime.js";
+import { selectedQuestRewardItemIds } from "../rewardOptions.js";
 
 export const FARMER_MILL_RUN_QUEST_ID = "side.farmer_mill_run";
 export const FARMER_MILL_RUN_REWARD_IDS = Object.freeze([
@@ -45,14 +46,13 @@ export const FarmerMillRunQuest = registerQuest({
   version: 1,
   journal: {
     flavorText: "The farmer has grain in the field, the mill has stone, and the tavern has hungry travelers. Carry one small harvest through the whole town.",
-    rewardItemIds: FARMER_MILL_RUN_REWARD_IDS,
     rewardChoice: true,
-    rewardGold: REWARD_GOLD,
-    rewardItems: [
-      { itemId: "bow_mirror", count: 1 },
-      { itemId: "tool_hatchet", count: 1 },
-      { itemId: "potion_vigor", count: 1 },
+    rewardChoices: [
+      { id: "bow_mirror", label: "Mirror Bow", items: [{ itemId: "bow_mirror" }] },
+      { id: "woodcutter_kit", label: "Woodcutter's Kit", items: [{ itemId: "tool_hatchet" }, { itemId: "scroll_enchant_fortified" }] },
+      { id: "field_medic_kit", label: "Field Medic's Kit", items: [{ itemId: "potion_vigor", count: 3 }, { itemId: "scroll_heal" }] },
     ],
+    rewardGold: REWARD_GOLD,
   },
   vars: {
     accepted: false,
@@ -150,7 +150,7 @@ export const FarmerMillRunQuest = registerQuest({
           actions: [
             grantSelectedReward(),
             setVar("objective", "Quest complete."),
-            emit("quest:completed", (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, rewardItemIds: [ctx.payload?.rewardId], rewardGold: REWARD_GOLD })),
+            emit("quest:completed", (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId), rewardGold: REWARD_GOLD })),
           ],
           to: "complete",
         }],
