@@ -23,7 +23,7 @@ function makeActor(world, x, y, hp = 10, maxHp = 10, faction = "ally") {
 Deno.test("flash_heal: restores 22% max HP and emits spell:flash_heal event", () => {
   const world = new World({ seed: 0xC0FFEE });
   const actor = makeActor(world, 8, 9, 7, 30);
-  world.add(actor, Brain, { intelligence: 99 });
+  world.add(actor, Brain, { intelligence: 10 });
   const events = [];
   world.on("spell:flash_heal", (e) => events.push(e));
 

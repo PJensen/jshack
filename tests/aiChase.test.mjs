@@ -688,11 +688,6 @@ Deno.test("spider onSeen self-throws near player, not on player, and not into wa
     const ally = world.create();
     world.add(ally, Position, { x: 10, y: 5 });
     world.add(ally, NamedIdentity, { name: "Spider", identity: "spider" });
-    world.add(ally, Faction, { key: "enemy" });
-    world.add(ally, AggroState, {
-      alertLevel: AGGRO_LEVELS.hunting,
-      lastKnownX: 5, lastKnownY: 5, searchTurnsLeft: 10, retreating: false,
-    });
 
     aiChaseSystem(world);
 
@@ -749,11 +744,6 @@ Deno.test("spider onSeen self-throw is cooldown-gated for 3 turns", () => {
     const ally = world.create();
     world.add(ally, Position, { x: 10, y: 5 });
     world.add(ally, NamedIdentity, { name: "Spider", identity: "spider" });
-    world.add(ally, Faction, { key: "enemy" });
-    world.add(ally, AggroState, {
-      alertLevel: AGGRO_LEVELS.hunting,
-      lastKnownX: 5, lastKnownY: 5, searchTurnsLeft: 10, retreating: false,
-    });
 
     world.step = 0;
     proposeChase(world);

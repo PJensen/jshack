@@ -7,6 +7,7 @@ import { Status } from "../src/rules/components/Status.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { CastSpellIntent } from "../src/rules/components/Intents/CastSpellIntent.js";
 import { castSpellSystem } from "../src/rules/systems/castSpellSystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
 
 function configureCaster(world, learnedSpellIds) {
   const caster = createPlayer(world, { name: "Mage" });
@@ -93,7 +94,10 @@ Deno.test("castSpellSystem: blink is not replaced by confusion miscast logic", (
 
 Deno.test("castSpellSystem: flash_heal remains reliable while confused", () => {
   const world = new World({ seed: 0xC0FFEE });
-  world.setScheduler((w) => castSpellSystem(w));
+  world.setScheduler((w) => {
+    channelingSystem(w);
+    castSpellSystem(w);
+  });
   const caster = configureCaster(world, ["flash_heal", "lightning"]);
 
   const vit = world.get(caster, Vitality);
@@ -108,6 +112,7 @@ Deno.test("castSpellSystem: flash_heal remains reliable while confused", () => {
   world.on("spell:fizzle", (e) => fizzleEvents.push(e));
 
   world.add(caster, CastSpellIntent, { spellId: "flash_heal" });
+  world.tick(1);
   world.tick(1);
 
   assertEquals(miscastEvents.length, 0, "flash_heal should not miscast while confused");
