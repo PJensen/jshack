@@ -1,7 +1,0 @@
-can we make thective quest overlay thing only as wide as it needs to be please.
-
-right now it takes up the full width of the sceen.
-
----
-
-commit and push whne done.
