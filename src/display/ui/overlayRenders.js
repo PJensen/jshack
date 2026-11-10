@@ -561,7 +561,7 @@ function questNodeLabel(node, status) {
 
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
- * @param {Array<{questId:string, title:string, status:string, node:string, t0:number, summary?:string, flavorText?:string, rewardText?:string, rewardItems?:Array<{itemId?:string,name?:string,description?:string,count?:number}>, rewardGold?:number, completionText?:string, progress?:number, target?:number, checklist?:Array<{text?:string, done?:boolean}>}>} quests
+ * @param {Array<{questId:string, title:string, status:string, node:string, t0:number, summary?:string, flavorText?:string, rewardText?:string, rewardItems?:Array<{itemId?:string,name?:string,description?:string,count?:number,choiceId?:string,choiceLabel?:string}>, rewardGold?:number, completionText?:string, progress?:number, target?:number, checklist?:Array<{text?:string, done?:boolean}>}>} quests
  */
 export function renderQuestJournal(panel, quests) {
   const el = /** @type {HTMLDivElement} */ (/** @type {any} */ (panel)._inner);
@@ -817,6 +817,7 @@ export function renderQuestJournal(panel, quests) {
             rewardBlock.appendChild(gold);
           }
           body.appendChild(rewardBlock);
+
         }
 
         const checklist = Array.isArray(q.checklist) ? q.checklist : [];
@@ -860,6 +861,102 @@ export function renderQuestJournal(panel, quests) {
   }
 
   appendSection(tab === 'completed' ? 'Completed' : 'Active', visibleQuests);
+}
+
+/**
+ * Render the canonical quest turn-in window. Reward selection belongs here,
+ * after the NPC has accepted the report, rather than in dialogue choices.
+ * @param {HTMLDivElement} panel
+ * @param {any} quest
+ */
+export function renderQuestReward(panel, quest) {
+  panel.innerHTML = '';
+  Object.assign(panel.style, {
+    position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
+    width: 'min(92vw, 460px)', maxHeight: 'min(84vh, 680px)', overflowY: 'auto',
+    padding: '22px', background: 'rgba(16, 21, 29, 0.98)', border: '1px solid #8ca2ba',
+    borderRadius: '12px', boxShadow: '0 18px 60px rgba(0,0,0,0.65)', zIndex: '1400',
+  });
+
+  const title = document.createElement('div');
+  title.textContent = String(quest?.title || 'Quest Complete');
+  Object.assign(title.style, { fontSize: '20px', fontWeight: '700', color: '#f3e6b3', marginBottom: '14px' });
+  panel.appendChild(title);
+
+  const flavor = document.createElement('div');
+  flavor.textContent = String(quest?.flavorText || 'Your work is complete.');
+  Object.assign(flavor.style, { fontSize: '14px', lineHeight: '1.5', color: '#e8edf5', whiteSpace: 'pre-wrap', marginBottom: '18px' });
+  panel.appendChild(flavor);
+  const completionText = String(quest?.completionText || '').trim();
+  if (completionText && completionText !== String(quest?.flavorText || '').trim()) {
+    const outcome = document.createElement('div');
+    outcome.textContent = completionText;
+    Object.assign(outcome.style, { fontSize: '13px', lineHeight: '1.45', color: '#b9d7c0', marginTop: '-8px', marginBottom: '18px' });
+    panel.appendChild(outcome);
+  }
+
+  const rewardHeading = document.createElement('div');
+  rewardHeading.textContent = 'Rewards';
+  Object.assign(rewardHeading.style, { fontSize: '11px', color: '#ad9f8d', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' });
+  panel.appendChild(rewardHeading);
+
+  const selected = String((/** @type {any} */ (panel))._selectedReward || '');
+  const items = Array.isArray(quest?.rewardItems) ? quest.rewardItems : [];
+  const choiceIds = [...new Set(items.map((item) => String(item.choiceId || item.itemId || '')))].filter(Boolean);
+  for (const choiceId of choiceIds) {
+    const choiceItems = items.filter((item) => String(item.choiceId || item.itemId || '') === choiceId);
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.textContent = String(choiceItems[0]?.choiceLabel || '').trim()
+      || choiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
+    Object.assign(row.style, {
+      display: 'block', width: '100%', padding: '11px 12px', margin: '6px 0', textAlign: 'left',
+      border: selected === choiceId ? '1px solid #d8b45a' : UI.BORDER, borderRadius: UI.RADIUS,
+      background: selected === choiceId ? 'rgba(100, 75, 25, 0.55)' : 'rgba(36, 46, 58, 0.82)',
+      color: '#ffd85a', font: 'inherit', cursor: 'pointer',
+    });
+    row.addEventListener('click', () => {
+      (/** @type {any} */ (panel))._selectedReward = choiceId;
+      renderQuestReward(panel, quest);
+    });
+    panel.appendChild(row);
+  }
+
+  const gold = Math.max(0, Number(quest?.rewardGold || 0) | 0);
+  if (gold > 0) {
+    const goldLine = document.createElement('div');
+    goldLine.textContent = `${gold} gold`;
+    Object.assign(goldLine.style, { color: '#ffd85a', fontSize: '13px', margin: '10px 0 4px' });
+    panel.appendChild(goldLine);
+  }
+
+  const warning = document.createElement('div');
+  warning.textContent = 'Select a reward before completing this quest.';
+  Object.assign(warning.style, { display: 'none', color: '#f07878', fontSize: '12px', marginTop: '10px' });
+  panel.appendChild(warning);
+
+  const actions = document.createElement('div');
+  Object.assign(actions.style, { display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '18px' });
+  const close = document.createElement('button');
+  close.type = 'button'; close.textContent = 'Close';
+  Object.assign(close.style, { minHeight: '42px', padding: '8px 14px', borderRadius: '999px', border: UI.BORDER, background: 'transparent', color: '#b6c4d6', font: 'inherit', cursor: 'pointer' });
+  close.addEventListener('click', () => {
+    if (!selected) {
+      warning.style.display = 'block';
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('ui:closeQuestReward'));
+  });
+  actions.appendChild(close);
+  const complete = document.createElement('button');
+  complete.type = 'button'; complete.textContent = 'Complete'; complete.disabled = !selected;
+  Object.assign(complete.style, { minHeight: '42px', padding: '8px 18px', borderRadius: '999px', border: '1px solid #c99d3c', background: selected ? 'rgba(125, 87, 24, 0.95)' : 'rgba(60, 60, 60, 0.6)', color: selected ? '#fff1b0' : '#8994a0', font: 'inherit', fontWeight: '700', cursor: selected ? 'pointer' : 'default' });
+  complete.addEventListener('click', () => {
+    if (!selected) { warning.style.display = 'block'; return; }
+    window.dispatchEvent(new CustomEvent('ui:requestQuestReward', { detail: { questId: quest.questId, rewardId: selected } }));
+  });
+  actions.appendChild(complete);
+  panel.appendChild(actions);
 }
 
 /**

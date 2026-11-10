@@ -1015,6 +1015,8 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
           description: item.description,
           count: item.count,
           tooltip: item.tooltip,
+          choiceId: item.choiceId,
+          choiceLabel: item.choiceLabel,
         })),
         rewardGold: Math.max(0, Number(vars?.data?.rewardGold || questDef?.journal?.rewardGold || 0) | 0),
         completionText,
@@ -1032,6 +1034,23 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
     }
     const quests = Array.from(questMap.values()).sort((a, b) => a.t0 - b.t0 || a.title.localeCompare(b.title));
     _uiEventTarget.dispatchEvent(new CustomEvent('ui:questJournalData', { detail: { quests } }));
+  });
+
+  addEventListener('ui:requestQuestReward', (ev) => {
+    const questId = String(ev?.detail?.questId || '').trim();
+    const rewardId = String(ev?.detail?.rewardId || '').trim();
+    const playerId = Number(playerEntity(world)?.id || 0) | 0;
+    if (!questId || !rewardId || !(playerId > 0)) return;
+    world.emit('quest:reward_selected', { questId, playerId, rewardId });
+    _uiEventTarget.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
+  });
+
+  world.on('quest:advanced', (payload) => {
+    if (/choose (?:your|one|the town) reward/i.test(String(payload?.objective || ''))) {
+      queueMicrotask(() => _uiEventTarget.dispatchEvent(new CustomEvent('ui:openQuestReward', {
+        detail: { questId: String(payload?.questId || '') },
+      })));
+    }
   });
 
   return { buildGroundPickupDetailAt };

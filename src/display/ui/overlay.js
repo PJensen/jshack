@@ -40,7 +40,7 @@ import {
 export { renderItemDetails } from './overlayUtils.js';
 
 import {
-  renderInventory, renderSettings, renderQuestJournal, renderTownBoard,
+  renderInventory, renderSettings, renderQuestJournal, renderQuestReward, renderTownBoard,
   renderCharacterSheet, renderEquipment, renderSpellPicker, renderMessageLog,
   renderAltarOfferChooser, renderActionChooser, renderDipChooser, renderPickupChooser, renderUseChooser,
   renderThrowChooser, renderApplyToolChooser, renderApplyTargetChooser, renderSlotChooser,
@@ -54,6 +54,7 @@ export function initOverlays() {
   const equip = ensurePanel('equipment');
   const settingsPanel = ensurePanel('settings');
   const questJournal = ensurePanel('quests');
+  const questReward = ensurePanel('questReward');
   const townBoard = ensurePanel('townBoard');
   const mailbox = ensurePanel('mailbox');
   const log = ensurePanel('messageLog');
@@ -372,6 +373,15 @@ export function initOverlays() {
     show(questJournal);
     window.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });
+  window.addEventListener('ui:openQuestReward', (ev) => {
+    const questId = String(ev?.detail?.questId || '');
+    (/** @type {any} */ (questReward))._questId = questId;
+    (/** @type {any} */ (questReward))._selectedReward = '';
+    hideCharMenuPanels();
+    show(questReward);
+    window.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
+  });
+  window.addEventListener('ui:closeQuestReward', () => hide(questReward));
   window.addEventListener('ui:openTownBoard', () => {
     hideCharMenuPanels();
     show(townBoard);
@@ -658,6 +668,12 @@ export function initOverlays() {
     const e = ev;
     const quests = Array.isArray(e?.detail?.quests) ? e.detail.quests : [];
     if (questJournal.style.display === 'block') renderQuestJournal(questJournal, quests);
+    if (questReward.style.display === 'block') {
+      const questId = String((/** @type {any} */ (questReward))._questId || '');
+      const quest = quests.find((entry) => entry.questId === questId && entry.node === 'reward');
+      if (quest) renderQuestReward(questReward, quest);
+      else hide(questReward);
+    }
   });
   window.addEventListener('ui:townBoardData', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore

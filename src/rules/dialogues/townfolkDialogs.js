@@ -405,15 +405,8 @@ registerDialog({
           label: "The flour is delivered.",
           visible: (ctx) => String(farmerMillRunQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "return",
           emits: [{ name: "dialog:reported", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
-          to: "reward",
+          close: true,
         },
-        ...[0, 1, 2].map((index) => ({
-          id: `farmer_reward_${index}`,
-          label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index)?.label || "Unavailable"),
-          visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index),
-          emits: [{ name: "quest:reward_selected", payload: (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId, rewardId: questRewardChoice(ctx.world, ctx.actorId, FARMER_MILL_RUN_QUEST_ID, index)?.id || "" }) }],
-          to: "reward_ack",
-        })),
         { id: "leave", label: "Goodbye.", close: true },
       ],
     },
@@ -482,7 +475,7 @@ registerDialog({
               speakerId: ctx.targetId,
             }),
           }],
-          to: "rootbound_reward_offer",
+          close: true,
         },
         { id: "leave", label: "Goodbye.", close: true },
       ],
@@ -496,22 +489,8 @@ registerDialog({
       choices: [{ id: "leave", label: "Goodbye.", close: true }],
     },
     rootbound_reward_offer: {
-      text: (ctx) => `The herbalist offers one of three gifts from the grove: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
-      choices: [0, 1, 2].map((index) => ({
-        id: `rootbound_reward_${index}`,
-        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.label || "Unavailable"),
-        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index),
-        emits: [{
-          name: "quest:reward_selected",
-          payload: (ctx) => ({
-            questId: ROOTBOUND_GROTTO_QUEST_ID,
-            playerId: ctx.actorId,
-            speakerId: ctx.targetId,
-            rewardId: questRewardChoice(ctx.world, ctx.actorId, ROOTBOUND_GROTTO_QUEST_ID, index)?.id || "",
-          }),
-        }],
-        to: "report_ack",
-      })),
+      text: "The herbalist has set your reward aside. Choose it from the completed quest in your journal.",
+      choices: [{ id: "leave", label: "I'll choose it from my journal.", close: true }],
     },
   },
 });
@@ -576,7 +555,7 @@ registerDialog({
               speakerId: ctx.targetId,
             }),
           }],
-          to: "reward_offer",
+          close: true,
         },
         { id: "leave", label: "Goodbye.", close: true },
       ],
@@ -593,22 +572,8 @@ registerDialog({
       choices: [{ id: "leave", label: "Goodbye.", close: true }],
     },
     reward_offer: {
-      text: (ctx) => `The trophy is secured. Choose one: ${[0, 1, 2].map((index) => String(runContractRewardChoice(ctx.world, ctx.actorId, index)?.label || "reward")).join(", ")}.`,
-      choices: [0, 1, 2].map((index) => ({
-        id: `run_contract_reward_${index}`,
-        label: (ctx) => String(runContractRewardChoice(ctx.world, ctx.actorId, index)?.label || "Unavailable"),
-        visible: (ctx) => !!runContractRewardChoice(ctx.world, ctx.actorId, index),
-        emits: [{
-          name: "quest:reward_selected",
-          payload: (ctx) => ({
-            questId: RUN_CONTRACT_QUEST_ID,
-            playerId: ctx.actorId,
-            speakerId: ctx.targetId,
-            rewardId: runContractRewardChoice(ctx.world, ctx.actorId, index)?.id || "",
-          }),
-        }],
-        to: "report_ack",
-      })),
+      text: "The trophy is secured. Choose your town reward from the completed quest in your journal.",
+      choices: [{ id: "leave", label: "I'll choose it from my journal.", close: true }],
     },
   },
 });
@@ -765,7 +730,7 @@ registerDialog({
               }),
             },
           ],
-          to: "rat_reward_offer",
+          close: true,
         },
         {
           id: "progress",
@@ -826,22 +791,8 @@ registerDialog({
       ],
     },
     rat_reward_offer: {
-      text: (ctx) => `The barkeep lays out three answers to the infestation: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
-      choices: [0, 1, 2].map((index) => ({
-        id: `rat_reward_${index}`,
-        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.label || "Unavailable"),
-        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index),
-        emits: [{
-          name: "quest:reward_selected",
-          payload: (ctx) => ({
-            questId: RAT_INFESTATION_QUEST_ID,
-            playerId: ctx.actorId,
-            speakerId: ctx.targetId,
-            rewardId: questRewardChoice(ctx.world, ctx.actorId, RAT_INFESTATION_QUEST_ID, index)?.id || "",
-          }),
-        }],
-        to: "report_ack",
-      })),
+      text: "The barkeep has set your reward aside. Choose it from the completed quest in your journal.",
+      choices: [{ id: "leave", label: "I'll choose it from my journal.", close: true }],
     },
     farmer_flour_ack: {
       text: "That'll make a fine batch of bread. Tell the farmer the town appreciates the work.",
@@ -926,7 +877,7 @@ registerDialog({
               }),
             },
           ],
-          to: "rift_reward_offer",
+          close: true,
         },
         {
           id: "accept_priest_fetch",
@@ -1018,22 +969,8 @@ registerDialog({
       ],
     },
     rift_reward_offer: {
-      text: (ctx) => `The church offers one of three answers to the rift: ${[0, 1, 2].map((index) => String(questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.label || "reward")).join(", ")}.`,
-      choices: [0, 1, 2].map((index) => ({
-        id: `rift_reward_${index}`,
-        label: (ctx) => String(questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.label || "Unavailable"),
-        visible: (ctx) => !!questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index),
-        emits: [{
-          name: "quest:reward_selected",
-          payload: (ctx) => ({
-            questId: PRIEST_RIFT_QUEST_ID,
-            playerId: ctx.actorId,
-            speakerId: ctx.targetId,
-            rewardId: questRewardChoice(ctx.world, ctx.actorId, PRIEST_RIFT_QUEST_ID, index)?.id || "",
-          }),
-        }],
-        to: "rift_report_ack",
-      })),
+      text: "The church has set your reward aside. Choose it from the completed quest in your journal.",
+      choices: [{ id: "leave", label: "I'll choose it from my journal.", close: true }],
     },
   },
 });
