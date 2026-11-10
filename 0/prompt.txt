@@ -1,0 +1,9 @@
+wow -- that is absolutely amazing -- I have no idea how to "maintain" this -- but I absolutely love the outcome.
+
+---
+
+one quick note, quick use item bar should use item icons, healing potion identity is such that is falls back to unicode.
+
+---
+
+??? and where is the changes??
