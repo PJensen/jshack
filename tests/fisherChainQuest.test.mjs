@@ -93,4 +93,5 @@ Deno.test("fisher chain counts fish, then sand crab deaths unlock the final turn
   world.emit("dialog:reported", { questId: FISHER_CRAB_CLEANUP_QUEST_ID, playerId: player, speakerId: fisher });
   assertEquals(world.get(crabQuest.id, QuestState)?.status, "complete");
   assertEquals(world.get(crabQuest.id, QuestVars)?.data?.killCount, 5);
+  assertEquals(countItem(world, player, "food_golden_carp"), 1);
 });

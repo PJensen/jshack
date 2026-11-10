@@ -213,7 +213,7 @@ export const FisherCrabCleanupQuest = registerQuest({
   id: FISHER_CRAB_CLEANUP_QUEST_ID,
   title: "Crabs in the Reeds",
   version: 1,
-  journal: { flavorText: "Sand crabs are tearing at the fisher's nets and eating the bait before the fish can reach it.", rewardItemIds: ["fishing_kelp"], rewardGold: 60 },
+  journal: { flavorText: "Sand crabs are tearing at the fisher's nets and eating the bait before the fish can reach it.", rewardItemIds: ["food_golden_carp"], rewardGold: 60 },
   vars: { accepted: false, killCount: 0, objective: "Talk to the fisher." },
   nodes: {
     offer: { on: { "dialog:accepted": [{
@@ -224,7 +224,7 @@ export const FisherCrabCleanupQuest = registerQuest({
     hunt: { on: {} },
     report: { on: { "dialog:reported": [{
       guard: (ctx) => playerPayload(ctx) && fisherSpeaker(ctx) && String(ctx.payload?.questId || "") === FISHER_CRAB_CLEANUP_QUEST_ID,
-      actions: [grantItem("fishing_kelp"), grantItem("gold", 60), emit("quest:completed", (ctx) => ({ questId: FISHER_CRAB_CLEANUP_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, title: "Crabs in the Reeds", rewardItemIds: ["fishing_kelp"], rewardGold: 60 }))],
+      actions: [grantItem("food_golden_carp"), grantItem("gold", 60), emit("quest:completed", (ctx) => ({ questId: FISHER_CRAB_CLEANUP_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, title: "Crabs in the Reeds", rewardItemIds: ["food_golden_carp"], rewardGold: 60 }))],
       to: "complete",
     }] } },
     complete: { terminal: true, on: {} },
