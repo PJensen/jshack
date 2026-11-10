@@ -3,7 +3,7 @@
   "checkpoint_id": "01M734DGQYYM2NSVE4PVR2P3TE",
   "session_id": "01a1c642-bc3c-75b1-81e9-77ebf17b9d67",
   "strategy": "manual-commit",
-  "created_at": "2026-11-10T16:24:54.523525227Z",
+  "created_at": "2026-11-10T16:24:55.454056614Z",
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
@@ -15,7 +15,14 @@
   "turn_id": "21d8f98c2a3a",
   "checkpoint_transcript_start": 218,
   "transcript_lines_at_start": 218,
-  "compact_transcript_start": 38,
+  "compact_transcript_start": 37,
+  "token_usage": {
+    "input_tokens": 213,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 54400,
+    "output_tokens": 263,
+    "api_call_count": 1
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
