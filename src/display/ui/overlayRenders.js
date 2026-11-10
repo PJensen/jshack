@@ -19,6 +19,7 @@ import {
   readInputMode, readWalkInterval, writeInputMode, writeWalkInterval,
   WALK_INTERVAL_MIN, WALK_INTERVAL_MAX,
 } from '../input/inputSettings.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
 import { DEFAULT_AI_ENDPOINT } from '../../shared/aiSettings.js';
 import { versionLoaded } from '../../shared/version.js';
 import { SAVEGAME_KEY } from '../../shared/savegameKeys.js';
@@ -559,6 +560,15 @@ function questNodeLabel(node, status) {
   }
 }
 
+function appendRewardIcon(parent, item, size = 22) {
+  const icon = document.createElement('span');
+  const identity = String(item?.tooltip?.identity || item?.itemId || '');
+  const fallback = String(item?.tooltip?.glyph || item?.glyph || '');
+  applyAtlasIcon(icon, ITEM_ICON_ATLAS, identity, fallback, size);
+  Object.assign(icon.style, { flex: '0 0 auto', verticalAlign: 'middle' });
+  parent.appendChild(icon);
+}
+
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
  * @param {Array<{questId:string, title:string, status:string, node:string, t0:number, summary?:string, flavorText?:string, rewardText?:string, rewardItems?:Array<{itemId?:string,name?:string,description?:string,count?:number,choiceId?:string,choiceLabel?:string}>, rewardGold?:number, completionText?:string, progress?:number, target?:number, checklist?:Array<{text?:string, done?:boolean}>}>} quests
@@ -790,10 +800,14 @@ export function renderQuestJournal(panel, quests) {
           for (const item of rewardItems) {
             const button = document.createElement('button');
             button.type = 'button';
-            button.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
+            Object.assign(button.style, { display: 'flex', alignItems: 'center', gap: '6px' });
+            appendRewardIcon(button, item, 20);
+            const label = document.createElement('span');
+            label.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
+            button.appendChild(label);
             button.setAttribute('aria-label', `Show tooltip for ${String(item.name || item.itemId || 'reward item')}`);
             Object.assign(button.style, {
-              display: 'block', padding: '3px 0', border: '0', background: 'transparent',
+              padding: '3px 0', border: '0', background: 'transparent',
               color: '#ffd85a', cursor: 'pointer', fontSize: '12px', textAlign: 'left',
               textDecoration: 'underline',
             });
@@ -905,20 +919,45 @@ export function renderQuestReward(panel, quest) {
   const choiceIds = [...new Set(items.map((item) => String(item.choiceId || item.itemId || '')))].filter(Boolean);
   for (const choiceId of choiceIds) {
     const choiceItems = items.filter((item) => String(item.choiceId || item.itemId || '') === choiceId);
-    const row = document.createElement('button');
-    row.type = 'button';
-    row.textContent = String(choiceItems[0]?.choiceLabel || '').trim()
-      || choiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
+    const row = document.createElement('div');
     Object.assign(row.style, {
-      display: 'block', width: '100%', padding: '11px 12px', margin: '6px 0', textAlign: 'left',
+      width: '100%', padding: '9px 12px', margin: '6px 0', textAlign: 'left',
       border: selected === choiceId ? '1px solid #d8b45a' : UI.BORDER, borderRadius: UI.RADIUS,
       background: selected === choiceId ? 'rgba(100, 75, 25, 0.55)' : 'rgba(36, 46, 58, 0.82)',
-      color: '#ffd85a', font: 'inherit', cursor: 'pointer',
+      color: '#ffd85a',
     });
-    row.addEventListener('click', () => {
+    const select = document.createElement('button');
+    select.type = 'button';
+    select.textContent = String(choiceItems[0]?.choiceLabel || '').trim()
+      || choiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
+    Object.assign(select.style, {
+      display: 'block', width: '100%', padding: '2px 0 7px', textAlign: 'left',
+      border: '0', background: 'transparent', color: '#ffd85a', font: 'inherit', cursor: 'pointer',
+    });
+    select.addEventListener('click', () => {
       (/** @type {any} */ (panel))._selectedReward = choiceId;
       renderQuestReward(panel, quest);
     });
+    row.appendChild(select);
+    for (const item of choiceItems) {
+      const inspect = document.createElement('button');
+      inspect.type = 'button';
+      inspect.setAttribute('aria-label', `Show tooltip for ${String(item.name || item.itemId || 'reward item')}`);
+      Object.assign(inspect.style, {
+        display: 'flex', alignItems: 'center', gap: '7px', width: '100%', padding: '3px 0',
+        border: '0', background: 'transparent', color: '#dbe9f6', cursor: 'pointer', font: 'inherit', textAlign: 'left',
+      });
+      appendRewardIcon(inspect, item, 28);
+      const itemLabel = document.createElement('span');
+      itemLabel.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')} · inspect details`;
+      inspect.appendChild(itemLabel);
+      inspect.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showItemTooltip(item.tooltip || item, inspect, { pinBottomOnMobile: true });
+      });
+      row.appendChild(inspect);
+    }
     panel.appendChild(row);
   }
 

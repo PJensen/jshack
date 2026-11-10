@@ -1,5 +1,6 @@
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import { getGem } from "../../rules/data/gems.js";
+import { getProcPackage } from "../../rules/data/procPackages.js";
 import { listQuestRewardBonusItems, listQuestRewardOptions } from "../../rules/quests/rewardOptions.js";
 
 /**
@@ -26,6 +27,17 @@ export function describeQuestRewardItem(itemId) {
   const rarityName = String(def?.rarityName || (["common", "uncommon", "rare", "epic", "legendary"][rarity] || "common"));
   const type = String(def?.type || (gem ? "gem" : "item"));
   const slot = String(def?.slot || (type === "ranged" ? "ranged" : type === "weapon" ? "weapon" : ""));
+  const mechanics = [];
+  for (const ability of Object.values(def?._contentAbilities || {})) {
+    const text = String(ability?.displayFormat || ability?.description || "").trim();
+    if (text) mechanics.push({ context: `Use — ${String(ability?.name || ability?.id || "Ability")}`, text });
+  }
+  for (const packageId of Array.isArray(def?.procPackages) ? def.procPackages : []) {
+    const pkg = getProcPackage(packageId);
+    const format = pkg?.display?.format || "{summary}";
+    const text = String(format).replace(/\{summary\}/g, String(pkg?.summary || ""));
+    if (text.trim()) mechanics.push({ context: String(pkg?.display?.context || "Equip"), text: text.trim() });
+  }
   return {
     itemId: id,
     name,
@@ -36,6 +48,7 @@ export function describeQuestRewardItem(itemId) {
       type,
       name,
       slot,
+      iconId: id,
       rarityName,
       description,
       bonuses: def?.bonuses && typeof def.bonuses === "object" ? { ...def.bonuses } : {},
@@ -45,7 +58,7 @@ export function describeQuestRewardItem(itemId) {
       weight: Number(def?.weight || 0),
       glyph: String(def?.glyph || ""),
       glyphColor: String(def?.color || "#cfe8ff"),
-      mechanics: [],
+      mechanics,
       affixes: [],
       detailLines: [],
       targetEffects: [],

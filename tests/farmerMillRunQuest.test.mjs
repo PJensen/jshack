@@ -86,6 +86,9 @@ Deno.test("farmer mill run reward is presented as a choice in the journal", () =
     "Choose one: Mirror Bow, Work Hatchet, Health Potion; plus 85 gold",
   );
   const mirrorBow = listQuestRewardItems(quest, {})[0];
+  assertEquals(mirrorBow.tooltip.identity, "bow_mirror");
+  assertEquals(mirrorBow.tooltip.iconId, "bow_mirror");
   assertEquals(mirrorBow.tooltip.damageDice, "1d6");
   assertEquals(mirrorBow.tooltip.bonuses.attack, 2);
+  assert(mirrorBow.tooltip.mechanics.some((entry) => String(entry.text).includes("Wall-adjacent")));
 });
