@@ -15,7 +15,7 @@
   "turn_id": "b8a426ec4f4a",
   "checkpoint_transcript_start": 150,
   "transcript_lines_at_start": 150,
-  "compact_transcript_start": 25,
+  "compact_transcript_start": 24,
   "redaction": {
     "replacements": 0,
     "layers": {
