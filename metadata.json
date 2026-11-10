@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "src/rules/quests/definitions/fisherChain.js",
     "tests/fisherChainQuest.test.mjs"
   ],
@@ -17,6 +18,13 @@
       "prompt": ""
     }
   ],
+  "token_usage": {
+    "input_tokens": 841,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 309248,
+    "output_tokens": 382,
+    "api_call_count": 2
+  },
   "redaction": {
     "replacements": 0,
     "layers": {

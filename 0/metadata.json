@@ -3,10 +3,11 @@
   "checkpoint_id": "01M73NMZ29W04MRJWM9BGEXC26",
   "session_id": "01a1c735-c8ae-7e83-a706-e299844e946d",
   "strategy": "manual-commit",
-  "created_at": "2026-11-10T21:26:02.226594172Z",
+  "created_at": "2026-11-10T21:26:28.643189843Z",
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "src/rules/quests/definitions/fisherChain.js",
     "tests/fisherChainQuest.test.mjs"
   ],
@@ -15,7 +16,14 @@
   "turn_id": "a98215bfa793",
   "checkpoint_transcript_start": 330,
   "transcript_lines_at_start": 330,
-  "compact_transcript_start": 58,
+  "compact_transcript_start": 57,
+  "token_usage": {
+    "input_tokens": 841,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 309248,
+    "output_tokens": 382,
+    "api_call_count": 2
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
