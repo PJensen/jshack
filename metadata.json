@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M733ZVY3NHCA8Z0HZBMFBJJ2",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "src/main/ui/questRewards.js",
+    "src/rules/dialogues/townfolkDialogs.js",
+    "src/rules/quests/actions.js",
+    "src/rules/quests/definitions/farmerMillRun.js",
+    "src/rules/quests/definitions/graveyardWatch.js",
+    "src/rules/quests/definitions/priestRift.js",
+    "src/rules/quests/definitions/ratInfestation.js",
+    "src/rules/quests/definitions/rootboundGrotto.js",
+    "src/rules/quests/definitions/runContract.js",
+    "src/rules/quests/rewardOptions.js",
+    "tests/hudQuestTracker.test.mjs",
+    "tests/questJournalData.test.mjs",
+    "tests/questRewardOptions.test.mjs",
+    "tests/runContract.test.mjs",
+    "tests/townDialogQuestIntegration.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 254911,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 21108480,
+    "output_tokens": 51674,
+    "api_call_count": 128,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
