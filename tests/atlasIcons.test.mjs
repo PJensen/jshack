@@ -20,6 +20,8 @@ function stubElement() {
 Deno.test("icon atlases point at WebP sheets and preserve status fallbacks", () => {
   assert(SPELL_ICON_ATLAS.entries.has("lightning"));
   assert(ITEM_ICON_ATLAS.entries.has("scroll_identify"));
+  assert(ITEM_ICON_ATLAS.entries.has("potion_health"));
+  assert(ITEM_ICON_ATLAS.entries.has("healing_potion"));
   assert(STATUS_ICON_ATLAS.entries.has("satiated"));
   assert(STATUS_ICON_ATLAS.entries.has("stunned"));
   assert(STATUS_ICON_ATLAS.entries.has("unknown"));

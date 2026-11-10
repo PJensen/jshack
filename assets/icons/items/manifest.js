@@ -1719,6 +1719,16 @@ export default {
       "y": 14
     },
     {
+      "id": "potion_health",
+      "x": 6,
+      "y": 14
+    },
+    {
+      "id": "healing_potion",
+      "x": 6,
+      "y": 14
+    },
+    {
       "id": "potion_water",
       "x": 7,
       "y": 14
