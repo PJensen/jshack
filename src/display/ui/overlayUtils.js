@@ -5,6 +5,7 @@ import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
 import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
 
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
@@ -2031,14 +2032,16 @@ export function renderItemDetails(container, it) {
     marginBottom: '4px',
   });
   const glyphText = String(it.glyph || '').trim();
-  if (glyphText) {
+  const identity = String(it.identity || it.details?.identity || '');
+  if (glyphText || ITEM_ICON_ATLAS.entries.has(identity)) {
     const glyphSpan = document.createElement('span');
-    glyphSpan.textContent = glyphText;
+    const hasAtlasIcon = applyAtlasIcon(glyphSpan, ITEM_ICON_ATLAS, identity, glyphText, 24);
     Object.assign(glyphSpan.style, {
       color: String(it.glyphColor || '#cfe8ff'),
       fontSize: '14px',
       lineHeight: '1',
     });
+    if (!hasAtlasIcon) glyphSpan.textContent = glyphText;
     title.appendChild(glyphSpan);
   }
   const nameSpan = document.createElement('span');

@@ -88,7 +88,7 @@ export function createActiveSpellController(world) {
     try {
       if (uiTarget && typeof uiTarget.dispatchEvent === "function") {
         uiTarget.dispatchEvent(new CustomEvent("ui:updateActiveSpellLabel", {
-          detail: { id: activeSpellId, name, symbol, cost, canCast, costKind }
+          detail: { id: activeSpellId, name, symbol, iconAtlas: "spells", iconId: activeSpellId, cost, canCast, costKind }
         }));
       }
     } catch (e) { console.debug('[activeSpellController] dispatch ui:updateActiveSpellLabel:', e); }

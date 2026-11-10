@@ -9,6 +9,7 @@ import { GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { createPinnedItemSlots } from './pinnedItemSlots.js';
 import { createMobileSpellRadial } from './mobileRadial.js';
 import { createPinnedSpellDock } from './spellDock.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
 
 const HUD_BUTTON_BG = 'linear-gradient(180deg, #2a2f35 0%, #1f2329 100%)';
 const HUD_BUTTON_ACTIVE_BG = 'linear-gradient(180deg, #3a3328 0%, #2a231c 100%)';
@@ -1063,6 +1064,13 @@ export function initHUD() {
       const iconSpan = document.createElement('span');
       iconSpan.textContent = icon;
       iconSpan.style.lineHeight = '1';
+      applyAtlasIcon(
+        iconSpan,
+        btn.dataset.iconAtlas === 'items' ? ITEM_ICON_ATLAS : SPELL_ICON_ATLAS,
+        btn.dataset.iconId || '',
+        icon,
+        22,
+      );
       btn.appendChild(iconSpan);
       if (barLabel) {
         const labelSpan = document.createElement('span');
@@ -1316,9 +1324,13 @@ export function initHUD() {
     const costSuffix = costKind === 'stamina' ? ' stam' : costKind === 'life' ? ' hp' : '';
     setDesktopLabel(castBtn, name ? (cost ? `Cast [${name}] (${cost}${costSuffix})` : `Cast [${name}]`) : 'Cast');
     if (symbol) {
+      castBtn.dataset.iconAtlas = e?.detail?.iconAtlas || 'spells';
+      castBtn.dataset.iconId = e?.detail?.iconId || e?.detail?.id || '';
       setDesktopIcon(castBtn, symbol);
       setMobileIcon(castBtn, symbol);
     } else {
+      delete castBtn.dataset.iconAtlas;
+      delete castBtn.dataset.iconId;
       setDesktopIcon(castBtn, ACTION_ICONS.cast);
       setMobileIcon(castBtn, ACTION_ICONS.cast);
     }
@@ -1684,7 +1696,13 @@ export function initHUD() {
       const onCooldown = cdRemaining > 0 && cdMax > 0;
 
       if (spell && spell.id) {
-        iconSpan.textContent = spell.symbol || ACTION_ICONS.cast;
+        applyAtlasIcon(
+          iconSpan,
+          spell.iconAtlas === 'items' ? ITEM_ICON_ATLAS : SPELL_ICON_ATLAS,
+          spell.iconId || spell.id,
+          spell.symbol || ACTION_ICONS.cast,
+          28,
+        );
         if (spell.kind === 'item-use') {
           btn.style.opacity = onCooldown ? '0.5' : '1';
           btn.style.borderColor = '#6e5f2b';
@@ -2611,7 +2629,8 @@ function renderQuickChip(it, h) {
   });
 
   const glyph = document.createElement('span');
-  glyph.textContent = String(it.glyph || '⬢');
+  const glyphText = String(it.glyph || '⬢');
+  const hasAtlasIcon = applyAtlasIcon(glyph, ITEM_ICON_ATLAS, String(it.identity || ''), glyphText, 30);
   Object.assign(glyph.style, {
     fontSize: '18px',
     lineHeight: '1',
@@ -2620,6 +2639,7 @@ function renderQuickChip(it, h) {
     textAlign: 'center',
     pointerEvents: 'none',
   });
+  if (!hasAtlasIcon) glyph.textContent = glyphText;
   header.appendChild(glyph);
 
   const textWrap = document.createElement('span');

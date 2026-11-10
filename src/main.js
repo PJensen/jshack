@@ -1625,6 +1625,8 @@ addEventListener('ui:requestSpellData', () => {
     const cd = getSpellCooldown(world, spell.id);
     return {
       ...spell,
+      iconAtlas: 'spells',
+      iconId: spell.id,
       detailLines: describeSpellDetailLines(spell),
       targetEffects: describeSpellTargetEffects(spell),
       cdRemaining: cd ? cd.remaining : 0,
