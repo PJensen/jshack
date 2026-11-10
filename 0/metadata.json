@@ -1,0 +1,39 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M73SPSR5F50M0ZV175G7VBH3",
+  "session_id": "01a1c798-f575-7a02-8a5c-22b8276e64f2",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-10T22:36:54.007927368Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/overlayRenders.js",
+    "src/main/ui/questRewards.js",
+    "tests/farmerMillRunQuest.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "6260b25693ce",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 80271,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1426816,
+    "output_tokens": 6775,
+    "api_call_count": 25
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
