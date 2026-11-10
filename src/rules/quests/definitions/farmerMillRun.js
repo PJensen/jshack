@@ -1,9 +1,7 @@
 import { NamedIdentity } from "../../components/NamedIdentity.js";
-import { createItemById } from "../../utils/itemFactory.js";
-import { addToInventory } from "../../utils/inventoryFacade.js";
 import { consumeInventoryIdentity, inventoryHasIdentity } from "../../utils/townEconomy.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
-import { emit, setVar } from "../actions.js";
+import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { getQuestRecord, instantiateQuest } from "../runtime.js";
 
@@ -14,7 +12,6 @@ export const FARMER_MILL_RUN_REWARD_IDS = Object.freeze([
   "potion_vigor",
 ]);
 
-const REWARD_COUNTS = Object.freeze({});
 const REWARD_GOLD = 85;
 
 function findTownfolk(world, identity) {
@@ -40,21 +37,6 @@ function isPlayerPayload(ctx) {
 function isSpeaker(ctx, identity) {
   const speakerId = Number(ctx.payload?.speakerId || 0) | 0;
   return speakerId > 0 && String(ctx.world.get(speakerId, NamedIdentity)?.identity || "") === identity;
-}
-
-function grantReward(ctx, rewardId) {
-  const playerId = Number(ctx.bind.player || 0) | 0;
-  const count = Math.max(1, Number(REWARD_COUNTS[rewardId] || 1) | 0);
-  const itemId = createItemById(ctx.world, rewardId, { count });
-  if (itemId > 0 && addToInventory(ctx.world, playerId, itemId)) {
-    const goldId = createItemById(ctx.world, "gold", { count: REWARD_GOLD });
-    if (goldId > 0) addToInventory(ctx.world, playerId, goldId);
-    return true;
-  }
-  if (itemId > 0) {
-    try { ctx.world.destroy(itemId); } catch {}
-  }
-  return false;
 }
 
 export const FarmerMillRunQuest = registerQuest({
@@ -164,16 +146,9 @@ export const FarmerMillRunQuest = registerQuest({
     reward: {
       on: {
         "quest:reward_selected": [{
-          guard: (ctx) => isPlayerPayload(ctx)
-            && FARMER_MILL_RUN_REWARD_IDS.includes(String(ctx.payload?.rewardId || ""))
-            && !ctx.vars.rewardGranted,
+          guard: (ctx) => isPlayerPayload(ctx) && isSelectedReward(ctx),
           actions: [
-            (ctx) => {
-              const rewardId = String(ctx.payload?.rewardId || "");
-              if (!grantReward(ctx, rewardId)) return;
-              setVar("rewardChoice", rewardId)(ctx);
-              setVar("rewardGranted", true)(ctx);
-            },
+            grantSelectedReward(),
             setVar("objective", "Quest complete."),
             emit("quest:completed", (ctx) => ({ questId: FARMER_MILL_RUN_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, rewardItemIds: [ctx.payload?.rewardId], rewardGold: REWARD_GOLD })),
           ],

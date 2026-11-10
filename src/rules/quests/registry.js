@@ -65,6 +65,7 @@ export function compileQuest(id) {
     id: String(def.id),
     version: Number(def.version || 1),
     title: String(def.title || def.id),
+    journal: Object.freeze({ ...(def.journal || {}) }),
     vars: Object.freeze({ ...(def.vars || {}) }),
     nodes,
     edgesByEvent,
