@@ -1,0 +1,13 @@
+make a codex exec cron job for automatically fixing failing tests every night at 9PM inside JSHack please; I have some warnings and mental notes about NOT regressing the code and fixing the tests, not hacking or regressing the code to fix the tests.
+
+`deno test --allow-read --allow-write --no-check`
+
+^^ is the command that actually runs the tests.
+
+---
+
+Make the fixer a 3PM launcher -- this one I would commit and push to the repository.
+
+---
+
+3PM for test fixer got me?
