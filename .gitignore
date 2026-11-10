@@ -60,3 +60,4 @@ tools/greenlight/
 .signal-control-tower/logs/events.jsonl
 signal-control-tower.json
 package.json
+assets/icons/originals/**
