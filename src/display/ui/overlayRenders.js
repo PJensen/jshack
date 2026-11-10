@@ -577,14 +577,42 @@ export function renderQuestJournal(panel, quests) {
 
   const active = quests.filter(q => q.status !== 'complete');
   const done   = quests.filter(q => q.status === 'complete');
+  const storedTab = String((/** @type {any} */ (panel))._questJournalTab || 'active');
+  const tab = storedTab === 'completed' ? 'completed' : 'active';
   const storedExpanded = String((/** @type {any} */ (panel))._expandedQuestId || '');
-  const fallbackExpanded = active[0]?.questId || done[0]?.questId || '';
+  const visibleQuests = tab === 'completed' ? done : active;
+  const fallbackExpanded = visibleQuests.some((quest) => quest.questId === storedExpanded)
+    ? storedExpanded
+    : (visibleQuests[0]?.questId || '');
   const expandedQuestId = storedExpanded || fallbackExpanded;
 
   function setExpandedQuest(id) {
     (/** @type {any} */ (panel))._expandedQuestId = String(id || '');
     renderQuestJournal(panel, quests);
   }
+
+  const tabs = document.createElement('div');
+  Object.assign(tabs.style, {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '6px',
+    marginBottom: '10px',
+  });
+  for (const [key, label] of [['active', 'Active'], ['completed', 'Completed']]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    decorateButton(button);
+    button.setAttribute('aria-selected', key === tab ? 'true' : 'false');
+    button.style.opacity = key === tab ? '1' : '0.58';
+    button.addEventListener('click', () => {
+      (/** @type {any} */ (panel))._questJournalTab = key;
+      (/** @type {any} */ (panel))._expandedQuestId = '';
+      renderQuestJournal(panel, quests);
+    });
+    tabs.appendChild(button);
+  }
+  el.appendChild(tabs);
 
   function appendSection(label, items) {
     const sectionLabel = document.createElement('div');
@@ -831,8 +859,7 @@ export function renderQuestJournal(panel, quests) {
     }
   }
 
-  appendSection('Active', active);
-  appendSection('Completed', done);
+  appendSection(tab === 'completed' ? 'Completed' : 'Active', visibleQuests);
 }
 
 /**
@@ -841,7 +868,6 @@ export function renderQuestJournal(panel, quests) {
  *   districts?: Array<{label?:string, opportunities?:string[], shortages?:string[]}>,
  *   questBoard?: {
  *     generatedAt?: number,
- *     active?: Array<{title?:string, status?:string, progress?:number, target?:number, summary?:string, checklist?:Array<{text?:string, done?:boolean}>}>,
  *     offers?: Array<{title?:string, objective?:string, sourceLabel?:string, urgency?:string, accepted?:boolean}>,
  *     sectors?: string[],
  *   }
@@ -859,7 +885,6 @@ export function renderTownBoard(panel, data) {
   el.appendChild(heading);
 
   const questBoard = (data && typeof data.questBoard === 'object') ? data.questBoard : {};
-  const active = Array.isArray(questBoard.active) ? questBoard.active : [];
   const offers = Array.isArray(questBoard.offers) ? questBoard.offers : [];
   const sectors = Array.isArray(questBoard.sectors) ? questBoard.sectors : [];
 
@@ -869,62 +894,8 @@ export function renderTownBoard(panel, data) {
     opacity: '0.85',
     marginBottom: '10px',
   });
-  summary.textContent = `${active.length} active quest${active.length === 1 ? '' : 's'} \u00b7 ${offers.length} posted contract${offers.length === 1 ? '' : 's'}`;
+  summary.textContent = `${offers.length} posted contract${offers.length === 1 ? '' : 's'}`;
   el.appendChild(summary);
-
-  const activeLabel = document.createElement('div');
-  activeLabel.textContent = 'Active Quests';
-  Object.assign(activeLabel.style, {
-    fontSize: '11px',
-    color: '#7ba7cc',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    marginBottom: '4px',
-  });
-  el.appendChild(activeLabel);
-
-  if (!active.length) {
-    const empty = document.createElement('div');
-    empty.textContent = 'No active quests yet.';
-    Object.assign(empty.style, { opacity: '0.55', fontStyle: 'italic', fontSize: '12px', marginBottom: '8px' });
-    el.appendChild(empty);
-  } else {
-    for (const quest of active) {
-      const row = document.createElement('div');
-      Object.assign(row.style, {
-        padding: '7px 10px',
-        marginBottom: '4px',
-        background: '#0a111f',
-        border: '1px solid #1e2d45',
-        borderRadius: '6px',
-      });
-      const title = document.createElement('div');
-      title.textContent = String(quest?.title || 'Quest');
-      title.style.fontSize = '13px';
-      row.appendChild(title);
-      if (Number(quest?.target || 0) > 0) {
-        const progress = document.createElement('div');
-        progress.textContent = `Progress: ${Number(quest?.progress || 0)}/${Number(quest?.target || 0)}`;
-        Object.assign(progress.style, { fontSize: '11px', opacity: '0.8', marginTop: '2px' });
-        row.appendChild(progress);
-      }
-      if (quest?.summary) {
-        const summary = document.createElement('div');
-        summary.textContent = String(quest.summary || '');
-        Object.assign(summary.style, { fontSize: '11px', opacity: '0.82', marginTop: '3px' });
-        row.appendChild(summary);
-      }
-      const checklist = Array.isArray(quest?.checklist) ? quest.checklist : [];
-      for (const entry of checklist) {
-        if (!entry?.text) continue;
-        const line = document.createElement('div');
-        line.textContent = `${entry.done ? '[x]' : '[ ]'} ${String(entry.text || '')}`;
-        Object.assign(line.style, { fontSize: '10px', opacity: entry.done ? '0.78' : '0.62', marginTop: '2px' });
-        row.appendChild(line);
-      }
-      el.appendChild(row);
-    }
-  }
 
   const offerLabel = document.createElement('div');
   offerLabel.textContent = 'Posted Contracts';

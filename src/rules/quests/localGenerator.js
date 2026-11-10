@@ -347,7 +347,6 @@ export function buildNoticeBoardQuestData(world, actor, districts = [], opportun
 
   return Object.freeze({
     generatedAt: Number(world?.step || 0),
-    active: Object.freeze(active),
     offers: Object.freeze(offers),
     sectors: Object.freeze(sectors),
     leverage: Object.freeze(leverage),

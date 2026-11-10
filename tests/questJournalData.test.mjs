@@ -9,6 +9,7 @@ import { Equipment } from "../src/rules/components/Equipment.js";
 import { QuestDefRef } from "../src/rules/components/QuestDefRef.js";
 import { QuestState } from "../src/rules/components/QuestState.js";
 import { QuestVars } from "../src/rules/components/QuestVars.js";
+import { QuestBindings } from "../src/rules/components/QuestBindings.js";
 import "../src/rules/quests/definitions/ratInfestation.js";
 
 Deno.test("quest journal payload includes flavor, reward, and completion details for overlay sheet", () => {
@@ -35,6 +36,7 @@ Deno.test("quest journal payload includes flavor, reward, and completion details
       rewardGold: 75,
     },
   });
+  world.add(quest, QuestBindings, { player, giver: 11, target: 11 });
 
   installInventoryDataProvider({
     world,
@@ -65,4 +67,41 @@ Deno.test("quest journal payload includes flavor, reward, and completion details
   assertEquals(String(quests[0]?.completionText || ""), "Clear the tavern cellar of rats.");
   assertEquals(Number(quests[0]?.progress || 0), 3);
   assertEquals(Number(quests[0]?.target || 0), 5);
+});
+
+Deno.test("quest journal excludes unknown quests and other players' quests", () => {
+  const world = new World({ seed: 6 });
+  const player = world.create();
+  world.add(player, Player, {});
+  world.add(player, Position, { x: 0, y: 0 });
+  const otherPlayer = world.create();
+  world.add(otherPlayer, Player, {});
+
+  const addQuest = (owner, accepted, id) => {
+    const quest = world.create();
+    world.add(quest, QuestDefRef, { id, version: 1 });
+    world.add(quest, QuestState, { node: "offer", status: "active", t0: 1 });
+    world.add(quest, QuestVars, { data: { accepted } });
+    world.add(quest, QuestBindings, { player: owner, giver: 0, target: 0 });
+  };
+  addQuest(player, false, "unknown.quest");
+  addQuest(player, true, "starter.rat_infestation");
+  addQuest(otherPlayer, true, "starter.rat_infestation");
+
+  installInventoryDataProvider({
+    world,
+    getActiveSpellId: () => null,
+    isSimUiBlocked: () => false,
+    getMessageLog: () => ({ getEntries: () => [] }),
+    tombstoneRepo: { getAll: () => [] },
+  });
+
+  let payload = null;
+  const onQuestData = (ev) => { payload = ev?.detail || null; };
+  addEventListener("ui:questJournalData", onQuestData);
+  dispatchEvent(new CustomEvent("ui:requestQuestJournalData"));
+  removeEventListener("ui:questJournalData", onQuestData);
+
+  assertEquals(payload?.quests?.length, 1);
+  assertEquals(payload.quests[0].questId, "starter.rat_infestation");
 });

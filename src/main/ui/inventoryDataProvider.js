@@ -49,6 +49,7 @@ import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
 import { QuestDefRef } from "../../rules/components/QuestDefRef.js";
 import { QuestState } from "../../rules/components/QuestState.js";
 import { QuestVars } from "../../rules/components/QuestVars.js";
+import { QuestBindings } from "../../rules/components/QuestBindings.js";
 import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
 import { Traits } from "../../rules/components/Traits.js";
 import { getQuestDef } from "../../rules/quests/registry.js";
@@ -992,7 +993,10 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
 
   addEventListener('ui:requestQuestJournalData', () => {
     const questMap = new Map();
-    for (const [, def, state, vars] of world.query(QuestDefRef, QuestState, QuestVars)) {
+    const playerId = Number(playerEntity(world)?.id || 0) | 0;
+    for (const [, def, state, vars, bindings] of world.query(QuestDefRef, QuestState, QuestVars, QuestBindings)) {
+      if (Number(bindings?.player || 0) !== playerId) continue;
+      if (vars?.data?.accepted === false) continue;
       const questDef = getQuestDef(def.id);
       const rewardText = questJournalRewardText(questDef, vars?.data, def.id);
       const completionText = questJournalCompletionText(state, vars?.data);

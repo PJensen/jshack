@@ -99,9 +99,8 @@ Deno.test("buildNoticeBoardQuestData returns active quests and district-driven o
   };
 
   const board = buildNoticeBoardQuestData(world, playerId, districts, opportunityView);
-  assert(Array.isArray(board.active), "active quest list should exist");
   assert(Array.isArray(board.offers), "offer list should exist");
-  assert(board.active.length >= 1, "should include local generated active quest");
+  assertEquals("active" in board, false, "notice board should not include quest-log entries");
   assertEquals(board.offers.length, 2);
   assertEquals(board.offers[0].sourceLabel, "Workshop Row");
   assertEquals(Array.isArray(board.sectors), true);
