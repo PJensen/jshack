@@ -21,7 +21,35 @@ export function describeQuestRewardItem(itemId) {
   const def = id ? getCatalogItem(id) : null;
   const name = String(def?.name || id || "Reward").trim();
   const description = String(def?.description || "").trim();
-  return { itemId: id, name, description };
+  const rarity = Number(def?.rarity || 0) | 0;
+  const rarityName = String(def?.rarityName || (["common", "uncommon", "rare", "epic", "legendary"][rarity] || "common"));
+  const type = String(def?.type || "item");
+  const slot = String(def?.slot || (type === "ranged" ? "ranged" : type === "weapon" ? "weapon" : ""));
+  return {
+    itemId: id,
+    name,
+    description,
+    tooltip: {
+      id: 0,
+      identity: id,
+      type,
+      name,
+      slot,
+      rarityName,
+      description,
+      bonuses: def?.bonuses && typeof def.bonuses === "object" ? { ...def.bonuses } : {},
+      damageDice: def?.damageDice || null,
+      staminaCost: def?.staminaCost ?? null,
+      twoHanded: !!def?.twoHanded,
+      weight: Number(def?.weight || 0),
+      glyph: String(def?.glyph || ""),
+      glyphColor: String(def?.color || "#cfe8ff"),
+      mechanics: [],
+      affixes: [],
+      detailLines: [],
+      targetEffects: [],
+    },
+  };
 }
 
 /**

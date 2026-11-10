@@ -15,7 +15,7 @@ import {
   FARMER_MILL_RUN_REWARD_IDS,
 } from "../src/rules/quests/definitions/farmerMillRun.js";
 import { getQuestRecord } from "../src/rules/quests/runtime.js";
-import { questRewardDetailText, questRewardPreviewText } from "../src/main/ui/questRewards.js";
+import { listQuestRewardItems, questRewardDetailText, questRewardPreviewText } from "../src/main/ui/questRewards.js";
 
 function addTownfolk(world, identity) {
   const id = world.create();
@@ -85,4 +85,7 @@ Deno.test("farmer mill run reward is presented as a choice in the journal", () =
     questRewardDetailText(quest, {}),
     "Choose one: Mirror Bow, Work Hatchet, Health Potion; plus 85 gold",
   );
+  const mirrorBow = listQuestRewardItems(quest, {})[0];
+  assertEquals(mirrorBow.tooltip.damageDice, "1d6");
+  assertEquals(mirrorBow.tooltip.bonuses.attack, 2);
 });

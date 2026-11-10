@@ -9,7 +9,7 @@ export { renderShop, renderChest, renderRack } from './shopOverlay.js';
 import {
   appendCharacterMenuTabs, markScrollable,
   decorateButton, sanitize, bracketize,
-  hide, showItemTooltip,
+  hide, showItemTooltip, hideItemTooltip,
   rarityStyle, getMessageColor,
   UI, createChooserRow, createSimpleSel, installKeyHandler, installDetachableKeyHandler,
   pulseRow, UX_THEME, dispatchCharacterMenuTabCycle,
@@ -769,15 +769,16 @@ export function renderQuestJournal(panel, quests) {
               color: '#ffd85a', cursor: 'pointer', fontSize: '12px', textAlign: 'left',
               textDecoration: 'underline',
             });
-            button.addEventListener('click', () => {
-              const detail = button.nextElementSibling;
-              if (detail) detail.remove();
-              else {
-                const description = document.createElement('div');
-                description.textContent = String(item.description || 'No further description.');
-                Object.assign(description.style, { fontSize: '11px', lineHeight: '1.4', color: '#dbe9f6', margin: '0 0 4px 8px' });
-                button.after(description);
+            button.addEventListener('click', (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              if (button.dataset.tooltipOpen === 'true') {
+                hideItemTooltip();
+                button.dataset.tooltipOpen = 'false';
+                return;
               }
+              showItemTooltip(item.tooltip || item, button, { pinBottomOnMobile: true });
+              button.dataset.tooltipOpen = 'true';
             });
             rewardBlock.appendChild(button);
           }
