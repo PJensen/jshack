@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "tools/nightly-fix-tests.sh"
   ],
   "sessions": [
