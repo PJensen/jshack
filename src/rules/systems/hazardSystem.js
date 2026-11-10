@@ -230,12 +230,17 @@ function applyStickySyrup(world, entityId, sourceId, turnsLeft, potency) {
 
 function gasHazardShouldIgnite(world, x, y, radius, metric) {
   const gasRadius = Math.max(0, radius | 0);
-  for (const [, firePos, fireHazard] of world.query(Position, HazardArea)) {
-    if (!firePos || !fireHazard) continue;
-    if (String(fireHazard.kind || "").toLowerCase() !== "fire") continue;
-    if ((Number(fireHazard.turnsLeft || 0) | 0) <= 0) continue;
-    const fireRadius = clampInt(fireHazard.radius, 0, 0);
-    if (inHazardRadius(firePos.x, firePos.y, x, y, gasRadius + fireRadius + 1, metric)) return true;
+  for (const [, stimulusPos, stimulusHazard] of world.query(Position, HazardArea)) {
+    if (!stimulusPos || !stimulusHazard) continue;
+    if ((Number(stimulusHazard.turnsLeft || 0) | 0) <= 0) continue;
+    const kind = String(stimulusHazard.kind || "").toLowerCase();
+    const damageType = String(stimulusHazard.damageType || "").toLowerCase();
+    const isFire = kind === "fire";
+    const isElectric = damageType === "electric" || damageType === "lightning"
+      || kind === "electric" || kind === "lightning" || kind === "plasma";
+    if (!isFire && !isElectric) continue;
+    const stimulusRadius = clampInt(stimulusHazard.radius, 0, 0);
+    if (inHazardRadius(stimulusPos.x, stimulusPos.y, x, y, gasRadius + stimulusRadius + 1, metric)) return true;
   }
   for (const [, actorPos, effects] of world.query(Position, ActiveEffects)) {
     if (!actorPos || !hasBurningEffect(effects)) continue;

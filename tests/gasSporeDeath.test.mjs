@@ -8,6 +8,7 @@ import { Position } from "../src/rules/components/Position.js";
 import { gasSporeExplodeOnDeath } from "../src/rules/data/callbacks/death.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { spawnHazard } from "../src/rules/utils/hazardSpawn.js";
+import { spawnPlasmaCloud } from "../src/rules/utils/spawnPlasmaCloud.js";
 
 Deno.test("gasSporeExplodeOnDeath spawns one explosive_gas hazard with euclidean metric", () => {
   const world = new World({ seed: 4401 });
@@ -133,4 +134,47 @@ Deno.test("equipped torch ignites explosive gas cloud", () => {
   assert(!atCell.includes("gas"), "gas should ignite when torch carrier is inside cloud");
   assert(atCell.includes("fire"), "ignition should leave fire hazard at the cloud origin");
   assertEquals(fireTurns, 4, "explosive gas ignition should preserve area-denial duration");
+});
+
+Deno.test("electric plasma cloud ignites explosive gas cloud", () => {
+  const world = new World({ seed: 4404 });
+  const spawned = [];
+  world.on("hazard:spawned", (event) => spawned.push(event));
+
+  const gasId = spawnHazard(world, {
+    x: 8,
+    y: 8,
+    kind: "gas",
+    medium: "air",
+    turnsLeft: 4,
+    radius: 1,
+    tickDamage: 2,
+    damageType: "poison",
+    cause: "test:gas",
+    identity: "explosive_gas",
+  });
+  assert(gasId > 0, "gas hazard should spawn");
+
+  const plasmaId = spawnPlasmaCloud(world, {
+    x: 8,
+    y: 8,
+    turnsLeft: 2,
+    radius: 0,
+    damage: 1,
+  });
+  assert(plasmaId > 0, "plasma hazard should spawn");
+
+  hazardSystem(world);
+
+  const atCell = [];
+  for (const [, pos, hazard] of world.query(Position, HazardArea)) {
+    if ((pos.x | 0) !== 8 || (pos.y | 0) !== 8) continue;
+    atCell.push(String(hazard.kind || ""));
+  }
+  assert(!atCell.includes("gas"), "gas should ignite when exposed to an electric plasma cloud");
+  assert(atCell.includes("fire"), "electric ignition should leave fire hazard at the cloud origin");
+  assert(
+    spawned.some((event) => String(event.kind || "") === "fire" && String(event.cause || "").includes("ignited")),
+    "electric ignition should spawn a fire hazard",
+  );
 });
