@@ -1,1 +1,0 @@
-NOTE: there will absolutely be instances where production code actually needs fixing -- but this is about a bias towards fixing tests and only tweaking code when the underlying fact pattern supports it.
