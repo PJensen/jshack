@@ -4705,12 +4705,12 @@ function drawSleepingMarker(ctx, e, fxTime, scale = 1) {
 }
 
 /**
- * Draw a yellow "!" above quest giver NPCs (mirrors drawRareStar pattern).
+ * Draw a yellow quest marker above quest giver NPCs (mirrors drawRareStar pattern).
  * @param {CanvasRenderingContext2D} ctx
  * @param {{ id:number, pos:{x:number,y:number} }} e
  * @param {number} fxTime
  */
-function drawQuestBang(ctx, e, fxTime, scale = 1) {
+function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!') {
   const cx = e.pos.x;
   const cy = e.pos.y - 0.72 * scale;
 
@@ -4731,15 +4731,19 @@ function drawQuestBang(ctx, e, fxTime, scale = 1) {
   ctx.arc(cx, dy, haloR, 0, Math.PI * 2);
   ctx.fill();
 
-  // "!" glyph
+  // Quest marker glyph
   ctx.globalCompositeOperation = 'source-over';
   ctx.fillStyle = 'rgba(255,220,40,0.95)';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = canvasFont(`${0.32 * scale}px`, 'bold');
-  ctx.fillText('!', cx, dy);
+  ctx.fillText(glyph, cx, dy);
 
   ctx.restore();
+}
+
+function drawQuestQuestion(ctx, e, fxTime, scale = 1) {
+  drawQuestBang(ctx, e, fxTime, scale, '?');
 }
 
 
@@ -5184,7 +5188,9 @@ function render(worldView) {
       if (PERF.quality !== 'low' && _renderTagSet.has('rare')) {
         drawRareStar(bctx, itemRender, _fxTime, finalItemScale);
       }
-      if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
+      if (PERF.quality !== 'low' && _renderTagSet.has('quest_turn_in')) {
+        drawQuestQuestion(bctx, itemRender, _fxTime, finalItemScale);
+      } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
         drawQuestBang(bctx, itemRender, _fxTime, finalItemScale);
       }
       if (PERF.quality !== 'low' && _renderTagSet.has('blinded')) {
@@ -5362,7 +5368,9 @@ function render(worldView) {
     if (PERF.quality !== 'low' && _renderTagSet.has('rare')) {
       drawRareStar(bctx, renderEntity, _fxTime);
     }
-    if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
+    if (PERF.quality !== 'low' && _renderTagSet.has('quest_turn_in')) {
+      drawQuestQuestion(bctx, renderEntity, _fxTime);
+    } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
       drawQuestBang(bctx, renderEntity, _fxTime);
     }
     if (PERF.quality !== 'low' && _renderTagSet.has('blinded')) {
