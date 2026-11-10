@@ -3,10 +3,11 @@
   "checkpoint_id": "01M736MQBR14TN30GF0YXNRH7D",
   "session_id": "01a1c667-753b-79a0-a6d7-e207342aab7d",
   "strategy": "manual-commit",
-  "created_at": "2026-11-10T17:03:44.848355339Z",
+  "created_at": "2026-11-10T17:04:06.827549602Z",
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "src/display/ui/overlayRenders.js"
   ],
   "agent": "Codex",
@@ -14,7 +15,14 @@
   "turn_id": "b8a426ec4f4a",
   "checkpoint_transcript_start": 143,
   "transcript_lines_at_start": 143,
-  "compact_transcript_start": 24,
+  "compact_transcript_start": 23,
+  "token_usage": {
+    "input_tokens": 335,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 103552,
+    "output_tokens": 124,
+    "api_call_count": 1
+  },
   "redaction": {
     "replacements": 0,
     "layers": {

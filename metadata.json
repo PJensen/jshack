@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 1,
   "files_touched": [
+    "VERSION",
     "src/display/ui/overlayRenders.js"
   ],
   "sessions": [
@@ -16,6 +17,13 @@
       "prompt": ""
     }
   ],
+  "token_usage": {
+    "input_tokens": 335,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 103552,
+    "output_tokens": 124,
+    "api_call_count": 1
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
