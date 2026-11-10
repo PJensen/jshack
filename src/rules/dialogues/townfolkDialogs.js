@@ -9,6 +9,12 @@ import { canAcceptPriestRift, ensurePriestRiftQuest, PRIEST_RIFT_QUEST_ID } from
 import { ensureRootboundGrottoQuest, ROOTBOUND_GROTTO_QUEST_ID } from "../quests/definitions/rootboundGrotto.js";
 import { canTurnInRunContract, RUN_CONTRACT_QUEST_ID } from "../quests/definitions/runContract.js";
 import { ensureFarmerMillRunQuest, FARMER_MILL_RUN_QUEST_ID } from "../quests/definitions/farmerMillRun.js";
+import {
+  ensureFisherBaitQuest,
+  FISHER_BAIT_QUEST_ID,
+  FISHER_FIRST_CATCH_QUEST_ID,
+  getFisherQuest,
+} from "../quests/definitions/fisherChain.js";
 import { getTownState, getWeather } from "../utils/townStateAccess.js";
 import { Vitality } from "../components/Vitality.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
@@ -16,6 +22,7 @@ import { Status } from "../components/Status.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { isItemCursed } from "../utils/curseUtils.js";
 import { BarkeepStoryRequested } from "../../events/BarkeepStoryRequested.js";
+import { inventoryHasIdentity } from "../utils/townEconomy.js";
 
 const MOOD_POOLS = {
   farmer: [
@@ -331,6 +338,11 @@ function farmerMillRunQuest(world, actorId, giverId = 0) {
   return getQuestRecord(world, FARMER_MILL_RUN_QUEST_ID, actorId);
 }
 
+function fisherQuest(world, actorId, giverId = 0) {
+  ensureFisherBaitQuest(world, { playerId: actorId, giverId });
+  return getFisherQuest(world, actorId);
+}
+
 function runContractQuest(world, actorId) {
   return getQuestRecord(world, RUN_CONTRACT_QUEST_ID, actorId);
 }
@@ -352,7 +364,7 @@ function rootboundGrottoQuest(world, actorId, giverId) {
 }
 
 for (const def of Object.values(TOWNFOLK)) {
-  if (def.role === "priest" || def.role === "barkeep" || def.role === "mason" || def.role === "enchantress") continue;
+  if (def.role === "priest" || def.role === "barkeep" || def.role === "mason" || def.role === "enchantress" || def.role === "fisher") continue;
   registerDialog({
     id: `townfolk:${def.role}`,
     start: "root",
@@ -491,6 +503,67 @@ registerDialog({
     rootbound_reward_offer: {
       text: "The herbalist has set your reward aside. Choose it from the completed quest in your journal.",
       choices: [{ id: "leave", label: "I'll choose it from my journal.", close: true }],
+    },
+  },
+});
+
+registerDialog({
+  id: "townfolk:fisher",
+  start: "root",
+  nodes: {
+    root: {
+      text: (ctx) => {
+        const quest = fisherQuest(ctx.world, ctx.actorId, ctx.targetId);
+        const state = quest?.state;
+        if (!state) return ambientTownfolkText(TOWNFOLK.fisher, ctx);
+        if (String(state.status || "") === "complete") return "The nets are mended and the water is calm. Keep your line wet while the luck lasts.";
+        if (String(quest.def?.id || "") === FISHER_BAIT_QUEST_ID) {
+          if (String(state.node || "") === "offer") return "I can make a bait that brings the little fish close, but I need five bunches of wild herbs. Bring them to me and I'll give you a proper rod.";
+          return "The herbs need to be fresh. Bring me five bunches and I'll set you up with a fishing rod.";
+        }
+        if (String(quest.def?.id || "") === FISHER_FIRST_CATCH_QUEST_ID) {
+          if (String(state.node || "") === "offer") return "Now prove the rod is more than a walking stick. Bring me three fish from the nearby water.";
+          if (String(state.node || "") === "report") return "Three fish already? Good. Bring them in and take this supper for the road.";
+          return `Keep casting. You've brought in ${Number(quest.vars?.data?.catchCount || 0)} of 3 fish.`;
+        }
+        if (String(state.node || "") === "offer") return "The sand crabs are tearing at my nets and eating the bait. Clear out five of them and I'll pay you for the trouble.";
+        if (String(state.node || "") === "report") return "The reeds are quiet again. You did the fishery a good turn.";
+        return `The crabs are still at it. You've dealt with ${Number(quest.vars?.data?.killCount || 0)} of 5.`;
+      },
+      choices: [
+        {
+          id: "accept_fisher_quest",
+          label: (ctx) => String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id || "") === FISHER_BAIT_QUEST_ID
+            ? "I'll gather the herbs."
+            : String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id || "") === FISHER_FIRST_CATCH_QUEST_ID
+              ? "I'll bring you three fish."
+              : "I'll clear out the crabs.",
+          visible: (ctx) => String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "offer",
+          emits: [{ name: "dialog:accepted", payload: (ctx) => ({ questId: fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
+          to: "accepted",
+        },
+        {
+          id: "report_fisher_quest",
+          label: (ctx) => String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id || "") === FISHER_BAIT_QUEST_ID ? "Here are the herbs." : "The job is done.",
+          visible: (ctx) => String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "report",
+          emits: [{ name: "dialog:reported", payload: (ctx) => ({ questId: fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
+          close: true,
+        },
+        {
+          id: "report_fisher_herbs",
+          label: "Here are the herbs.",
+          visible: (ctx) => String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.def?.id || "") === FISHER_BAIT_QUEST_ID
+            && String(fisherQuest(ctx.world, ctx.actorId, ctx.targetId)?.state?.node || "") === "collect"
+            && inventoryHasIdentity(ctx.world, ctx.actorId, "food_wild_herbs", 5),
+          emits: [{ name: "dialog:reported", payload: (ctx) => ({ questId: FISHER_BAIT_QUEST_ID, playerId: ctx.actorId, speakerId: ctx.targetId }) }],
+          close: true,
+        },
+        { id: "leave", label: "Goodbye.", close: true },
+      ],
+    },
+    accepted: {
+      text: "Good. The water is close, and the shore plants are hard to miss. Come back when you've got what I need.",
+      choices: [{ id: "leave", label: "I'll get moving.", close: true }],
     },
   },
 });

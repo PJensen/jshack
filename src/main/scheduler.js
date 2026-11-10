@@ -122,6 +122,7 @@ import { installRatQuestHooks, ratInfestationDeathSystem } from "../rules/quests
 import { installRunContractHooks, runContractDeathSystem } from "../rules/quests/definitions/runContract.js";
 import { installPriestRiftHooks, priestRiftDeathSystem } from "../rules/quests/definitions/priestRift.js";
 import { installRootboundGrottoHooks, rootboundGrottoDeathSystem } from "../rules/quests/definitions/rootboundGrotto.js";
+import { fisherCrabDeathSystem, installFisherQuestHooks } from "../rules/quests/definitions/fisherChain.js";
 import "../rules/quests/definitions/farmerMillRun.js";
 // Side-effect: registers script handlers at import time
 import "../rules/scripts/traps.js";
@@ -160,6 +161,7 @@ export function configureWorld(world) {
   installRunContractHooks(world);
   installPriestRiftHooks(world);
   installRootboundGrottoHooks(world);
+  installFisherQuestHooks(world);
   installRatatoskrListeners(world);
 
   installTownfolkDoorListener(world);
@@ -340,6 +342,7 @@ export function configureWorld(world) {
   registerSystem(runContractDeathSystem, 'effects', { after: [ratInfestationDeathSystem] });
   registerSystem(priestRiftDeathSystem, 'effects', { after: [runContractDeathSystem] });
   registerSystem(rootboundGrottoDeathSystem, 'effects', { after: [priestRiftDeathSystem] });
+  registerSystem(fisherCrabDeathSystem, 'effects', { after: [monsterDeathHookSystem] });
   registerSystem(deityChallengeSystem, 'effects', { after: [runContractDeathSystem] });
   registerSystem(tombstoneSystem, 'effects', { after: [deityChallengeSystem] });
   registerSystem(perceptionMemorySystem, 'effects');
