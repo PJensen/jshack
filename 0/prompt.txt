@@ -1,5 +1,0 @@
-quest completion, quest reward items should use the item icons we just made! and have the full blown item tooltips so players can make informed choices!
-
----
-
-complete and ship this end to end please.
