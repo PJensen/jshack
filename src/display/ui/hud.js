@@ -2529,9 +2529,17 @@ function createChannelingOverlay() {
     cancelBackground: '#123447',
     cancelColor: '#e4f7ff',
   };
+  const cookingTheme = {
+    border: '#a86b2d',
+    shadow: '0 0 16px rgba(210,130,45,0.24)',
+    bar: 'linear-gradient(90deg, #d97706, #f6c453)',
+    cancelBorder: '#a86b2d',
+    cancelBackground: '#442b16',
+    cancelColor: '#fff1d6',
+  };
   function applyChannelTheme(channelId) {
     const id = String(channelId || '');
-    const theme = id === 'eating' ? eatingTheme : id === 'fishing' ? fishingTheme : defaultTheme;
+    const theme = id === 'eating' ? eatingTheme : id === 'fishing' ? fishingTheme : id === 'cooking' ? cookingTheme : defaultTheme;
     el.style.borderColor = theme.border;
     el.style.boxShadow = theme.shadow;
     barInner.style.background = theme.bar;

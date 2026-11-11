@@ -103,6 +103,7 @@ import { installCurseHooks } from "../rules/systems/curseHooks.js";
 import { channelingSystem } from "../rules/systems/channelingSystem.js";
 import { installFishingAction } from "../rules/content/useActions/fishingAction.js";
 import { installFoodEatingAction } from "../rules/content/useActions/foodEatingAction.js";
+import { installCookingAction } from "../rules/content/useActions/cookingAction.js";
 import { installGenocideListener } from "../rules/systems/genocideSystem.js";
 import { installTamingListener } from "../rules/systems/tamingSystem.js";
 import { workstationStateSystem } from "../rules/systems/workstationStateSystem.js";
@@ -205,6 +206,7 @@ export function configureWorld(world) {
   installAggroFromStealthOffenseListener(world);
   installFishingAction(world);
   installFoodEatingAction();
+  installCookingAction();
   // Centipede body segments cascade position when the head moves.
   installCentipedeBodyCascade(world);
   installEnchantingOpenRequestListener(world);

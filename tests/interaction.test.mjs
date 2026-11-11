@@ -4,8 +4,11 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { Interactable } from "../src/rules/components/Interactable.js";
 import { InteractIntent } from "../src/rules/components/Intents/InteractIntent.js";
 import { UseIntent } from "../src/rules/components/Intents/UseIntent.js";
+import { Channeling } from "../src/rules/components/Channeling.js";
 import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
 import { FOOD_EATING_TURNS } from "../src/rules/content/useActions/foodEatingAction.js";
+import { COOKING_TURNS } from "../src/rules/content/useActions/cookingAction.js";
+import { startCooking } from "../src/rules/content/useActions/cookingAction.js";
 import { DoorState } from "../src/rules/components/DoorState.js";
 import { DoorLock } from "../src/rules/components/DoorLock.js";
 import { Collider } from "../src/rules/components/Collider.js";
@@ -1493,6 +1496,32 @@ Deno.test("cooking fire: phase 1 emits cooking:open with corpses and herbs", () 
   assert(openEvents[0].herbs.count === 3, "should count herbs");
 });
 
+Deno.test("cooking fire: movement interrupts cooking before it resolves", () => {
+  const world = new World({ seed: 170 });
+  const actor = world.create();
+  const fire = world.create();
+  world.add(actor, Position, { x: 3, y: 3 });
+  world.add(fire, Position, { x: 4, y: 3 });
+
+  const starts = [];
+  const cooked = [];
+  world.on("channeling:start", (event) => starts.push(event));
+  world.on("cooking:cooked", (event) => cooked.push(event));
+
+  assert(startCooking(world, actor, fire, { recipe: "hearty_stew" }));
+  assertEquals(world.has(actor, Channeling), true);
+  assertEquals(starts[0].channelLabel, "Cooking");
+
+  channelingSystem(world);
+  assertEquals(world.has(actor, Channeling), true);
+  world.set(actor, Position, { x: 5, y: 3 });
+  channelingSystem(world);
+
+  assertEquals(world.has(actor, Channeling), false);
+  assertEquals(cooked.length, 0);
+  assertEquals(COOKING_TURNS, 5);
+});
+
 Deno.test("cooking fire: phase 2 transmogrifies corpse into ration", () => {
   const world = new World({ seed: 71 });
   world.setScheduler((w) => {
@@ -1531,6 +1560,12 @@ Deno.test("cooking fire: phase 2 transmogrifies corpse into ration", () => {
     itemId: corpse,
   });
   world.tick(1);
+
+  for (let turn = 1; turn < COOKING_TURNS; turn++) {
+    channelingSystem(world);
+    assertEquals(cooked.length, 0, "cooking should not resolve before the channel completes");
+  }
+  channelingSystem(world);
 
   assert(cooked.length === 1, "should emit cooking:cooked");
   assert(cooked[0].itemId === corpse, "cooked event should reference the item");
@@ -1594,6 +1629,8 @@ Deno.test("cooking fire: recipe cooking creates long-buff food from dungeon ingr
 
   world.add(actor, InteractIntent, { targetId: fire, mode: "cook", recipe: "hearty_stew" });
   world.tick(1);
+  for (let turn = 1; turn < COOKING_TURNS; turn++) channelingSystem(world);
+  channelingSystem(world);
 
   assertEquals(cooked.length, 1, "recipe should emit cooking:cooked");
   assertEquals(cooked[0].outputIdentity, "food_hearty_stew");

@@ -72,7 +72,8 @@ import {
   craftAtEnchantingBench,
   emitEnchantingBenchOpen,
 } from "../enchanting/benchGame.js";
-import { cookAtFire, cookRecipeAtFire, emitCookingFireOpen } from "../cooking/cookingGame.js";
+import { emitCookingFireOpen } from "../cooking/cookingGame.js";
+import { startCooking } from "../useActions/cookingAction.js";
 import { emitAnvilOpen, forgeAtAnvil } from "../smithing/anvilGame.js";
 import { createItemById } from "../../utils/itemFactory.js";
 import { actorHasDoorKey, getDoorLockId, setDoorState } from "../../utils/doorAccess.js";
@@ -759,11 +760,11 @@ export const INTERACT_PAYLOADS = {
       if (String(intent?.mode || "") === "cook") {
         const recipe = String(intent?.recipe || "").trim().toLowerCase();
         if (recipe) {
-          cookRecipeAtFire(world, actor, targetId, recipe);
+          startCooking(world, actor, targetId, { recipe });
           return;
         }
         if ((intent?.itemId | 0) > 0) {
-          cookAtFire(world, actor, targetId, intent.itemId | 0);
+          startCooking(world, actor, targetId, { itemId: intent.itemId | 0 });
           return;
         }
       }

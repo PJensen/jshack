@@ -11,6 +11,8 @@ import { defineComponent } from "../../lib/ecs-js/index.js";
  * lifePerTick:    life spent on each sustain tick.
  * spellId:        the spell being channeled.
  * channelId:      presentation identity for non-spell channels.
+ * itemActionId:   item-driven channel completion handler.
+ * actionData:     action-specific completion data for item-driven channels.
  * targetId:       entity target (0 = self).
  * x, y:           optional tile target coordinates.
  * breakOnNoLos:   if true, cancel the channel when caster loses LOS to targetId.
@@ -27,6 +29,7 @@ export const Channeling = defineComponent("Channeling", {
   spellId: "",
   channelId: "",
   itemActionId: "",
+  actionData: null,
   targetId: 0,
   x: null,
   y: null,
