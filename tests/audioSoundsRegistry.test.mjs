@@ -31,6 +31,13 @@ Deno.test("sounds registry exposes thrown potion impact sound", () => {
   assertEquals(throwSound.bus, "items");
 });
 
+Deno.test("sounds registry exposes Mirror Bow ricochet sound", () => {
+  const sound = resolve("ranged:mirror_bow:ricochet");
+  assertExists(sound);
+  assertEquals(sound.file, "mirror_bow_ricochet.mp3");
+  assertEquals(sound.bus, "combat");
+});
+
 Deno.test("sounds registry exposes taming and genocide success sounds", () => {
   const taming = resolve("magic:taming");
   const spiritSurge = resolve("magic:spirit-surge");
