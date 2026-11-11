@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M76FW2KC5K0FMJDXS2BBCWQA",
+  "session_id": "01a1ccf1-33d2-7702-9604-61d21f65d0ee",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-11T23:42:44.824759754Z",
+  "branch": "master",
+  "checkpoints_count": 5,
+  "save_step_count": 2,
+  "files_touched": [
+    "assets/audio/mirror_bow_ricochet.mp3",
+    "src/display/audio/audioWiring.js",
+    "src/display/audio/sounds.js",
+    "tests/audioSoundsRegistry.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "a165c0640b04",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 132781,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3016448,
+    "output_tokens": 10808,
+    "api_call_count": 35,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 5
+  }
+}

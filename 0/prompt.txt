@@ -1,0 +1,19 @@
+weapon sounds are supposed to pick from a list of variations -- but I swear I keep hearng the same sounds over and over again for certain weapons
+
+have a look -- gotta be something here, unless I'm deaf and the variations are truly subtle.
+
+---
+
+hmmm, I you 100% sure? and no I would not use recently played lockout, too much machinery -- rand should carry the day if we're honest.
+
+---
+
+Next item -- mirror bow, sounds bespoke to it -- how?
+
+---
+
+mirror_bow_split_electric MP3 added -- rename to richochet do not run manifest tools, richochet only
+
+---
+
+approved change -- make it so
