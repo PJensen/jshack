@@ -10,11 +10,13 @@ import { ItemInfo } from "../src/rules/components/ItemInfo.js";
 import { MaterialState } from "../src/rules/components/MaterialState.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { ApplyIntent } from "../src/rules/components/Intents/ApplyIntent.js";
+import { Channeling } from "../src/rules/components/Channeling.js";
 import { InteractIntent } from "../src/rules/components/Intents/InteractIntent.js";
 import { Position } from "../src/rules/components/Position.js";
 import { TemporarySpawn } from "../src/rules/components/TemporarySpawn.js";
 import { WeatherState } from "../src/rules/components/WeatherState.js";
 import { applySystem } from "../src/rules/systems/applySystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
 import { temporarySpawnExpirySystem } from "../src/rules/systems/temporarySpawnExpirySystem.js";
 import { TURNS_PER_DAY } from "../src/rules/data/calendar.js";
@@ -108,6 +110,28 @@ Deno.test("poison potion apply hook coats weapon and consumes the potion", () =>
   assert(!inventoryContains(world, actor, potion), "consumed potion should be removed from inventory");
   assertEquals(usedEvents.length, 1);
   assertEquals(Number(usedEvents[0]?.itemId || 0), potion);
+});
+
+Deno.test("weapon oil takes time to apply before consuming the flask", () => {
+  const world = new World({ seed: 10025 });
+  const actor = world.create();
+  world.add(actor, Inventory, { items: [], maxWeight: 100 });
+  const oil = createItemById(world, "potion_oil");
+  const dagger = buildCatalogItem(world, "dagger_quick");
+  addToInventory(world, actor, oil);
+  addToInventory(world, actor, dagger);
+
+  world.add(actor, ApplyIntent, { itemId: oil, targetItemId: dagger });
+  applySystem(world);
+
+  assertEquals(world.has(actor, Channeling), true);
+  assertEquals(world.get(dagger, ItemInfo)?.coating, undefined);
+  channelingSystem(world);
+  assertEquals(world.get(dagger, ItemInfo)?.coating, undefined);
+  channelingSystem(world);
+
+  assertEquals(world.get(dagger, ItemInfo)?.coating?.kind, "oil");
+  assertEquals(world.isAlive(oil), false);
 });
 
 Deno.test("flint applied to wood with wielded metal weapon creates a campfire", () => {

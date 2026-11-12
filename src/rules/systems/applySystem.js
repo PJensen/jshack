@@ -1,4 +1,5 @@
 import { ApplyIntent } from "../components/Intents/ApplyIntent.js";
+import { startGearApplication } from "../content/useActions/gearApplicationAction.js";
 import { executeInteraction } from "../interaction/runtime/actionRuntime.js";
 import { applyPipeline } from "../interaction/verbs/applyPipeline.js";
 /** @typedef {import('../../lib/ecs-js/index.js').World} World */
@@ -13,6 +14,10 @@ export function applySystem(world) {
   for (const [actor, intent] of world.query(ApplyIntent)) {
     const toolId = intent.itemId | 0;
     const targetId = intent.targetItemId | 0;
+    if (startGearApplication(world, actor, toolId, targetId)) {
+      try { world.remove(actor, ApplyIntent); } catch {}
+      continue;
+    }
     let result = null;
     try {
       result = executeInteraction(world, {

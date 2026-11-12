@@ -1197,6 +1197,12 @@ export function initOverlays() {
     if (String(e?.detail?.channelId || '') !== 'cooking') return;
     window.dispatchEvent(new CustomEvent('ui:closeCookingFire'));
   });
+  window.addEventListener('ui:channeling:start', (ev) => {
+    /** @type {CustomEvent} */ // @ts-ignore
+    const e = ev;
+    if (String(e?.detail?.channelId || '') !== 'applying') return;
+    hide(applyPanel);
+  });
   window.addEventListener('ui:cookingFireData', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;

@@ -9,6 +9,8 @@ import { EnchantmentNode } from "../src/rules/components/EnchantmentNode.js";
 import { NON_AMMO_GEAR_SLOTS } from "../src/rules/components/Equipment.js";
 import { InteractIntent } from "../src/rules/components/Intents/InteractIntent.js";
 import { ApplyIntent } from "../src/rules/components/Intents/ApplyIntent.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { GEAR_APPLICATION_TURNS } from "../src/rules/content/useActions/gearApplicationAction.js";
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
 import { applySystem } from "../src/rules/systems/applySystem.js";
 import { createItemById } from "../src/rules/utils/itemFactory.js";
@@ -35,6 +37,10 @@ function addCatalogItem(world, actor, identity, count = 1) {
     assert(itemId > 0, `expected ${identity} to be creatable`);
     addToInventory(world, actor, itemId);
   }
+}
+
+function finishGearApplication(world) {
+  for (let turn = 0; turn < GEAR_APPLICATION_TURNS; turn++) channelingSystem(world);
 }
 
 Deno.test("enchanting bench crafts a poison enchant scroll from reagents and gold", () => {
@@ -93,6 +99,7 @@ Deno.test("enchant scroll applies persistent affixes, supports accessories, and 
 
   world.add(actor, ApplyIntent, { itemId: firstScroll, targetItemId: weapon });
   applySystem(world);
+  finishGearApplication(world);
 
   assertEquals(results.length, 1);
   assertEquals(results[0]?.ok, true);
@@ -103,6 +110,7 @@ Deno.test("enchant scroll applies persistent affixes, supports accessories, and 
 
   world.add(actor, ApplyIntent, { itemId: wardScroll, targetItemId: amulet });
   applySystem(world);
+  finishGearApplication(world);
 
   assertEquals(results.length, 2);
   assertEquals(results[1]?.ok, true);
@@ -113,6 +121,7 @@ Deno.test("enchant scroll applies persistent affixes, supports accessories, and 
   addToInventory(world, actor, secondScroll);
   world.add(actor, ApplyIntent, { itemId: secondScroll, targetItemId: weapon });
   applySystem(world);
+  finishGearApplication(world);
 
   assertEquals(results.length, 3);
   assertEquals(results[2]?.ok, false);
@@ -177,6 +186,7 @@ Deno.test("enchant paths cover every non-ammo gear slot", () => {
 
     world.add(actor, ApplyIntent, { itemId: scroll, targetItemId: target });
     applySystem(world);
+    finishGearApplication(world);
 
     assert((world.get(target, ItemInfo)?.affixes || []).includes(fixture.affixId), `${slot} should accept ${fixture.scrollId}`);
     assert(!world.isAlive(scroll), `${slot} enchant should consume the scroll`);
@@ -195,6 +205,7 @@ Deno.test("slot normalization lets shield-labeled gear accept offhand enchants",
 
   world.add(actor, ApplyIntent, { itemId: scroll, targetItemId: shield });
   applySystem(world);
+  finishGearApplication(world);
 
   assert((world.get(shield, ItemInfo)?.affixes || []).includes("kineticWard1"));
   assert(!world.isAlive(scroll));

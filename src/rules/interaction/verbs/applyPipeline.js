@@ -1,4 +1,5 @@
 import { resolveApplyPayload } from "../../content/items/applyPayloads.js";
+import { Equipment, getEquippedSlot } from "../../components/Equipment.js";
 
 /**
  * @param {any} value
@@ -67,7 +68,8 @@ export function applyPipeline(ctx) {
     ctx.cancel({ code: "APPLY_GATE_MISSING_ITEM", message: "Tool or target item no longer exists." });
     return { metrics };
   }
-  if (!ctx.rules.hasItemInInventory(actor, toolId) || !ctx.rules.hasItemInInventory(actor, targetId)) {
+  const targetEquippedSlot = getEquippedSlot(ctx.query.get(actor, Equipment), targetId);
+  if (!ctx.rules.hasItemInInventory(actor, toolId) || (!ctx.rules.hasItemInInventory(actor, targetId) && !targetEquippedSlot)) {
     ctx.cancel({ code: "APPLY_GATE_NOT_OWNED", message: "Tool and target must both be in inventory." });
     return { metrics };
   }
