@@ -1,5 +1,0 @@
-You should put that above the window, or, close the window when cooking begins
-
----
-
-commit and push this change to the remote as well
