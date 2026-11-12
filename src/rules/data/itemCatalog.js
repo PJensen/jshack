@@ -4,6 +4,7 @@
 // the merged catalog and public API.
 import { EQUIPMENT_ITEMS } from "./itemCatalogEquipment.js";
 import { MAGIC_ITEMS } from "./itemCatalogMagic.js";
+import { GEM_DEFS } from "./gems.js";
 import { isWeaponCatalogItem, resolveWeaponVisualMeta } from "./weaponVisuals.js";
 import { resolveWeaponFamily } from "./weaponFamilies.js";
 import {
@@ -41,20 +42,14 @@ export const ITEM_CATALOG = buildItemCatalog();
 
 // ── Gem socket hook registry (separate from ITEM_CATALOG to avoid duplication) ──
 // Gems are defined in gems.js; hooks live here and are resolved via getGemItemHooks().
-const GEM_ITEM_HOOKS = Object.freeze({
-  gem_ruby:     { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_ruby") },
-  gem_sapphire: { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_sapphire") },
-  gem_emerald:  { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_emerald") },
-  gem_diamond:  { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_diamond") },
-  gem_topaz:    { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_topaz") },
-  gem_amethyst: { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_amethyst") },
-  gem_opal:     { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_opal") },
-  gem_obsidian:   { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_obsidian") },
-  gem_garnet:     { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_garnet") },
-  gem_jacinth:    { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_jacinth") },
-  gem_aquamarine: { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_aquamarine") },
-  gem_voidstone:  { canDipTarget: canGemSocketDipTarget, onDip: createGemSocketDipHook("gem_voidstone") },
-});
+const GEM_ITEM_HOOKS = Object.freeze(Object.fromEntries(
+  Object.entries(GEM_DEFS)
+    .filter(([, gem]) => gem?.socketable === true)
+    .map(([identity]) => [identity, {
+      canDipTarget: canGemSocketDipTarget,
+      onDip: createGemSocketDipHook(identity),
+    }]),
+));
 
 /**
  * Returns gem socket hooks for a given gem identity, or null if not found.

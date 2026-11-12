@@ -70,6 +70,12 @@ Deno.test("quick-chip treats gems as actionable stack items", () => {
   assertEquals(isQuickChipActionable({ type: "gem", count: 0 }), false);
 });
 
+Deno.test("quick-chip labels an applicable gem as Socket", () => {
+  const gem = { type: "gem", count: 1, canApply: true };
+  assertEquals(getQuickChipPrimaryAction(gem), "apply");
+  assertEquals(getQuickChipPrimaryActionLabel(gem), "Socket");
+});
+
 Deno.test("quick-chip rarity style maps epic to purple", () => {
   assertEquals(rarityStyle("epic"), { color: "#c47bff", fontWeight: "bold" });
 });

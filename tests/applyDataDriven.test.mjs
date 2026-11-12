@@ -21,6 +21,8 @@ import { GEAR_APPLICATION_TURNS } from "../src/rules/content/useActions/gearAppl
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
 import { temporarySpawnExpirySystem } from "../src/rules/systems/temporarySpawnExpirySystem.js";
 import { TURNS_PER_DAY } from "../src/rules/data/calendar.js";
+import { GEM_DEFS } from "../src/rules/data/gems.js";
+import { getItemHooksByIdentity } from "../src/rules/content/items/itemHooks.js";
 import { isIdentified, resetIdentification } from "../src/rules/data/identification.js";
 import { addToInventory, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
@@ -52,6 +54,13 @@ function identitiesAt(world, x, y) {
 function finishGearApplication(world) {
   for (let turn = 0; turn < GEAR_APPLICATION_TURNS; turn++) channelingSystem(world);
 }
+
+Deno.test("every authored socketable gem resolves an apply hook", () => {
+  for (const [identity, gem] of Object.entries(GEM_DEFS)) {
+    if (gem.socketable !== true) continue;
+    assertEquals(typeof getItemHooksByIdentity(identity).onDip, "function", identity);
+  }
+});
 
 Deno.test("touchstone apply hook identifies gem targets", () => {
   resetIdentification();
