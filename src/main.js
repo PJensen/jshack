@@ -54,6 +54,7 @@ import { createHudFeeds } from "./main/ui/hudFeeds.js";
 import { createSceneRuntime } from "./main/sceneRuntime.js";
 import { createActiveSpellController } from "./main/spells/activeSpellController.js";
 import { applyDebugCommands } from "./main/debug/debugCommands.js";
+import { startSpellReel } from "./main/debug/spellReel.js";
 import { installSceneControls } from "./main/debug/sceneControls.js";
 import { initDebugConsole } from "./display/ui/debugConsole.js";
 import { registerBuiltinCommands } from "./main/debug/consoleCommands.js";
@@ -231,7 +232,7 @@ function hasValidFloorOverride() {
 }
 
 const _hasFloorOverride = hasValidFloorOverride();
-const _pendingSavegame = _hasFloorOverride ? null : readSavegamePayload();
+const _pendingSavegame = (_hasFloorOverride || runtimeConfig.spellReelMode) ? null : readSavegamePayload();
 const FIRST_RUN_DEV_NOTICE_KEY = "jshack:firstRunDevNoticeSeen:v1";
 const FIRST_RUN_TILE_KEY_KEY = "jshack:firstRunTileKeySeen:v1";
 const _shouldShowFirstRunDevNotice = consumeFirstRunDevNoticeFlag();
@@ -974,7 +975,9 @@ const _initialDepth = (Number.isFinite(_startDepth) && _startDepth >= 0) ? _star
 // won't match the boot's random seed). Generate ONCE, after Begin is clicked.
 // Savegames and ?test=1 still pre-generate at boot because they have a known
 // seed and need entities ready immediately.
-const _willShowCharCreation = !_pendingSavegame && runtimeConfig.params.get('test') !== '1';
+const _willShowCharCreation = !_pendingSavegame
+  && runtimeConfig.params.get('test') !== '1'
+  && !runtimeConfig.spellReelMode;
 let spawnPos = null;
 if (!_willShowCharCreation) {
   _bootTotalUnits += 1;
@@ -1214,6 +1217,10 @@ async function _finalizeNewGame(classData) {
   // Initial world tick — runs all systems once so status effects, equipment stats,
   // and other derived state are fully resolved before the first frame renders.
   stepSim(1);
+
+  if (runtimeConfig.spellReelMode) {
+    startSpellReel({ world });
+  }
 
   // Show tile key overlay on very first run so new players learn the glyphs.
   if (!_savegameLoaded) {
@@ -6102,11 +6109,16 @@ function frame(now) {
 if (_savegameLoaded) {
   await bootPaint("Finalizing saved run...", _bootDoneUnits);
   _finalizeNewGame(null);
-} else if (runtimeConfig.params.get('test') === '1') {
-  // ?test=1 — skip char creation, auto-start as Outlaw "Debug Agent"
+} else if (runtimeConfig.params.get('test') === '1' || runtimeConfig.spellReelMode) {
+  // ?test=1 and ?spellreel skip character creation with a fixed debug setup.
   await bootPaint("Finalizing debug run...", _bootDoneUnits);
   finishBoot();
-  _finalizeNewGame({ name: 'Debug Agent', classId: 'outlaw', seed: 0xC0FFEE, difficulty: 'easy' });
+  _finalizeNewGame({
+    name: runtimeConfig.spellReelMode ? 'Spell Reel' : 'Debug Agent',
+    classId: 'outlaw',
+    seed: runtimeConfig.spellReelMode ? 0x5EED : 0xC0FFEE,
+    difficulty: 'easy',
+  });
 } else {
   // Fade out the boot loader so the char creation panel is visible
   await bootPaint("Opening character creation...", _bootDoneUnits);
