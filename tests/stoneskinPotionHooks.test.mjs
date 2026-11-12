@@ -13,12 +13,14 @@ import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { Position } from "../src/rules/components/Position.js";
 import { applySystem } from "../src/rules/systems/applySystem.js";
+import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
 import { drinkSystem } from "../src/rules/systems/drinkSystem.js";
 import { installTauntListener } from "../src/rules/systems/tauntSystem.js";
 import { throwSystem } from "../src/rules/systems/throwSystem.js";
 import { useItemSystem } from "../src/rules/systems/useItemSystem.js";
 import { createItemById } from "../src/rules/utils/itemFactory.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
+import { GEAR_APPLICATION_TURNS } from "../src/rules/content/useActions/gearApplicationAction.js";
 
 Deno.test("stoneskin potion on_drink grants temporary stoneskin effect", () => {
   const world = new World({ seed: 6101 });
@@ -165,6 +167,7 @@ Deno.test("stoneskin potion on_dip (via apply pipeline) petrifies target item", 
 
   world.add(actor, ApplyIntent, { itemId: potion, targetItemId: weapon });
   applySystem(world);
+  for (let turn = 0; turn < GEAR_APPLICATION_TURNS; turn++) channelingSystem(world);
 
   assertEquals(results.length, 1);
   assertEquals(results[0].verb, "apply");

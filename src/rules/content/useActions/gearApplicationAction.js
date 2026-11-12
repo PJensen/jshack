@@ -1,6 +1,5 @@
 import { Channeling } from "../../components/Channeling.js";
 import { ItemInfo } from "../../components/ItemInfo.js";
-import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
 import { Equipment } from "../../components/Equipment.js";
 import { defineChannelAction } from "./useActionRegistry.js";
@@ -76,9 +75,8 @@ export function startGearApplication(world, actorId, toolId, targetId) {
   if (!world.isAlive(tool) || !world.isAlive(target) || world.has(actor, Channeling)) return false;
   if (!actorOwnsItem(world, actor, tool) || !actorOwnsItem(world, actor, target)) return false;
   if (String(world.get(target, ItemInfo)?.type || "") !== "equip") return false;
-  const toolIdentity = String(world.get(tool, NamedIdentity)?.identity || "").toLowerCase();
-  if (!toolIdentity.startsWith("scroll_enchant_") && toolIdentity !== "potion_oil") return false;
   if (!resolveApplyPayloadForWorld(world, { actor, toolId: tool, targetId: target }).payloadDef) return false;
+  const isSocketing = String(world.get(tool, ItemInfo)?.type || "") === "gem";
 
   const pos = world.get(actor, Position);
   try {
@@ -87,7 +85,7 @@ export function startGearApplication(world, actorId, toolId, targetId) {
       turnsRemaining: GEAR_APPLICATION_TURNS,
       turnsTotal: GEAR_APPLICATION_TURNS,
       spellId: "gear_application",
-      channelId: "applying",
+      channelId: isSocketing ? "socketing" : "applying",
       itemActionId: GEAR_APPLICATION_ACTION_ID,
       targetId: target,
       actionData: { toolId: tool },
@@ -103,8 +101,8 @@ export function startGearApplication(world, actorId, toolId, targetId) {
   world.emit("channeling:start", {
     actor,
     spellId: "gear_application",
-    channelId: "applying",
-    channelLabel: "Applying",
+    channelId: isSocketing ? "socketing" : "applying",
+    channelLabel: isSocketing ? "Socketing" : "Applying",
     castTime: GEAR_APPLICATION_TURNS,
     mode: "applying",
     toolId: tool,

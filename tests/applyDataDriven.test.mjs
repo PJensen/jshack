@@ -17,6 +17,7 @@ import { TemporarySpawn } from "../src/rules/components/TemporarySpawn.js";
 import { WeatherState } from "../src/rules/components/WeatherState.js";
 import { applySystem } from "../src/rules/systems/applySystem.js";
 import { channelingSystem } from "../src/rules/systems/channelingSystem.js";
+import { GEAR_APPLICATION_TURNS } from "../src/rules/content/useActions/gearApplicationAction.js";
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
 import { temporarySpawnExpirySystem } from "../src/rules/systems/temporarySpawnExpirySystem.js";
 import { TURNS_PER_DAY } from "../src/rules/data/calendar.js";
@@ -46,6 +47,10 @@ function identitiesAt(world, x, y) {
     }
   }
   return out.sort();
+}
+
+function finishGearApplication(world) {
+  for (let turn = 0; turn < GEAR_APPLICATION_TURNS; turn++) channelingSystem(world);
 }
 
 Deno.test("touchstone apply hook identifies gem targets", () => {
@@ -89,6 +94,7 @@ Deno.test("poison potion apply hook coats weapon and consumes the potion", () =>
 
   world.add(actor, ApplyIntent, { itemId: potion, targetItemId: dagger });
   applySystem(world);
+  finishGearApplication(world);
 
   const daggerInfo = world.get(dagger, ItemInfo);
   assert(daggerInfo?.coating, "dagger should receive a coating payload");
@@ -128,10 +134,32 @@ Deno.test("weapon oil takes time to apply before consuming the flask", () => {
   assertEquals(world.get(dagger, ItemInfo)?.coating, undefined);
   channelingSystem(world);
   assertEquals(world.get(dagger, ItemInfo)?.coating, undefined);
-  channelingSystem(world);
+  finishGearApplication(world);
 
   assertEquals(world.get(dagger, ItemInfo)?.coating?.kind, "oil");
   assertEquals(world.isAlive(oil), false);
+});
+
+Deno.test("socketing a gem takes time before consuming the gem", () => {
+  const world = new World({ seed: 10026 });
+  const actor = world.create();
+  world.add(actor, Inventory, { items: [], maxWeight: 100 });
+  const gem = createItemById(world, "gem_ruby");
+  const dagger = buildCatalogItem(world, "dagger_quick");
+  addToInventory(world, actor, gem);
+  addToInventory(world, actor, dagger);
+
+  const starts = [];
+  world.on("channeling:start", (event) => starts.push(event));
+  world.add(actor, ApplyIntent, { itemId: gem, targetItemId: dagger });
+  applySystem(world);
+
+  assertEquals(starts[0]?.channelId, "socketing");
+  assertEquals(world.get(dagger, ItemInfo)?.sockets?.length || 0, 0);
+  finishGearApplication(world);
+
+  assertEquals(world.get(dagger, ItemInfo)?.sockets?.[0], "gem_ruby");
+  assertEquals(world.isAlive(gem), false);
 });
 
 Deno.test("flint applied to wood with wielded metal weapon creates a campfire", () => {

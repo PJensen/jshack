@@ -1200,7 +1200,8 @@ export function initOverlays() {
   window.addEventListener('ui:channeling:start', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
-    if (String(e?.detail?.channelId || '') !== 'applying') return;
+    const channelId = String(e?.detail?.channelId || '');
+    if (channelId !== 'applying' && channelId !== 'socketing') return;
     hide(applyPanel);
   });
   window.addEventListener('ui:cookingFireData', (ev) => {
