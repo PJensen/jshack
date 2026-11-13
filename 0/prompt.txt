@@ -1,0 +1,9 @@
+that was dumb -- it looks like you used the lighing engine for this which is entirely wrong. I called out "glows"  and "poisioned" as being a good benchmark.
+
+second: if you were using lighing, it would be a light precisely on the impacted targets.
+
+WOW
+
+---
+
+visualy dominate? you maede a grid of lights. way off the mark here.
