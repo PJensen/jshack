@@ -82,6 +82,7 @@ import { engraveSystem, installEngraveListeners } from "../rules/systems/engrave
 import { installBumpInteractListener } from "../rules/systems/interactionSystem.js";
 import { hungerSystem } from "../rules/systems/hungerSystem.js";
 import { hazardSystem } from "../rules/systems/hazardSystem.js";
+import { auraFieldSystem } from "../rules/systems/auraFieldSystem.js";
 import { monsterDeathHookSystem } from "../rules/systems/monsterDeathHookSystem.js";
 import { scoreSystem } from "../rules/systems/scoreSystem.js";
 import { materialReactionListenersExtension, materialReactionSystem } from "../rules/systems/materialReactionSystem.js";
@@ -319,6 +320,7 @@ export function configureWorld(world) {
   registerSystem(foodDecaySystem, 'effects');
   registerSystem(itemCooldownSystem, 'effects');
   registerSystem(spellCooldownSystem, 'effects');
+  registerSystem(auraFieldSystem, 'effects');
   registerSystem(hazardSystem, 'effects');
   registerSystem(voidHoleSystem, 'effects', { after: [hazardSystem] });
   registerSystem(manaRegenerationSystem, 'effects');

@@ -39,6 +39,7 @@ import { isVisible as isTileVisible } from "../environment/dungeon/exploredMap.j
 import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana, effectiveMaxStamina } from "../utils/passiveBonuses.js";
 import { Stamina } from "../components/Stamina.js";
 import { spawnHazard } from "../utils/hazardSpawn.js";
+import { spawnAuraField } from "../utils/auraFieldSpawn.js";
 import { createFrom } from "../../lib/ecs-js/archetype.js";
 import { Monster } from "../archetypes/Creatures.js";
 import { PetState } from "../components/PetState.js";
@@ -2043,25 +2044,20 @@ function runFactionAuraScript(world, actor, spell) {
 
   const radius = resolveSpellRadius(world, actor, spell);
   const auraTurns = Math.max(1, Number(spell?.auraTurns || 5) | 0);
-  spawnHazard(world, {
+  spawnAuraField(world, {
     x: apos.x | 0,
     y: apos.y | 0,
-    kind: "aura",
-    medium: "air",
     turnsLeft: auraTurns,
     radius,
-    cause: `spell:${spell.id}`,
     sourceId: actor,
-    sourceKind: spell.id,
+    sourceKey: spell.id,
+    effectKey: spell.auraEffect,
+    effectTurns: spell.auraEffectTurns,
+    potency: spell.auraPotency,
+    targetRelation: spell.auraTarget,
+    woundedOnly: spell.auraWoundedOnly === true,
     identity: `${spell.id}_aura`,
     name: `${spell.name || "Aura"} Field`,
-    meta: {
-      effectKey: spell.auraEffect,
-      effectTurns: spell.auraEffectTurns,
-      potency: spell.auraPotency,
-      targetRelation: spell.auraTarget,
-      woundedOnly: spell.auraWoundedOnly === true,
-    },
   });
   applyAuraFieldPulse(world, actor, apos, {
     radius,
@@ -2084,23 +2080,19 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
   const actorFaction = String(world.get(actor, Faction)?.key || "").trim();
   const radius = Math.max(1, Number(spell?.radius || 6) | 0);
   const rallyTurns = Math.max(1, Number(spell?.rallyTurns || 5) | 0);
-  const auraId = spawnHazard(world, {
+  const auraId = spawnAuraField(world, {
     x: apos.x | 0,
     y: apos.y | 0,
-    kind: "ally_aura",
-    medium: "air",
     turnsLeft: rallyTurns,
     radius,
-    cause: "spell:wolf_howl",
     sourceId: actor,
-    sourceKind: "wolf_howl",
+    sourceKey: "wolf_howl",
+    effectKey: "hastened",
+    effectTurns: 2,
+    potency: 1,
+    targetRelation: "allied",
     identity: "wolf_howl_aura",
     name: "Pack Aura",
-    meta: {
-      effectKey: "hastened",
-      effectTurns: 2,
-      potency: 1,
-    },
   });
   let playerPos = null;
   for (const [id, _player, p] of world.query(Player, Position)) {
