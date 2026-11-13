@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7BAP9K0ZET8XX0FAPH7QX8M",
+  "session_id": "01a1d630-fb1d-7312-8b75-cdf27c1829be",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-13T20:48:28.265651218Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/bridge/schema/worldView.js",
+    "src/content/monsters/humanoids.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "tests/monsterAuras.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "cc8229f32717",
+  "checkpoint_transcript_start": 2294,
+  "transcript_lines_at_start": 2294,
+  "compact_transcript_start": 408,
+  "token_usage": {
+    "input_tokens": 38193,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 3318016,
+    "output_tokens": 6033,
+    "api_call_count": 23
+  },
+  "redaction": {
+    "replacements": 33969,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 33969,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 42
+  }
+}
