@@ -5,6 +5,7 @@ import {
   installDetachableKeyHandler, pulseRow, UI, UX_THEME, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
 import { getInventoryDefaultAction, isInventoryItemEquippable, isInventoryItemUsable } from './inventoryUtils.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
 
 /** @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel @param {Array<any>} items @param {any} [ground] @param {string} [slotFilter] */
 export function renderInventory(panel, items, ground, slotFilter = '', scrollOfIdentifyId = 0, encumbrance = null, pinnedKeys = []) {
@@ -177,6 +178,29 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     name.style.overflow = 'hidden';
     name.style.textOverflow = 'ellipsis';
     name.style.whiteSpace = 'nowrap';
+
+    const modifierIcons = [
+      ...(Array.isArray(it.socketedGems) ? it.socketedGems : []).map((gem) => ({
+        id: gem?.iconId,
+        label: gem?.name || 'Socketed gem',
+      })),
+      ...(Array.isArray(it.mechanics) ? it.mechanics : [])
+        .filter((mechanic) => mechanic?.iconId)
+        .map((mechanic) => ({ id: mechanic.iconId, label: 'Enchantment' })),
+    ].filter((entry) => String(entry.id || '').trim()).slice(0, 4);
+    if (modifierIcons.length) {
+      const modifiers = document.createElement('span');
+      Object.assign(modifiers.style, { display: 'inline-flex', gap: '2px', flex: '0 0 auto' });
+      for (const modifier of modifierIcons) {
+        const icon = document.createElement('span');
+        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(modifier.id), '✧', 16);
+        if (!hasIcon) icon.textContent = '✧';
+        icon.title = String(modifier.label);
+        icon.setAttribute('aria-label', String(modifier.label));
+        modifiers.appendChild(icon);
+      }
+      row.appendChild(modifiers);
+    }
 
     const slot = document.createElement('span');
     slot.style.opacity = '0.7'; slot.textContent = it.slot ? `(${it.slot})` : '';
