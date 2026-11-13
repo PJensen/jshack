@@ -925,35 +925,35 @@ export function renderQuestReward(panel, quest) {
     const selectedChoiceItems = choiceItems.filter((item) => String(item.choiceId || '') === choiceId);
     const row = document.createElement('div');
     Object.assign(row.style, {
-      width: '100%', padding: '9px 12px', margin: '6px 0', textAlign: 'left',
+      width: '100%', padding: '5px 10px', margin: '4px 0', textAlign: 'left',
       border: selected === choiceId ? '1px solid #d8b45a' : UI.BORDER, borderRadius: UI.RADIUS,
       background: selected === choiceId ? 'rgba(100, 75, 25, 0.55)' : 'rgba(36, 46, 58, 0.82)',
-      color: '#ffd85a',
+      color: '#dbe9f6', cursor: 'pointer',
     });
-    const select = document.createElement('button');
-    select.type = 'button';
-    select.textContent = String(selectedChoiceItems[0]?.choiceLabel || '').trim()
-      || selectedChoiceItems.map((item) => `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`).join(' + ');
-    Object.assign(select.style, {
-      display: 'block', width: '100%', padding: '2px 0 7px', textAlign: 'left',
-      border: '0', background: 'transparent', color: '#ffd85a', font: 'inherit', cursor: 'pointer',
-    });
-    select.addEventListener('click', () => {
+    row.setAttribute('role', 'button');
+    row.tabIndex = 0;
+    row.setAttribute('aria-label', selectedChoiceItems.map((item) => String(item.name || item.itemId || 'Item')).join(', '));
+    row.addEventListener('click', () => {
       (/** @type {any} */ (panel))._selectedReward = choiceId;
       renderQuestReward(panel, quest);
     });
-    row.appendChild(select);
+    row.addEventListener('keydown', (event) => {
+      if (event.target !== row || (event.key !== 'Enter' && event.key !== ' ')) return;
+      event.preventDefault();
+      (/** @type {any} */ (panel))._selectedReward = choiceId;
+      renderQuestReward(panel, quest);
+    });
     for (const item of selectedChoiceItems) {
       const inspect = document.createElement('button');
       inspect.type = 'button';
       inspect.setAttribute('aria-label', `Show tooltip for ${String(item.name || item.itemId || 'reward item')}`);
       Object.assign(inspect.style, {
-        display: 'flex', alignItems: 'center', gap: '7px', width: '100%', padding: '3px 0',
+        display: 'flex', alignItems: 'center', gap: '7px', width: '100%', padding: '2px 0',
         border: '0', background: 'transparent', color: '#dbe9f6', cursor: 'pointer', font: 'inherit', textAlign: 'left',
       });
       appendRewardIcon(inspect, item, 28);
       const itemLabel = document.createElement('span');
-      itemLabel.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')} · inspect details`;
+      itemLabel.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
       inspect.appendChild(itemLabel);
       inspect.addEventListener('click', (event) => {
         event.preventDefault();
