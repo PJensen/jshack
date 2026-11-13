@@ -376,72 +376,33 @@ export function initHUD() {
     border: '1px solid rgba(190,210,230,0.38)', borderRadius: '8px',
     background: 'rgba(8,12,20,0.56)', boxShadow: '0 5px 18px rgba(0,0,0,0.35)',
     pointerEvents: 'none', zIndex: 902, imageRendering: 'pixelated',
-    transition: 'left 280ms ease, top 280ms ease, width 280ms ease, height 280ms ease, transform 280ms ease',
+    transformOrigin: 'center center',
+    transition: 'transform 280ms cubic-bezier(0.22, 1, 0.36, 1)',
   });
   let minimapExpanded = false;
-  let minimapTransitioning = false;
-  const restoreMinimapLayout = () => {
-    minimap.style.position = 'static';
-    minimap.style.left = '';
-    minimap.style.top = '';
-    minimap.style.right = '';
-    minimap.style.width = 'min(180px, 36vw)';
-    minimap.style.height = 'min(180px, 36vw)';
-    minimap.style.transform = '';
-    minimap.style.zIndex = '902';
-    minimapTransitioning = false;
-  };
   const toggleMinimap = () => {
-    if (minimapTransitioning || minimap.style.display === 'none') return;
-    minimapTransitioning = true;
-    const current = minimap.getBoundingClientRect();
+    if (minimap.style.display === 'none') return;
+    minimapExpanded = !minimapExpanded;
     if (!minimapExpanded) {
-      minimap.style.position = 'fixed';
-      minimap.style.left = `${current.left}px`;
-      minimap.style.top = `${current.top}px`;
-      minimap.style.right = 'auto';
-      minimap.style.width = `${current.width}px`;
-      minimap.style.height = `${current.height}px`;
-      minimap.style.zIndex = '1000';
-      requestAnimationFrame(() => {
-        minimap.style.left = '50%';
-        minimap.style.top = '50%';
-        minimap.style.width = 'min(86vw, 720px)';
-        minimap.style.height = 'min(86vw, 720px)';
-        minimap.style.transform = 'translate(-50%, -50%)';
-      });
-      minimapExpanded = true;
-      minimapTransitioning = false;
+      minimap.style.transform = '';
       return;
     }
 
-    // Measure the normal flow position first, then animate from the expanded
-    // fixed position back to it before restoring the HUD's layout ownership.
-    minimap.style.position = 'static';
-    minimap.style.left = '';
-    minimap.style.top = '';
-    minimap.style.right = '';
-    minimap.style.width = 'min(180px, 36vw)';
-    minimap.style.height = 'min(180px, 36vw)';
-    minimap.style.transform = '';
-    const target = minimap.getBoundingClientRect();
-    minimap.style.position = 'fixed';
-    minimap.style.left = `${current.left}px`;
-    minimap.style.top = `${current.top}px`;
-    minimap.style.width = `${current.width}px`;
-    minimap.style.height = `${current.height}px`;
+    // Keep the canvas in normal HUD flow. A transform moves and enlarges the
+    // painted surface without reflowing the rows around it.
+    const rect = minimap.getBoundingClientRect();
+    const viewportWidth = Math.max(1, Number(window.innerWidth || 1));
+    const viewportHeight = Math.max(1, Number(window.innerHeight || 1));
+    const expandedSize = Math.min(viewportWidth, viewportHeight) * 0.86;
+    const scale = expandedSize / Math.max(1, rect.width);
+    const dx = viewportWidth / 2 - (rect.left + rect.width / 2);
+    const dy = viewportHeight / 2 - (rect.top + rect.height / 2);
     minimap.style.zIndex = '1000';
-    requestAnimationFrame(() => {
-      minimap.style.left = `${target.left}px`;
-      minimap.style.top = `${target.top}px`;
-      minimap.style.width = `${target.width}px`;
-      minimap.style.height = `${target.height}px`;
-      minimap.style.transform = 'none';
-      window.setTimeout(restoreMinimapLayout, 300);
-    });
-    minimapExpanded = false;
-    minimapTransitioning = false;
+    minimap.style.transform = `translate(${dx}px, ${dy}px) scale(${scale})`;
   };
+  minimap.addEventListener('transitionend', (ev) => {
+    if (ev.propertyName === 'transform' && !minimapExpanded) minimap.style.zIndex = '902';
+  });
   window.addEventListener('ui:toggleMinimap', toggleMinimap);
   const minimapCtx = minimap.getContext('2d');
   window.addEventListener('ui:updateMinimap', (ev) => {
