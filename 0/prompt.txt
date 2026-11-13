@@ -1,0 +1,3 @@
+quest reward items selector should have a much smaller container, simply the {icon} {name} -- should be sufficient and would save significantly on space.
+
+funny becuase this happens at the bottom for "in addition to" rewards, "town soup" for example.
