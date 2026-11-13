@@ -1,0 +1,11 @@
+some useful keybindings:
+
+b -- bags (i already does this -- add nother keybinding)
+c -- character (already exists)
+m --  expand minimap (animate minimap to center, expanding it, or moving it back to it's present location -- css animation transition -- smooth)
+
+I would focus on `m`
+
+---
+
+and it's a toggle right you got that.
