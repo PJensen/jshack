@@ -9,7 +9,7 @@ import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
 
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
- * @param {{ playerName?: string, stats?: Record<string, any>, activeEffects?: Array<any> }} data
+ * @param {{ playerName?: string, stats?: Record<string, any>, activeEffects?: Array<any>, equippedBySlot?: Record<string, any> }} data
  */
 export function renderCharacterSheet(panel, data) {
   const SEASON_COLORS = {
@@ -31,7 +31,24 @@ export function renderCharacterSheet(panel, data) {
 
   const playerName = String(data?.playerName || 'Hero').trim() || 'Hero';
   const stats = data?.stats && typeof data.stats === 'object' ? data.stats : {};
-  const activeEffects = Array.isArray(data?.activeEffects) ? data.activeEffects : [];
+  const equippedBySlot = data?.equippedBySlot && typeof data.equippedBySlot === 'object'
+    ? data.equippedBySlot
+    : {};
+  const gearMechanics = [];
+  const seenGearMechanics = new Set();
+  for (const slot of CHARACTER_SLOT_ORDER) {
+    const item = equippedBySlot?.[slot]?.item;
+    const mechanics = Array.isArray(item?.mechanics) ? item.mechanics : [];
+    for (const mechanic of mechanics) {
+      const context = String(mechanic?.context || '').trim();
+      const text = String(mechanic?.text || '').trim();
+      if (!text || (context !== 'Equip' && context !== 'Enchant')) continue;
+      const label = `${context} ${text}`;
+      if (seenGearMechanics.has(label)) continue;
+      seenGearMechanics.add(label);
+      gearMechanics.push(label);
+    }
+  }
   const traits = Array.isArray(data?.traits) ? data.traits : [];
   const calendar = data?.calendar && typeof data.calendar === 'object' ? data.calendar : null;
 
@@ -204,7 +221,7 @@ export function renderCharacterSheet(panel, data) {
   }
 
   const effectsTitle = document.createElement('div');
-  effectsTitle.textContent = 'Active Effects';
+  effectsTitle.textContent = 'Gear Effects';
   effectsTitle.style.marginTop = '10px';
   effectsTitle.style.fontWeight = 'bold';
   el.appendChild(effectsTitle);
@@ -220,18 +237,15 @@ export function renderCharacterSheet(panel, data) {
     overflowY: 'auto',
     fontSize: '13px',
   });
-  if (!activeEffects.length) {
+  if (!gearMechanics.length) {
     const empty = document.createElement('div');
     empty.textContent = '(none)';
     empty.style.opacity = '0.75';
     effects.appendChild(empty);
   } else {
-    for (const status of activeEffects) {
+    for (const label of gearMechanics) {
       const row = document.createElement('div');
-      const key = humanize(String(status?.key || '').trim());
-      const turns = Math.max(0, Number(status?.turns || 0) | 0);
-      const stacks = Math.max(1, Number(status?.stacks || 1) | 0);
-      row.textContent = `${key} \u00b7 ${turns}t${stacks > 1 ? ` \u00b7 x${stacks}` : ''}`;
+      row.textContent = label;
       row.style.marginBottom = '4px';
       effects.appendChild(row);
     }

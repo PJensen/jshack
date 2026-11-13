@@ -652,10 +652,10 @@ export function initOverlays() {
     const e = ev;
     const playerName = String(e?.detail?.playerName || 'Hero');
     const stats = e?.detail?.stats || {};
-    const activeEffects = Array.isArray(e?.detail?.activeEffects) ? e.detail.activeEffects : [];
+    const equippedBySlot = e?.detail?.equippedBySlot || {};
     const traits = Array.isArray(e?.detail?.traits) ? e.detail.traits : [];
     const calendar = e?.detail?.calendar || null;
-    if (char.style.display === 'block') renderCharacterSheet(char, { playerName, stats, activeEffects, traits, calendar });
+    if (char.style.display === 'block') renderCharacterSheet(char, { playerName, stats, equippedBySlot, traits, calendar });
   });
   window.addEventListener('ui:equipmentData', (ev) => {
     /** @type {CustomEvent} */ // @ts-ignore
