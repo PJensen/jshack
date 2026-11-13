@@ -1313,8 +1313,6 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     );
   } catch {}
 
-  nameInput.select();
-
   // ---- entropy listeners (all input forms → seed) ----
   function onPointerEntropy(e) {
     feedEntropy((e.clientX * 31337) ^ (e.clientY * 7919));
