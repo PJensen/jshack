@@ -195,7 +195,9 @@ Deno.test("status emitter controller gives aura recipients colorized item-style 
     ],
   }, 1.0);
 
-  assert(harness.ensured.some((rec) => rec.key === "aura:pack:21"));
+  const packEmitter = harness.ensured.find((rec) => rec.key === "aura:pack:21");
+  assert(packEmitter);
+  assertEquals(packEmitter.cfg.rate, 0, "positive pack auras should not emit particles");
   const lights = controller.getActiveLights();
   assertEquals(lights.length, 1);
   assert(lights[0].color[1] > lights[0].color[0]);
