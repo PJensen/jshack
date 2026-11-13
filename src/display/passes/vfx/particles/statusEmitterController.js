@@ -90,7 +90,7 @@ export function createStatusEmitterController({ world, fx }) {
     blood: { rate: 8, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
   };
   const AURA_GLOW_STYLE = {
-    pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 2.6 },
+    pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 1.25 },
     toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 2.6 },
     rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 2.8 },
     dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 2.8 },
