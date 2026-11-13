@@ -90,12 +90,12 @@ export function createStatusEmitterController({ world, fx }) {
     blood: { rate: 8, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
   };
   const AURA_GLOW_STYLE = {
-    pack: { color: [156, 255, 104], radius: 0.72, speed: 5.0, lightRadius: 2.8 },
-    toxic: { color: [181, 239, 98], radius: 0.70, speed: 4.0, lightRadius: 2.6 },
-    rally: { color: [255, 211, 106], radius: 0.72, speed: 5.8, lightRadius: 2.8 },
-    dread: { color: [192, 140, 255], radius: 0.72, speed: 3.2, lightRadius: 2.8 },
-    void: { color: [120, 184, 255], radius: 0.74, speed: 4.6, lightRadius: 2.9 },
-    blood: { color: [255, 111, 120], radius: 0.72, speed: 6.2, lightRadius: 2.8 },
+    pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.72, lightRadius: 2.8 },
+    toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 2.6 },
+    rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 2.8 },
+    dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 2.8 },
+    void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 2.9 },
+    blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 2.8 },
   };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {
@@ -200,7 +200,11 @@ export function createStatusEmitterController({ world, fx }) {
         seenEmitterKeys.add(key);
         auraEmitterKeys.add(key);
         const emitter = fx.ensureEmitter(key, { continuous: true, ...cfg });
-        if (emitter) emitter.alphaMultiplier = Math.min(1.25, 0.75 + Number(aura.strength || 1) * 0.12);
+        const temporal = evaluatePattern(style.pattern, fxTime, e.id);
+        if (emitter) {
+          emitter.alphaMultiplier = Math.min(1.25,
+            (0.75 + Number(aura.strength || 1) * 0.12) * temporal.intensity);
+        }
         origins.push({ key, x: e.pos.x, y: e.pos.y - 0.08 });
         lightProbes.push({ kind: "aura_profile", id: e.id, x: e.pos.x, y: e.pos.y, style });
       }
@@ -313,10 +317,13 @@ export function createStatusEmitterController({ world, fx }) {
       for (const aura of glows) {
         const style = AURA_GLOW_STYLE[String(aura?.key || "")];
         if (!style) continue;
-        const pulse = 0.5 + 0.5 * Math.sin(Number(fxTime || 0) * style.speed + (entity.id | 0) * 0.37);
+        const temporal = evaluatePattern(style.pattern, Number(fxTime || 0), entity.id | 0);
+        const pulse = Math.max(0, Math.min(1, (temporal.intensity - 0.65) / 0.45));
         const strength = Math.max(0.7, Math.min(1.4, Number(aura.strength || 1)));
         const radius = style.radius * (0.92 + 0.10 * pulse) * strength;
-        const [r, g, b] = style.color;
+        const r = Math.max(0, Math.min(255, style.color[0] * (1 + temporal.r)));
+        const g = Math.max(0, Math.min(255, style.color[1] * (1 + temporal.g)));
+        const b = Math.max(0, Math.min(255, style.color[2] * (1 + temporal.b)));
         const outer = ctx.createRadialGradient(entity.pos.x, entity.pos.y, 0, entity.pos.x, entity.pos.y, radius);
         outer.addColorStop(0, `rgba(${r},${g},${b},${(0.22 + 0.10 * pulse).toFixed(3)})`);
         outer.addColorStop(0.48, `rgba(${r},${g},${b},${(0.10 + 0.05 * pulse).toFixed(3)})`);
@@ -353,9 +360,14 @@ export function createStatusEmitterController({ world, fx }) {
       } else if (p.kind === "aura_profile") {
         const style = p.style || null;
         if (!style) continue;
-        const phase = Number(p.id || 0) * 0.37;
-        const f = 0.86 + 0.14 * Math.sin(_fxTime * Number(style.speed || 1) + phase);
-        const color = Array.isArray(style.color) ? style.color : [180, 220, 255];
+        const temporal = evaluatePattern(style.pattern, _fxTime, p.id | 0);
+        const f = temporal.intensity;
+        const baseColor = Array.isArray(style.color) ? style.color : [180, 220, 255];
+        const color = [
+          Math.max(0, Math.min(255, baseColor[0] * (1 + temporal.r))),
+          Math.max(0, Math.min(255, baseColor[1] * (1 + temporal.g))),
+          Math.max(0, Math.min(255, baseColor[2] * (1 + temporal.b))),
+        ];
         out.push({
           x: p.x + 0.5,
           y: p.y + 0.5,

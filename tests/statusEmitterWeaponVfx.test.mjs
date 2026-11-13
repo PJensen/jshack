@@ -198,8 +198,15 @@ Deno.test("status emitter controller gives aura recipients colorized item-style 
   assert(harness.ensured.some((rec) => rec.key === "aura:pack:21"));
   const lights = controller.getActiveLights();
   assertEquals(lights.length, 1);
-  assertEquals(lights[0].color, [156, 255, 104]);
-  assert(lights[0].radius > 2.3 && lights[0].radius < 3.1);
+  assert(lights[0].color[1] > lights[0].color[0]);
+  assert(lights[0].color[1] > lights[0].color[2]);
+  assert(lights[0].radius > 1.8 && lights[0].radius < 3.1);
+  const firstFlicker = lights[0].flicker;
+
+  controller.step(0.016, {
+    entities: [{ id: 21, kind: "dire_wolf", pos: { x: 4, y: 6 }, tags: [], auraGlows: [{ key: "pack", strength: 1 }] }],
+  }, 2.0);
+  assert(controller.getActiveLights()[0].flicker !== firstFlicker, "aura light should follow its temporal pattern");
 
   const lastStep = harness.stepCalls[harness.stepCalls.length - 1];
   assert(lastStep.origins.some((origin) => origin.key === "aura:pack:21"));
