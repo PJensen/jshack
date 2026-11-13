@@ -25,6 +25,7 @@ import { runCallbackList } from "../src/rules/interaction/dispatch.js";
 import { hasEffect } from "../src/rules/utils/statusFacade.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
+import { buildWorldView } from "../src/bridge/schema/worldView.js";
 
 function loadFlatFloor() {
   clearAll();
@@ -400,6 +401,8 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     assertEquals(aggro?.lastKnownY, 5);
     assertEquals(hasEffect(world, ally, "hastened"), true, "wolf_howl should hasten nearby same-faction allies");
     assertEquals(hasEffect(world, wolf, "hastened"), true, "wolf_howl should include the howling wolf in its aura");
+    const wolfView = buildWorldView(world).entities.find((entity) => entity.id === wolf);
+    assertEquals(wolfView?.auraGlows, [{ key: "pack", strength: 1 }], "wolf_howl should project the wolf's own pack glow");
     assertEquals(hasEffect(world, farAlly, "hastened"), false, "wolf_howl should not reach beyond its aura radius");
 
     let auraId = 0;
