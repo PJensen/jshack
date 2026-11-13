@@ -2332,8 +2332,11 @@ export function renderItemDetails(container, it) {
       const lines = Array.isArray(gem?.detailLines)
         ? gem.detailLines.map((line) => String(line || '').trim()).filter(Boolean)
         : [];
+      const summary = lines
+        .map((line) => line.replace(/^Socketed:/i, 'Socket:').replace(/^On hit:/i, 'Equip:'))
+        .join(' ');
       text.textContent = lines.length
-        ? `${String(gem?.name || 'Gem')}: ${lines.join(' ')}`
+        ? `${String(gem?.name || 'Gem')} — ${summary}`
         : `${String(gem?.name || 'Gem')} socketed`;
       gemRow.appendChild(text);
       container.appendChild(gemRow);
