@@ -1,8 +1,7 @@
 import { AuraField } from "../components/AuraField.js";
-import { NamedIdentity } from "../components/NamedIdentity.js";
 import { Position } from "../components/Position.js";
-import { attachEntityToCurrentFloor } from "./floorEntities.js";
 import { clampInt } from "./numberCoerce.js";
+import { attach } from "../../lib/ecs-js/hierarchy.js";
 
 /**
  * Spawn a persistent, source-following aura. Aura fields are intentionally
@@ -27,14 +26,6 @@ export function spawnAuraField(world, params) {
     turnsLeft: params.turnsLeft,
     radius: params.radius,
   });
-  if (params.identity || params.name) {
-    try {
-      world.add(fieldId, NamedIdentity, {
-        identity: String(params.identity || "aura_field"),
-        name: String(params.name || "Aura Field"),
-      });
-    } catch { /* optional presentation metadata */ }
-  }
-  attachEntityToCurrentFloor(world, fieldId);
+  if (sourceId > 0 && world.isAlive(sourceId)) attach(world, fieldId, sourceId);
   return fieldId;
 }

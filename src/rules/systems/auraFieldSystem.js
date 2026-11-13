@@ -1,7 +1,7 @@
 import { AuraField } from "../components/AuraField.js";
-import { NamedIdentity } from "../components/NamedIdentity.js";
 import { Position } from "../components/Position.js";
 import { applyAuraFieldPulse } from "../utils/auraFields.js";
+import { destroySubtree } from "../../lib/ecs-js/hierarchy.js";
 
 export function auraFieldSystem(world) {
   for (const [fieldId, pos, field] of world.query(Position, AuraField)) {
@@ -20,9 +20,9 @@ export function auraFieldSystem(world) {
       targetRelation: field.targetRelation,
       woundedOnly: field.woundedOnly,
       sourceKind: "aura",
-      sourceKey: field.sourceKey || world.get(fieldId, NamedIdentity)?.identity || field.effectKey,
+      sourceKey: field.sourceKey || field.effectKey,
     });
     field.turnsLeft = (field.turnsLeft | 0) - 1;
-    if (field.turnsLeft <= 0) world.destroy(fieldId);
+    if (field.turnsLeft <= 0) destroySubtree(world, fieldId);
   }
 }

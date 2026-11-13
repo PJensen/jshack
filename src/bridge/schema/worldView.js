@@ -20,6 +20,7 @@ import { forEachInRect, ensureSpatialIndex } from '../../rules/utils/spatialInde
 import { Engraving } from '../../rules/components/Engraving.js';
 import { PlasmaCloud } from "../../rules/components/PlasmaCloud.js";
 import { HazardArea } from "../../rules/components/HazardArea.js";
+import { AuraField } from "../../rules/components/AuraField.js";
 import { Trap } from "../../rules/components/Trap.js";
 import { Vitality } from '../../rules/components/Vitality.js';
 import { Channeling } from '../../rules/components/Channeling.js';
@@ -1209,7 +1210,7 @@ export function buildWorldView(world) {
 		const x1 = _view.player.pos.x + viewR;
 		const y1 = _view.player.pos.y + viewR;
 		forEachInRect(world, x0, y0, x1, y1, (id, pos) => {
-			if (world.has(id, PlasmaCloud) || world.has(id, HazardArea)) return;
+			if (world.has(id, PlasmaCloud) || world.has(id, HazardArea) || world.has(id, AuraField)) return;
 			if (world.has(id, Burned)) return;
 			if (world.has(id, DistrictProfile) || world.has(id, EntranceProfile)) return;
 			// Hide unrevealed traps — completely invisible until triggered
@@ -1353,7 +1354,7 @@ export function buildWorldView(world) {
 		});
 	} else {
 		for (const [id, pos] of world.query(Position)) {
-			if (world.has(id, PlasmaCloud) || world.has(id, HazardArea)) continue;
+			if (world.has(id, PlasmaCloud) || world.has(id, HazardArea) || world.has(id, AuraField)) continue;
 			if (world.has(id, Burned)) continue;
 			if (world.has(id, DistrictProfile) || world.has(id, EntranceProfile)) continue;
 			// Hide unrevealed traps — completely invisible until triggered

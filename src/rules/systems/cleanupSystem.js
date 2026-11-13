@@ -37,6 +37,7 @@ import { Ashes, Bone } from "../archetypes/Items.js";
 import { EffectInstance } from "../components/EffectInstance.js";
 import { childrenWith } from "../utils/topology.js";
 import { removeEffectInstance } from "../utils/effectInstances.js";
+import { destroySubtree } from "../../lib/ecs-js/hierarchy.js";
 
 const GROUND_STACK_SEQ_KEY = Symbol.for("jshack:groundStack:seq");
 const DEATH_IMPACT_KEY = Symbol.for("jshack:deathImpact:map");
@@ -312,7 +313,7 @@ export function cleanupSystem(world) {
         removeEffectInstance(world, effectId, "death");
       }
       destroyInventoryRoot(world, id);
-      world.destroy(id);
+      destroySubtree(world, id);
     }
   }
 }

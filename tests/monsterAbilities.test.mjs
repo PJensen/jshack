@@ -21,6 +21,7 @@ import { getMonster } from "../src/rules/data/monsters.js";
 import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { auraFieldSystem } from "../src/rules/systems/auraFieldSystem.js";
+import { cleanupSystem } from "../src/rules/systems/cleanupSystem.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { castSpellSystem } from "../src/rules/systems/castSpellSystem.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
@@ -28,6 +29,7 @@ import { hasEffect } from "../src/rules/utils/statusFacade.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { buildWorldView } from "../src/bridge/schema/worldView.js";
+import { getParent } from "../src/lib/ecs-js/hierarchy.js";
 
 function loadFlatFloor() {
   clearAll();
@@ -420,6 +422,8 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
       break;
     }
     assert(auraId > 0, "wolf_howl should leave a temporary ally aura field");
+    assertEquals(getParent(world, auraId), wolf, "aura field should be attached to its caster");
+    assertEquals(buildWorldView(world).entities.some((entity) => entity.id === auraId), false, "aura field should be invisible in WorldView");
 
     const lateAlly = world.create();
     world.add(lateAlly, Position, { x: 6, y: 5 });
@@ -431,6 +435,9 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     const pulsedView = buildWorldView(world);
     assertEquals(pulsedView.entities.find((entity) => entity.id === wolf)?.auraGlows, [{ key: "pack", strength: 2 }], "wolf glow should survive aura refresh");
     assertEquals(pulsedView.entities.find((entity) => entity.id === ally)?.auraGlows, [{ key: "pack", strength: 2 }], "ally glow should survive aura refresh");
+    world.get(wolf, Vitality).hp = 0;
+    cleanupSystem(world);
+    assertEquals(world.isAlive(auraId), false, "caster death should destroy its aura child");
   } finally {
     clearAll();
   }
