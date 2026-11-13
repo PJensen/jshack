@@ -4,7 +4,7 @@ import { Stamina } from "../../rules/components/Stamina.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../../rules/components/Equipment.js";
 import { ItemInfo } from "../../rules/components/ItemInfo.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
-import { inventoryItems } from "../../rules/utils/inventoryFacade.js";
+import { getCarriedWeight, inventoryItems } from "../../rules/utils/inventoryFacade.js";
 import { getAffixName } from "../../rules/data/affixes.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
 import { DungeonEntrance } from "../../rules/components/DungeonEntrance.js";
@@ -18,6 +18,7 @@ import { PetState } from "../../rules/components/PetState.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
 import { resolveResistance } from "../../rules/utils/dealDamage.js";
 import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana } from "../../rules/utils/passiveBonuses.js";
+import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
 import { getSpell } from "../../rules/data/spells.js";
 import { getSpellCooldown } from "../../rules/utils/spellCooldowns.js";
@@ -56,7 +57,7 @@ export function formatClockLabel12Hour(turn) {
 export function createHudFeeds(world, deps) {
   const { getPlayerMana, ensureActiveSpell, updateActiveSpellLabel, getFxTime } = deps;
 
-  let lastVitals = { hp: -1, maxHp: -1, mana: -1, maxMana: -1, stamina: -1, maxStamina: -1 };
+  let lastVitals = { hp: -1, maxHp: -1, mana: -1, maxMana: -1, stamina: -1, maxStamina: -1, encumbrance: -1 };
   let lastCombatHud = {
     weaponId: -1,
     rangedId: -1,
@@ -436,12 +437,14 @@ export function createHudFeeds(world, deps) {
     const stamina = Number(stam?.stamina ?? 0);
     const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
     const maxStamina = Number(stam?.maxStamina ?? 100) + maxStaminaBonus;
+    const encumbrance = resolveEncumbrance(getCarriedWeight(world, pe.id), getCarryCapacity(world, pe.id));
     if (hp !== lastVitals.hp || maxHp !== lastVitals.maxHp ||
         mana.mana !== lastVitals.mana || mana.maxMana !== lastVitals.maxMana ||
-        stamina !== lastVitals.stamina || maxStamina !== lastVitals.maxStamina) {
-      lastVitals = { hp, maxHp, mana: mana.mana, maxMana: mana.maxMana, stamina, maxStamina };
+        stamina !== lastVitals.stamina || maxStamina !== lastVitals.maxStamina ||
+        encumbrance.loadRatio !== lastVitals.encumbrance) {
+      lastVitals = { hp, maxHp, mana: mana.mana, maxMana: mana.maxMana, stamina, maxStamina, encumbrance: encumbrance.loadRatio };
       try {
-        window.dispatchEvent(new CustomEvent("ui:updateVitals", { detail: lastVitals }));
+        window.dispatchEvent(new CustomEvent("ui:updateVitals", { detail: { ...lastVitals, encumbrance } }));
       } catch (e) { console.debug('[hudFeeds] dispatch ui:updateVitals:', e); }
     }
   }

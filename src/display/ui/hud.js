@@ -141,6 +141,10 @@ export const MOBILE_ACTION_BAR_GRID_AREAS = Object.freeze({
   shoot: Object.freeze({ col: '7', row: '1' }),
 });
 
+export function clampEncumbrancePercent(loadRatio) {
+  return Math.max(0, Math.min(100, Number(loadRatio || 0) * 100));
+}
+
 const STARTER_PIN_PRIORITY = Object.freeze([
   Object.freeze(['hearthstone']),
   Object.freeze(['potion_mana', 'mana_potion']),
@@ -445,10 +449,27 @@ export function initHUD() {
   });
   const bar = document.createElement('div');
   Object.assign(bar.style, {
-    position: 'fixed', left: '8px', right: '8px', bottom: 'calc(var(--jshack-ticker-height, 30px) + 8px + env(safe-area-inset-bottom, 0px))',
+    position: 'fixed', left: '8px', right: '8px', bottom: 'calc(var(--jshack-ticker-height, 30px) + 19px + env(safe-area-inset-bottom, 0px))',
     display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center',
     pointerEvents: 'auto', zIndex: 900
   });
+
+  const encumbranceBar = document.createElement('div');
+  Object.assign(encumbranceBar.style, {
+    position: 'fixed', left: '8px', right: '8px', bottom: 'calc(var(--jshack-ticker-height, 30px) + 8px + env(safe-area-inset-bottom, 0px))',
+    height: '6px', maxWidth: '490px', margin: '0 auto',
+    background: 'rgba(100, 110, 122, 0.28)', borderRadius: '3px',
+    overflow: 'hidden', pointerEvents: 'none', zIndex: 900,
+  });
+  const encumbranceFill = document.createElement('div');
+  Object.assign(encumbranceFill.style, {
+    width: '0%', height: '100%', background: '#7c858f', borderRadius: 'inherit',
+  });
+  encumbranceBar.appendChild(encumbranceFill);
+  encumbranceBar.setAttribute('role', 'progressbar');
+  encumbranceBar.setAttribute('aria-label', 'Encumbrance');
+  encumbranceBar.setAttribute('aria-valuemin', '0');
+  encumbranceBar.setAttribute('aria-valuemax', '100');
 
   // All top rows flow together; no independently maintained vertical offsets.
   const topRightHud = document.createElement('div');
@@ -1266,7 +1287,7 @@ export function initHUD() {
   function syncActionBarHeight() {
     const barH = Math.max(44, Math.ceil(bar.getBoundingClientRect().height || 44));
     const tickerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--jshack-ticker-height') || '30', 10);
-    document.documentElement.style.setProperty('--jshack-actionbar-height', `${barH + tickerH}px`);
+    document.documentElement.style.setProperty('--jshack-actionbar-height', `${barH + tickerH + 11}px`);
   }
 
   // Show/hide pet button based on pet existence
@@ -1383,6 +1404,9 @@ export function initHUD() {
       staminaValue: stVal,
       staminaMax: stMax,
     });
+    const percent = clampEncumbrancePercent(e?.detail?.encumbrance?.loadRatio);
+    encumbranceFill.style.width = `${percent}%`;
+    encumbranceBar.setAttribute('aria-valuenow', String(Math.round(percent)));
   });
 
   window.addEventListener('ui:updateCalendar', (ev) => {
@@ -1843,6 +1867,7 @@ export function initHUD() {
   bar.appendChild(waitBtn);
   bar.appendChild(shootBtn);
   root.appendChild(bar);
+  root.appendChild(encumbranceBar);
   root.appendChild(quick.el);
 
   // --- Channeling overlay (progress bar + cancel button) ---
