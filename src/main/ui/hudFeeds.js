@@ -5,7 +5,6 @@ import { Equipment, NON_AMMO_GEAR_SLOTS } from "../../rules/components/Equipment
 import { ItemInfo } from "../../rules/components/ItemInfo.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { getCarriedWeight, inventoryItems } from "../../rules/utils/inventoryFacade.js";
-import { buildItemDisplayData } from "../wiring/itemName.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
 import { DungeonEntrance } from "../../rules/components/DungeonEntrance.js";
 import { Position } from "../../rules/components/Position.js";
@@ -69,7 +68,6 @@ export function createHudFeeds(world, deps) {
     ac: -999,
     critPct: -999,
     statusSig: "",
-    affixSig: "",
     ammo: -1,
     coatingSig: "",
     posture: "",
@@ -529,27 +527,6 @@ export function createHudFeeds(world, deps) {
     }
     const statusSig = statuses.map((s) => `${s.instanceId || s.key}:${s.turns}:${s.stacks}:${Number(s.potency || 0)}:${s.sourceKey || ''}:${s.masked ? 1 : 0}`).join("|");
 
-    const affixEffects = [];
-    const effectSet = new Set();
-    const pushAffixEffects = (id) => {
-      if (!(id > 0)) return;
-      const display = buildItemDisplayData(world, id);
-      const mechanics = Array.isArray(display?.mechanics) ? display.mechanics : [];
-      for (const mechanic of mechanics) {
-        const context = String(mechanic?.context || '').trim();
-        const text = String(mechanic?.text || '').trim();
-        if (!text || (context !== 'Equip' && context !== 'Enchant')) continue;
-        const label = `${context}: ${text}`;
-        if (effectSet.has(label)) continue;
-        effectSet.add(label);
-        affixEffects.push(label);
-      }
-    };
-    if (eq) {
-      for (const slot of NON_AMMO_GEAR_SLOTS) pushAffixEffects(Number(eq[slot] || 0));
-    }
-    const affixSig = affixEffects.join("|");
-
     // Count ammo in player inventory
     let ammo = 0;
     for (const iid of inventoryItems(world, pe.id)) {
@@ -560,8 +537,8 @@ export function createHudFeeds(world, deps) {
     if (lastCombatHud.weaponId !== wid || lastCombatHud.rangedId !== rangedId || lastCombatHud.rangedCount !== rangedCount ||
       lastCombatHud.atk !== atk || lastCombatHud.def !== def || lastCombatHud.luck !== luck ||
       lastCombatHud.ac !== armorClass || lastCombatHud.critPct !== critPct ||
-      lastCombatHud.statusSig !== statusSig || lastCombatHud.affixSig !== affixSig || lastCombatHud.ammo !== ammo || lastCombatHud.coatingSig !== coatingSig || lastCombatHud.posture !== posture) {
-      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def, luck, ac: armorClass, critPct, statusSig, affixSig, ammo, coatingSig, posture };
+      lastCombatHud.statusSig !== statusSig || lastCombatHud.ammo !== ammo || lastCombatHud.coatingSig !== coatingSig || lastCombatHud.posture !== posture) {
+      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def, luck, ac: armorClass, critPct, statusSig, ammo, coatingSig, posture };
       try {
         window.dispatchEvent(new CustomEvent("ui:updateCombatHUD", { detail: {
           attack: atk,
@@ -574,7 +551,6 @@ export function createHudFeeds(world, deps) {
           critChancePercent: critPct,
           posture,
           statuses,
-          affixes: affixEffects,
           ammo,
         } }));
       } catch (e) { console.debug('[hudFeeds] dispatch ui:updateCombatHUD:', e); }

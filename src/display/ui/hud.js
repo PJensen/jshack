@@ -653,8 +653,6 @@ export function initHUD() {
     overscrollBehaviorX: 'contain',
     pointerEvents: 'auto',
   });
-  const affixRow = document.createElement('div');
-  Object.assign(affixRow.style, { display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', gap: '4px', width: '100%' });
   const questRow = document.createElement('div');
   questRow.id = 'hud-objective';
   Object.assign(questRow.style, {
@@ -669,7 +667,6 @@ export function initHUD() {
     pointerEvents: 'auto',
   });
   effectsHud.appendChild(statusRow);
-  effectsHud.appendChild(affixRow);
   topRightHud.appendChild(worldControls);
   topRightHud.appendChild(vitals);
   topRightHud.appendChild(effectsHud);
@@ -1450,7 +1447,6 @@ export function initHUD() {
     const weapon = e?.detail?.weapon || null;
     const ranged = e?.detail?.ranged || null;
     const statuses = Array.isArray(e?.detail?.statuses) ? e.detail.statuses : [];
-    const affixes = Array.isArray(e?.detail?.affixes) ? e.detail.affixes : [];
     const posture = String(e?.detail?.posture || 'balanced').toLowerCase();
 
     const rangedCount = Math.max(0, Number(ranged?.count || 0) | 0);
@@ -1496,35 +1492,7 @@ export function initHUD() {
     // Effects stack (badges + pie timers)
     ensureEffectsStack(statusRow).update(statuses);
 
-    // Affix chips (equipped gear effects)
-    affixRow.innerHTML = '';
-    if (affixes.length) {
-      for (const name of affixes) {
-        const chip = document.createElement('div');
-        chip.textContent = String(name);
-        Object.assign(chip.style, {
-          fontSize: '11px', padding: '2px 6px', borderRadius: '999px',
-          background: 'rgba(180,120,255,0.15)', color: '#e6d6ff', border: '1px solid #3b2d52'
-        });
-        affixRow.appendChild(chip);
-      }
-    }
-
-    // Weapon coating chip
-    const coating = weapon?.coating;
-    if (coating && coating.kind) {
-      const charges = Number(coating.charges || 0);
-      const chip = document.createElement('div');
-      const coatColor = coating.color || '#88ee88';
-      chip.textContent = `\u2022 ${String(coating.kind)}` + (charges > 0 ? ` (${charges})` : '');
-      Object.assign(chip.style, {
-        fontSize: '11px', padding: '2px 6px', borderRadius: '999px',
-        background: 'rgba(80,200,80,0.18)', color: coatColor, border: '1px solid #2d5234'
-      });
-      affixRow.appendChild(chip);
-    }
-    affixRow.style.display = affixRow.children.length ? 'flex' : 'none';
-    effectsHud.style.display = statuses.length || affixRow.children.length ? 'flex' : 'none';
+    effectsHud.style.display = statuses.length ? 'flex' : 'none';
   });
 
   window.addEventListener('ui:updateQuestTracker', (ev) => {
