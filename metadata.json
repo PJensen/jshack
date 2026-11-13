@@ -13,16 +13,15 @@
       "transcript": "/0/full.jsonl",
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
-      "prompt": "/0/prompt.txt"
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 53215,
+    "input_tokens": 1250,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 4343808,
-    "output_tokens": 7239,
-    "api_call_count": 26,
-    "subagent_tokens_complete": true
+    "cache_read_tokens": 194816,
+    "output_tokens": 1784,
+    "api_call_count": 1
   },
   "redaction": {
     "replacements": 6086,

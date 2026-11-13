@@ -1,5 +1,0 @@
-spawned dire wolf, aura is supposed to apply to self -- dont see it -- still
-
----
-
-wolf in dungeon also does not have aura on allies -- rats, etc
