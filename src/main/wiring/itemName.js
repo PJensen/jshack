@@ -23,7 +23,7 @@ import { ScriptRef } from "../../rules/components/ScriptRef.js";
 import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
-import { getGem, describeGemDetailLines } from "../../rules/data/gems.js";
+import { getGem, describeGemDetailLines, describeGemMechanics } from "../../rules/data/gems.js";
 import { getEnchantScrollDef, listEnchantScrollDefs } from "../../rules/content/enchanting/enchantCatalog.js";
 
 const ENCHANT_SCROLL_ICON_BY_AFFIX = new Map(
@@ -623,14 +623,7 @@ export function buildItemDisplayData(world, itemId) {
       }).filter((mechanic) => mechanic.text)
     : [];
   if (gemType && identified) {
-    for (const line of describeGemDetailLines(identity)) {
-      const match = String(line || '').match(/^([^:]+):\s*(.*)$/);
-      if (!match || !match[2].trim()) continue;
-      mechanics.push({
-        context: match[1].trim() === 'Socketed' ? 'Socket' : match[1].trim(),
-        text: match[2].trim(),
-      });
-    }
+    mechanics.push(...describeGemMechanics(identity));
   }
   const enchantScroll = identified ? getEnchantScrollDef(identity) : null;
   if (enchantScroll?.effectSummary) {

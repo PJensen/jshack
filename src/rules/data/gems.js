@@ -157,6 +157,21 @@ export function describeGemDetailLines(gemOrId) {
 
 /**
  * @param {string|GemDef|undefined|null} gemOrId
+ * @returns {{ context:string, text:string }[]}
+ */
+export function describeGemMechanics(gemOrId) {
+  return describeGemDetailLines(gemOrId).flatMap((line) => {
+    const match = String(line || '').match(/^([^:]+):\s*(.*)$/);
+    if (!match || !match[2].trim()) return [];
+    return [{
+      context: match[1].trim() === 'Socketed' ? 'Socket' : match[1].trim(),
+      text: match[2].trim(),
+    }];
+  });
+}
+
+/**
+ * @param {string|GemDef|undefined|null} gemOrId
  * @param {{ identified?: boolean }} [opts]
  * @returns {null|{ name:string, identity:string, weight:number, value:number, appearance:string, description:string, details:string, detailLines:string[], identified:boolean }}
  */

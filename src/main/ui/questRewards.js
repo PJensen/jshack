@@ -1,5 +1,5 @@
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
-import { getGem, describeGemDetailLines } from "../../rules/data/gems.js";
+import { getGem, describeGemDetailLines, describeGemMechanics } from "../../rules/data/gems.js";
 import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEnchantScrollDef } from "../../rules/content/enchanting/enchantCatalog.js";
 import { listQuestRewardBonusItems, listQuestRewardOptions } from "../../rules/quests/rewardOptions.js";
@@ -34,14 +34,7 @@ export function describeQuestRewardItem(itemId) {
   const slot = String(def?.slot || (type === "ranged" ? "ranged" : type === "weapon" ? "weapon" : ""));
   const mechanics = [];
   if (gem) {
-    for (const line of describeGemDetailLines(gem)) {
-      const match = String(line || '').match(/^([^:]+):\s*(.*)$/);
-      if (!match || !match[2].trim()) continue;
-      mechanics.push({
-        context: match[1].trim() === 'Socketed' ? 'Socket' : match[1].trim(),
-        text: match[2].trim(),
-      });
-    }
+    mechanics.push(...describeGemMechanics(gem));
   }
   const enchantScroll = getEnchantScrollDef(id);
   if (enchantScroll?.effectSummary) {
