@@ -177,3 +177,30 @@ Deno.test("status emitter controller gives return portals calmer motes and light
   controller.step(0.016, { entities: [] }, 2.1);
   assert(harness.removed.includes("portal:12"));
 });
+
+Deno.test("status emitter controller gives aura recipients colorized item-style light", () => {
+  const world = makeWorld();
+  const harness = makeFxHarness();
+  const controller = createStatusEmitterController({ world, fx: harness.fx });
+
+  controller.step(0.016, {
+    entities: [
+      {
+        id: 21,
+        kind: "dire_wolf",
+        pos: { x: 4, y: 6 },
+        tags: [],
+        auraGlows: [{ key: "pack", strength: 1 }],
+      },
+    ],
+  }, 1.0);
+
+  assert(harness.ensured.some((rec) => rec.key === "aura:pack:21"));
+  const lights = controller.getActiveLights();
+  assertEquals(lights.length, 1);
+  assertEquals(lights[0].color, [156, 255, 104]);
+  assert(lights[0].radius > 2.3 && lights[0].radius < 3.1);
+
+  const lastStep = harness.stepCalls[harness.stepCalls.length - 1];
+  assert(lastStep.origins.some((origin) => origin.key === "aura:pack:21"));
+});

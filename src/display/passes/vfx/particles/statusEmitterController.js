@@ -192,9 +192,11 @@ export function createStatusEmitterController({ world, fx }) {
       }
 
       for (const aura of Array.isArray(e.auraGlows) ? e.auraGlows : []) {
-        const cfg = AURA_GLOW_CFG[String(aura?.key || "")];
-        if (!cfg) continue;
-        const key = `aura:${aura.key}:${e.id}`;
+        const auraKey = String(aura?.key || "");
+        const cfg = AURA_GLOW_CFG[auraKey];
+        const style = AURA_GLOW_STYLE[auraKey];
+        if (!cfg || !style) continue;
+        const key = `aura:${auraKey}:${e.id}`;
         seenEmitterKeys.add(key);
         auraEmitterKeys.add(key);
         const emitter = fx.ensureEmitter(key, { continuous: true, ...cfg });
