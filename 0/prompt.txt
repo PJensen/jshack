@@ -1,0 +1,11 @@
+one interesting consequence here is that aura could not carry a proc-node :-) -- that would be kind of wild if you thnk about it and save on custom aura authoring.
+
+---
+
+way better -- now propose new proc-nods that descend from aura to accomplush some of our objectives please.
+
+a bandit captain could have a leadership aura
+
+that gives his guys some beneficial stat boost.
+
+unless I'm thinking about this wrong -- tell me early please.
