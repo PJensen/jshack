@@ -1,0 +1,1 @@
+bind spacebar to take a turn please, essentially a `wait` without searching.
