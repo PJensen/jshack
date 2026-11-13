@@ -28,7 +28,6 @@ export function applyAuraFieldPulse(world, sourceId, center, options) {
   // spatial-index maintenance pass has seen the new Position component.
   updateSpatialIndex(world);
   forEachInRadius(world, center.x | 0, center.y | 0, radius, (id) => {
-    if (id === sourceId) return;
     const targetFaction = world.get(id, Faction);
     const vitality = world.get(id, Vitality);
     if (!targetFaction || !vitality || (vitality.hp | 0) <= 0) return;

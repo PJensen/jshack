@@ -2114,7 +2114,6 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
   /** @type {number[]} */
   const ralliedIds = [];
   for (const [id, pos, fac, vit] of world.query(Position, Faction, Vitality)) {
-    if (id === actor) continue;
     if (!pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
     if (!areFactionsAllied(actorFaction, fac.key)) continue;
     const dist = Math.max(Math.abs((pos.x | 0) - (apos.x | 0)), Math.abs((pos.y | 0) - (apos.y | 0)));

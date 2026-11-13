@@ -102,6 +102,7 @@ Deno.test("war drummer aura hastens nearby allies but not hostiles", () => {
   runSpellScript(world, caster, getSpell("war_drum"), {});
 
   assert(hasEffect(world, ally, "hastened"));
+  assert(hasEffect(world, caster, "hastened"));
   assert(!hasEffect(world, target, "hastened"));
   assertEquals(snapshotStatusState(world, ally)?.auraSources.map((source) => source.sourceKey), ["war_drum"]);
 });

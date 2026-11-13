@@ -399,6 +399,7 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     assertEquals(aggro?.lastKnownX, 8);
     assertEquals(aggro?.lastKnownY, 5);
     assertEquals(hasEffect(world, ally, "hastened"), true, "wolf_howl should hasten nearby same-faction allies");
+    assertEquals(hasEffect(world, wolf, "hastened"), true, "wolf_howl should include the howling wolf in its aura");
     assertEquals(hasEffect(world, farAlly, "hastened"), false, "wolf_howl should not reach beyond its aura radius");
 
     let auraId = 0;
