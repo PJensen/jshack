@@ -778,6 +778,7 @@ export function renderQuestJournal(panel, quests) {
             lineHeight: '1.45',
             color: '#dbe9f6',
             opacity: '0.9',
+            overflowWrap: 'anywhere',
           });
           block.appendChild(valueEl);
           body.appendChild(block);
@@ -887,7 +888,8 @@ export function renderQuestReward(panel, quest) {
   panel.innerHTML = '';
   Object.assign(panel.style, {
     position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-    width: 'min(92vw, 460px)', maxHeight: 'min(84vh, 680px)', overflowY: 'auto',
+    width: 'min(92vw, 460px)', maxHeight: 'min(92vh, 680px)', overflowY: 'auto', overflowX: 'hidden',
+    boxSizing: 'border-box',
     padding: '22px', background: 'rgba(16, 21, 29, 0.98)', border: '1px solid #8ca2ba',
     borderRadius: '12px', boxShadow: '0 18px 60px rgba(0,0,0,0.65)', zIndex: '1400',
   });
@@ -925,7 +927,7 @@ export function renderQuestReward(panel, quest) {
     const selectedChoiceItems = choiceItems.filter((item) => String(item.choiceId || '') === choiceId);
     const row = document.createElement('div');
     Object.assign(row.style, {
-      width: '100%', padding: '5px 10px', margin: '4px 0', textAlign: 'left',
+      width: '100%', boxSizing: 'border-box', padding: '5px 10px', margin: '4px 0', textAlign: 'left',
       border: selected === choiceId ? '1px solid #d8b45a' : UI.BORDER, borderRadius: UI.RADIUS,
       background: selected === choiceId ? 'rgba(100, 75, 25, 0.55)' : 'rgba(36, 46, 58, 0.82)',
       color: '#dbe9f6', cursor: 'pointer',
