@@ -24,6 +24,7 @@ import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import { getGem, describeGemDetailLines } from "../../rules/data/gems.js";
+import { getEnchantScrollDef } from "../../rules/content/enchanting/enchantCatalog.js";
 import {
   getSpell,
   describeSpellDetailLines,
@@ -622,6 +623,10 @@ export function buildItemDisplayData(world, itemId) {
         text: match[2].trim(),
       });
     }
+  }
+  const enchantScroll = identified ? getEnchantScrollDef(identity) : null;
+  if (enchantScroll?.effectSummary) {
+    mechanics.push({ context: 'Enchant', text: String(enchantScroll.effectSummary).trim() });
   }
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
   mechanics.push(...procPackageMechanics.mechanics);

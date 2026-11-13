@@ -17,6 +17,7 @@ import "../src/content/items/boots.js";
 import "../src/content/items/rangedWeapons.js";
 import "../src/content/items/weapons.js";
 import "../src/content/items/helms.js";
+import "../src/content/items/scrolls.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 
@@ -237,4 +238,17 @@ Deno.test("buildItemDisplayData preserves rarityName for unidentified items", ()
   assertEquals(data.rarityName, "epic", "rarity should be preserved for UI chip coloring");
   assertEquals(data.description, "", "unidentified items should still hide description");
   assertEquals(data.affixes, [], "unidentified items should still hide affixes");
+});
+
+Deno.test("buildItemDisplayData exposes enchantment scroll effects as authored mechanics", () => {
+  resetIdentification();
+  identify("scroll_enchant_fire");
+  const world = new World({ seed: 23 });
+  const scroll = buildCatalogItem(world, "scroll_enchant_fire");
+
+  const data = buildItemDisplayData(world, scroll);
+  assert(data, "display data should exist");
+  assert(data.mechanics.some((entry) =>
+    entry.context === "Enchant" && String(entry.text).includes("kindle lingering fire damage"),
+  ));
 });
