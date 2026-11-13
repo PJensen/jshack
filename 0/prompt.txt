@@ -1,0 +1,10 @@
+meaning -- the ones that effect the player.
+
+these are positive ally auras.
+
+it's not like we've been targeted. 
+like we've cast a confusing aura.
+
+etc -- 
+
+anywya -- no particles for auras for right now.
