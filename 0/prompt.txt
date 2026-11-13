@@ -1,0 +1,9 @@
+the item skill(s) needs an update to be aware of the icon manifest.js file
+
+---
+
+scan those new items please -- lets find icons for them -- or -- I can ammend the sprite-sheet.
+
+---
+
+sure, make those tweaks -- this'll work for now. ;-)
