@@ -1,0 +1,35 @@
+tag this version it's 2500 commits in -- something about it makes me want to freeze it as an offical release :-) tag it and tthe build shall be created :-)
+
+---
+
+nope -- I said tag
+
+---
+
+push the tags please.
+
+---
+
+get back onto remote origin please.
+
+---
+
+????? what are you talking about - it was always PJensen/jshack.git dummy - fix this asap.
+
+---
+
+that's why I said adopt what ever is on origin master -- anyway
+
+---
+
+and the tag?
+
+---
+
+very wel -- what was I thinking a moment ago -- before we got into this mess. I remember; pet kills and spell kills should count as being your kills.
+
+---
+
+commit and push please.
+
+NOTE: this should be almost a repeatable "playerKill" hook - catch my drift? vs -- re-implementing or having non-canonical player kill mechanics.
