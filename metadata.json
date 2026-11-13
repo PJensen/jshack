@@ -14,17 +14,9 @@
       "transcript": "/0/full.jsonl",
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
-      "prompt": "/0/prompt.txt"
+      "prompt": ""
     }
   ],
-  "token_usage": {
-    "input_tokens": 41032,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 1527296,
-    "output_tokens": 5479,
-    "api_call_count": 22,
-    "subagent_tokens_complete": true
-  },
   "redaction": {
     "replacements": 14040,
     "layers": {
