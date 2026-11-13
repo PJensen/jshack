@@ -353,7 +353,15 @@ export function hazardSystem(world) {
           : String(hazard.meta?.targetRelation || "allied"),
         woundedOnly: hazard.meta?.woundedOnly === true,
         sourceKind: "aura",
-        sourceKey: String(world.get(hazardId, NamedIdentity)?.identity || kind),
+        // Preserve the authored spell/content key for bridge visuals. The
+        // hazard identity is often a presentation label such as
+        // `wolf_howl_aura`, not a key in SPELL_DEFS.
+        sourceKey: String(
+          hazard.meta?.sourceKey
+            || hazard.sourceKind
+            || world.get(hazardId, NamedIdentity)?.identity
+            || kind,
+        ),
       }));
     }
 

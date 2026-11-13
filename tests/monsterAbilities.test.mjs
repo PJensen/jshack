@@ -420,8 +420,12 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     world.add(lateAlly, Position, { x: 6, y: 5 });
     world.add(lateAlly, Faction, { key: "enemy" });
     world.add(lateAlly, Vitality, { hp: 12, maxHp: 12 });
+    world.step = 1;
     hazardSystem(world);
     assertEquals(hasEffect(world, lateAlly, "hastened"), true, "ally aura should affect allies entering the field");
+    const pulsedView = buildWorldView(world);
+    assertEquals(pulsedView.entities.find((entity) => entity.id === wolf)?.auraGlows, [{ key: "pack", strength: 2 }], "wolf glow should survive aura refresh");
+    assertEquals(pulsedView.entities.find((entity) => entity.id === ally)?.auraGlows, [{ key: "pack", strength: 2 }], "ally glow should survive aura refresh");
   } finally {
     clearAll();
   }
