@@ -31,6 +31,8 @@ Deno.test("HUD uses the labeled linear vitals surface and keeps the vitals event
   assertStringIncludes(bars, "justifyContent: 'space-between'");
   assertStringIncludes(bars, "background: 'rgba(255,255,255,0.92)'");
   assertStringIncludes(bars, "resource.lagRatio");
+  assertStringIncludes(bars, "const lostRatio = previousRatio - resolved.ratio");
+  assertStringIncludes(bars, "recentChange.style.left = width");
   assertStringIncludes(bars, "requestAnimationFrame");
   assertStringIncludes(bars, "The colored fill is authoritative and immediate");
   assert(!hud.includes("createConcentricGauge"), "player HUD should not instantiate the circular gauge");

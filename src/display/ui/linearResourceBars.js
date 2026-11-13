@@ -225,22 +225,24 @@ export function createLinearResourceBars(root, initial = {}) {
       // deliberately lags behind reductions so players can read the loss.
       fill.style.width = width;
       if (resolved.ratio < previousRatio) {
+        const lostRatio = previousRatio - resolved.ratio;
         recentChange.style.transition = 'none';
-        recentChange.style.width = `${(previousRatio * 100).toFixed(2)}%`;
+        recentChange.style.left = width;
+        recentChange.style.width = `${(lostRatio * 100).toFixed(2)}%`;
         recentChange.style.opacity = '1';
-        // Let the browser commit the previous width before easing the marker
-        // down to the new value. This also coalesces rapid resource updates.
+        // Let the browser commit the lost segment before easing it away.
         const animate = typeof requestAnimationFrame === 'function'
           ? requestAnimationFrame
           : (callback) => setTimeout(callback, 0);
         animate(() => {
           recentChange.style.transition = 'width 560ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease-out 560ms';
-          recentChange.style.width = width;
+          recentChange.style.width = '0%';
           recentChange.style.opacity = '0';
         });
       } else if (resolved.ratio > previousRatio) {
         recentChange.style.transition = 'opacity 120ms ease-out';
         recentChange.style.opacity = '0';
+        recentChange.style.left = width;
         recentChange.style.width = '0%';
       }
       resource.lagRatio = resolved.ratio;
