@@ -1,10 +1,10 @@
-import { DeathApplied } from "../../components/DeathApplied.js";
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { QuestVars } from "../../components/QuestVars.js";
 import { QuestState } from "../../components/QuestState.js";
 import { createItemById } from "../../utils/itemFactory.js";
 import { addToInventory } from "../../utils/inventoryFacade.js";
 import { consumeInventoryIdentity, inventoryHasIdentity } from "../../utils/townEconomy.js";
+import { forEachPlayerKill } from "../../utils/killCredit.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
 import { emit, incVar, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
@@ -92,14 +92,13 @@ export function getFisherQuest(world, playerId) {
 }
 
 export function fisherCrabDeathSystem(world) {
-  for (const [, death] of world.query(DeathApplied)) {
-    const killer = Number(death.killer || 0) | 0;
+  forEachPlayerKill(world, (death, killer) => {
     const target = Number(death.target || 0) | 0;
-    if (!(killer > 0) || !(target > 0)) continue;
-    if (killer !== firstPlayerId(world)) continue;
-    if (String(world.get(target, NamedIdentity)?.identity || "") !== "sand_crab") continue;
+    if (!(target > 0)) return;
+    if (killer !== firstPlayerId(world)) return;
+    if (String(world.get(target, NamedIdentity)?.identity || "") !== "sand_crab") return;
     const quest = getQuestRecord(world, FISHER_CRAB_CLEANUP_QUEST_ID, killer);
-    if (!quest || String(quest.state?.node || "") !== "hunt") continue;
+    if (!quest || String(quest.state?.node || "") !== "hunt") return;
     const killCount = Number(quest.vars?.data?.killCount || 0) | 0;
     const nextCount = Math.min(REQUIRED_FISHER_CRABS, killCount + 1);
     world.set(quest.id, QuestVars, {
@@ -129,7 +128,7 @@ export function fisherCrabDeathSystem(world) {
         objective: `Kill ${REQUIRED_FISHER_CRABS - nextCount} more sand crabs.`,
       });
     }
-  }
+  });
 }
 
 export function installFisherQuestHooks(world) {

@@ -1,4 +1,3 @@
-import { DeathApplied } from "../../components/DeathApplied.js";
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
 import { QuestVars } from "../../components/QuestVars.js";
@@ -12,6 +11,7 @@ import { createItemById } from "../../utils/itemFactory.js";
 import { addToInventory, inventoryItems } from "../../utils/inventoryFacade.js";
 import { spawnMonsterEntity } from "../../utils/spawnMonsterEntity.js";
 import { attachEntityToCurrentFloor } from "../../utils/floorEntities.js";
+import { forEachPlayerKill } from "../../utils/killCredit.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
 import { isWalkable } from "../../environment/dungeon/tileMap.js";
 import { emit, grantSelectedReward, incVar, isSelectedReward, setVar } from "../actions.js";
@@ -187,22 +187,21 @@ export function installRatQuestHooks(world) {
 }
 
 export function ratInfestationDeathSystem(world) {
-  for (const [, death] of world.query(DeathApplied)) {
-    const killerId = Number(death.killer || 0) | 0;
+  forEachPlayerKill(world, (death, killerId) => {
     const victimId = Number(death.target || 0) | 0;
-    if (!(killerId > 0) || !(victimId > 0)) continue;
-    if (!isRat(world, victimId)) continue;
+    if (!(victimId > 0)) return;
+    if (!isRat(world, victimId)) return;
 
     const playerId = firstPlayerId(world);
-    if (killerId !== playerId) continue;
+    if (killerId !== playerId) return;
 
     const quest = getQuestRecord(world, RAT_INFESTATION_QUEST_ID, playerId);
-    if (!quest) continue;
-    if (String(quest.state?.status || "active") !== "active") continue;
-    if (String(quest.state?.node || "") !== "hunt") continue;
+    if (!quest) return;
+    if (String(quest.state?.status || "active") !== "active") return;
+    if (String(quest.state?.node || "") !== "hunt") return;
 
     world.emit("rat:killed", { playerId, victimId });
-  }
+  });
 }
 
 export const RatInfestationQuest = registerQuest({

@@ -1,7 +1,7 @@
-import { DeathApplied } from "../../components/DeathApplied.js";
 import { DungeonState } from "../../components/DungeonState.js";
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
+import { forEachPlayerKill } from "../../utils/killCredit.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
 import { emit, grantSelectedReward, isSelectedReward, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
@@ -56,13 +56,14 @@ export function rootboundGrottoDeathSystem(world) {
   if (!quest || String(quest.state?.status || "") !== "active") return;
   if (String(quest.state?.node || "") !== "hunt") return;
 
-  for (const [, death] of world.query(DeathApplied)) {
-    if ((Number(death?.killer || 0) | 0) !== playerId) continue;
+  let completed = false;
+  forEachPlayerKill(world, (death, killerId) => {
+    if (completed || killerId !== playerId) return;
     const victimId = Number(death?.target || 0) | 0;
-    if (!(victimId > 0) || !isRootboundHealer(world, victimId)) continue;
+    if (!(victimId > 0) || !isRootboundHealer(world, victimId)) return;
     world.emit("rootbound:healer_defeated", { playerId, victimId });
-    break;
-  }
+    completed = true;
+  });
 }
 
 export function installRootboundGrottoHooks(world) {
