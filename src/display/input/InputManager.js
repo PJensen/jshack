@@ -267,6 +267,12 @@ export class InputManager {
       this._emit(makeAction(Actions.Wait));
       return;
     }
+    // Wait intent: Space is the accessible turn-pass binding.
+    if (key === " " || code === "Space") {
+      e.preventDefault();
+      this._emit(makeAction(Actions.Wait));
+      return;
+    }
     // Pray to deity: 'P' (Shift+P)
     if (key === "P") {
       e.preventDefault();

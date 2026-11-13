@@ -388,6 +388,24 @@ Deno.test("InputManager: action-bar desktop hints emit canonical actions", () =>
   }
 });
 
+Deno.test("InputManager: Space takes a wait turn without searching", () => {
+  const target = new FakeEventTarget();
+  const canvas = new FakeCanvas({ left: 0, top: 0, width: 220, height: 180 });
+  const mgr = new InputManager(target, { canvas, touchFeedback: false });
+  const actions = [];
+  const off = mgr.onAction((a) => actions.push(a));
+  try {
+    const ev = target.emit("keydown", { key: " ", code: "Space" });
+
+    assertEquals(ev.defaultPrevented, true);
+    assertEquals(actions, [{ type: Actions.Wait, payload: {} }]);
+    assertEquals(actions.some((action) => action.type === Actions.Search), false);
+  } finally {
+    off();
+    mgr.dispose();
+  }
+});
+
 Deno.test("InputManager: number keys target the four-slot pinned spell dock", () => {
   const target = new FakeEventTarget();
   const canvas = new FakeCanvas({ left: 0, top: 0, width: 220, height: 180 });
