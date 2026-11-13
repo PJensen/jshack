@@ -25,7 +25,7 @@ function addQuest(world, node, giver) {
   world.add(id, QuestBindings, { player: 1, giver });
 }
 
-Deno.test("WorldView marks quest givers with ! and ready turn-ins with ?", () => {
+Deno.test("WorldView marks quest givers with !, accepted quests with grey ?, and ready turn-ins with ?", () => {
   const world = new World({ seed: 0x51 });
 
   const player = world.create();
@@ -36,20 +36,28 @@ Deno.test("WorldView marks quest givers with ! and ready turn-ins with ?", () =>
   world.add(player, Faction, { key: "player" });
 
   const availableGiver = addNpc(world, "Available", 11, 10);
+  const activeGiver = addNpc(world, "Active", 11, 11);
   const turnInGiver = addNpc(world, "TurnIn", 12, 10);
   addQuest(world, "offer", availableGiver);
+  addQuest(world, "hunt", activeGiver);
   addQuest(world, "report", turnInGiver);
 
   const entities = buildWorldView(world).entities;
   const available = entities.find((entity) => entity.id === availableGiver);
+  const active = entities.find((entity) => entity.id === activeGiver);
   const turnIn = entities.find((entity) => entity.id === turnInGiver);
 
   assert(available, "available quest giver should be visible");
+  assert(active, "active quest giver should be visible");
   assert(turnIn, "turn-in quest giver should be visible");
   assertEquals(available.tags.includes("quest_giver"), true);
   assertEquals(available.tags.includes("quest_turn_in"), false);
+  assertEquals(available.tags.includes("quest_in_progress"), false);
+  assertEquals(active.tags.includes("quest_giver"), true);
+  assertEquals(active.tags.includes("quest_in_progress"), true);
   assertEquals(turnIn.tags.includes("quest_giver"), true);
   assertEquals(turnIn.tags.includes("quest_turn_in"), true);
+  assertEquals(turnIn.tags.includes("quest_in_progress"), false);
 });
 
 Deno.test("WorldView does not mark terminal quests as active quest givers", () => {

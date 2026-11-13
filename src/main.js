@@ -4718,12 +4718,12 @@ function drawSleepingMarker(ctx, e, fxTime, scale = 1) {
 }
 
 /**
- * Draw a yellow quest marker above quest giver NPCs (mirrors drawRareStar pattern).
+ * Draw a quest marker above quest giver NPCs (mirrors drawRareStar pattern).
  * @param {CanvasRenderingContext2D} ctx
  * @param {{ id:number, pos:{x:number,y:number} }} e
  * @param {number} fxTime
  */
-function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!') {
+function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!', color = 'yellow') {
   const cx = e.pos.x;
   const cy = e.pos.y - 0.72 * scale;
 
@@ -4737,8 +4737,9 @@ function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!') {
   // Soft yellow glow halo
   const haloR = 0.18 * scale;
   const halo = ctx.createRadialGradient(cx, dy, 0, cx, dy, haloR);
-  halo.addColorStop(0, 'rgba(255,220,40,0.25)');
-  halo.addColorStop(1, 'rgba(255,200,0,0)');
+  const isGrey = color === 'grey';
+  halo.addColorStop(0, isGrey ? 'rgba(185,195,210,0.18)' : 'rgba(255,220,40,0.25)');
+  halo.addColorStop(1, isGrey ? 'rgba(185,195,210,0)' : 'rgba(255,200,0,0)');
   ctx.fillStyle = halo;
   ctx.beginPath();
   ctx.arc(cx, dy, haloR, 0, Math.PI * 2);
@@ -4746,7 +4747,7 @@ function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!') {
 
   // Quest marker glyph
   ctx.globalCompositeOperation = 'source-over';
-  ctx.fillStyle = 'rgba(255,220,40,0.95)';
+  ctx.fillStyle = isGrey ? 'rgba(190,200,215,0.92)' : 'rgba(255,220,40,0.95)';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = canvasFont(`${0.32 * scale}px`, 'bold');
@@ -4755,8 +4756,8 @@ function drawQuestBang(ctx, e, fxTime, scale = 1, glyph = '!') {
   ctx.restore();
 }
 
-function drawQuestQuestion(ctx, e, fxTime, scale = 1) {
-  drawQuestBang(ctx, e, fxTime, scale, '?');
+function drawQuestQuestion(ctx, e, fxTime, scale = 1, color = 'yellow') {
+  drawQuestBang(ctx, e, fxTime, scale, '?', color);
 }
 
 
@@ -5203,6 +5204,8 @@ function render(worldView) {
       }
       if (PERF.quality !== 'low' && _renderTagSet.has('quest_turn_in')) {
         drawQuestQuestion(bctx, itemRender, _fxTime, finalItemScale);
+      } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_in_progress')) {
+        drawQuestQuestion(bctx, itemRender, _fxTime, finalItemScale, 'grey');
       } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
         drawQuestBang(bctx, itemRender, _fxTime, finalItemScale);
       }
@@ -5383,6 +5386,8 @@ function render(worldView) {
     }
     if (PERF.quality !== 'low' && _renderTagSet.has('quest_turn_in')) {
       drawQuestQuestion(bctx, renderEntity, _fxTime);
+    } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_in_progress')) {
+      drawQuestQuestion(bctx, renderEntity, _fxTime, 1, 'grey');
     } else if (PERF.quality !== 'low' && _renderTagSet.has('quest_giver')) {
       drawQuestBang(bctx, renderEntity, _fxTime);
     }

@@ -113,6 +113,7 @@ function projectDungeonEntranceBadge(world, id, rec) {
 }
 const _questGiverIds = new Set(); // entity IDs that are active quest givers
 const _questTurnInGiverIds = new Set(); // entity IDs with a quest ready to turn in
+const _questInProgressGiverIds = new Set(); // entity IDs with an accepted quest in progress
 /** @type {Map<number, SolidView>} */
 const _solidRecs = new Map();    // id -> { id, x, y }
 
@@ -1063,10 +1064,12 @@ export function buildWorldView(world) {
 	// Collect active quest giver entity IDs for display tag projection.
 	_questGiverIds.clear();
 	_questTurnInGiverIds.clear();
+	_questInProgressGiverIds.clear();
 	for (const [, state, bind] of world.query(QuestState, QuestBindings)) {
 		if (state.status !== 'active' || !(bind.giver > 0)) continue;
 		_questGiverIds.add(bind.giver);
 		if (state.node === 'report' || state.node === 'return') _questTurnInGiverIds.add(bind.giver);
+		else if (state.node !== 'offer') _questInProgressGiverIds.add(bind.giver);
 	}
 
 	// Expose tile grid functions for direct grid-based rendering
@@ -1323,6 +1326,7 @@ export function buildWorldView(world) {
 			if ((kind === "bell" || kind === "tavern_sign") && !rec.tags.includes('above_roof')) rec.tags.push('above_roof');
 			if (_questGiverIds.has(id) && !rec.tags.includes('quest_giver')) rec.tags.push('quest_giver');
 			if (_questTurnInGiverIds.has(id) && !rec.tags.includes('quest_turn_in')) rec.tags.push('quest_turn_in');
+			if (_questInProgressGiverIds.has(id) && !rec.tags.includes('quest_in_progress')) rec.tags.push('quest_in_progress');
 			if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
 			if (kind === 'epic_chest') rec.tags.push('epic_glowing');
 			if (harvestNode && String(harvestNode.kind || "") === "fishing_spot") {
@@ -1458,6 +1462,7 @@ export function buildWorldView(world) {
 			if ((kind === "bell" || kind === "tavern_sign") && !rec.tags.includes('above_roof')) rec.tags.push('above_roof');
 			if (_questGiverIds.has(id) && !rec.tags.includes('quest_giver')) rec.tags.push('quest_giver');
 			if (_questTurnInGiverIds.has(id) && !rec.tags.includes('quest_turn_in')) rec.tags.push('quest_turn_in');
+			if (_questInProgressGiverIds.has(id) && !rec.tags.includes('quest_in_progress')) rec.tags.push('quest_in_progress');
 			if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
 			if (kind === 'epic_chest') rec.tags.push('epic_glowing');
 			if (harvestNode2 && String(harvestNode2.kind || "") === "fishing_spot") {
@@ -1532,6 +1537,7 @@ export function buildWorldView(world) {
 			if (world.has(id, Flying) && !rec.tags.includes("flying")) rec.tags.push("flying");
 			if (_questGiverIds.has(id) && !rec.tags.includes("quest_giver")) rec.tags.push("quest_giver");
 			if (_questTurnInGiverIds.has(id) && !rec.tags.includes("quest_turn_in")) rec.tags.push("quest_turn_in");
+			if (_questInProgressGiverIds.has(id) && !rec.tags.includes("quest_in_progress")) rec.tags.push("quest_in_progress");
 			// Familiar ready-to-fire glow
 			const petState = /** @type {any} */ (world.get(id, PetState));
 			const isFamiliar = String(rec.kind || "").toLowerCase() === "familiar";
