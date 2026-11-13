@@ -30,6 +30,8 @@ Deno.test("HUD uses the labeled linear vitals surface and keeps the vitals event
   assertStringIncludes(bars, "value.textContent = '— / —'");
   assertStringIncludes(bars, "justifyContent: 'space-between'");
   assertStringIncludes(bars, "background: 'rgba(255,255,255,0.92)'");
+  assertStringIncludes(bars, "borderRadius: '999px 0 0 999px'");
+  assertStringIncludes(bars, "borderRadius: '0 999px 999px 0'");
   assertStringIncludes(bars, "resource.lagRatio");
   assertStringIncludes(bars, "const lostRatio = previousRatio - resolved.ratio");
   assertStringIncludes(bars, "recentChange.style.left = width");
