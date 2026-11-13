@@ -11,14 +11,17 @@ Add a new item with id `$ARGUMENTS` to the game.
 
 1. **Ask the user** for the item concept if not obvious from the name — category (weapon/armor/consumable/tool/scroll/etc.), theme, special behavior, flavor.
 2. **Read the reference files** listed below to understand existing patterns.
-3. **Define the item** in `src/rules/data/itemCatalog.js` (ITEM_CATALOG object).
-4. **Add a palette entry** in `src/display/palette/base.js` so it renders on screen.
-5. **Add to a loot table** in `src/rules/data/lootTables.js` so it can drop.
-6. **Add any new hooks** if the item has special behavior (use, drink, dip, throw).
-7. **Run tests**: `deno test --allow-read`.
+3. **Define the item** through the current content path. Most authored items belong in `src/content/items/`; `src/rules/data/itemCatalog.js` is the merged public catalog, not usually the authoring file.
+4. **Add an icon manifest entry** in `assets/icons/items/manifest.js` for the canonical item identity. Choose an unused `{ x, y }` cell in the 32px item atlas and keep the manifest entry aligned with the corresponding sprite in `assets/icons/items/sheet.webp`.
+5. **Add a palette entry** in `src/display/palette/base.js` when the item needs a text/glyph fallback or existing palette coverage; the icon atlas is used by UI surfaces that support item icons.
+6. **Add to a loot table** in `src/rules/data/lootTables.js` so it can drop, unless the item is intentionally crafted-only or shop-only.
+7. **Add any new hooks** if the item has special behavior (use, drink, dip, throw).
+8. **Run focused tests** for the item and relevant catalog/loot behavior; do not default to the full suite.
 
 **Reference files to read before writing:**
 - `src/rules/data/itemCatalog.js` — existing items, all patterns
+- `src/content/items/` and `src/content/define.js` — canonical authored item definitions and automatic catalog/palette registration
+- `assets/icons/items/manifest.js` — item icon atlas identity-to-cell mapping
 - `src/display/palette/base.js` — existing glyph/color entries
 - `src/rules/data/lootTables.js` — table structure and weights
 
@@ -136,6 +139,16 @@ hooks: {
   }),
 },
 ```
+
+### Enchantment Scrolls
+
+For a scroll that applies a gear enchantment, use the shared enchantment path:
+
+- Add the definition to `src/rules/content/enchanting/enchantCatalog.js`; `src/content/items/scrolls.js` generates the item and canonical apply/dip hooks.
+- Reuse or author the affix in `src/rules/data/affixes.js`, keeping its supported slots aligned with the scroll definition.
+- Add the item identity to `sub:scrolls` in `src/rules/data/lootTables.js` when it should be a normal drop.
+- Add its identity to `assets/icons/items/manifest.js` and provide the matching atlas sprite cell.
+- Cover successful binding in `tests/enchantingBench.test.mjs` and loot/shop policy in `tests/enchantingContent.test.mjs`.
 
 ### Spellbook Fields (teaches a spell)
 
