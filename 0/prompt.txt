@@ -1,0 +1,5 @@
+this is still not working really. I spawn a dire_wolf, he howls, I see no aura on allies -- let me know if there is some constraint I'm not aware of on that aura (e.g.) it dosn't apply to other species or something.
+
+because right not I'm just not seeinga glow.
+
+NOTE: when I envenom my weapon, I very plainly see what I'm looking for on the poisioned enemy.
