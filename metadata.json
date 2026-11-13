@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7BAFD2KK8TYNWTK7EG5D9ZX",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "src/rules/systems/auraFieldSystem.js",
+    "tests/procEvaluator.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 8147,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1072128,
+    "output_tokens": 2919,
+    "api_call_count": 10
+  },
+  "redaction": {
+    "replacements": 33969,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 33969,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
