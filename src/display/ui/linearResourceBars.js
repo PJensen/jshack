@@ -167,13 +167,27 @@ export function createLinearResourceBars(root, initial = {}) {
       transition: 'width 220ms ease-out, filter 180ms ease-out, box-shadow 180ms ease-out',
       zIndex: '0',
     });
+    const recentChange = document.createElement('div');
+    Object.assign(recentChange.style, {
+      position: 'absolute',
+      inset: '0 auto 0 0',
+      width: '0%',
+      borderRadius: 'inherit',
+      background: 'rgba(255,255,255,0.92)',
+      boxShadow: '0 0 8px rgba(255,255,255,0.72), inset 0 1px 0 rgba(255,255,255,0.9)',
+      opacity: '0',
+      pointerEvents: 'none',
+      transition: 'width 560ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease-out 560ms',
+      zIndex: '1',
+    });
     track.appendChild(fill);
+    track.appendChild(recentChange);
     track.appendChild(label);
     track.appendChild(value);
     content.appendChild(track);
     row.appendChild(content);
     root.appendChild(row);
-    rows.set(def.key, { def, row, value, track, fill });
+    rows.set(def.key, { def, row, value, track, fill, recentChange, lagRatio: 0 });
   }
 
   const state = {
@@ -186,7 +200,8 @@ export function createLinearResourceBars(root, initial = {}) {
   };
 
   function set(next = {}) {
-    for (const { def, row, value, track, fill } of rows.values()) {
+    for (const resource of rows.values()) {
+      const { def, row, value, track, fill, recentChange } = resource;
       const valueKey = def.valueKey;
       const maxKey = def.maxKey;
       if (Object.prototype.hasOwnProperty.call(next, valueKey)) state[valueKey] = Number(next[valueKey]);
@@ -195,21 +210,46 @@ export function createLinearResourceBars(root, initial = {}) {
       if (!hasLiveValue) {
         value.textContent = '— / —';
         fill.style.width = '0%';
+        recentChange.style.width = '0%';
+        recentChange.style.opacity = '0';
+        resource.lagRatio = 0;
         row.dataset.state = 'unknown';
         track.setAttribute('aria-valuetext', 'Waiting for vitals');
         continue;
       }
       const resolved = resolveResourceBarState(state[valueKey], state[maxKey]);
-      const previousWidth = fill.style.width;
+      const previousRatio = resource.lagRatio || 0;
       const width = `${(resolved.ratio * 100).toFixed(2)}%`;
       value.textContent = `${resolved.value}/${resolved.max}`;
+      // The colored fill is authoritative and immediate. The white segment
+      // deliberately lags behind reductions so players can read the loss.
       fill.style.width = width;
+      if (resolved.ratio < previousRatio) {
+        recentChange.style.transition = 'none';
+        recentChange.style.width = `${(previousRatio * 100).toFixed(2)}%`;
+        recentChange.style.opacity = '1';
+        // Let the browser commit the previous width before easing the marker
+        // down to the new value. This also coalesces rapid resource updates.
+        const animate = typeof requestAnimationFrame === 'function'
+          ? requestAnimationFrame
+          : (callback) => setTimeout(callback, 0);
+        animate(() => {
+          recentChange.style.transition = 'width 560ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease-out 560ms';
+          recentChange.style.width = width;
+          recentChange.style.opacity = '0';
+        });
+      } else if (resolved.ratio > previousRatio) {
+        recentChange.style.transition = 'opacity 120ms ease-out';
+        recentChange.style.opacity = '0';
+        recentChange.style.width = '0%';
+      }
+      resource.lagRatio = resolved.ratio;
       fill.style.filter = resolved.state === 'empty' ? 'saturate(0.55)' : 'none';
       fill.style.boxShadow = resolved.state === 'critical'
         ? `0 0 15px ${def.color}, inset 0 1px 0 rgba(255,255,255,0.55)`
         : `0 0 9px ${def.color}99, inset 0 1px 0 rgba(255,255,255,0.45)`;
       row.dataset.state = resolved.state;
-      if (previousWidth !== width) row.dataset.changed = String(Date.now());
+      if (previousRatio !== resolved.ratio) row.dataset.changed = 'true';
       track.setAttribute('aria-valuenow', String(resolved.value));
       track.setAttribute('aria-valuemax', String(resolved.max));
       track.setAttribute('aria-valuetext', `${resolved.value} of ${resolved.max}`);
