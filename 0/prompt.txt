@@ -1,0 +1,26 @@
+I saw a great video about health bars yesterday which I loved -- it uses micro-ux techniques to bring the healthbar up to AAA level.
+
+
+
+- show what you lost, the lost portion becomes white -- then ...
+- smooth movement (tweening, lerping)
+- use color to indicate situation (we already do this)
+
+
+
+does all this make sense? I feel like mortal combat does this brilliantly.
+
+---
+
+agree on all counts, also, I don't see why mana and stamina would'nt have the same treatment.
+
+(e.g.)
+
+you get hit by a monster spell that cuts your mana in half.
+you step into a slim trap that drains your stamina.
+
+also -- it's just good practice to generalize approaches.
+
+---
+
+approved -- make it so.
