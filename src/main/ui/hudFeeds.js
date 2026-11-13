@@ -5,7 +5,7 @@ import { Equipment, NON_AMMO_GEAR_SLOTS } from "../../rules/components/Equipment
 import { ItemInfo } from "../../rules/components/ItemInfo.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { getCarriedWeight, inventoryItems } from "../../rules/utils/inventoryFacade.js";
-import { getAffixName } from "../../rules/data/affixes.js";
+import { buildItemDisplayData } from "../wiring/itemName.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
 import { DungeonEntrance } from "../../rules/components/DungeonEntrance.js";
 import { Position } from "../../rules/components/Position.js";
@@ -529,19 +529,26 @@ export function createHudFeeds(world, deps) {
     }
     const statusSig = statuses.map((s) => `${s.instanceId || s.key}:${s.turns}:${s.stacks}:${Number(s.potency || 0)}:${s.sourceKey || ''}:${s.masked ? 1 : 0}`).join("|");
 
-    const affixIds = [];
-    const pushAffixes = (id) => {
-      const info = id ? world.get(id, ItemInfo) : null;
-      const arr = info && Array.isArray(info.affixes) ? info.affixes : [];
-      for (const a of arr) affixIds.push(String(a));
+    const affixEffects = [];
+    const effectSet = new Set();
+    const pushAffixEffects = (id) => {
+      if (!(id > 0)) return;
+      const display = buildItemDisplayData(world, id);
+      const mechanics = Array.isArray(display?.mechanics) ? display.mechanics : [];
+      for (const mechanic of mechanics) {
+        const context = String(mechanic?.context || '').trim();
+        const text = String(mechanic?.text || '').trim();
+        if (!text || (context !== 'Equip' && context !== 'Enchant')) continue;
+        const label = `${context}: ${text}`;
+        if (effectSet.has(label)) continue;
+        effectSet.add(label);
+        affixEffects.push(label);
+      }
     };
     if (eq) {
-      for (const slot of NON_AMMO_GEAR_SLOTS) pushAffixes(Number(eq[slot] || 0));
+      for (const slot of NON_AMMO_GEAR_SLOTS) pushAffixEffects(Number(eq[slot] || 0));
     }
-    const affixNames = affixIds
-      .filter((id) => !/^thorns/i.test(String(id)))
-      .map((id) => getAffixName(id));
-    const affixSig = affixNames.join("|");
+    const affixSig = affixEffects.join("|");
 
     // Count ammo in player inventory
     let ammo = 0;
@@ -567,7 +574,7 @@ export function createHudFeeds(world, deps) {
           critChancePercent: critPct,
           posture,
           statuses,
-          affixes: affixNames,
+          affixes: affixEffects,
           ammo,
         } }));
       } catch (e) { console.debug('[hudFeeds] dispatch ui:updateCombatHUD:', e); }

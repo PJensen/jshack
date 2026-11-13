@@ -153,6 +153,28 @@ Deno.test("buildItemDisplayData hides affix names after converting them to mecha
   assertEquals(data.affixes, []);
 });
 
+Deno.test("buildItemDisplayData describes Earthshaker as an equip mechanic", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 186 });
+  const item = world.create();
+  world.add(item, NamedIdentity, { identity: "test_earthshaker", name: "Volcanic Gloves" });
+  world.add(item, ItemInfo, {
+    type: "equip",
+    slot: "gloves",
+    count: 1,
+    identified: true,
+    bonuses: {},
+    affixes: ["earthshaker"],
+  });
+
+  const data = buildItemDisplayData(world, item);
+  assertEquals(data.mechanics, [
+    { context: "Equip", text: "Earthshatter creates a Volcanic Fissure instead of a normal quake." },
+  ]);
+  assertEquals(data.affixes, []);
+});
+
 Deno.test("buildItemDisplayData does not repeat Mirror Bow package mechanics as proc nodes", () => {
   resetIdentification();
   installContent();
