@@ -1,0 +1,1 @@
+your map animation jitters seriously -- reconsider your approach here.
