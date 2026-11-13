@@ -1979,7 +1979,17 @@ export default {
       "y": 16
     },
     {
+      "id": "scroll_enchant_fierce",
+      "x": 8,
+      "y": 16
+    },
+    {
       "id": "scroll_enchant_flame_ward",
+      "x": 9,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_lucky",
       "x": 9,
       "y": 16
     },
@@ -1989,7 +1999,17 @@ export default {
       "y": 16
     },
     {
+      "id": "scroll_enchant_guarded",
+      "x": 10,
+      "y": 16
+    },
+    {
       "id": "scroll_enchant_frost",
+      "x": 11,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_attuned",
       "x": 11,
       "y": 16
     },
@@ -2015,6 +2035,11 @@ export default {
     },
     {
       "id": "scroll_heal",
+      "x": 16,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_healthy",
       "x": 16,
       "y": 16
     },
