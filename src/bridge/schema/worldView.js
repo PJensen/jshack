@@ -29,6 +29,7 @@ import { PetState } from '../../rules/components/PetState.js';
 import { areFactionsHostile } from '../../rules/utils/factionHostility.js';
 import { effectiveMaxHp } from '../../rules/utils/passiveBonuses.js';
 import { getMonsterTags, getMonster } from '../../rules/data/monsters.js';
+import { SPELL_DEFS } from '../../rules/data/spells.js';
 import { Flying } from '../../rules/components/Flying.js';
 import { hasOverworldAerialLOS } from '../../rules/utils/flyingEligibility.js';
 import { DungeonState } from "../../rules/components/DungeonState.js";
@@ -81,7 +82,7 @@ import {
 } from "../../rules/environment/dungeon/perceptionMemory.js";
 
 // Reuse view/record objects across frames to reduce allocations/GC churn.
-/** @typedef {{ id:number, kind:string, pos:{x:number,y:number}, tags:string[], layer:number, hp:number, maxHp:number, isPet:boolean, isNpc?:boolean, displayName?:string, showHealthBar:boolean, castBar?:{ mode:string, spellId:string, turnsRemaining:number, turnsTotal:number }|null, showNameLabel?:boolean, facing:{dx:number,dy:number}|null, aggroLevel:string, aggroTargetId:number, aggroTargetReason:string, threatState:string, targetLocked:boolean, weaponVfx:any[]|null, itemScale:number, rotation:number, visualOff:{dx:number,dy:number}, entranceBadge?:{level:number,floors:number,color:string} }} EntityView */
+/** @typedef {{ id:number, kind:string, pos:{x:number,y:number}, tags:string[], auraGlows?:Array<{key:string,strength:number}>, layer:number, hp:number, maxHp:number, isPet:boolean, isNpc?:boolean, displayName?:string, showHealthBar:boolean, castBar?:{ mode:string, spellId:string, turnsRemaining:number, turnsTotal:number }|null, showNameLabel?:boolean, facing:{dx:number,dy:number}|null, aggroLevel:string, aggroTargetId:number, aggroTargetReason:string, threatState:string, targetLocked:boolean, weaponVfx:any[]|null, itemScale:number, rotation:number, visualOff:{dx:number,dy:number}, entranceBadge?:{level:number,floors:number,color:string} }} EntityView */
 /** @typedef {{ id:number, x:number, y:number }} SolidView */
 /** @typedef {{ x:number, y:number, kind:string, alpha:number, burning?:boolean, smoking?:boolean }} RoofTileView */
 /** @typedef {{ id:number, profile:string, pos:{x:number,y:number}, interior:boolean }} AudioEmitterView */
@@ -460,6 +461,12 @@ function normalizeDisplayStatusType(rawType) {
  * @param {EntityView} rec
  */
 function projectDisplayTags(world, id, rec) {
+	rec.auraGlows = [];
+	for (const aura of snapshotStatusState(world, id)?.auraSources || []) {
+		const visual = String(SPELL_DEFS[aura.sourceKey]?.auraVisual || "").trim();
+		if (!visual || rec.auraGlows.some((entry) => entry.key === visual)) continue;
+		rec.auraGlows.push({ key: visual, strength: aura.strength });
+	}
 	if (world.has(id, Reanimated) && !rec.tags.includes('reanimated_glow')) {
 		rec.tags.push('reanimated_glow');
 	}
@@ -1272,6 +1279,7 @@ export function buildWorldView(world) {
 				rec.layer = layer;
 				rec.pos.x = pos.x; rec.pos.y = pos.y;
 				rec.tags.length = 0;
+				rec.auraGlows = [];
 				rec.procStates = null;
 				rec.equipBadges = null;
 				rec.stackSeq = stackSeq;

@@ -2126,7 +2126,7 @@ REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {
       potency: 1,
       stacks: 1,
       sourceId: actor,
-      sourceKind: "spell",
+      sourceKind: "aura",
       sourceKey: "wolf_howl",
     });
     ralliedIds.push(id | 0);

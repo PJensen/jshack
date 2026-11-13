@@ -716,18 +716,18 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
       const radius = Math.max(0.5, aura.radius | 0);
       const [r, g, b] = aura.color || [120, 205, 125];
 
-      ctx.fillStyle = `rgba(${r},${g},${b},${(0.035 * alpha).toFixed(3)})`;
+      ctx.fillStyle = `rgba(${r},${g},${b},${(0.018 * alpha).toFixed(3)})`;
       ctx.beginPath();
       ctx.arc(aura.x, aura.y, radius + 0.1, 0, TAU);
       ctx.fill();
 
-      ctx.strokeStyle = `rgba(${Math.min(255, r + 55)},${Math.min(255, g + 35)},${Math.min(255, b + 35)},${(0.45 * alpha * pulse).toFixed(3)})`;
-      ctx.lineWidth = 0.07 + 0.025 * pulse;
+      ctx.strokeStyle = `rgba(${Math.min(255, r + 55)},${Math.min(255, g + 35)},${Math.min(255, b + 35)},${(0.20 * alpha * pulse).toFixed(3)})`;
+      ctx.lineWidth = 0.055 + 0.018 * pulse;
       ctx.beginPath();
       ctx.arc(aura.x, aura.y, radius, 0, TAU);
       ctx.stroke();
 
-      ctx.strokeStyle = `rgba(${Math.min(255, r + 25)},${Math.min(255, g + 25)},${Math.min(255, b + 75)},${(0.28 * alpha).toFixed(3)})`;
+      ctx.strokeStyle = `rgba(${Math.min(255, r + 25)},${Math.min(255, g + 25)},${Math.min(255, b + 75)},${(0.12 * alpha).toFixed(3)})`;
       ctx.lineWidth = 0.04;
       for (let i = 0; i < 3; i++) {
         const start = now * 0.35 + aura.phase + i * (TAU / 3);

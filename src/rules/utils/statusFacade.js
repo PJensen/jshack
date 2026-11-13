@@ -5,6 +5,7 @@ import { Equipment, NON_AMMO_GEAR_SLOTS } from "../components/Equipment.js";
 import { SleepState } from "../components/SleepState.js";
 import { Status } from "../components/Status.js";
 import { StatusEffectNode } from "../components/StatusEffectNode.js";
+import { Source } from "../components/Source.js";
 import { TimedEffectNode } from "../components/TimedEffectNode.js";
 import { EFFECT_DEFS } from "../data/effectDefs.js";
 import { SPELL_DEFS } from "../data/spells.js";
@@ -189,6 +190,8 @@ export function snapshotStatusState(world, entityId) {
   const capabilityStrengths = new Map();
   /** @type {Map<string, Array<{kind:string, key:string, strength:number}>>} */
   const capabilitySources = new Map();
+  /** @type {Array<{sourceId:number, sourceKey:string, strength:number}>} */
+  const auraSources = [];
 
   const topologyEffects = collectTopologyEffects(world, id);
   const topologyKeys = new Set(topologyEffects.map((effect) => effect.key));
@@ -225,6 +228,34 @@ export function snapshotStatusState(world, entityId) {
       capabilitySources.set(capability, rows);
       capabilityStrengths.set(capability, Number(capabilityStrengths.get(capability) || 0) + strength);
     }
+  }
+
+  // Aura provenance is a presentation-relevant semantic of the applied
+  // effect, not a replacement for the effect/status itself. Keep it separate
+  // so generic haste, poison, fear, etc. do not accidentally glow as auras.
+  for (const [nodeId, effectNode] of descendantsWith(world, id, StatusEffectNode)) {
+    const duration = world.get(nodeId, Duration);
+    const source = world.get(nodeId, Source);
+    if (!isActiveEffect({ turnsLeft: duration?.turnsLeft, onsetLeft: duration?.onsetLeft })) continue;
+    if (String(source?.kind || "").trim().toLowerCase() !== "aura") continue;
+    const sourceKey = normalizeKey(source?.key);
+    if (!sourceKey) continue;
+    auraSources.push(Object.freeze({
+      sourceId: Number(source?.id || 0) | 0,
+      sourceKey,
+      strength: normalizeStrength(effectNode?.potency, effectNode?.stacks),
+    }));
+  }
+  for (const effect of legacyEffects) {
+    if (!isActiveEffect(effect)) continue;
+    if (String(effect?.sourceKind || "").trim().toLowerCase() !== "aura") continue;
+    const sourceKey = normalizeKey(effect?.sourceKey);
+    if (!sourceKey) continue;
+    auraSources.push(Object.freeze({
+      sourceId: Number(effect?.sourceId || 0) | 0,
+      sourceKey,
+      strength: normalizeStrength(effect?.potency, effect?.stacks),
+    }));
   }
 
   /** @type {Map<string, number>} */
@@ -305,6 +336,7 @@ export function snapshotStatusState(world, entityId) {
     statusStrengths,
     capabilityStrengths,
     capabilitySources,
+    auraSources: Object.freeze(auraSources),
   });
 }
 

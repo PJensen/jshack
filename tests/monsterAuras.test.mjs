@@ -16,6 +16,7 @@ import { createRng } from "../src/rules/utils/rng.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { hasEffect } from "../src/rules/utils/statusFacade.js";
+import { snapshotStatusState } from "../src/rules/utils/statusFacade.js";
 
 function actor(world, faction, x, y, hp = 20, maxHp = hp) {
   const id = world.create();
@@ -102,6 +103,7 @@ Deno.test("war drummer aura hastens nearby allies but not hostiles", () => {
 
   assert(hasEffect(world, ally, "hastened"));
   assert(!hasEffect(world, target, "hastened"));
+  assertEquals(snapshotStatusState(world, ally)?.auraSources.map((source) => source.sourceKey), ["war_drum"]);
 });
 
 Deno.test("dread warden and void priest auras apply fear and silence", () => {
