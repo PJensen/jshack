@@ -42,7 +42,6 @@ import { clamp01Or, clampInt } from "../utils/numberCoerce.js";
 import { applyMaterialStimulus } from "../utils/materialStimulus.js";
 import { applyMaterialTransform, resolveMaterialTransform } from "../utils/materialTransforms.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
-import { applyAuraFieldPulse } from "../utils/auraFields.js";
 
 const DEFAULT_TURNS = 3;
 const DEFAULT_RADIUS = 1;
@@ -327,43 +326,6 @@ export function hazardSystem(world) {
 
     /** @type {number[]} */
     const affectedIds = [];
-
-    if (kind === "ally_aura" || kind === "aura") {
-      const sourcePos = sourceId > 0 ? world.get(sourceId, Position) : null;
-      if (sourcePos) {
-        const sx = sourcePos.x | 0;
-        const sy = sourcePos.y | 0;
-        if ((pos.x | 0) !== sx || (pos.y | 0) !== sy) {
-          world.set(hazardId, Position, { x: sx, y: sy });
-          pos.x = sx;
-          pos.y = sy;
-        }
-      }
-
-      const effectKey = String(hazard.meta?.effectKey || "hastened");
-      const effectTurns = Math.max(1, Number(hazard.meta?.effectTurns || 2) | 0);
-      const potency = Math.max(1, Number(hazard.meta?.potency || 1));
-      affectedIds.push(...applyAuraFieldPulse(world, sourceId, pos, {
-        radius,
-        effectKey,
-        effectTurns,
-        potency,
-        targetRelation: kind === "ally_aura"
-          ? "allied"
-          : String(hazard.meta?.targetRelation || "allied"),
-        woundedOnly: hazard.meta?.woundedOnly === true,
-        sourceKind: "aura",
-        // Preserve the authored spell/content key for bridge visuals. The
-        // hazard identity is often a presentation label such as
-        // `wolf_howl_aura`, not a key in SPELL_DEFS.
-        sourceKey: String(
-          hazard.meta?.sourceKey
-            || hazard.sourceKind
-            || world.get(hazardId, NamedIdentity)?.identity
-            || kind,
-        ),
-      }));
-    }
 
     if (kind === "fire" && medium === "floor") {
       burnFlammableEntitiesAt(world, pos.x, pos.y, source, hazardId, cause, sourceId, sourceKind);

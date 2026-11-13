@@ -2,7 +2,7 @@ import "./helpers/installContentMonsters.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { Faction } from "../src/rules/components/Faction.js";
-import { HazardArea } from "../src/rules/components/HazardArea.js";
+import { AuraField } from "../src/rules/components/AuraField.js";
 import { Player } from "../src/rules/components/Player.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
@@ -11,7 +11,7 @@ import { getSpell } from "../src/rules/data/spells.js";
 import { pickMonster } from "../src/rules/environment/dungeon/tables.js";
 import { spawnDebugMonsterNearPlayer } from "../src/main/debug/spawnDebugMonster.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
-import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
+import { auraFieldSystem } from "../src/rules/systems/auraFieldSystem.js";
 import { createRng } from "../src/rules/utils/rng.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
@@ -91,7 +91,7 @@ Deno.test("plaguebearer aura poisons nearby hostiles but not allies", () => {
 
   assert(hasEffect(world, target, "poison"));
   assert(!hasEffect(world, ally, "poison"));
-  assertEquals([...world.query(HazardArea)].length, 1);
+  assertEquals([...world.query(AuraField)].length, 1);
 });
 
 Deno.test("war drummer aura hastens nearby allies but not hostiles", () => {
@@ -131,12 +131,12 @@ Deno.test("blood herald aura enrages wounded allies only", () => {
   assert(!hasEffect(world, healthy, "berserk"));
 });
 
-Deno.test("aura fields pulse again through the hazard system", () => {
+Deno.test("aura fields pulse again through the aura field system", () => {
   const world = new World({ seed: 0xA11A });
   const caster = actor(world, "enemy", 5, 5);
   runSpellScript(world, caster, getSpell("war_drum"), {});
   const lateAlly = actor(world, "enemy", 6, 5);
   world.step = 1;
-  hazardSystem(world);
+  auraFieldSystem(world);
   assert(hasEffect(world, lateAlly, "hastened"));
 });

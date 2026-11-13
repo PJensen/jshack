@@ -12,6 +12,7 @@ import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
+import { AuraField } from "../src/rules/components/AuraField.js";
 import { KnockbackPending } from "../src/rules/components/KnockbackPending.js";
 import { SeenCallbackContext, castSpellOnLOS } from "../src/rules/data/callbacks/ai.js";
 import { CombatCallbackContext } from "../src/rules/data/callbacks/combat.js";
@@ -19,6 +20,7 @@ import { DeathCallbackContext } from "../src/rules/data/callbacks/death.js";
 import { getMonster } from "../src/rules/data/monsters.js";
 import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
+import { auraFieldSystem } from "../src/rules/systems/auraFieldSystem.js";
 import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { castSpellSystem } from "../src/rules/systems/castSpellSystem.js";
 import { runCallbackList } from "../src/rules/interaction/dispatch.js";
@@ -406,12 +408,11 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     assertEquals(hasEffect(world, farAlly, "hastened"), false, "wolf_howl should not reach beyond its aura radius");
 
     let auraId = 0;
-    for (const [id, pos, hazard] of world.query(Position, HazardArea)) {
-      if ((hazard?.sourceId | 0) !== wolf) continue;
-      if (String(hazard?.kind || "") !== "ally_aura") continue;
+    for (const [id, pos, aura] of world.query(Position, AuraField)) {
+      if ((aura?.sourceId | 0) !== wolf) continue;
       auraId = id;
       assertEquals({ x: pos.x | 0, y: pos.y | 0 }, { x: 5, y: 5 });
-      assertEquals(hazard.radius | 0, 6);
+      assertEquals(aura.radius | 0, 6);
       break;
     }
     assert(auraId > 0, "wolf_howl should leave a temporary ally aura field");
@@ -421,7 +422,7 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     world.add(lateAlly, Faction, { key: "enemy" });
     world.add(lateAlly, Vitality, { hp: 12, maxHp: 12 });
     world.step = 1;
-    hazardSystem(world);
+    auraFieldSystem(world);
     assertEquals(hasEffect(world, lateAlly, "hastened"), true, "ally aura should affect allies entering the field");
     const pulsedView = buildWorldView(world);
     assertEquals(pulsedView.entities.find((entity) => entity.id === wolf)?.auraGlows, [{ key: "pack", strength: 2 }], "wolf glow should survive aura refresh");
