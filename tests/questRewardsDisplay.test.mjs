@@ -4,6 +4,7 @@ import { describeQuestRewardItem } from "../src/main/ui/questRewards.js";
 
 Deno.test("quest reward gem tooltips expose canonical socket mechanics", () => {
   const reward = describeQuestRewardItem("gem_ruby");
+  assert(reward.description.includes("fire resist"));
   assert(reward.tooltip.mechanics.some((entry) => entry.context === "Socket" && entry.text.includes("fire resist")));
   assert(reward.tooltip.mechanics.some((entry) => entry.context === "On hit" && entry.text.includes("ignite")));
 });

@@ -23,7 +23,11 @@ export function describeQuestRewardItem(itemId) {
   const def = id ? getCatalogItem(id) : null;
   const gem = !def && id ? getGem(id) : null;
   const name = String(def?.name || gem?.name || id || "Reward").trim();
-  const description = String(def?.description || (gem ? `${gem.socketable ? "Socketable " : ""}${gem.appearance}.` : "")).trim();
+  const gemDetails = gem ? describeGemDetailLines(gem) : [];
+  const description = String(
+    def?.description
+      || (gemDetails.length ? gemDetails.join(" ") : (gem ? `${gem.socketable ? "Socketable " : ""}${gem.appearance}.` : "")),
+  ).trim();
   const rarity = Number(def?.rarity || (gem?.value >= 2500 ? 4 : gem?.value >= 800 ? 3 : 1)) | 0;
   const rarityName = String(def?.rarityName || (["common", "uncommon", "rare", "epic", "legendary"][rarity] || "common"));
   const type = String(def?.type || (gem ? "gem" : "item"));
