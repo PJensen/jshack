@@ -1,0 +1,19 @@
+okay -- back to the issue at hand please.
+
+---
+
+and if you're already inside the aura whne it's cast" why not make the proc node spatially aware?
+
+---
+
+which do you prefer:
+
+
+
+- auras as they exist
+- proc node without spatial awareness
+- proc node with spatial awareness
+
+
+
+be honest please.
