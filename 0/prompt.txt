@@ -1,0 +1,41 @@
+we started cleaning up gear descriptions recently -- specifically adding:
+
+
+
+`Equip: some summary text here`
+
+
+
+And even more specifically we worked hard to remote "Proc Node" from various items -- insteak making things look more like world of warcraft.
+
+
+
+I've got a few things to do here:
+
+
+
+1. make these "Equip" etc -- summaries green.
+2. Consider how socketed gems are repsented here.
+3. Consider how enchantment are represented here.
+4. Consider how gems themselves are displayed.
+5. Consider how enchantments themselves are displayed.
+
+
+
+It's potentially a lot of work -- but very much worth doing if you think about it from the players perspective -- the engine is essentially leaking internal aspects into the gameplay surface and really should not do that.
+
+
+
+I would much rather the gem or enchantment have a desrription of what it actually does using our usual `printf` methodology, pulling from  gems metadata saying things like, `Socket: gives your weapon +2 fire damage` --&#x20;
+
+
+
+and subsequently, inside the thing you socketesing the actual icon for the thing that is socketed, or enchantment applied such that if someone wants to know what it does, the'd need only tap on it -- or -- better yet, actually show the summary in-line right there on the item that has the ssocketed gem or enchantment.
+
+
+
+A little bit like how quest rewards work -- but not exactly.
+
+
+
+Let me know if you understand all this and why I'm thinkig this way.
