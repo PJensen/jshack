@@ -1,0 +1,1 @@
+small ux issue I've been living with -- character creator starts with player name as selected text and should not.
