@@ -328,6 +328,11 @@ export const LOOT_TABLES = {
       { type: "item",      weight: 3,  itemId: "scroll_genocide" },
       { type: "item",      weight: 5,  itemId: "scroll_taming" },
       { type: "item",      weight: 3,  itemId: "scroll_mass_delirium" },
+      { type: "item",      weight: 5,  itemId: "scroll_enchant_guarded" },
+      { type: "item",      weight: 5,  itemId: "scroll_enchant_healthy" },
+      { type: "item",      weight: 4,  itemId: "scroll_enchant_attuned" },
+      { type: "item",      weight: 4,  itemId: "scroll_enchant_lucky" },
+      { type: "item",      weight: 5,  itemId: "scroll_enchant_fierce" },
     ],
   },
 

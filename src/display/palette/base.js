@@ -138,6 +138,11 @@ export const basePalette = {
   scroll_enchant_flame_ward: { glyph: "?", fg: "#ffcc66", glow: "#cc9933", baseScale: S_SCROLL },
   scroll_enchant_venom_ward: { glyph: "?", fg: "#aaddaa", glow: "#77aa77", baseScale: S_SCROLL },
   scroll_enchant_fortified:  { glyph: "?", fg: "#c8ccd0", glow: "#8890a0", baseScale: S_SCROLL },
+  scroll_enchant_guarded:    { glyph: "?", fg: "#b8c8ff", glow: "#7188cc", baseScale: S_SCROLL },
+  scroll_enchant_healthy:    { glyph: "?", fg: "#ff9f9f", glow: "#cc5f6f", baseScale: S_SCROLL },
+  scroll_enchant_attuned:    { glyph: "?", fg: "#c69cff", glow: "#895dcc", baseScale: S_SCROLL },
+  scroll_enchant_lucky:      { glyph: "?", fg: "#ffe27a", glow: "#c8a83f", baseScale: S_SCROLL },
+  scroll_enchant_fierce:     { glyph: "?", fg: "#ff8d66", glow: "#c95132", baseScale: S_SCROLL },
   return_portal: { glyph: "O", fg: "#7bd6ff", glow: "#3f98bb" },
   rift_portal: { glyph: "◇", fg: "#d67bff", glow: "#7b3fbb" },
   // Aliases to match rules identity so they render on the ground

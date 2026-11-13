@@ -26,7 +26,12 @@ Deno.test("loot tables define thematic enchanting reagent families", () => {
 });
 
 Deno.test("loot and alchemy shops bias toward reagents instead of finished enchant scrolls", () => {
-  assertEquals(JSON.stringify(LOOT_TABLES).includes("scroll_enchant_"), false);
+  const scrollEntries = LOOT_TABLES["sub:scrolls"]?.entries || [];
+  assert(scrollEntries.some((entry) => entry.itemId === "scroll_enchant_guarded"));
+  assert(scrollEntries.some((entry) => entry.itemId === "scroll_enchant_healthy"));
+  assert(scrollEntries.some((entry) => entry.itemId === "scroll_enchant_attuned"));
+  assert(scrollEntries.some((entry) => entry.itemId === "scroll_enchant_lucky"));
+  assert(scrollEntries.some((entry) => entry.itemId === "scroll_enchant_fierce"));
 
   const world = new World({ seed: 1210 });
   const rng = { next: () => 0.99 };

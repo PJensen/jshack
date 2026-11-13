@@ -210,3 +210,30 @@ Deno.test("slot normalization lets shield-labeled gear accept offhand enchants",
   assert((world.get(shield, ItemInfo)?.affixes || []).includes("kineticWard1"));
   assert(!world.isAlive(scroll));
 });
+
+Deno.test("stat enchant scrolls bind their authored passive affixes", () => {
+  const fixtures = [
+    ["scroll_enchant_guarded", "leather_armor", "guard1"],
+    ["scroll_enchant_healthy", "leather_armor", "life1"],
+    ["scroll_enchant_attuned", "ring_copper", "attuned1"],
+    ["scroll_enchant_lucky", "ring_copper", "lucky1"],
+    ["scroll_enchant_fierce", "dagger_quick", "fierce"],
+  ];
+
+  for (const [scrollId, targetId, affixId] of fixtures) {
+    const world = new World({ seed: 1206 });
+    const actor = makeActor(world);
+    const target = createItemById(world, targetId);
+    const scroll = createItemById(world, scrollId);
+    assert(target > 0 && scroll > 0, `${scrollId} should be creatable`);
+    addToInventory(world, actor, target);
+    addToInventory(world, actor, scroll);
+
+    world.add(actor, ApplyIntent, { itemId: scroll, targetItemId: target });
+    applySystem(world);
+    finishGearApplication(world);
+
+    assert((world.get(target, ItemInfo)?.affixes || []).includes(affixId), `${scrollId} should add ${affixId}`);
+    assert(!world.isAlive(scroll), `${scrollId} should be consumed after a successful binding`);
+  }
+});
