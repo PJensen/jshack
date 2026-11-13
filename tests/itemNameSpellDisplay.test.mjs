@@ -130,6 +130,29 @@ Deno.test("buildItemDisplayData formats authored proc packages as equip mechanic
   ]);
 });
 
+Deno.test("buildItemDisplayData hides affix names after converting them to mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 185 });
+  const shield = world.create();
+  world.add(shield, NamedIdentity, { identity: "wardkeeper_shield", name: "Wardkeeper Shield" });
+  world.add(shield, ItemInfo, {
+    type: "offhand",
+    slot: "offhand",
+    count: 1,
+    identified: true,
+    bonuses: { defense: 2, kineticDR: 1 },
+    affixes: ["shieldWall1", "guard1"],
+  });
+
+  const data = buildItemDisplayData(world, shield);
+  assertEquals(data.mechanics, [
+    { context: "Equip", text: "When damaged, 15% chance to gain stoneskin for 4 turns." },
+    { context: "Equip", text: "+1 evade." },
+  ]);
+  assertEquals(data.affixes, []);
+});
+
 Deno.test("buildItemDisplayData does not repeat Mirror Bow package mechanics as proc nodes", () => {
   resetIdentification();
   installContent();

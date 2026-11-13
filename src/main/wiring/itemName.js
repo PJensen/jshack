@@ -662,7 +662,15 @@ export function buildItemDisplayData(world, itemId) {
     description,
     bonuses: identified && info.bonuses && typeof info.bonuses === 'object' ? { ...info.bonuses } : {},
     mechanics,
-    affixes: identified ? resolveAffixes(info.affixes) : [],
+    // Once an affix has a player-facing mechanic, do not render its internal
+    // name/description as a second, implementation-shaped tooltip section.
+    // Keep unresolved legacy affixes visible until they have equivalent copy.
+    affixes: identified
+      ? resolveAffixes(info.affixes).filter((affix) => {
+          const key = String(affix?.id || "");
+          return !affixMechanics.authoredIds.has(key) && !enchantmentMechanics.authoredIds.has(key);
+        })
+      : [],
     damageDice: identified ? (info.damageDice || null) : null,
     staminaCost: identified ? (info.staminaCost ?? null) : null,
     twoHanded: identified ? !!info.twoHanded : false,
