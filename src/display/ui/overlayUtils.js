@@ -2262,46 +2262,35 @@ export function renderItemDetails(container, it) {
     }
   }
 
-  // --- Proc nodes (trigger/effect summaries from item topology) ---
+  // --- Fallback equip effects (rendered without exposing runtime topology) ---
   const procNodes = Array.isArray(it.procNodes) ? it.procNodes : [];
   if (procNodes.length) {
-    const title = document.createElement('div');
-    title.textContent = 'Proc Nodes';
-    title.style.color = '#9fd6ff';
-    title.style.fontSize = '11px';
-    title.style.textTransform = 'uppercase';
-    title.style.letterSpacing = '0.06em';
-    title.style.opacity = '0.9';
-    title.style.marginTop = '6px';
-    container.appendChild(title);
-
     for (const node of procNodes) {
-      const src = document.createElement('div');
-      src.textContent = String(node?.source || 'Item');
-      src.style.color = '#7fb3df';
-      src.style.fontSize = '12px';
-      src.style.marginTop = '2px';
-      container.appendChild(src);
-
-      const trigger = document.createElement('div');
       const qualifiers = Array.isArray(node?.qualifiers)
         ? node.qualifiers.map((q) => String(q || '').trim()).filter(Boolean)
         : [];
-      trigger.textContent = qualifiers.length
+      const trigger = qualifiers.length
         ? `${String(node?.trigger || 'On Trigger')} \u00b7 ${qualifiers.join(' \u00b7 ')}`
         : String(node?.trigger || 'On Trigger');
-      trigger.style.color = '#d7e9ff';
-      trigger.style.fontSize = '12px';
-      container.appendChild(trigger);
-
       const effects = Array.isArray(node?.effects) ? node.effects : [];
-      for (const effect of effects) {
-        const line = document.createElement('div');
-        line.textContent = `\u2022 ${String(effect || '').trim()}`;
-        line.style.color = '#b6d6f2';
-        line.style.fontSize = '12px';
-        container.appendChild(line);
-      }
+      const effectText = effects.map((effect) => String(effect || '').trim()).filter(Boolean).join('; ');
+      if (!effectText) continue;
+
+      const line = document.createElement('div');
+      line.style.color = '#b8e6b8';
+      line.style.fontSize = '12px';
+      line.style.marginTop = '2px';
+
+      const contextSpan = document.createElement('span');
+      contextSpan.textContent = 'Equip: ';
+      contextSpan.style.fontWeight = 'bold';
+      contextSpan.style.color = '#d9ffd9';
+      line.appendChild(contextSpan);
+
+      const textSpan = document.createElement('span');
+      textSpan.textContent = `${trigger} — ${effectText}`;
+      line.appendChild(textSpan);
+      container.appendChild(line);
     }
   }
 
