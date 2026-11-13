@@ -5,6 +5,7 @@
   "branch": "master",
   "checkpoints_count": 3,
   "files_touched": [
+    "VERSION",
     "src/main.js",
     "src/main/config/runtimeConfig.js",
     "src/main/debug/spellReel.js"
@@ -18,6 +19,13 @@
       "prompt": ""
     }
   ],
+  "token_usage": {
+    "input_tokens": 305,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 134656,
+    "output_tokens": 206,
+    "api_call_count": 1
+  },
   "redaction": {
     "replacements": 0,
     "layers": {
