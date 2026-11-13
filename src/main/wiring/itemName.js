@@ -294,7 +294,7 @@ function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
   return { mechanics, authoredIds };
 }
 
-function formatAffixMechanics(affixes, mechanicFormats = {}) {
+function formatAffixMechanics(affixes, mechanicFormats = {}, fallbackContext = 'Equip') {
   const formats = mechanicFormats?.affixes && typeof mechanicFormats.affixes === 'object'
     ? mechanicFormats.affixes
     : {};
@@ -314,9 +314,11 @@ function formatAffixMechanics(affixes, mechanicFormats = {}) {
     const text = format.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, name) => String(values[name] ?? ''));
     if (!text.trim()) continue;
     mechanics.push({
-      context: typeof formatSpec === 'object' && formatSpec.context
-        ? String(formatSpec.context)
-        : 'Equip',
+      context: fallbackContext !== 'Equip'
+        ? fallbackContext
+        : (typeof formatSpec === 'object' && formatSpec.context
+          ? String(formatSpec.context)
+          : fallbackContext),
       text: text.trim(),
     });
     authoredIds.add(key);
@@ -567,11 +569,16 @@ export function buildItemDisplayData(world, itemId) {
   const procPackages = identified ? buildProcPackageSummaries(world, itemId) : [];
   const catalogItem = identified ? getCatalogItem(identity) : null;
   const procPackageMechanics = formatProcPackageMechanics(procPackages, catalogItem?.mechanicFormats);
-  const affixIds = [
-    ...(Array.isArray(info.affixes) ? info.affixes : []),
-    ...(identified ? buildAttachedAffixIds(world, itemId) : []),
-  ];
-  const affixMechanics = formatAffixMechanics(affixIds, catalogItem?.mechanicFormats);
+  const attachedAffixIds = identified ? buildAttachedAffixIds(world, itemId) : [];
+  const attachedAffixSet = new Set(attachedAffixIds);
+  const authoredAffixIds = (Array.isArray(info.affixes) ? info.affixes : [])
+    .filter((affixId) => !attachedAffixSet.has(String(affixId || '')));
+  const affixMechanics = formatAffixMechanics(authoredAffixIds, catalogItem?.mechanicFormats);
+  const enchantmentMechanics = formatAffixMechanics(
+    attachedAffixIds,
+    catalogItem?.mechanicFormats,
+    'Enchant',
+  );
   const detailLines = identified
     ? [
         ...(gemType ? [] : (Array.isArray(info.detailLines) ? info.detailLines.map((line) => String(line || "").trim()).filter(Boolean) : [])),
@@ -631,12 +638,16 @@ export function buildItemDisplayData(world, itemId) {
     mechanics.push({ context: 'Equip', text: summary });
   }
   mechanics.push(...affixMechanics.mechanics);
+  mechanics.push(...enchantmentMechanics.mechanics);
   const procNodes = identified ? buildProcNodeSummaries(world, itemId) : [];
-  const visibleProcNodes = catalogItem
-    ? procNodes.filter((node) =>
-        !procPackageMechanics.authoredIds.has(String(node?.packageId || ""))
-        && !affixMechanics.authoredIds.has(String(node?.affixId || "")))
-    : procNodes;
+  const visibleProcNodes = procNodes.filter((node) => {
+    const packageId = String(node?.packageId || "");
+    const affixId = String(node?.affixId || "");
+    if (enchantmentMechanics.authoredIds.has(affixId)) return false;
+    if (!catalogItem) return true;
+    return !procPackageMechanics.authoredIds.has(packageId)
+      && !affixMechanics.authoredIds.has(affixId);
+  });
 
   return {
     id: itemId,

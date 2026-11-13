@@ -20,6 +20,7 @@ import "../src/content/items/helms.js";
 import "../src/content/items/scrolls.js";
 import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
+import { attachEnchantmentNode } from "../src/rules/utils/enchantmentTopology.js";
 
 Deno.test("buildItemDisplayData enriches spell-linked items with target effects", () => {
   resetIdentification();
@@ -273,4 +274,25 @@ Deno.test("buildItemDisplayData projects socketed gems with canonical detail lin
   const data = buildItemDisplayData(world, blade);
   assertEquals(data.socketedGems?.[0]?.name, "Ruby");
   assert(data.socketedGems[0].detailLines.some((line) => line.startsWith("Socketed:")));
+});
+
+Deno.test("buildItemDisplayData labels topology-backed enchantments separately", () => {
+  resetIdentification();
+  identify("test_enchanted_blade");
+  const world = new World({ seed: 31 });
+  const blade = world.create();
+  world.add(blade, NamedIdentity, { identity: "test_enchanted_blade", name: "Enchanted Blade" });
+  world.add(blade, ItemInfo, {
+    type: "equip",
+    slot: "weapon",
+    count: 1,
+    identified: true,
+    bonuses: {},
+    affixes: [],
+  });
+  attachEnchantmentNode(world, blade, { affixId: "fierce", sourceKey: "scroll_enchant_fierce" });
+
+  const data = buildItemDisplayData(world, blade);
+  assert(data.mechanics.some((entry) => entry.context === "Enchant" && String(entry.text).includes("+1 damage")), JSON.stringify(data.mechanics));
+  assertEquals(data.procNodes, []);
 });
