@@ -14,6 +14,7 @@ import "../src/content/items/pocketRelics.js";
 import "../src/content/items/fishingRod.js";
 import "../src/content/items/lodbrokSerpentBoundBreeches.js";
 import "../src/content/items/boots.js";
+import "../src/content/items/rings.js";
 import "../src/content/items/rangedWeapons.js";
 import "../src/content/items/weapons.js";
 import "../src/content/items/helms.js";
@@ -284,6 +285,21 @@ Deno.test("buildItemDisplayData preserves rarityName for unidentified items", ()
   assertEquals(data.rarityName, "epic", "rarity should be preserved for UI chip coloring");
   assertEquals(data.description, "", "unidentified items should still hide description");
   assertEquals(data.affixes, [], "unidentified items should still hide affixes");
+});
+
+Deno.test("buildItemDisplayData hides unidentified ring mechanics", () => {
+  resetIdentification();
+  installContent();
+  const world = new World({ seed: 20 });
+  const ring = buildCatalogItem(world, "ring_of_fury");
+
+  const data = buildItemDisplayData(world, ring);
+  assertEquals(data.name, "Unidentified Ring");
+  assertEquals(data.identified, false);
+  assertEquals(data.bonuses, {});
+  assertEquals(data.mechanics, []);
+  assertEquals(data.description, "");
+  assertEquals(data.affixes, []);
 });
 
 Deno.test("buildItemDisplayData exposes enchantment scroll effects as authored mechanics", () => {

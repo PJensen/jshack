@@ -577,8 +577,10 @@ export function buildItemDisplayData(world, itemId) {
   const procPackageMechanics = formatProcPackageMechanics(procPackages, catalogItem?.mechanicFormats);
   const attachedAffixIds = identified ? buildAttachedAffixIds(world, itemId) : [];
   const attachedAffixSet = new Set(attachedAffixIds);
-  const authoredAffixIds = (Array.isArray(info.affixes) ? info.affixes : [])
-    .filter((affixId) => !attachedAffixSet.has(String(affixId || '')));
+  const authoredAffixIds = identified
+    ? (Array.isArray(info.affixes) ? info.affixes : [])
+      .filter((affixId) => !attachedAffixSet.has(String(affixId || '')))
+    : [];
   const affixMechanics = formatAffixMechanics(authoredAffixIds, catalogItem?.mechanicFormats);
   const enchantmentMechanics = formatAffixMechanics(
     attachedAffixIds,
