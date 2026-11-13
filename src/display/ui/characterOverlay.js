@@ -5,6 +5,7 @@ import {
   CHARACTER_SLOT_ORDER, installDetachableKeyHandler, pulseRow,
   UI, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
 
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
@@ -542,6 +543,28 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
 
     row.appendChild(slot);
     row.appendChild(name);
+    const modifierIcons = [
+      ...(Array.isArray(rowData.item?.socketedGems) ? rowData.item.socketedGems : []).map((gem) => ({
+        id: gem?.iconId,
+        label: gem?.name || 'Socketed gem',
+      })),
+      ...(Array.isArray(rowData.item?.mechanics) ? rowData.item.mechanics : [])
+        .filter((mechanic) => mechanic?.iconId)
+        .map((mechanic) => ({ id: mechanic.iconId, label: 'Enchantment' })),
+    ].filter((entry) => String(entry.id || '').trim()).slice(0, 4);
+    if (modifierIcons.length) {
+      const modifiers = document.createElement('span');
+      Object.assign(modifiers.style, { display: 'inline-flex', gap: '2px', flex: '0 0 auto' });
+      for (const modifier of modifierIcons) {
+        const icon = document.createElement('span');
+        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(modifier.id), '✧', 16);
+        if (!hasIcon) icon.textContent = '✧';
+        icon.title = String(modifier.label);
+        icon.setAttribute('aria-label', String(modifier.label));
+        modifiers.appendChild(icon);
+      }
+      row.appendChild(modifiers);
+    }
     if (rowData.item?.coating?.kind) {
       const dot = document.createElement('span');
       dot.textContent = '\u2022';
