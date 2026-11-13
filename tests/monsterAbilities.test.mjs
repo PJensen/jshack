@@ -365,7 +365,7 @@ Deno.test("death_volley damages target tile and adjacent tiles", () => {
 Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
   const wolfHowl = getSpell("wolf_howl");
   assertEquals(wolfHowl?.manaCost, 0);
-  assertEquals(wolfHowl?.rallyTurns, 5);
+  assertEquals(wolfHowl?.rallyTurns, 15);
   assertEquals(wolfHowl?.castTime, 3);
   loadFlatFloor();
   try {
