@@ -2332,12 +2332,30 @@ export function renderItemDetails(container, it) {
       const lines = Array.isArray(gem?.detailLines)
         ? gem.detailLines.map((line) => String(line || '').trim()).filter(Boolean)
         : [];
-      const summary = lines
-        .map((line) => line.replace(/^Socketed:/i, 'Socket:').replace(/^On hit:/i, 'Equip:'))
-        .join(' ');
-      text.textContent = lines.length
-        ? `${String(gem?.name || 'Gem')} — ${summary}`
-        : `${String(gem?.name || 'Gem')} socketed`;
+      const gemName = document.createElement('span');
+      gemName.textContent = `${String(gem?.name || 'Gem')} — `;
+      gemName.style.color = '#cfe8ff';
+      gemName.style.fontWeight = 'bold';
+      text.appendChild(gemName);
+      if (lines.length) {
+        lines.forEach((line, index) => {
+          if (index > 0) text.appendChild(document.createTextNode(' '));
+          const normalized = line.replace(/^Socketed:/i, 'Socket:').replace(/^On hit:/i, 'Equip:');
+          const match = normalized.match(/^([^:]+):\s*(.*)$/);
+          if (!match) {
+            text.appendChild(document.createTextNode(normalized));
+            return;
+          }
+          const label = document.createElement('span');
+          label.textContent = `${match[1]}: `;
+          label.style.color = '#d9ffd9';
+          label.style.fontWeight = 'bold';
+          text.appendChild(label);
+          text.appendChild(document.createTextNode(match[2]));
+        });
+      } else {
+        text.appendChild(document.createTextNode('socketed'));
+      }
       gemRow.appendChild(text);
       container.appendChild(gemRow);
     }
