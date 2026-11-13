@@ -2222,6 +2222,17 @@ export function renderItemDetails(container, it) {
       line.style.color = '#b8e6b8';
       line.style.fontSize = '12px';
       line.style.marginBottom = '2px';
+      if (mechanic?.iconId) {
+        line.style.display = 'flex';
+        line.style.alignItems = 'flex-start';
+        line.style.gap = '5px';
+        const icon = document.createElement('span');
+        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(mechanic.iconId), '✧', 16);
+        if (!hasIcon) icon.textContent = '✧';
+        icon.style.color = '#d9ffd9';
+        icon.style.flex = '0 0 auto';
+        line.appendChild(icon);
+      }
 
       const contextSpan = document.createElement('span');
       contextSpan.textContent = `${context}: `;

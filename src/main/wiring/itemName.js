@@ -24,7 +24,11 @@ import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import { getGem, describeGemDetailLines } from "../../rules/data/gems.js";
-import { getEnchantScrollDef } from "../../rules/content/enchanting/enchantCatalog.js";
+import { getEnchantScrollDef, listEnchantScrollDefs } from "../../rules/content/enchanting/enchantCatalog.js";
+
+const ENCHANT_SCROLL_ICON_BY_AFFIX = new Map(
+  listEnchantScrollDefs().map((def) => [String(def.affixId || ''), String(def.itemId || '')]),
+);
 import {
   getSpell,
   describeSpellDetailLines,
@@ -294,7 +298,7 @@ function formatProcPackageMechanics(procPackages, mechanicFormats = {}) {
   return { mechanics, authoredIds };
 }
 
-function formatAffixMechanics(affixes, mechanicFormats = {}, fallbackContext = 'Equip') {
+function formatAffixMechanics(affixes, mechanicFormats = {}, fallbackContext = 'Equip', iconResolver = null) {
   const formats = mechanicFormats?.affixes && typeof mechanicFormats.affixes === 'object'
     ? mechanicFormats.affixes
     : {};
@@ -313,6 +317,7 @@ function formatAffixMechanics(affixes, mechanicFormats = {}, fallbackContext = '
     };
     const text = format.replace(/\{([a-zA-Z0-9_.]+)\}/g, (_match, name) => String(values[name] ?? ''));
     if (!text.trim()) continue;
+    const iconId = typeof iconResolver === 'function' ? String(iconResolver(key) || '') : '';
     mechanics.push({
       context: fallbackContext !== 'Equip'
         ? fallbackContext
@@ -320,6 +325,7 @@ function formatAffixMechanics(affixes, mechanicFormats = {}, fallbackContext = '
           ? String(formatSpec.context)
           : fallbackContext),
       text: text.trim(),
+      ...(iconId ? { iconId } : {}),
     });
     authoredIds.add(key);
   }
@@ -578,6 +584,7 @@ export function buildItemDisplayData(world, itemId) {
     attachedAffixIds,
     catalogItem?.mechanicFormats,
     'Enchant',
+    (affixId) => ENCHANT_SCROLL_ICON_BY_AFFIX.get(String(affixId || '')) || '',
   );
   const detailLines = identified
     ? [

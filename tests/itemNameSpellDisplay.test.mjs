@@ -293,6 +293,10 @@ Deno.test("buildItemDisplayData labels topology-backed enchantments separately",
   attachEnchantmentNode(world, blade, { affixId: "fierce", sourceKey: "scroll_enchant_fierce" });
 
   const data = buildItemDisplayData(world, blade);
-  assert(data.mechanics.some((entry) => entry.context === "Enchant" && String(entry.text).includes("+1 damage")), JSON.stringify(data.mechanics));
+  assert(data.mechanics.some((entry) =>
+    entry.context === "Enchant"
+      && String(entry.text).includes("+1 damage")
+      && entry.iconId === "scroll_enchant_fierce",
+  ), JSON.stringify(data.mechanics));
   assertEquals(data.procNodes, []);
 });
