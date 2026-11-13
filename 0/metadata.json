@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7B14SYTJKJQ4THJKV6J6DDY",
+  "session_id": "01a1d5e5-c3c5-7e71-b2b8-dcaafce23d44",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-13T18:01:35.306198213Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/main/debug/debugCommands.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "f6b663222d99",
+  "checkpoint_transcript_start": 1101,
+  "transcript_lines_at_start": 1101,
+  "compact_transcript_start": 195,
+  "token_usage": {
+    "input_tokens": 48432,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2359808,
+    "output_tokens": 5281,
+    "api_call_count": 23
+  },
+  "redaction": {
+    "replacements": 5976,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 5976,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 23
+  }
+}
