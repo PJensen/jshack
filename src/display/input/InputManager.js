@@ -197,6 +197,13 @@ export class InputManager {
       return;
     }
 
+    // Toggle the minimap presentation without consuming a turn.
+    if (lowerKey === "m") {
+      e.preventDefault();
+      try { this.target?.dispatchEvent?.(new CustomEvent("ui:toggleMinimap")); } catch {}
+      return;
+    }
+
     // Pinned spell dock slots 1-4. Desktop gets keyboard aliases for the same
     // four-slot spell surface used by touch.
     if (key >= '1' && key <= '4' && !e.shiftKey && !e.ctrlKey && !e.altKey) {

@@ -298,6 +298,22 @@ Deno.test("InputManager: keyboard c emits open character action", () => {
   }
 });
 
+Deno.test("InputManager: keyboard m toggles the minimap presentation", () => {
+  const target = new FakeEventTarget();
+  const canvas = new FakeCanvas({ left: 0, top: 0, width: 220, height: 180 });
+  const mgr = new InputManager(target, { canvas, touchFeedback: false });
+  let toggles = 0;
+  target.addEventListener("ui:toggleMinimap", () => toggles++);
+  try {
+    const evM = target.emit("keydown", { key: "m", code: "KeyM" });
+
+    assertEquals(evM.defaultPrevented, true);
+    assertEquals(toggles, 1);
+  } finally {
+    mgr.dispose();
+  }
+});
+
 Deno.test("InputManager: keyboard f emits cast even when a ui-panel is open", () => {
   const target = new FakeEventTarget();
   const canvas = new FakeCanvas({ left: 0, top: 0, width: 220, height: 180 });
