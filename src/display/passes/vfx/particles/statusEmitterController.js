@@ -89,6 +89,14 @@ export function createStatusEmitterController({ world, fx }) {
     void: { rate: 7, angle: 0, spread: Math.PI * 2, speed: 0.26, speedJitter: 0.14, ax: 0, ay: 0, life: 1.1, lifeJitter: 0.35, size: 0.11, sizeEnd: 0.02, color: "#78b8ff", alpha0: 0.54, alpha1: 0.0 },
     blood: { rate: 8, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
   };
+  const AURA_GLOW_STYLE = {
+    pack: { color: [156, 255, 104], radius: 0.62, speed: 5.0 },
+    toxic: { color: [181, 239, 98], radius: 0.58, speed: 4.0 },
+    rally: { color: [255, 211, 106], radius: 0.60, speed: 5.8 },
+    dread: { color: [192, 140, 255], radius: 0.62, speed: 3.2 },
+    void: { color: [120, 184, 255], radius: 0.64, speed: 4.6 },
+    blood: { color: [255, 111, 120], radius: 0.60, speed: 6.2 },
+  };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {
     fountain: { tracker: fountainEmitters, prefix: "fountain", cfg: { continuous: true, rate: 16, angle: -Math.PI / 2, spread: Math.PI / 3, speed: 1.4, speedJitter: 0.5, ax: 0, ay: 2.5, life: 1.2, lifeJitter: 0.3, size: 0.35, sizeEnd: 0.08, color: "#66ccff", alpha0: 0.7, alpha1: 0.0, offsetX: 0, offsetY: -0.3 } },
@@ -292,6 +300,33 @@ export function createStatusEmitterController({ world, fx }) {
     fx.step(dtSec, origins);
   }
 
+  function drawAuraGlows(ctx, view, fxTime) {
+    if (!ctx || !Array.isArray(view?.entities)) return;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (const entity of view.entities) {
+      const glows = Array.isArray(entity?.auraGlows) ? entity.auraGlows : [];
+      if (!glows.length || !entity?.pos) continue;
+      for (const aura of glows) {
+        const style = AURA_GLOW_STYLE[String(aura?.key || "")];
+        if (!style) continue;
+        const pulse = 0.5 + 0.5 * Math.sin(Number(fxTime || 0) * style.speed + (entity.id | 0) * 0.37);
+        const strength = Math.max(0.7, Math.min(1.4, Number(aura.strength || 1)));
+        const radius = style.radius * (0.92 + 0.10 * pulse) * strength;
+        const [r, g, b] = style.color;
+        const outer = ctx.createRadialGradient(entity.pos.x, entity.pos.y, 0, entity.pos.x, entity.pos.y, radius);
+        outer.addColorStop(0, `rgba(${r},${g},${b},${(0.22 + 0.10 * pulse).toFixed(3)})`);
+        outer.addColorStop(0.48, `rgba(${r},${g},${b},${(0.10 + 0.05 * pulse).toFixed(3)})`);
+        outer.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = outer;
+        ctx.beginPath();
+        ctx.arc(entity.pos.x, entity.pos.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
   function getActiveLights() {
     const out = [];
     for (let i = 0; i < lightProbes.length; i++) {
@@ -332,5 +367,5 @@ export function createStatusEmitterController({ world, fx }) {
     return out;
   }
 
-  return { installListeners, step, getActiveLights };
+  return { installListeners, step, drawAuraGlows, getActiveLights };
 }

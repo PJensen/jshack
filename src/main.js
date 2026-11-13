@@ -5863,12 +5863,14 @@ function render(worldView) {
     throwFx,
     pickupFx,
     cloudFx,
+    statusEmitterFx,
     spiritWispFx,
     deathEssenceFx,
     meleeSlashFx,
     aggroFx,
     fx,
     PERF,
+    fxTime: _fxTime,
   });
 
   // Weather particles (rain) drawn above entities but under roofs

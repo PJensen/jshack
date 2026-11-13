@@ -19,7 +19,7 @@ export function tickDisplayEffects({ dtSec, boltFx, spellAreaFx, projectileFx, t
 /**
  * Draw world-space effects in the canonical pass order.
  */
-export function drawWorldEffects({ bctx, worldView, glyphAtlas, boltFx, spellAreaFx, projectileFx, throwFx, pickupFx, cloudFx, spiritWispFx, deathEssenceFx, meleeSlashFx, aggroFx, fx, PERF }) {
+export function drawWorldEffects({ bctx, worldView, glyphAtlas, boltFx, spellAreaFx, projectileFx, throwFx, pickupFx, cloudFx, statusEmitterFx, spiritWispFx, deathEssenceFx, meleeSlashFx, aggroFx, fx, PERF, fxTime }) {
   if (!bctx) return;
   throwFx.draw(bctx, worldView, glyphAtlas);
   if (pickupFx) pickupFx.draw(bctx, worldView, glyphAtlas);
@@ -95,6 +95,9 @@ export function drawWorldEffects({ bctx, worldView, glyphAtlas, boltFx, spellAre
   }
   if (typeof cloudFx.drawAllyAura === "function") {
     cloudFx.drawAllyAura(bctx);
+  }
+  if (typeof statusEmitterFx?.drawAuraGlows === "function") {
+    statusEmitterFx.drawAuraGlows(bctx, worldView, fxTime);
   }
   fx.render({
     mode: (PERF.quality === "low" ? "source-over" : "lighter"),
