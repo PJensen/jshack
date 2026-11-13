@@ -523,6 +523,21 @@ function buildProcPackageSummaries(world, itemId) {
   return out;
 }
 
+function buildAttachedAffixIds(world, itemId) {
+  const out = [];
+  const stack = [Number(itemId || 0) | 0];
+  const seen = new Set();
+  while (stack.length) {
+    const entityId = stack.pop();
+    if (!(entityId > 0) || seen.has(entityId)) continue;
+    seen.add(entityId);
+    const affix = world.get(entityId, AffixTopologyNode);
+    if (affix?.affixId) out.push(String(affix.affixId));
+    for (const childId of children(world, entityId)) stack.push(childId);
+  }
+  return out;
+}
+
 /**
  * Build a standardised display-data object for an item entity.
  * Used by inventory, chest, ground-pickup and any other UI that shows item info.
@@ -551,7 +566,11 @@ export function buildItemDisplayData(world, itemId) {
   const procPackages = identified ? buildProcPackageSummaries(world, itemId) : [];
   const catalogItem = identified ? getCatalogItem(identity) : null;
   const procPackageMechanics = formatProcPackageMechanics(procPackages, catalogItem?.mechanicFormats);
-  const affixMechanics = formatAffixMechanics(info.affixes, catalogItem?.mechanicFormats);
+  const affixIds = [
+    ...(Array.isArray(info.affixes) ? info.affixes : []),
+    ...(identified ? buildAttachedAffixIds(world, itemId) : []),
+  ];
+  const affixMechanics = formatAffixMechanics(affixIds, catalogItem?.mechanicFormats);
   const procPackageDetailLines = procPackages.map((pkg) => {
     if (procPackageMechanics.authoredIds.has(String(pkg?.id || ''))) return '';
     const summary = String(pkg?.summary || "").trim();
