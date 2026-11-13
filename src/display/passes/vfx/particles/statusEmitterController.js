@@ -90,12 +90,12 @@ export function createStatusEmitterController({ world, fx }) {
     blood: { rate: 8, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
   };
   const AURA_GLOW_STYLE = {
-    pack: { color: [156, 255, 104], radius: 0.62, speed: 5.0 },
-    toxic: { color: [181, 239, 98], radius: 0.58, speed: 4.0 },
-    rally: { color: [255, 211, 106], radius: 0.60, speed: 5.8 },
-    dread: { color: [192, 140, 255], radius: 0.62, speed: 3.2 },
-    void: { color: [120, 184, 255], radius: 0.64, speed: 4.6 },
-    blood: { color: [255, 111, 120], radius: 0.60, speed: 6.2 },
+    pack: { color: [156, 255, 104], radius: 0.72, speed: 5.0, lightRadius: 2.8 },
+    toxic: { color: [181, 239, 98], radius: 0.70, speed: 4.0, lightRadius: 2.6 },
+    rally: { color: [255, 211, 106], radius: 0.72, speed: 5.8, lightRadius: 2.8 },
+    dread: { color: [192, 140, 255], radius: 0.72, speed: 3.2, lightRadius: 2.8 },
+    void: { color: [120, 184, 255], radius: 0.74, speed: 4.6, lightRadius: 2.9 },
+    blood: { color: [255, 111, 120], radius: 0.72, speed: 6.2, lightRadius: 2.8 },
   };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {
@@ -200,6 +200,7 @@ export function createStatusEmitterController({ world, fx }) {
         const emitter = fx.ensureEmitter(key, { continuous: true, ...cfg });
         if (emitter) emitter.alphaMultiplier = Math.min(1.25, 0.75 + Number(aura.strength || 1) * 0.12);
         origins.push({ key, x: e.pos.x, y: e.pos.y - 0.08 });
+        lightProbes.push({ kind: "aura_profile", id: e.id, x: e.pos.x, y: e.pos.y, style });
       }
 
       if (Array.isArray(e.weaponVfx)) {
@@ -345,6 +346,19 @@ export function createStatusEmitterController({ world, fx }) {
           y: p.y + 0.5,
           radius: radius * f,
           color: [Number(color[0]) || 255, Number(color[1]) || 160, Number(color[2]) || 80],
+          flicker: f,
+        });
+      } else if (p.kind === "aura_profile") {
+        const style = p.style || null;
+        if (!style) continue;
+        const phase = Number(p.id || 0) * 0.37;
+        const f = 0.86 + 0.14 * Math.sin(_fxTime * Number(style.speed || 1) + phase);
+        const color = Array.isArray(style.color) ? style.color : [180, 220, 255];
+        out.push({
+          x: p.x + 0.5,
+          y: p.y + 0.5,
+          radius: Number(style.lightRadius || 2.5) * f,
+          color,
           flicker: f,
         });
       } else if (p.kind === "familiar_ready") {
