@@ -615,6 +615,22 @@ export const SPELL_DEFS = {
       { kind: 'utility', note: 'Leaves a persistent rallying aura for 5 turns' },
     ],
   },
+  leadership_aura: {
+    id: 'leadership_aura',
+    name: 'Leadership Aura',
+    symbol: '\u2691', // ⚑
+    schools: ['martial'],
+    manaCost: 0,
+    radius: 4,
+    auraTurns: 5,
+    auraVisual: 'rally',
+    script: 'leadership_aura',
+    targeting: 'self',
+    description: 'The captain’s command sharpens allied attacks and defenses nearby.',
+    effects: [
+      { kind: 'utility', note: 'Nearby allies gain +2 attack and +2 defense while inside' },
+    ],
+  },
   dread_warden_aura: {
     id: 'dread_warden_aura',
     name: 'Dread Warden Aura',

@@ -80,6 +80,7 @@ import { toMonsterSpawnParams } from "../utils/monsterSpawnParams.js";
 import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import { Owner } from "../components/Owner.js";
 import { Reanimated } from "../components/Reanimated.js";
+import { attachProcNode } from "../utils/statProcAuthoring.js";
 
 /** @returns {any|null} */
 function _getWeather(world) {
@@ -2072,6 +2073,30 @@ function runFactionAuraScript(world, actor, spell) {
 }
 
 REGISTRY["faction_aura"] = runFactionAuraScript;
+
+REGISTRY["leadership_aura"] = function leadershipAuraScript(world, actor, spell) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return;
+  const radius = Math.max(1, Number(spell?.radius || 4) | 0);
+  const auraId = spawnAuraField(world, {
+    x: apos.x | 0,
+    y: apos.y | 0,
+    turnsLeft: Math.max(1, Number(spell?.auraTurns || 5) | 0),
+    radius,
+    sourceId: actor,
+    sourceKey: spell.id,
+    effectKey: "",
+    targetRelation: "allied",
+    identity: "leadership_aura",
+    name: "Leadership Aura",
+  });
+  attachProcNode(world, auraId, {
+    effects: [
+      { kind: "modifyCombatStat", a: "attack", b: 2, c: "leadership_aura" },
+      { kind: "modifyCombatStat", a: "defense", b: 2, c: "leadership_aura" },
+    ],
+  });
+};
 
 // Wolf Howl — alert nearby same-faction allies toward the player.
 REGISTRY["wolf_howl"] = function wolfHowlScript(world, actor, spell, _intent) {

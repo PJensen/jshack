@@ -17,6 +17,8 @@ import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constan
 import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
 import { hasEffect } from "../src/rules/utils/statusFacade.js";
 import { snapshotStatusState } from "../src/rules/utils/statusFacade.js";
+import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
+import { buildWorldView } from "../src/bridge/schema/worldView.js";
 
 function actor(world, faction, x, y, hp = 20, maxHp = hp) {
   const id = world.create();
@@ -28,6 +30,7 @@ function actor(world, faction, x, y, hp = 20, maxHp = hp) {
 
 Deno.test("aura monsters are cataloged with their authored ability", () => {
   const expected = [
+    ["bandit_captain", "leadership_aura"],
     ["plaguebearer", "plaguebearer_aura"],
     ["war_drummer", "war_drum"],
     ["dread_warden", "dread_warden_aura"],
@@ -40,6 +43,24 @@ Deno.test("aura monsters are cataloged with their authored ability", () => {
     assert(monster.learnedSpellIds.includes(spellId), `${monsterId} should know ${spellId}`);
     assert(getSpell(spellId), `${spellId} should be in the spell catalog`);
   }
+});
+
+Deno.test("bandit captain leadership aura buffs allied combatants spatially", () => {
+  const world = new World({ seed: 0xCA971 });
+  const captain = actor(world, "enemy", 5, 5);
+  const ally = actor(world, "enemy", 6, 5);
+  const target = actor(world, "player", 7, 5);
+  world.add(target, Player);
+  runSpellScript(world, captain, getSpell("leadership_aura"), {});
+  auraFieldSystem(world);
+
+  assertEquals(resolveCombatSnapshot(world, ally).attackBonus, 3);
+  assertEquals(resolveCombatSnapshot(world, ally).armorClass, 12);
+  assertEquals(resolveCombatSnapshot(world, target).attackBonus, 1);
+  assertEquals(buildWorldView(world).entities.find((entity) => entity.id === ally)?.auraGlows, [{ key: "rally", strength: 2 }]);
+
+  auraFieldSystem(world);
+  assertEquals(resolveCombatSnapshot(world, ally).attackBonus, 3);
 });
 
 Deno.test("aura monsters are available to the normal depth spawn pool", () => {

@@ -21,6 +21,7 @@ import { Engraving } from '../../rules/components/Engraving.js';
 import { PlasmaCloud } from "../../rules/components/PlasmaCloud.js";
 import { HazardArea } from "../../rules/components/HazardArea.js";
 import { AuraField } from "../../rules/components/AuraField.js";
+import { AuraStatModifier } from "../../rules/components/AuraStatModifier.js";
 import { Trap } from "../../rules/components/Trap.js";
 import { Vitality } from '../../rules/components/Vitality.js';
 import { Channeling } from '../../rules/components/Channeling.js';
@@ -66,6 +67,7 @@ import {
 } from "../../rules/utils/facing.js";
 import { readPlayerPerceptionState } from "../../rules/utils/perceptionState.js";
 import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
+import { descendantsWith } from "../../rules/utils/topology.js";
 import { chebyshevDistance, hasMindForEsp, isFixedDecorationEntity, isPerceptionMonster } from "../../rules/utils/perceptionChannels.js";
 import { PERCEPTION_TUNING } from "../../rules/environment/dungeon/perceptionTuning.js";
 import { BaseStats } from "../../rules/components/BaseStats.js";
@@ -468,6 +470,11 @@ function projectDisplayTags(world, id, rec) {
 		const visual = String(SPELL_DEFS[aura.sourceKey]?.auraVisual || "").trim();
 		if (!visual || rec.auraGlows.some((entry) => entry.key === visual)) continue;
 		rec.auraGlows.push({ key: visual, strength: aura.strength });
+	}
+	for (const [_modifierId, modifier] of descendantsWith(world, id, AuraStatModifier)) {
+		const visual = String(SPELL_DEFS[modifier?.key]?.auraVisual || "").trim();
+		if (!visual || rec.auraGlows.some((entry) => entry.key === visual)) continue;
+		rec.auraGlows.push({ key: visual, strength: Math.max(1, Number(modifier?.amount || 1)) });
 	}
 	if (world.has(id, Reanimated) && !rec.tags.includes('reanimated_glow')) {
 		rec.tags.push('reanimated_glow');

@@ -391,7 +391,9 @@ defineMonster('bandit_captain', {
   massKg: 88,
   resistances: { kinetic: { DR: 3 } },
   speed: 2,
-  learnedSpellIds: ['shield_bash'],
+  learnedSpellIds: ['shield_bash', 'leadership_aura'],
+  maxMana: 24,
+  manaRegen: 0.1,
   wielding: ['iron_mace', 'dagger_quick', 'sword_plain'],
   equipped: [
     "shield_wood", "shield_iron",
@@ -411,10 +413,20 @@ defineMonster('bandit_captain', {
         telegraphTurns: 1,
         chance: 0.7,
       }),
+      castSpellOnLOS({
+        spellId: 'leadership_aura',
+        abilityId: 'leadership_aura',
+        abilityName: 'Leadership Aura',
+        targeting: 'self',
+        maxRange: 8,
+        cooldownTurns: 12,
+        telegraphTurns: 1,
+        chance: 0.75,
+      }),
     ],
   },
-  specials: ['Telegraphed shield bash', 'Weapon + shield'],
-  description: 'A disciplined raider who opens duels by smashing foes off-balance.',
+  specials: ['Leadership aura', 'Telegraphed shield bash', 'Weapon + shield'],
+  description: 'A disciplined raider whose commands harden nearby bandits before the fighting begins.',
   lootTable: 'drop:goblin',
 });
 
