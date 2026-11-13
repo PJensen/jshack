@@ -1,0 +1,10 @@
+okay -- describe all glows please.
+
+---
+
+wolf howl did nothing
+
+spawn dire_worlf
+spawn rat
+
+NADDA -- no visual effect on the rat.
