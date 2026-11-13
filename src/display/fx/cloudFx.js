@@ -1278,21 +1278,6 @@ export function createCloudFxController({ world, cam, fx, getFxTime, getPosition
       }
     }
 
-    // -- Friendly aura: soft green/blue field glow --
-    for (const [, aura] of _allyAuraFx) {
-      const life = Math.max(0.35, Math.min(1, aura.maxTurns > 0 ? aura.turnsLeft / aura.maxTurns : 1));
-      const fade = aura.fading ? Math.max(0, aura.fadeMax > 0 ? aura.fadeLeft / aura.fadeMax : 0) : 1;
-      const a = life * fade;
-      if (a < 0.01) continue;
-      const r = Math.max(0, aura.radius | 0);
-      for (let dy = -r; dy <= r; dy++) {
-        for (let dx = -r; dx <= r; dx++) {
-          if (Math.max(Math.abs(dx), Math.abs(dy)) > r) continue;
-          out.push({ x: aura.x + dx, y: aura.y + dy, radius: 0.45, color: aura.color || [120, 205, 125], flicker: a * 0.35 });
-        }
-      }
-    }
-
     return out;
   }
 
