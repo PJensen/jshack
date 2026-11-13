@@ -41,7 +41,11 @@ export function describeQuestRewardItem(itemId) {
   }
   const enchantScroll = getEnchantScrollDef(id);
   if (enchantScroll?.effectSummary) {
-    mechanics.push({ context: 'Enchant', text: String(enchantScroll.effectSummary).trim() });
+    mechanics.push({
+      context: 'Enchant',
+      text: String(enchantScroll.effectSummary).trim(),
+      iconId: id,
+    });
   }
   for (const ability of Object.values(def?._contentAbilities || {})) {
     const text = String(ability?.displayFormat || ability?.description || "").trim();
