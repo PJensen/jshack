@@ -1,0 +1,1 @@
+when a quest is accepted,  we should no longer display the `!` icon above their head, we should either display a grey `?` question mark -- or nothing at all -- I'm leaning towards grey `?` as being ideal since it lets you know you have something to do with that NPC.
