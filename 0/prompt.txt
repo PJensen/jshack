@@ -1,0 +1,69 @@
+tag this version it's 2500 commits in -- something about it makes me want to freeze it as an offical release :-) tag it and tthe build shall be created :-)
+
+---
+
+nope -- I said tag
+
+---
+
+push the tags please.
+
+---
+
+get back onto remote origin please.
+
+---
+
+????? what are you talking about - it was always PJensen/jshack.git dummy - fix this asap.
+
+---
+
+that's why I said adopt what ever is on origin master -- anyway
+
+---
+
+and the tag?
+
+---
+
+very wel -- what was I thinking a moment ago -- before we got into this mess. I remember; pet kills and spell kills should count as being your kills.
+
+---
+
+commit and push please.
+
+NOTE: this should be almost a repeatable "playerKill" hook - catch my drift? vs -- re-implementing or having non-canonical player kill mechanics.
+
+---
+
+okay -- very nice -- that is much better than bespoke implementations floating all over the place.
+
+---
+
+give me command to push a new tag -- this fix is too important lol
+
+---
+
+can we commit w/o hooks firing?
+
+---
+
+but I want to create a tag and not run into the rebase issue if possible
+
+---
+
+hey -- this idea of showing enchants below the status bar is dumb; I dont think we should do it anymore -- it used to be like "Capacitive" or "Stunning" -- but that's stuff coming from your gear -- if anything -- it might be worthwhile putting on your character sheet as a list toward the bottom -- but certainly not on the main game surface.
+
+Do you know what I'm talking about? It's below active effects on main game surface.
+
+---
+
+correct -- make it so
+
+they read like "Enchant 25% chance to stun on hit"
+
+Right below status effects entries -- lol
+
+Approving this change.
+
+Commit and push when ready.
