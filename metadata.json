@@ -3,7 +3,7 @@
   "checkpoint_id": "01M798MQP27M12XHD9RFYJTD2Z",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 3,
   "files_touched": [
     "src/rules/data/itemCatalog.js",
     "tests/applyDataDriven.test.mjs",
@@ -16,14 +16,21 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 60923,
+    "input_tokens": 76785,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 765440,
-    "output_tokens": 5461,
-    "api_call_count": 14,
+    "cache_read_tokens": 845312,
+    "output_tokens": 6033,
+    "api_call_count": 18,
     "subagent_tokens_complete": true
   },
   "redaction": {
