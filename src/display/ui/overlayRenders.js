@@ -888,7 +888,7 @@ export function renderQuestReward(panel, quest) {
   panel.innerHTML = '';
   Object.assign(panel.style, {
     position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-    width: 'min(92vw, 460px)', maxHeight: 'min(92vh, 680px)', overflowY: 'auto', overflowX: 'hidden',
+    width: 'min(86vw, 420px)', maxHeight: 'min(92vh, 680px)', overflowY: 'auto', overflowX: 'hidden',
     boxSizing: 'border-box',
     padding: '22px', background: 'rgba(16, 21, 29, 0.98)', border: '1px solid #8ca2ba',
     borderRadius: '12px', boxShadow: '0 18px 60px rgba(0,0,0,0.65)', zIndex: '1400',
@@ -938,7 +938,7 @@ export function renderQuestReward(panel, quest) {
     row.addEventListener('click', () => {
       (/** @type {any} */ (panel))._selectedReward = choiceId;
       renderQuestReward(panel, quest);
-    });
+    }, true);
     row.addEventListener('keydown', (event) => {
       if (event.target !== row || (event.key !== 'Enter' && event.key !== ' ')) return;
       event.preventDefault();
@@ -958,8 +958,6 @@ export function renderQuestReward(panel, quest) {
       itemLabel.textContent = `${Number(item.count || 1) > 1 ? `${Number(item.count || 1)}x ` : ''}${String(item.name || item.itemId || 'Item')}`;
       inspect.appendChild(itemLabel);
       inspect.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
         showItemTooltip(item.tooltip || item, inspect, { pinBottomOnMobile: true });
       });
       row.appendChild(inspect);
@@ -989,8 +987,9 @@ export function renderQuestReward(panel, quest) {
   }
 
   const warning = document.createElement('div');
-  warning.textContent = 'Select a reward before completing this quest.';
-  Object.assign(warning.style, { display: 'none', color: '#f07878', fontSize: '12px', marginTop: '10px' });
+  const rewardError = String((/** @type {any} */ (panel))._rewardError || '');
+  warning.textContent = rewardError || 'Select a reward before completing this quest.';
+  Object.assign(warning.style, { display: rewardError ? 'block' : 'none', color: '#f07878', fontSize: '12px', marginTop: '10px' });
   panel.appendChild(warning);
 
   const actions = document.createElement('div');

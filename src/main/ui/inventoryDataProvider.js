@@ -1042,6 +1042,16 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
     const playerId = Number(playerEntity(world)?.id || 0) | 0;
     if (!questId || !rewardId || !(playerId > 0)) return;
     world.emit('quest:reward_selected', { questId, playerId, rewardId });
+    const rewardStillPending = Array.from(world.query(QuestDefRef, QuestState, QuestBindings))
+      .some(([, def, state, bindings]) => String(def?.id || '') === questId
+        && Number(bindings?.player || 0) === playerId
+        && String(state?.node || '') === 'reward'
+        && String(state?.status || '') === 'active');
+    if (rewardStillPending) {
+      _uiEventTarget.dispatchEvent(new CustomEvent('ui:questRewardError', {
+        detail: { questId, message: 'Make room in your inventory before claiming this reward.' },
+      }));
+    }
     _uiEventTarget.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });
 

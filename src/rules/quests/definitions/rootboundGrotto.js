@@ -169,8 +169,8 @@ export const RootboundGrottoQuest = registerQuest({
             && String(ctx.payload?.questId || "") === ROOTBOUND_GROTTO_QUEST_ID
             && isSelectedReward(ctx),
           actions: [
-            setVar("rewardGranted", true),
             grantSelectedReward(),
+            setVar("rewardGranted", true),
             emit("quest:completed", (ctx) => ({ questId: ROOTBOUND_GROTTO_QUEST_ID, playerId: ctx.bind.player, giverId: ctx.bind.giver, title: "The Rootbound Grotto", rewardGold: REWARD_GOLD, rewardItemIds: selectedQuestRewardItemIds(ctx.def, ctx.vars, ctx.payload?.rewardId) })),
           ],
           to: "complete",

@@ -59,7 +59,18 @@ function handleQuestEvent(world, qid, eventName, payload, compiled) {
 
     // Rebuild the context so actions see the actual payload.
     const actionCtx = buildContext(world, qid, compiled, state, bindings, cloneVars(varsRec.data), payload, eventName);
-    for (const action of edge.actions || []) action(actionCtx);
+    for (const action of edge.actions || []) {
+      if (action(actionCtx) === false) {
+        setQuestLog(world, qid, {
+          lastEvent: eventName,
+          lastFrom: String(state.node || ""),
+          lastTo: String(state.node || ""),
+          transitions: Number(world.get(qid, QuestLog)?.transitions || 0),
+          lastError: `Quest action rejected event '${eventName}'`,
+        });
+        return;
+      }
+    }
 
     const currentState = world.get(qid, QuestState) || state;
     if (!edge.to || !compiled.nodes[edge.to]) {

@@ -416,9 +416,9 @@ export const RatInfestationQuest = registerQuest({
             && String(ctx.payload?.questId || "") === RAT_INFESTATION_QUEST_ID
             && isSelectedReward(ctx),
           actions: [
+            grantSelectedReward(),
             setVar("reported", true),
             setVar("rewardGranted", true),
-            grantSelectedReward(),
             setVar("completionText", (ctx) => String(ctx.vars?.resolution || "") === "genocide"
               ? "The cellar fell silent after rat-kind was erased from the run."
               : "The tavern cellar is clear, at least for now."),

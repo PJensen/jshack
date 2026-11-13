@@ -377,11 +377,15 @@ export function initOverlays() {
     const questId = String(ev?.detail?.questId || '');
     (/** @type {any} */ (questReward))._questId = questId;
     (/** @type {any} */ (questReward))._selectedReward = '';
+    (/** @type {any} */ (questReward))._rewardError = '';
     hideCharMenuPanels();
     show(questReward);
     window.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });
   window.addEventListener('ui:closeQuestReward', () => hide(questReward));
+  window.addEventListener('ui:questRewardError', (ev) => {
+    (/** @type {any} */ (questReward))._rewardError = String(ev?.detail?.message || 'Unable to claim this reward.');
+  });
   window.addEventListener('ui:openTownBoard', () => {
     hideCharMenuPanels();
     show(townBoard);
