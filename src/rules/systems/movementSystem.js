@@ -11,6 +11,7 @@
 
 import { Position } from "../components/Position.js";
 import { MoveIntent } from "../components/Intents/MoveIntent.js";
+import { Channeling } from "../components/Channeling.js";
 import { Facing } from "../components/Facing.js";
 import { Inventory } from "../components/Inventory.js";
 import { ItemInfo } from "../components/ItemInfo.js";
@@ -178,6 +179,14 @@ export function movementSystem(world) {
       const vit = world.get(actor, Vitality);
       if (vit && (vit.hp | 0) <= 0) { world.remove(actor, MoveIntent); continue; }
       if (sleepPreventsMovement(world, actor)) { world.remove(actor, MoveIntent); continue; }
+      // An active cast channel owns the actor's turn.  Producers may have
+      // queued movement before the channel began, or AI may propose a chase
+      // step while the channel is counting down; neither should move a caster.
+      if (world.has(actor, Channeling)) {
+        world.remove(actor, MoveIntent);
+        world.emit?.("intent:blocked", { actor, reason: "channeling" });
+        continue;
+      }
       if (statusStrength(world, actor, "stasis") > 0) {
         world.set(actor, MoveIntent, {
           ...intent,

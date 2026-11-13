@@ -1,8 +1,9 @@
-import { assert } from "jsr:@std/assert";
+import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Status } from "../src/rules/components/Status.js";
 import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
+import { Channeling } from "../src/rules/components/Channeling.js";
 import { movementSystem } from "../src/rules/systems/movementSystem.js";
 import { loadChunk, clearAll } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
@@ -33,6 +34,30 @@ Deno.test("movementSystem: confused status causes a misstep", () => {
     assert(Math.abs(pos.x - 5) <= 1 && Math.abs(pos.y - 5) <= 1, "misstep should remain adjacent");
     assert(!(pos.x === 5 && pos.y === 5), "movement should still consume into an actual step");
     assert(!world.has(actor, MoveIntent), "move intent should be consumed");
+  } finally {
+    clearAll();
+  }
+});
+
+Deno.test("movementSystem: active cast channel holds the caster in place", () => {
+  loadFloorChunk();
+  try {
+    const world = new World({ seed: 0xC0FFEE });
+    const actor = world.create();
+
+    world.add(actor, Position, { x: 5, y: 5 });
+    world.add(actor, Channeling, {
+      mode: "cast",
+      spellId: "wolf_howl",
+      turnsRemaining: 2,
+      turnsTotal: 3,
+    });
+    world.add(actor, MoveIntent, { dx: 1, dy: 0 });
+
+    movementSystem(world);
+
+    assertEquals(world.get(actor, Position), { x: 5, y: 5 });
+    assert(!world.has(actor, MoveIntent), "channeling should consume the queued move");
   } finally {
     clearAll();
   }
