@@ -441,7 +441,7 @@ defineMonster('dire_wolf', {
         abilityName: 'Howl',
         targeting: 'self',
         maxRange: 7,
-        cooldownTurns: 10,
+        cooldownTurns: 30,
         telegraphTurns: 1,
         chance: 0.6,
       }),
