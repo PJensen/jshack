@@ -1,4 +1,5 @@
 import { children } from "../../lib/ecs-js/index.js";
+import { AuraField } from "../components/AuraField.js";
 import { ActivationGate } from "../components/ActivationGate.js";
 import { CreatureType } from "../components/CreatureType.js";
 import { Faction } from "../components/Faction.js";
@@ -14,7 +15,8 @@ import { Status } from "../components/Status.js";
 import { Vitality } from "../components/Vitality.js";
 import { runEntityScript, ScriptVerb } from "../scripting.js";
 import { gatherStatTopology, resolveDerivedStats } from "./derivedStats.js";
-import { forEachInRadius } from "./spatialIndex.js";
+import { areFactionsAllied, areFactionsHostile } from "./factionHostility.js";
+import { forEachInRadius, updateSpatialIndex } from "./spatialIndex.js";
 
 function compareByPriorityThenId(a, b) {
   return Number(a.record.priority || 0) - Number(b.record.priority || 0)
@@ -31,6 +33,30 @@ function gatherDirectChildrenWith(world, parentId, Comp) {
   }
   out.sort(compareByPriorityThenId);
   return out;
+}
+
+function gatherDescendantProcNodes(world, rootId) {
+  /** @type {Array<{entityId:number, node:any}>} */
+  const out = [];
+  const stack = [...children(world, rootId)];
+  while (stack.length > 0) {
+    const entityId = stack.pop();
+    if (!(entityId > 0)) continue;
+    const node = world.get(entityId, ProcNode);
+    if (node && node.enabled !== false) out.push({ entityId, node });
+    for (const childId of children(world, entityId)) stack.push(childId);
+  }
+  out.sort((a, b) => Number(a.node.priority || 0) - Number(b.node.priority || 0) || a.entityId - b.entityId);
+  return out;
+}
+
+function auraTargetMatches(world, sourceId, targetId, relation) {
+  if (relation === "all") return true;
+  const sourceFaction = world.get(sourceId, Faction);
+  const targetFaction = world.get(targetId, Faction);
+  if (!sourceFaction || !targetFaction) return false;
+  if (relation === "hostile") return areFactionsHostile(sourceFaction.key, targetFaction.key);
+  return areFactionsAllied(sourceFaction.key, targetFaction.key);
 }
 
 function getHealthPct(world, entityId) {
@@ -428,6 +454,58 @@ export function evaluateActorProcs(world, actorId, ctx, opts = {}) {
   }
 
   return out;
+}
+
+/**
+ * Evaluate ProcNodes descended from an AuraField against every current spatial
+ * recipient. The field owns membership; proc nodes receive the recipient as
+ * ctx.target and the caster/field as ctx.source/ctx.aura.
+ *
+ * @param {import('../../lib/ecs-js/index.js').World} world
+ * @param {number} auraId
+ * @param {{ phase?: string, context?: object }} [opts]
+ * @returns {Array<{targetId:number, context:object, out:object}>}
+ */
+export function evaluateAuraProcNodes(world, auraId, opts = {}) {
+  const fieldId = Number(auraId || 0) | 0;
+  const field = world.get(fieldId, AuraField);
+  const center = world.get(fieldId, Position);
+  if (!field || !center) return [];
+
+  const sourceId = field.sourceId > 0 ? field.sourceId : fieldId;
+  const radius = Math.max(0, Number(field.radius || 0) | 0);
+  const relation = String(field.targetRelation || "allied").toLowerCase();
+  const nodes = gatherDescendantProcNodes(world, fieldId);
+  if (nodes.length === 0) return [];
+
+  const sourceStats = resolveDerivedStats(world, sourceId);
+  const results = [];
+  updateSpatialIndex(world);
+  forEachInRadius(world, center.x | 0, center.y | 0, radius, (targetId) => {
+    if (!world.has(targetId, Vitality)) return;
+    if ((world.get(targetId, Vitality)?.hp | 0) <= 0) return;
+    if (!auraTargetMatches(world, sourceId, targetId, relation)) return;
+
+    const targetPos = world.get(targetId, Position);
+    const context = {
+      ...(opts.context || {}),
+      source: sourceId,
+      aura: fieldId,
+      target: targetId,
+      relation,
+      phase: String(opts.phase || "inside"),
+      distance: targetPos
+        ? Math.max(Math.abs((targetPos.x | 0) - (center.x | 0)), Math.abs((targetPos.y | 0) - (center.y | 0)))
+        : null,
+    };
+    const targetStats = resolveDerivedStats(world, targetId);
+    const out = createProcAccumulator();
+    for (let i = 0; i < nodes.length; i++) {
+      evaluateProcNode(world, nodes[i].entityId, context, sourceStats, targetStats, out);
+    }
+    results.push({ targetId: targetId | 0, context, out });
+  });
+  return results;
 }
 
 export function projectResourceRestore(world, entityId, resource, amount) {

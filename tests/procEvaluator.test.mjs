@@ -6,11 +6,15 @@ import { DerivedExpression } from "../src/rules/components/DerivedExpression.js"
 import { Equipment } from "../src/rules/components/Equipment.js";
 import { ProcEffect } from "../src/rules/components/ProcEffect.js";
 import { ProcNode } from "../src/rules/components/ProcNode.js";
+import { AuraField } from "../src/rules/components/AuraField.js";
+import { Faction } from "../src/rules/components/Faction.js";
+import { Position } from "../src/rules/components/Position.js";
 import { Stamina } from "../src/rules/components/Stamina.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import {
   createProcAccumulator,
   evaluateActorProcs,
+  evaluateAuraProcNodes,
   projectResourceRestore,
 } from "../src/rules/utils/procEvaluator.js";
 
@@ -20,6 +24,46 @@ function addChild(world, parentId, Comp, value = {}) {
   attach(world, id, parentId);
   return id;
 }
+
+Deno.test("evaluateAuraProcNodes evaluates current allied recipients spatially", () => {
+  const world = new World({ seed: 1234 });
+  const captain = world.create();
+  const ally = world.create();
+  const enemy = world.create();
+  const aura = world.create();
+  const proc = world.create();
+
+  world.add(captain, Position, { x: 5, y: 5 });
+  world.add(captain, Faction, { key: "enemy" });
+  world.add(captain, Vitality, { hp: 20, maxHp: 20 });
+  world.add(ally, Position, { x: 6, y: 5 });
+  world.add(ally, Faction, { key: "enemy" });
+  world.add(ally, Vitality, { hp: 20, maxHp: 20 });
+  world.add(enemy, Position, { x: 7, y: 5 });
+  world.add(enemy, Faction, { key: "player" });
+  world.add(enemy, Vitality, { hp: 20, maxHp: 20 });
+  world.add(aura, Position, { x: 5, y: 5 });
+  world.add(aura, AuraField, { sourceId: captain, radius: 2, targetRelation: "allied" });
+  attach(world, aura, captain);
+  world.add(proc, ProcNode, { priority: 1 });
+  attach(world, proc, aura);
+  const effect = addChild(world, proc, ProcEffect, { kind: "applyStatus", a: "hastened", b: 1, c: 1 });
+
+  const inside = evaluateAuraProcNodes(world, aura);
+  assertEquals(inside.map((entry) => entry.targetId), [captain, ally]);
+  assertEquals(inside[1].context.aura, aura);
+  assertEquals(inside[1].context.phase, "inside");
+  assertEquals(inside[1].out.statusesToApply[0].target, ally);
+  assertEquals(inside[1].out.statusesToApply[0].source, effect);
+
+  const lateAlly = world.create();
+  world.add(lateAlly, Position, { x: 6, y: 6 });
+  world.add(lateAlly, Faction, { key: "enemy" });
+  world.add(lateAlly, Vitality, { hp: 20, maxHp: 20 });
+  const entered = evaluateAuraProcNodes(world, aura, { phase: "enter" });
+  assertEquals(entered.map((entry) => entry.targetId), [captain, ally, lateAlly]);
+  assertEquals(entered[2].context.phase, "enter");
+});
 
 Deno.test("evaluateActorProcs resolves passive source stats before gated proc effects", () => {
   const world = new World({ seed: 1234 });
