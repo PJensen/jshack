@@ -1117,6 +1117,7 @@ export const LOOT_TABLES = {
   // Max 1 weapon per chest - equipment split into weapon vs armor/jewelry
 
   "chest:basic": {
+    guaranteedTables: ["sub:equip_common"],
     rolls: { min: 1, max: 2 },
     entries: [
       { type: "gold",      weight: 40, count: { base: 12, perDepth: 4 } },
@@ -1140,6 +1141,7 @@ export const LOOT_TABLES = {
   },
 
   "chest:magic": {
+    guaranteedTables: ["sub:equip_magic"],
     rolls: { min: 1, max: 2 },
     entries: [
       { type: "gold",      weight: 30, count: { base: 15, perDepth: 5 } },
@@ -1162,6 +1164,7 @@ export const LOOT_TABLES = {
   },
 
   "chest:epic": {
+    guaranteedTables: ["sub:equip_epic"],
     rolls: { min: 1, max: 2 },
     entries: [
       { type: "gold",      weight: 30, count: { base: 28, perDepth: 6 } },
@@ -1187,6 +1190,7 @@ export const LOOT_TABLES = {
   },
 
   "chest:legendary": {
+    guaranteedTables: ["sub:equip_legendary"],
     rolls: { min: 1, max: 2 },
     entries: [
       { type: "gold",      weight: 25, count: { base: 40, perDepth: 8 } },

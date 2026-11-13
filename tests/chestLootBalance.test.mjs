@@ -8,12 +8,20 @@ import { LOOT_TABLES } from "../src/rules/data/lootTables.js";
 function assertChestRollBounds(tableId, depth, seeds) {
   const table = LOOT_TABLES[tableId];
   const maxRolls = Number(table?.rolls?.max ?? 0);
+  const guaranteedCount = Array.isArray(table?.guaranteedTables) ? table.guaranteedTables.length : 0;
   for (let seed = 0; seed < seeds; seed++) {
     const drops = resolveLootTable(tableId, createRng(seed), depth);
     assert(
-      drops.length >= 1 && drops.length <= maxRolls,
-      `${tableId} seed ${seed}: expected 1-${maxRolls} drops, got ${drops.length}`,
+      drops.length >= guaranteedCount && drops.length <= maxRolls + guaranteedCount,
+      `${tableId} seed ${seed}: expected ${guaranteedCount}-${maxRolls + guaranteedCount} drops, got ${drops.length}`,
     );
+  }
+}
+
+function assertChestGuaranteesEquipment(tableId, depth, seeds) {
+  for (let seed = 0; seed < seeds; seed++) {
+    const drops = resolveLootTable(tableId, createRng(seed), depth);
+    assert(drops.some((drop) => drop.kind === "equip"), `${tableId} seed ${seed}: expected guaranteed equipment`);
   }
 }
 
@@ -46,6 +54,13 @@ Deno.test("chest:magic drop count stays non-empty and within max roll bound", ()
 
 Deno.test("chest:legendary drop count stays non-empty and within max roll bound", () => {
   assertChestRollBounds("chest:legendary", 5, 80);
+});
+
+Deno.test("every chest tier guarantees an equipment reward", () => {
+  assertChestGuaranteesEquipment("chest:basic", 1, 120);
+  assertChestGuaranteesEquipment("chest:magic", 3, 120);
+  assertChestGuaranteesEquipment("chest:epic", 10, 120);
+  assertChestGuaranteesEquipment("chest:legendary", 14, 120);
 });
 
 Deno.test("chest drops never emit unresolved equipment ids", () => {

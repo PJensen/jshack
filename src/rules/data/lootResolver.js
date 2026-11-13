@@ -75,6 +75,15 @@ export function resolveLootTable(tableId, rng, depth, nest = 0, opts) {
   // weapon cap is respected even when the weapon comes from a sub-table.
   const weaponRef = isChest ? { count: 0 } : (opts?._weaponRef || null);
 
+  // Some tables, notably chests, promise a meaningful reward before their
+  // bonus rolls are resolved. Reuse the same nested-table path so chest-wide
+  // constraints (such as one weapon maximum) still apply.
+  const guaranteedTables = Array.isArray(table.guaranteedTables) ? table.guaranteedTables : [];
+  for (const guaranteedTableId of guaranteedTables) {
+    const nestedOpts = weaponRef ? { ...(opts || {}), _weaponRef: weaponRef } : opts;
+    results.push(...resolveLootTable(String(guaranteedTableId || ""), rng, depth, nest + 1, nestedOpts));
+  }
+
   for (let r = 0; r < rollCount; r++) {
     const entry = weightedPick(table.entries, rng, opts);
     if (!entry) continue;
