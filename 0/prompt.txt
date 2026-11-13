@@ -1,0 +1,1 @@
+we need a small grey bar below the action bar that shows how much weight you are carrying -- note: in the future, the experience bar will be above the action bar. it's unlabbeled, grey, has no animation, and represent % encumberence.
