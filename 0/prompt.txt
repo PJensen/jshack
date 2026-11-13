@@ -1,0 +1,27 @@
+question: why was this buried in hazard system -- I never would have found that, it also means that I've not exactly been testing the situation properly this whole time .
+
+anyhow -- will retest and see what we lean.
+
+---
+
+but it comes interestingly from hazzard meta -- anyhow -- that's a semantic issue for later.
+
+---
+
+what would you do to remediate?
+
+---
+
+it
+
+---
+
+it;s not reallya hazzard though is my point.
+
+---
+
+no -- not "do it" -- read what I said.
+
+---
+
+correct -- otherwise, overloading hazzard is largely a mistake in my mind --- pitch *that* fix pleas.e
