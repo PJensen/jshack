@@ -1,0 +1,3 @@
+I cannot see the portion actually lost, what you did blinks the entire bar white! the intention is to ONLY make while the portion of the bar that you are loosing!
+
+everything else looks pretty good though!
