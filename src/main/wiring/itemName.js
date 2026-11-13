@@ -23,6 +23,7 @@ import { ScriptRef } from "../../rules/components/ScriptRef.js";
 import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
+import { getGem, describeGemDetailLines } from "../../rules/data/gems.js";
 import {
   getSpell,
   describeSpellDetailLines,
@@ -564,6 +565,18 @@ export function buildItemDisplayData(world, itemId) {
       ]
     : [];
   const targetEffects = linkedSpell ? describeSpellTargetEffects(linkedSpell) : [];
+  const socketedGems = identified
+    ? (Array.isArray(info.sockets) ? info.sockets : []).map((gemId) => {
+        const gem = getGem(String(gemId || ""));
+        if (!gem) return null;
+        return {
+          id: gem.id,
+          name: gem.name,
+          iconId: gem.id,
+          detailLines: describeGemDetailLines(gem),
+        };
+      }).filter(Boolean)
+    : [];
   const description = identified
     ? (linkedSpell
         ? String(linkedSpell.description || info.details || info.description || "").trim()
@@ -609,6 +622,7 @@ export function buildItemDisplayData(world, itemId) {
     coating: identified && info.coating && typeof info.coating === 'object' ? { ...info.coating } : null,
     sockets: Array.isArray(info.sockets) ? info.sockets.slice() : [],
     maxSockets: Number(info.maxSockets || 0) | 0,
+    socketedGems,
     procNodes: visibleProcNodes,
     spellId: linkedSpell?.id || null,
     detailLines,

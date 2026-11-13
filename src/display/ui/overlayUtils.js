@@ -2298,6 +2298,7 @@ export function renderItemDetails(container, it) {
   const maxSockets = Number(it.maxSockets || 0) | 0;
   if (maxSockets > 0) {
     const sockets = Array.isArray(it.sockets) ? it.sockets : [];
+    const socketedGems = Array.isArray(it.socketedGems) ? it.socketedGems : [];
     const sockRow = document.createElement('div');
     sockRow.style.marginTop = '4px';
     sockRow.style.letterSpacing = '2px';
@@ -2309,6 +2310,34 @@ export function renderItemDetails(container, it) {
     sockRow.textContent = `Sockets: ${circles}`;
     sockRow.style.color = '#c8a860';
     container.appendChild(sockRow);
+
+    for (const gem of socketedGems) {
+      const gemRow = document.createElement('div');
+      Object.assign(gemRow.style, {
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '5px',
+        marginTop: '2px',
+        color: '#b8e6b8',
+        fontSize: '12px',
+      });
+      const icon = document.createElement('span');
+      const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(gem?.iconId || ''), '◆', 16);
+      if (!hasIcon) icon.textContent = '◆';
+      icon.style.color = '#8de0ff';
+      icon.style.flex = '0 0 auto';
+      gemRow.appendChild(icon);
+
+      const text = document.createElement('span');
+      const lines = Array.isArray(gem?.detailLines)
+        ? gem.detailLines.map((line) => String(line || '').trim()).filter(Boolean)
+        : [];
+      text.textContent = lines.length
+        ? `${String(gem?.name || 'Gem')}: ${lines.join(' ')}`
+        : `${String(gem?.name || 'Gem')} socketed`;
+      gemRow.appendChild(text);
+      container.appendChild(gemRow);
+    }
   }
 
   // --- Comparison deltas vs equipped item ---
