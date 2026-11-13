@@ -1,0 +1,5 @@
+Lets make more enchanting scrolls, lets make them elligable as drops. Simple stat boosts.
+
+---
+
+if we find that there are differences we could create `add-enchantment-scroll` skill -- might be interesting. We gotota come up with good names for these too.
