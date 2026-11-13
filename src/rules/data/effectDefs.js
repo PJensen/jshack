@@ -24,6 +24,13 @@ export const EFFECT_OPERATION_IDS = Object.freeze([
 /** @type {EffectDef[]} */
 export const EFFECT_DEFS = [
   {
+    id: "encumbered",
+    keys: ["encumbered"],
+    operation: "none",
+    statuses: ["encumbered"],
+    description: "Encumbered. Carrying too much weight.",
+  },
+  {
     id: "invulnerability",
     keys: ["invuln", "invulnerable"],
     operation: "none",

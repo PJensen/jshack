@@ -19,6 +19,7 @@ import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.j
 import { resolveResistance } from "../../rules/utils/dealDamage.js";
 import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana } from "../../rules/utils/passiveBonuses.js";
 import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
+import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
 import { getSpell } from "../../rules/data/spells.js";
 import { getSpellCooldown } from "../../rules/utils/spellCooldowns.js";
@@ -57,7 +58,7 @@ export function formatClockLabel12Hour(turn) {
 export function createHudFeeds(world, deps) {
   const { getPlayerMana, ensureActiveSpell, updateActiveSpellLabel, getFxTime } = deps;
 
-  let lastVitals = { hp: -1, maxHp: -1, mana: -1, maxMana: -1, stamina: -1, maxStamina: -1, encumbrance: -1 };
+  let lastVitals = { hp: -1, maxHp: -1, mana: -1, maxMana: -1, stamina: -1, maxStamina: -1, encumbrance: -1, encumbered: false };
   let lastCombatHud = {
     weaponId: -1,
     rangedId: -1,
@@ -438,13 +439,15 @@ export function createHudFeeds(world, deps) {
     const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
     const maxStamina = Number(stam?.maxStamina ?? 100) + maxStaminaBonus;
     const encumbrance = resolveEncumbrance(getCarriedWeight(world, pe.id), getCarryCapacity(world, pe.id));
+    const encumbered = snapshotStatusState(world, pe.id)?.allStatuses
+      ?.some((status) => status.type === "encumbered") === true;
     if (hp !== lastVitals.hp || maxHp !== lastVitals.maxHp ||
         mana.mana !== lastVitals.mana || mana.maxMana !== lastVitals.maxMana ||
         stamina !== lastVitals.stamina || maxStamina !== lastVitals.maxStamina ||
-        encumbrance.loadRatio !== lastVitals.encumbrance) {
-      lastVitals = { hp, maxHp, mana: mana.mana, maxMana: mana.maxMana, stamina, maxStamina, encumbrance: encumbrance.loadRatio };
+        encumbrance.loadRatio !== lastVitals.encumbrance || encumbered !== lastVitals.encumbered) {
+      lastVitals = { hp, maxHp, mana: mana.mana, maxMana: mana.maxMana, stamina, maxStamina, encumbrance: encumbrance.loadRatio, encumbered };
       try {
-        window.dispatchEvent(new CustomEvent("ui:updateVitals", { detail: { ...lastVitals, encumbrance } }));
+        window.dispatchEvent(new CustomEvent("ui:updateVitals", { detail: { ...lastVitals, encumbrance: { ...encumbrance, encumbered } } }));
       } catch (e) { console.debug('[hudFeeds] dispatch ui:updateVitals:', e); }
     }
   }

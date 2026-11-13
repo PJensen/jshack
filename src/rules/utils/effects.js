@@ -1,7 +1,7 @@
 // rules/utils/effects.js
 // Shared helper to ensure an entity has the ActiveEffects component.
 
-import { attach } from "../../lib/ecs-js/hierarchy.js";
+import { attach, destroySubtree } from "../../lib/ecs-js/hierarchy.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { Duration } from "../components/Duration.js";
 import { Source } from "../components/Source.js";
@@ -136,4 +136,27 @@ export function applyStatusEffect(world, actorId, effect) {
   }
 
   return nodeId;
+}
+
+/**
+ * Remove topology-backed and legacy instances of one status key from an actor.
+ * @param {import('../../lib/ecs-js/index.js').World} world
+ * @param {number} actorId
+ * @param {string} effectKey
+ */
+export function removeStatusEffect(world, actorId, effectKey) {
+  const id = Number(actorId || 0) | 0;
+  const normalizedKey = normalizeEffectKey(effectKey);
+  if (!(id > 0) || !normalizedKey) return;
+
+  const nodeIds = [];
+  for (const [nodeId, node] of descendantsWith(world, id, StatusEffectNode)) {
+    if (normalizeEffectKey(node?.key) === normalizedKey) nodeIds.push(nodeId);
+  }
+  for (const nodeId of nodeIds) destroySubtree(world, nodeId);
+
+  const active = world.get(id, ActiveEffects);
+  if (Array.isArray(active?.effects)) {
+    active.effects = active.effects.filter((effect) => normalizeEffectKey(effect?.key) !== normalizedKey);
+  }
 }

@@ -7,6 +7,11 @@ Deno.test("encumbrance percentage is clamped to the visible bar", () => {
   assertEquals(clampEncumbrancePercent(-0.2), 0);
 });
 
+Deno.test("gameplay encumbrance begins at the burdened threshold", () => {
+  assertEquals(clampEncumbrancePercent(0.85), 85);
+  assertEquals(clampEncumbrancePercent(1), 100);
+});
+
 Deno.test("mobile action bar is a single row of 7 action buttons", () => {
   assertEquals(MOBILE_ACTION_BAR_GRID_AREAS.character, { col: "1", row: "1" });
   assertEquals(MOBILE_ACTION_BAR_GRID_AREAS.pet, { col: "2", row: "1" });

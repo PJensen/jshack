@@ -12,6 +12,7 @@ import { itemPickupSystem } from "../src/rules/systems/itemPickupSystem.js";
 import { staminaRegenerationSystem } from "../src/rules/systems/staminaRegenerationSystem.js";
 import { addToInventory, getCarriedWeight, inventoryContains } from "../src/rules/utils/inventoryFacade.js";
 import { setEquippedSlotTopology } from "../src/rules/utils/equipmentTopology.js";
+import { snapshotStatusState } from "../src/rules/utils/statusFacade.js";
 
 function actor(world, maxStamina = 100) {
   const id = world.create();
@@ -38,9 +39,10 @@ Deno.test("encumbrance derives realistic capacity and graduated load tiers", () 
   encumbranceSystem(world);
   let enc = world.get(id, Encumbrance);
   assertEquals(enc.limit, 60);
-  assertEquals(enc.hardLimit, 75);
+  assertEquals(enc.hardLimit, 60);
   assertEquals(enc.heavilyLoaded, true);
   assertEquals(enc.overloaded, false);
+  assertEquals(snapshotStatusState(world, id).allStatuses.some((status) => status.type === "encumbered"), true);
 
   staminaRegenerationSystem(world);
   assertEquals(world.get(id, Stamina).stamina, 52, "burdened actors retain half stamina regeneration");
@@ -51,6 +53,10 @@ Deno.test("encumbrance derives realistic capacity and graduated load tiers", () 
   assertEquals(enc.overloaded, true);
   staminaRegenerationSystem(world);
   assertEquals(world.get(id, Stamina).stamina, 52, "overloaded actors cannot regenerate stamina");
+
+  world.get(load, ItemInfo).weight = 0;
+  encumbranceSystem(world);
+  assertEquals(snapshotStatusState(world, id).allStatuses.some((status) => status.type === "encumbered"), false);
 });
 
 Deno.test("equipped plate and a greatsword consume carrying capacity", () => {
@@ -66,7 +72,7 @@ Deno.test("equipped plate and a greatsword consume carrying capacity", () => {
   assertEquals(world.get(id, Encumbrance).limit, 78);
 });
 
-Deno.test("pickup refuses weight beyond the emergency overage", () => {
+Deno.test("pickup refuses weight beyond normal carrying capacity", () => {
   const world = new World({ seed: 3 });
   const id = actor(world);
   addToInventory(world, id, item(world, 60));

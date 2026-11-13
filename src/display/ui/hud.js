@@ -470,6 +470,12 @@ export function initHUD() {
   encumbranceBar.setAttribute('aria-label', 'Encumbrance');
   encumbranceBar.setAttribute('aria-valuemin', '0');
   encumbranceBar.setAttribute('aria-valuemax', '100');
+  if (!document.getElementById('jshack-encumbrance-blink-style')) {
+    const style = document.createElement('style');
+    style.id = 'jshack-encumbrance-blink-style';
+    style.textContent = '@keyframes jshack-encumbrance-blink{0%,49%{opacity:1}50%,100%{opacity:.25}}';
+    document.head.appendChild(style);
+  }
 
   // All top rows flow together; no independently maintained vertical offsets.
   const topRightHud = document.createElement('div');
@@ -1407,6 +1413,12 @@ export function initHUD() {
     const percent = clampEncumbrancePercent(e?.detail?.encumbrance?.loadRatio);
     encumbranceFill.style.width = `${percent}%`;
     encumbranceBar.setAttribute('aria-valuenow', String(Math.round(percent)));
+    const gameplayEncumbered = e?.detail?.encumbrance?.encumbered === true;
+    const reducedMotion = typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    encumbranceBar.style.animation = gameplayEncumbered && !reducedMotion
+      ? 'jshack-encumbrance-blink 900ms steps(2, jump-none) infinite'
+      : 'none';
   });
 
   window.addEventListener('ui:updateCalendar', (ev) => {
