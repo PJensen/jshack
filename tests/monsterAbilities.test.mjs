@@ -363,6 +363,9 @@ Deno.test("death_volley damages target tile and adjacent tiles", () => {
 });
 
 Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
+  const wolfHowl = getSpell("wolf_howl");
+  assertEquals(wolfHowl?.manaCost, 3);
+  assertEquals(wolfHowl?.rallyTurns, 10);
   loadFlatFloor();
   try {
     const world = new World({ seed: 0xA01F });
@@ -395,7 +398,7 @@ Deno.test("wolf_howl alerts nearby same-faction allies toward player", () => {
     world.add(player, Faction, { key: "player" });
     world.add(player, Vitality, { hp: 20, maxHp: 20 });
 
-    runSpellScript(world, wolf, getSpell("wolf_howl"), {});
+    runSpellScript(world, wolf, wolfHowl, {});
 
     const aggro = world.get(ally, AggroState);
     assertEquals(aggro?.alertLevel, AGGRO_LEVELS.hunting);
