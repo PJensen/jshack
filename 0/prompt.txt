@@ -1,0 +1,9 @@
+let me get this right, tons of weapons and items have glows, but auras on allies do not -- I find it absolutely crazy that we cannot et this working.
+
+wolf_howl --> radius --> allies --> aura_glow
+
+^^ rough mental model.
+
+I dont get it.
+
+included screenshot.
