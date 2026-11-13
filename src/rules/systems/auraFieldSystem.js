@@ -1,9 +1,10 @@
 import { AuraField } from "../components/AuraField.js";
+import { AuraStatModifier } from "../components/AuraStatModifier.js";
 import { Position } from "../components/Position.js";
 import { applyStatusEffect } from "../utils/effects.js";
 import { applyAuraFieldPulse } from "../utils/auraFields.js";
 import { evaluateAuraProcNodes } from "../utils/procEvaluator.js";
-import { destroySubtree } from "../../lib/ecs-js/hierarchy.js";
+import { attach, destroySubtree } from "../../lib/ecs-js/hierarchy.js";
 
 export function auraFieldSystem(world) {
   for (const [fieldId, pos, field] of world.query(Position, AuraField)) {
@@ -14,6 +15,11 @@ export function auraFieldSystem(world) {
       pos.y = sourcePos.y | 0;
     }
     const sourceId = field.sourceId > 0 ? field.sourceId : fieldId;
+    const staleModifiers = [];
+    for (const [modifierId, modifier] of world.query(AuraStatModifier)) {
+      if ((modifier?.auraId | 0) === (fieldId | 0)) staleModifiers.push(modifierId);
+    }
+    for (let i = 0; i < staleModifiers.length; i++) destroySubtree(world, staleModifiers[i]);
     applyAuraFieldPulse(world, sourceId, pos, {
       radius: field.radius,
       effectKey: field.effectKey,
@@ -38,6 +44,18 @@ export function auraFieldSystem(world) {
           sourceKind: "aura",
           sourceKey: field.sourceKey || field.effectKey,
         });
+      }
+      for (let j = 0; j < result.out.statModifiers.length; j++) {
+        const modifier = result.out.statModifiers[j];
+        const modifierId = world.create();
+        world.add(modifierId, AuraStatModifier, {
+          auraId: fieldId,
+          sourceId,
+          stat: modifier.stat,
+          amount: modifier.amount,
+          key: modifier.key,
+        });
+        attach(world, modifierId, result.targetId);
       }
     }
     field.turnsLeft = (field.turnsLeft | 0) - 1;

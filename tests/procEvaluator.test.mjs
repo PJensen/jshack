@@ -19,6 +19,7 @@ import {
 } from "../src/rules/utils/procEvaluator.js";
 import { auraFieldSystem } from "../src/rules/systems/auraFieldSystem.js";
 import { hasEffect } from "../src/rules/utils/statusFacade.js";
+import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 
 function addChild(world, parentId, Comp, value = {}) {
   const id = world.create();
@@ -50,6 +51,7 @@ Deno.test("evaluateAuraProcNodes evaluates current allied recipients spatially",
   world.add(proc, ProcNode, { priority: 1 });
   attach(world, proc, aura);
   const effect = addChild(world, proc, ProcEffect, { kind: "applyStatus", a: "hastened", b: 1, c: 1 });
+  addChild(world, proc, ProcEffect, { kind: "modifyCombatStat", a: "attack", b: 2, c: "leadership" });
 
   const inside = evaluateAuraProcNodes(world, aura);
   assertEquals(inside.map((entry) => entry.targetId), [captain, ally]);
@@ -69,6 +71,7 @@ Deno.test("evaluateAuraProcNodes evaluates current allied recipients spatially",
   world.get(aura, AuraField).turnsLeft = 2;
   auraFieldSystem(world);
   assertEquals(hasEffect(world, ally, "hastened"), true);
+  assertEquals(resolveCombatSnapshot(world, ally).attackBonus >= 3, true);
 });
 
 Deno.test("evaluateActorProcs resolves passive source stats before gated proc effects", () => {

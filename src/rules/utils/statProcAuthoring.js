@@ -37,6 +37,7 @@ export const PROC_EFFECT_KINDS = Object.freeze({
   RestoreResource: "restoreResource",
   ApplyStatus: "applyStatus",
   AttachTimedBuff: "attachTimedBuff",
+  ModifyCombatStat: "modifyCombatStat",
   SpawnEntity: "spawnEntity",
   ConsumeCharge: "consumeCharge",
 });

@@ -8,6 +8,8 @@ import { Traits } from "../components/Traits.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { getMonster } from "../data/monsters.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
+import { AuraStatModifier } from "../components/AuraStatModifier.js";
+import { descendantsWith } from "./topology.js";
 
 const MODE_RULES = Object.freeze({
   melee: Object.freeze({
@@ -176,6 +178,12 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
     );
   }
 
+  for (const [_modifierId, modifier] of descendantsWith(world, id, AuraStatModifier)) {
+    if (modifier?.stat !== "attack") continue;
+    pushModifier(modifiers, "attack", `aura:${modifier.key || modifier.sourceId}`, Number(modifier.amount || 0), "aura-bonus");
+    attackBonus += Number(modifier.amount || 0);
+  }
+
   if (stance === COMBAT_POSTURES.aggressive) {
     pushModifier(modifiers, "attack", "posture:aggressive", 2, "aggressive-bonus");
     attackBonus += 2;
@@ -218,6 +226,12 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
       +(statusTotals.spider_sense * 2)
       -(statusTotals.staggered * 2)
     );
+  }
+
+  for (const [_modifierId, modifier] of descendantsWith(world, id, AuraStatModifier)) {
+    if (modifier?.stat !== "defense") continue;
+    pushModifier(modifiers, "defense", `aura:${modifier.key || modifier.sourceId}`, Number(modifier.amount || 0), "aura-bonus");
+    defenseContribution += Number(modifier.amount || 0);
   }
 
   if (rules.includeStoneskin) {

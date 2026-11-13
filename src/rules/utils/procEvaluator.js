@@ -109,6 +109,7 @@ export function createProcAccumulator() {
     messages: [],
     presentations: [],
     lightEvents: [],
+    statModifiers: [],
   };
 }
 
@@ -398,6 +399,15 @@ export function applyProcEffect(world, effect, ctx, sourceStats = {}, targetStat
         target: String(effect.c || "source") === "target" ? Number(ctx?.target || 0) : Number(ctx?.source || 0),
         buff: String(effect.a || ""),
         duration: Math.max(0, Number(effect.b || 0)),
+      });
+      break;
+
+    case "modifyCombatStat":
+      out.statModifiers.push({
+        source: effectId,
+        stat: String(effect.a || ""),
+        amount: Number(effect.b || 0),
+        key: String(effect.c || ""),
       });
       break;
 
