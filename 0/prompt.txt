@@ -1,0 +1,29 @@
+that last commit messed things up, no longer rendering -- I would reset --soft head 1 stash it --
+
+---
+
+I dont see that -- I see make aura turn local
+
+---
+
+get us back into the remote master cleanly please; sorry about that
+
+---
+
+I swear to god aura is leaving behind *something* and I'm not sure what.
+
+see that white circle there?
+
+it's an entity being redered
+
+and - it's sticking around after death,&#x20;
+
+I would attach aura as hierarchy entry TO the caster
+
+that way it's cleaned up
+
+and also -- I would make sure it's essentially an invisible entity if that makes sense.
+
+---
+
+becuse that is definately an aura, the entity disappeard after the alloted time.
