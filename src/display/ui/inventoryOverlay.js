@@ -186,7 +186,10 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
       })),
       ...(Array.isArray(it.mechanics) ? it.mechanics : [])
         .filter((mechanic) => mechanic?.iconId)
-        .map((mechanic) => ({ id: mechanic.iconId, label: 'Enchantment' })),
+        .map((mechanic) => ({
+          id: mechanic.iconId,
+          label: `${mechanic.context || 'Enchantment'}: ${mechanic.text || 'Enchantment'}`,
+        })),
     ].filter((entry) => String(entry.id || '').trim()).slice(0, 4);
     if (modifierIcons.length) {
       const modifiers = document.createElement('span');
