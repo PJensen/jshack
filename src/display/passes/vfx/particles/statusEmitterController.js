@@ -91,11 +91,11 @@ export function createStatusEmitterController({ world, fx }) {
   };
   const AURA_GLOW_STYLE = {
     pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 1.25 },
-    toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 2.6 },
-    rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 2.8 },
-    dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 2.8 },
-    void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 2.9 },
-    blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 2.8 },
+    toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 1.25 },
+    rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 1.25 },
+    dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 1.25 },
+    void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 1.25 },
+    blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 1.25 },
   };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {
