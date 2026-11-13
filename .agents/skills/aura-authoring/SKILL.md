@@ -35,6 +35,11 @@ Author the gameplay effect through the canonical status/aura path:
 The bridge should remain the read-only projection boundary. Rules should not
 import display code or attach visual state to `world`.
 
+When a hazard refreshes an aura, preserve the authored spell/content key in
+the refreshed status source. A hazard identity such as `wolf_howl_aura` is a
+display label and may not exist in `SPELL_DEFS`; replacing `wolf_howl` with it
+silently removes the recipient glow while leaving gameplay effects active.
+
 ## Content and behavior checks
 
 For a new aura, test all of the following:
