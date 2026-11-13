@@ -572,16 +572,10 @@ export function buildItemDisplayData(world, itemId) {
     ...(identified ? buildAttachedAffixIds(world, itemId) : []),
   ];
   const affixMechanics = formatAffixMechanics(affixIds, catalogItem?.mechanicFormats);
-  const procPackageDetailLines = procPackages.map((pkg) => {
-    if (procPackageMechanics.authoredIds.has(String(pkg?.id || ''))) return '';
-    const summary = String(pkg?.summary || "").trim();
-    return summary ? `Proc: ${pkg.name} - ${summary}` : `Proc: ${pkg.name}`;
-  }).filter(Boolean);
   const detailLines = identified
     ? [
         ...(gemType ? [] : (Array.isArray(info.detailLines) ? info.detailLines.map((line) => String(line || "").trim()).filter(Boolean) : [])),
         ...(linkedSpell ? describeSpellDetailLines(linkedSpell) : []),
-        ...procPackageDetailLines,
       ]
     : [];
   const targetEffects = linkedSpell ? describeSpellTargetEffects(linkedSpell) : [];
@@ -630,6 +624,12 @@ export function buildItemDisplayData(world, itemId) {
   }
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
   mechanics.push(...procPackageMechanics.mechanics);
+  for (const pkg of procPackages) {
+    if (procPackageMechanics.authoredIds.has(String(pkg?.id || ""))) continue;
+    const summary = String(pkg?.summary || "").trim();
+    if (!summary) continue;
+    mechanics.push({ context: 'Equip', text: summary });
+  }
   mechanics.push(...affixMechanics.mechanics);
   const procNodes = identified ? buildProcNodeSummaries(world, itemId) : [];
   const visibleProcNodes = catalogItem

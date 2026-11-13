@@ -252,3 +252,25 @@ Deno.test("buildItemDisplayData exposes enchantment scroll effects as authored m
     entry.context === "Enchant" && String(entry.text).includes("kindle lingering fire damage"),
   ));
 });
+
+Deno.test("buildItemDisplayData projects socketed gems with canonical detail lines", () => {
+  resetIdentification();
+  identify("test_socketed_blade");
+  const world = new World({ seed: 29 });
+  const blade = world.create();
+  world.add(blade, NamedIdentity, { identity: "test_socketed_blade", name: "Socketed Blade" });
+  world.add(blade, ItemInfo, {
+    type: "equip",
+    slot: "weapon",
+    count: 1,
+    identified: true,
+    sockets: ["gem_ruby"],
+    maxSockets: 2,
+    bonuses: {},
+    affixes: [],
+  });
+
+  const data = buildItemDisplayData(world, blade);
+  assertEquals(data.socketedGems?.[0]?.name, "Ruby");
+  assert(data.socketedGems[0].detailLines.some((line) => line.startsWith("Socketed:")));
+});
