@@ -20,6 +20,8 @@ import { Interactable } from "../../rules/components/Interactable.js";
 import { Material } from "../../rules/components/Material.js";
 import { AggroState } from "../../rules/components/AggroState.js";
 import { applyStatusEffect } from "../../rules/utils/effects.js";
+import { listCatalogItems } from "../../rules/data/itemCatalog.js";
+import { allContentItems } from "../../content/registry.js";
 
 // All player-castable spells (from SPELL_DEFS) granted instantly in ?audio mode.
 const AUDIO_SPELLS = [
@@ -43,6 +45,22 @@ const AUDIO_SPELLS = [
 // Each entry: string = count 1, { id, count } = explicit count.
 const SECTION_COLS = 10;
 const ITEM_STRIDE  = 2; // horizontal tiles between item centers
+
+const AUDIO_GEAR_SLOTS = new Set([
+  "armor", "head", "neck", "belt", "gloves", "offhand", "ring", "legs", "feet",
+]);
+
+function listAudioGearItemIds() {
+  const gear = new Map();
+  const add = (id, def) => {
+    const itemId = String(id || def?.id || "").trim();
+    if (!itemId || !AUDIO_GEAR_SLOTS.has(String(def?.slot || ""))) return;
+    gear.set(itemId, true);
+  };
+  for (const def of listCatalogItems()) add(def?.id, def);
+  for (const [id, def] of allContentItems()) add(id, def);
+  return Array.from(gear.keys());
+}
 
 const AUDIO_SECTIONS = [
   {
@@ -387,8 +405,12 @@ export function applyDebugCommands({ world, runtimeConfig }) {
       curRow += 2;
     }
 
-    // 2c. Item sections (gems, potions, weapons, etc.).
-    for (const section of AUDIO_SECTIONS) {
+    // 2c. Item sections (gems, gear, potions, weapons, etc.).
+    const audioItemSections = [
+      { label: "GEAR", items: listAudioGearItemIds() },
+      ...AUDIO_SECTIONS,
+    ];
+    for (const section of audioItemSections) {
       placeSign(section.label, curRow);
       let col = 0;
       for (const entry of section.items) {
@@ -467,6 +489,6 @@ export function applyDebugCommands({ world, runtimeConfig }) {
       console.debug(`[?audio] Learned ${AUDIO_SPELLS.length} spells.`);
     }
 
-    console.debug(`[?audio] Placed ${placed} items across ${AUDIO_SECTIONS.length} sections.`);
+    console.debug(`[?audio] Placed ${placed} items across ${audioItemSections.length} sections.`);
   }
 }
