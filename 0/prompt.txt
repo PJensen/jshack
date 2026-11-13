@@ -1,0 +1,1 @@
+the joint between where you lost health and your current health is rounded, can we square just the joint off please?
