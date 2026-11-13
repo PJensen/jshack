@@ -606,7 +606,9 @@ export function buildItemDisplayData(world, itemId) {
       }).filter(Boolean)
     : [];
   const description = identified
-    ? (linkedSpell
+    ? (gemType
+        ? ''
+        : linkedSpell
         ? String(linkedSpell.description || info.details || info.description || "").trim()
         : String(info.details || info.description || "").trim())
     : "";

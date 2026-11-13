@@ -276,6 +276,29 @@ Deno.test("buildItemDisplayData projects socketed gems with canonical detail lin
   assert(data.socketedGems[0].detailLines.some((line) => line.startsWith("Socketed:")));
 });
 
+Deno.test("buildItemDisplayData keeps standalone gem effects in one mechanic block", () => {
+  resetIdentification();
+  identify("gem_ruby");
+  const world = new World({ seed: 30 });
+  const gem = world.create();
+  world.add(gem, NamedIdentity, { identity: "gem_ruby", name: "Ruby" });
+  world.add(gem, ItemInfo, {
+    type: "gem",
+    count: 1,
+    identified: true,
+    description: "Red Gem",
+    details: "Socketed: +10% fire resist. On hit: 25% chance to ignite the target.",
+    detailLines: ["Socketed: +10% fire resist.", "On hit: 25% chance to ignite the target."],
+    bonuses: {},
+    affixes: [],
+  });
+
+  const data = buildItemDisplayData(world, gem);
+  assertEquals(data.description, "");
+  assertEquals(data.detailLines, []);
+  assertEquals(data.mechanics.map((entry) => entry.context), ["Socket", "On hit"]);
+});
+
 Deno.test("buildItemDisplayData labels topology-backed enchantments separately", () => {
   resetIdentification();
   identify("test_enchanted_blade");
