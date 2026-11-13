@@ -90,12 +90,12 @@ export function createStatusEmitterController({ world, fx }) {
     blood: { rate: 0, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
   };
   const AURA_GLOW_STYLE = {
-    pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 1.25 },
-    toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 1.25 },
-    rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 1.25 },
-    dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 1.25 },
-    void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 1.25 },
-    blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 1.25 },
+    pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 1.2 },
+    toxic: { color: [181, 239, 98], pattern: "biolum", radius: 0.70, lightRadius: 1.2 },
+    rally: { color: [255, 211, 106], pattern: "holy", radius: 0.72, lightRadius: 1.2 },
+    dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 1.2 },
+    void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 1.2 },
+    blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 1.2 },
   };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {

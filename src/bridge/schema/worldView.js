@@ -474,7 +474,7 @@ function projectDisplayTags(world, id, rec) {
 	for (const [_modifierId, modifier] of descendantsWith(world, id, AuraStatModifier)) {
 		const visual = String(SPELL_DEFS[modifier?.key]?.auraVisual || "").trim();
 		if (!visual || rec.auraGlows.some((entry) => entry.key === visual)) continue;
-		rec.auraGlows.push({ key: visual, strength: Math.max(1, Number(modifier?.amount || 1)) });
+		rec.auraGlows.push({ key: visual, strength: 1 });
 	}
 	if (world.has(id, Reanimated) && !rec.tags.includes('reanimated_glow')) {
 		rec.tags.push('reanimated_glow');

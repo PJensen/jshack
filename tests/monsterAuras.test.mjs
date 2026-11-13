@@ -57,7 +57,7 @@ Deno.test("bandit captain leadership aura buffs allied combatants spatially", ()
   assertEquals(resolveCombatSnapshot(world, ally).attackBonus, 3);
   assertEquals(resolveCombatSnapshot(world, ally).armorClass, 12);
   assertEquals(resolveCombatSnapshot(world, target).attackBonus, 1);
-  assertEquals(buildWorldView(world).entities.find((entity) => entity.id === ally)?.auraGlows, [{ key: "rally", strength: 2 }]);
+  assertEquals(buildWorldView(world).entities.find((entity) => entity.id === ally)?.auraGlows, [{ key: "rally", strength: 1 }]);
 
   auraFieldSystem(world);
   assertEquals(resolveCombatSnapshot(world, ally).attackBonus, 3);

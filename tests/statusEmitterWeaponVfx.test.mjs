@@ -202,7 +202,7 @@ Deno.test("status emitter controller gives aura recipients colorized item-style 
   assertEquals(lights.length, 1);
   assert(lights[0].color[1] > lights[0].color[0]);
   assert(lights[0].color[1] > lights[0].color[2]);
-  assert(lights[0].radius > 0.8 && lights[0].radius < 1.6);
+  assert(lights[0].radius > 0.8 && lights[0].radius < 1.5);
   const firstFlicker = lights[0].flicker;
 
   controller.step(0.016, {
