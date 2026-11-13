@@ -1,0 +1,22 @@
+when it starts to have game effects, start blinking it -- game effects, start blinking it --"encumbered" -- I cannot recall.
+
+---
+
+maybe it should be a conditional status effect
+
+---
+
+and how the hell is that wired into the engine itself -- one canonical place for it -- second, I told you about a conditional status effect "encumbered" -- you didn't do it
+
+---
+
+right --- we're going to need a status effect and everything.
+
+NEXT: tell me what effect encumberance has on the player -- and precisely where it should be codified.
+
+
+NOTE: I would consider adding a skill precisely about status effects, where their icons live, how they work, etc.
+
+---
+
+FYI: no more carrying over 100%  all else looks pretty good to me.

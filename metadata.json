@@ -1,0 +1,48 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7AXP1T52RP6GJNXVTK5AJ85",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "src/display/ui/hud.js",
+    "src/main/ui/hudFeeds.js",
+    "src/rules/data/effectDefs.js",
+    "src/rules/data/encumbranceTuning.js",
+    "src/rules/systems/encumbranceSystem.js",
+    "src/rules/utils/effects.js",
+    "tests/encumbrance.test.mjs",
+    "tests/hudActionBarLayout.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 88126,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5071616,
+    "output_tokens": 14094,
+    "api_call_count": 38,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
