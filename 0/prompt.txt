@@ -1,0 +1,3 @@
+dude; this should have been easy to get these working. and yes, I think it's display side, it's clear simulation side is plainly working. gotta be something about rendering. maybe world-view, maybe something else.
+
+also -- wolf_howl has next to no cooldown on it -- needs to be prety high, else, they are
