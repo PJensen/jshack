@@ -13,8 +13,8 @@ recipient.
 
 An aura has two related but separate visual layers:
 
-- the world-space aura field around its source, usually represented by a
-  hazard/field entity;
+- the world-space aura field around its source, represented by an `AuraField`
+  entity (not a `HazardArea`);
 - a tight, colorized glow on every affected entity, including the source when
   the rules intentionally include it.
 
@@ -24,8 +24,9 @@ Author the gameplay effect through the canonical status/aura path:
    content catalog, including `auraVisual` when the effect has a recipient
    visual.
 2. Apply the status with `sourceKind: "aura"` and a stable `sourceKey`.
-3. Use the existing aura field helpers or the established spell script path;
-   do not create a parallel visual-only status.
+3. Use `spawnAuraField()` from `src/rules/utils/auraFieldSpawn.js` or the
+   established spell script path; do not overload `spawnHazard()` for aura
+   persistence and do not create a parallel visual-only status.
 4. Let `src/bridge/schema/worldView.js` derive `auraGlows` from aura provenance.
 5. Map the visual key in
    `src/display/passes/vfx/particles/statusEmitterController.js` to the tight
@@ -35,8 +36,8 @@ Author the gameplay effect through the canonical status/aura path:
 The bridge should remain the read-only projection boundary. Rules should not
 import display code or attach visual state to `world`.
 
-When a hazard refreshes an aura, preserve the authored spell/content key in
-the refreshed status source. A hazard identity such as `wolf_howl_aura` is a
+When an aura field refreshes a status, preserve the authored spell/content key
+in the refreshed status source. A field identity such as `wolf_howl_aura` is a
 display label and may not exist in `SPELL_DEFS`; replacing `wolf_howl` with it
 silently removes the recipient glow while leaving gameplay effects active.
 
