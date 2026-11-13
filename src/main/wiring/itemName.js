@@ -578,7 +578,7 @@ export function buildItemDisplayData(world, itemId) {
   }).filter(Boolean);
   const detailLines = identified
     ? [
-        ...(Array.isArray(info.detailLines) ? info.detailLines.map((line) => String(line || "").trim()).filter(Boolean) : []),
+        ...(gemType ? [] : (Array.isArray(info.detailLines) ? info.detailLines.map((line) => String(line || "").trim()).filter(Boolean) : [])),
         ...(linkedSpell ? describeSpellDetailLines(linkedSpell) : []),
         ...procPackageDetailLines,
       ]
@@ -613,6 +613,16 @@ export function buildItemDisplayData(world, itemId) {
         };
       }).filter((mechanic) => mechanic.text)
     : [];
+  if (gemType && identified) {
+    for (const line of describeGemDetailLines(identity)) {
+      const match = String(line || '').match(/^([^:]+):\s*(.*)$/);
+      if (!match || !match[2].trim()) continue;
+      mechanics.push({
+        context: match[1].trim() === 'Socketed' ? 'Socket' : match[1].trim(),
+        text: match[2].trim(),
+      });
+    }
+  }
   mechanics.push(...formatAmmoMechanics(info, catalogItem?.mechanicFormats));
   mechanics.push(...procPackageMechanics.mechanics);
   mechanics.push(...affixMechanics.mechanics);
