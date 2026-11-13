@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7B0VGH1XZ4D5EF2TPD8XXND",
+  "session_id": "01a1d5e5-c3c5-7e71-b2b8-dcaafce23d44",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-13T17:56:30.272431362Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "src/main/ui/hudFeeds.js",
+    "src/rules/data/affixes.js",
+    "tests/itemNameSpellDisplay.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "ac20129f1166",
+  "checkpoint_transcript_start": 1015,
+  "transcript_lines_at_start": 1015,
+  "compact_transcript_start": 181,
+  "token_usage": {
+    "input_tokens": 24100,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 857088,
+    "output_tokens": 4852,
+    "api_call_count": 13,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 5976,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 5976,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 21
+  }
+}
