@@ -1,0 +1,41 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7E0TT3AGSJF0RM6XDG5W435",
+  "session_id": "01a1dbfe-9398-7900-ab8a-ff9eb0502ec3",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-14T21:53:49.73511006Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/display/ui/inventoryOverlay.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "4da703c54124",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 95518,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1801472,
+    "output_tokens": 10394,
+    "api_call_count": 28,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 1
+  }
+}

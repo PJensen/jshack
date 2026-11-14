@@ -1,0 +1,18 @@
+check last created GH issue please -- it should outline everything.
+
+---
+
+approved -- make it so, it's already inventory, if you did nothing but convert it to a "bag" or grid of stuff, tap and hold to move stack swap, that would be incredible. think about world of warcraft backs, except this one has no particular limit.
+
+
+
+- inventory screen only
+- note:
+
+
+
+everything else above applies - try it -- commit and push end to end
+
+---
+
+no branch work righ on main :-)
