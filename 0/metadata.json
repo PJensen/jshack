@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7E75ZRP13PD5YMWRVT5DG11",
+  "session_id": "01a1dc58-77b2-7ba0-b666-6944858e07e4",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-14T23:44:47.4789372Z",
+  "branch": "codex/issue-187-stat-canonicalization",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "docs/architecture/STAT_INVENTORY_ISSUE_187.md"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "02dc1ee24782",
+  "checkpoint_transcript_start": 255,
+  "transcript_lines_at_start": 255,
+  "compact_transcript_start": 43,
+  "token_usage": {
+    "input_tokens": 4830,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 681472,
+    "output_tokens": 2950,
+    "api_call_count": 5
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 4
+  }
+}
