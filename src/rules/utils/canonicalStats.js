@@ -29,6 +29,7 @@ export function resolveCanonicalStats(world, entityId) {
   const piercePenetrationDerived = Number(passive?.piercePenetrationDerived || 0);
   const evadeDerived = Number(passive?.evadeDerived || 0);
   const mitigationDerived = Number(passive?.mitigationDerived || 0);
+  const spellPowerDerived = Number(passive?.spellPowerDerived || 0);
   const critChanceDerived = Number(passive?.critChanceDerived || 0);
   const critMultDerived = Number(passive?.critMultDerived || 0);
 
@@ -43,6 +44,7 @@ export function resolveCanonicalStats(world, entityId) {
     piercePenetration: Number(resolved?.piercePenetration || 0) + piercePenetrationDerived,
     evade: Number(resolved?.evade || 0) + evadeDerived + dexBonusDelta,
     mitigation: Number(resolved?.mitigation || 0) + mitigationDerived,
+    spellPower: Number(resolved?.spellPower || 0) + spellPowerDerived,
     critChancePhysical: Number(resolved?.critChancePhysical || 0) + critChanceDerived + (dexBonusDelta * 0.01),
     critChanceSpell: Number(resolved?.critChanceSpell || 0) + critChanceDerived,
     critMultPhysical: Number(resolved?.critMultPhysical || 0) + critMultDerived,

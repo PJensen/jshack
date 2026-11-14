@@ -1,8 +1,8 @@
 # Issue #187: Current Stat Inventory and Resolution Map
 
-Status: Phase-A baseline, 2026-11-14
+Status: Phase-A baseline plus Phase-B resource/stat slices, 2026-11-14
 
-This document records the current implementation before any Issue #187
+This document records the current implementation before broad Issue #187
 canonicalization or presentation changes. It is an inventory and map, not a
 replacement stat contract. Values and behavior below describe the current
 code paths and should be treated as compatibility constraints until an
@@ -133,11 +133,13 @@ attack  -> accuracy + damagePower
 defense -> evade
 ```
 
-Important gaps requiring an explicit Phase-B decision:
+Important gaps requiring an explicit Phase-B decision at the time of the
+baseline:
 
 - `spellPower` is present in `ResolvedStats` and accepted as a
   `DerivedExpression` target, but it is not an ordinary `ItemInfo.bonuses`
-  key in `BONUS_KEY_MAP`.
+  key in `BONUS_KEY_MAP`. *(Resolved in the Phase-B slice: direct equipment
+  `spellPower` now flows through `PassiveBonuses` and `resolveCanonicalStats`.)*
 - `strength`, `intelligence`, and `vitality` are canonical primary channels,
   but ordinary equipment bonus normalization does not currently map them.
 - `coldResist` is represented in passive defaults and added by the canonical
@@ -276,3 +278,15 @@ The next phase can now be split without re-discovering the topology:
 5. Audit critical and healing scopes before changing itemization semantics.
 
 No gameplay behavior is changed by this document.
+
+## Phase-B slices completed
+
+- `resolveResourceStats()` now provides one read-only resource projection for
+  Health, Mana, and Stamina, including effective caps, nominal recovery,
+  context multipliers, cooldown suppression, and suppression reasons.
+- Mana and Stamina regeneration systems consume that projection while keeping
+  mutation and cooldown countdown in their existing systems.
+- HUD and character-data projections consume the same effective resource caps
+  and recovery values.
+- Direct equipment `spellPower` is now a supported passive bonus and is merged
+  into canonical spell power.
