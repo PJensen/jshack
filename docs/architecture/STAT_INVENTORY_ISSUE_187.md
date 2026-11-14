@@ -83,6 +83,90 @@ not treat `Equipment.*Derived` as canonical truth.
 | Contextual stats | `visionRange`, `hungerRate`, speed, encumbrance/carry fields | canonical/passive stats plus dedicated components/systems | FOV, hunger, stamina, movement, UI | specialized behavior; not all belong in ordinary capability display |
 | Exceptional mechanics | proc topology, `Hamingja`, deity effects, affix scripts, auras | child ECS topology and script bridges | combat/effects/proc systems | preserve passive/proc split; do not flatten into global stats |
 
+## Exact canonical and authored key sets
+
+The following are the current code-defined key sets, rather than a guessed
+taxonomy.
+
+### `ResolvedStats` defaults
+
+`src/rules/utils/derivedStats.js` currently defines these channels:
+
+```text
+strength, intelligence, dexterity, vitality
+accuracy, damagePower
+physicalPenetration, bluntPenetration, slashPenetration, piercePenetration
+evade, mitigation
+critChancePhysical, critChanceSpell, critMultPhysical, critMultSpell
+spellHit, spellAvoid, spellPower, luck
+kineticDR, fireResist, poisonResist, acidResist, radiationResist,
+electricOhms, bluntResist, slashResist, pierceResist
+spellRadius, visionRange, hungerRate
+staminaRegen, manaRegen
+critChance, critMultiplier, baseDamageMin, baseDamageMax
+```
+
+`BaseStats` additionally contains `perception`, but `perception` is not in
+`RESOLVED_STAT_DEFAULTS` and is therefore not part of the current canonical
+derived-stat sheet.
+
+### Supported ordinary equipment/affix bonus keys
+
+`src/rules/utils/passiveBonuses.js` maps these authored keys into passive
+derived channels:
+
+```text
+dexterity, accuracy, damagePower
+physicalPenetration, bluntPenetration, slashPenetration, piercePenetration
+evade, mitigation, maxHp, critChance, critMult
+manaRegen, maxMana, staminaRegen, maxStamina
+kineticDR, fireResist, coldResist, poisonResist, acidResist,
+radiationResist, electricOhms, bluntResist, slashResist, pierceResist
+luck, spellHit, spellAvoid, spellRadius, visionRange, hungerRate
+polymorphControl, polymorphPower, polymorphResistance, polymorphStability
+```
+
+Compatibility aliases are also accepted:
+
+```text
+attack  -> accuracy + damagePower
+defense -> evade
+```
+
+Important gaps requiring an explicit Phase-B decision:
+
+- `spellPower` is present in `ResolvedStats` and accepted as a
+  `DerivedExpression` target, but it is not an ordinary `ItemInfo.bonuses`
+  key in `BONUS_KEY_MAP`.
+- `strength`, `intelligence`, and `vitality` are canonical primary channels,
+  but ordinary equipment bonus normalization does not currently map them.
+- `coldResist` is represented in passive defaults and added by the canonical
+  merge, but is absent from `RESOLVED_STAT_DEFAULTS`; its authored and runtime
+  consumers still need a complete source audit.
+
+Unknown ordinary item bonus keys are ignored by `normalizeBonusKey()` rather
+than rejected. That is a compatibility behavior that must be measured before
+changing it.
+
+### Units and current normalization
+
+The code establishes these units or normalization rules:
+
+| Channel family | Current unit/normalization evidence |
+| --- | --- |
+| Primary attributes | integer-like attribute points; component defaults are numeric and stat synthesis uses integer floors for bonuses |
+| Accuracy, Damage Power, Evade, Mitigation, Penetration | numeric combat points; no universal display unit is declared |
+| Critical chance | fraction internally, clamped to `0..0.95`; HUD converts to percent |
+| Critical multiplier | additive amount above the legacy `1.5` baseline in derived stats; combat/UI add it to a displayed base multiplier |
+| Resistances | channel-specific numeric values; elemental examples are authored as fractions, while `electricOhms` uses larger integer values |
+| Resource capacities | numeric resource units; current resource values are integer-truncated in some UI projections |
+| Resource regeneration | resource units per simulation turn before temporary hunger/encumbrance multipliers |
+| Dice | `count` and `sides`; mathematical mean is `count * (sides + 1) / 2` |
+| Damage multipliers | multiplicative factors applied by the combat snapshot; target-specific and proc outcomes are separate concerns |
+
+The table intentionally marks underspecified channels instead of inventing
+units. Establishing those missing units is a Phase-B contract task.
+
 ## Producer-to-consumer map
 
 ### Primary and secondary stat path
