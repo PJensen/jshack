@@ -125,27 +125,28 @@ export function renderCharacterSheet(panel, data) {
 
   // [label, value, color|null]  — null = default text color
   const statRows = [
+    ['__header', 'Attributes'],
     ['Strength', `${Number(stats.strength || 0)}`, deltaColor(stats.strength)],
     ['Dexterity', `${Number(stats.dexterity || 0)}`, deltaColor(stats.dexterity)],
     ['Intelligence', `${Number(stats.intelligence || 0)}`, deltaColor(stats.intelligence)],
     ['Vitality', `${Number(stats.vitalityStat || 0)}`, deltaColor(stats.vitalityStat)],
-    ['HP', `${Number(stats.hp || 0)}/${Number(stats.maxHp || 0)}`],
-    ['Mana', `${Number(stats.mana || 0)}/${Number(stats.maxMana || 0)}`],
-    ['Stamina', `${Number(stats.stamina || 0)}/${Number(stats.maxStamina || 0)}`],
-    ['Attack', `${Number(stats.attack || 0)}`, deltaColor(stats.attack)],
-    ['Defense', `${Number(stats.defense || 0)}`, deltaColor(stats.defense)],
+    ['__header', 'Resources'],
+    ['Health', `${Number(stats.hp || 0)}/${Number(stats.maxHp || 0)}`],
+    ['Mana', `${Number(stats.mana || 0)}/${Number(stats.maxMana || 0)}  +${Number(stats.manaRegen || 0).toFixed(2)}/t`],
+    ['Stamina', `${Number(stats.stamina || 0)}/${Number(stats.maxStamina || 0)}  +${Number(stats.staminaRegen || 0).toFixed(1)}/t`],
+    ['__header', 'Capabilities'],
+    ['Damage', `${Number(stats.damage || 0)}`, deltaColor(stats.damage)],
     ['Accuracy', `${Number(stats.accuracy || 0)}`, deltaColor(stats.accuracy)],
-    ['Damage Power', `${Number(stats.damagePower || 0)}`, deltaColor(stats.damagePower)],
-    ['Evade', `${Number(stats.evade || 0)}`, deltaColor(stats.evade)],
-    ['Mitigation', `${Number(stats.mitigation || 0)}`, deltaColor(stats.mitigation)],
+    ['Avoidance', `${Number(stats.avoidance || 0)}`, deltaColor(stats.avoidance)],
+    ['Armor', `${Number(stats.armor || 0)}`, deltaColor(stats.armor)],
+    ['Critical Strike', `${Number(stats.critChancePercent || 0).toFixed(1)}%`, deltaColor(stats.critChancePercent)],
     ['Spell Power', `${Number(stats.spellPower || 0)}`, deltaColor(stats.spellPower)],
-    ['Armor Class', `${Number(stats.armorClass || 0)}`, deltaColor(stats.armorClass, 10)],
+    ['__header', 'Additional Details'],
+    ['Damage Power', `${Number(stats.damagePower || 0)}`, deltaColor(stats.damagePower)],
+    ['Mitigation', `${Number(stats.mitigation || 0)}`, deltaColor(stats.mitigation)],
     ['Luck', `${Number(stats.luck || 0)}`, deltaColor(stats.luck)],
-    ['Crit %', `${Number(stats.critChancePercent || 0).toFixed(1)}`, deltaColor(stats.critChancePercent)],
     ['Crit Mult', `\u00d7${(2 + Number(stats.critMult || 0)).toFixed(1)}`, deltaColor(stats.critMult)],
     ['Dmg Bonus', `${Number(stats.damageFlatBonus || 0)}`, deltaColor(stats.damageFlatBonus)],
-    ['Mana Regen', `${Number(stats.manaRegen || 0).toFixed(2)}/t`, deltaColor(stats.manaRegenDerived)],
-    ['Stam Regen', `${Number(stats.staminaRegen || 0).toFixed(1)}/t`, deltaColor(stats.staminaRegenDerived)],
     ['Carry', `${Number(stats.carryWeight || 0).toFixed(1)}/${Number(stats.carryLimit || 0).toFixed(1)} kg · ${humanize(String(stats.carryState || 'unburdened'))}`],
     ['Max HP Bonus', `${Number(stats.maxHpDerived || 0)}`, deltaColor(stats.maxHpDerived)],
     ['Speed', `${Number(stats.speed || 1)}`, deltaColor(stats.speed, 1) === '#64c87a' ? '#e06a6a' : deltaColor(stats.speed, 1) === '#e06a6a' ? '#64c87a' : null],
@@ -155,6 +156,16 @@ export function renderCharacterSheet(panel, data) {
     ['Turn', `${Number(stats.turn || 0)}`],
   ];
   for (const [label, value, color] of statRows) {
+    if (label === '__header') {
+      const header = document.createElement('div');
+      header.textContent = value.toUpperCase();
+      header.style.gridColumn = '1 / -1';
+      header.style.marginTop = '8px';
+      header.style.color = '#9ecbff';
+      header.style.fontWeight = 'bold';
+      statCard.appendChild(header);
+      continue;
+    }
     const row = document.createElement('div');
     const lbl = document.createElement('span');
     lbl.textContent = `${label}: `;
@@ -168,7 +179,6 @@ export function renderCharacterSheet(panel, data) {
 
   // Resistances — only show non-zero entries
   const resistRows = [
-    ['Kinetic DR', Number(stats.kineticDR || 0)],
     ['Fire Resist', Number(stats.fireResist || 0)],
     ['Cold Resist', Number(stats.coldResist || 0)],
     ['Poison Resist', Number(stats.poisonResist || 0)],

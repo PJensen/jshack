@@ -76,6 +76,8 @@ Deno.test("hudFeeds combat payload reports equipment defense as persistent bar d
     assert(payloads.length > 0, "expected combat HUD payload");
     const detail = payloads[payloads.length - 1];
     assertEquals(Number(detail?.defense || 0), 2);
+    assertEquals(Number(detail?.avoidance || 0), 2);
+    assertEquals(Number(detail?.armor || 0), 0);
     assertEquals(Number(detail?.armorClass || 0), 12);
   } finally {
     restoreWindow();

@@ -29,7 +29,7 @@ import "../src/content/items/fishingRod.js";
 import { installContent } from "../src/content/install.js";
 installContent();
 
-function makeEquipItem(world, identity, name, slot) {
+function makeEquipItem(world, identity, name, slot, damageDice = null) {
   const id = world.create();
   world.add(id, NamedIdentity, { identity, name });
   world.add(id, ItemInfo, {
@@ -38,6 +38,7 @@ function makeEquipItem(world, identity, name, slot) {
     weight: 1,
     value: 0,
     description: name,
+    damageDice,
     count: 1,
     bonuses: {},
     rarity: 1,
@@ -77,7 +78,7 @@ Deno.test("inventory data provider hides equipped gear from bag and exposes char
   world.add(player, Equipment, {});
   world.add(player, Stamina, { maxStamina: 100, stamina: 100, staminaRegen: 3 });
 
-  const sword = makeEquipItem(world, "sword_plain", "Plain Sword", "weapon");
+  const sword = makeEquipItem(world, "sword_plain", "Plain Sword", "weapon", "1d6");
   const boots = makeEquipItem(world, "boots_leather", "Leather Boots", "feet");
 
   addToInventory(world, player, sword);
@@ -105,6 +106,7 @@ Deno.test("inventory data provider hides equipped gear from bag and exposes char
   assert(bagItems.every((it) => Number(it.id || 0) !== sword), "equipped weapon should be hidden from bagItems");
   assert(bagItems.some((it) => Number(it.id || 0) === boots), "unequipped gear should remain in bagItems");
   assertEquals(Number(inventoryPayload?.equippedBySlot?.weapon?.item?.id || 0), sword);
+  assertEquals(inventoryPayload?.equippedBySlot?.weapon?.item?.damageExpected, 4);
   assertEquals(inventoryPayload?.encumbrance?.current, 2, "projection should include bag and equipped weight before an effects pass");
   assertEquals(inventoryPayload?.encumbrance?.limit, 60, "projection should derive capacity without cached Encumbrance state");
 

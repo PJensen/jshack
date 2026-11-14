@@ -15,8 +15,9 @@ import { getHungerLevel } from "../../rules/data/food.js";
 import { Pet } from "../../rules/components/Pet.js";
 import { PetState } from "../../rules/components/PetState.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
-import { resolveResistance } from "../../rules/utils/dealDamage.js";
-import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana } from "../../rules/utils/passiveBonuses.js";
+import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
+import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
+import { resolveExpectedWeaponDamage } from "../../rules/utils/expectedDamage.js";
 import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
 import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
@@ -425,17 +426,20 @@ export function createHudFeeds(world, deps) {
     if (!pe) return;
     /** @type {{ hp?:number, maxHp?:number }|null} */
     const vit = /** @type any */ (world.get(pe.id, Vitality));
-    const mana = getPlayerMana();
-    const stam = /** @type any */ (world.get(pe.id, Stamina));
+    const manaResource = resolveResourceStats(world, pe.id, "mana");
+    const mana = manaResource
+      ? { mana: manaResource.current, maxMana: manaResource.max }
+      : getPlayerMana();
+    const staminaResource = resolveResourceStats(world, pe.id, "stamina");
     const passive = getPassiveBonuses(world, pe.id);
 
     const rawHp = Number(vit?.hp ?? 0);
-    const maxHp = vit ? effectiveMaxHp(world, pe.id, vit) : 0;
+    const healthResource = resolveResourceStats(world, pe.id, "health");
+    const maxHp = healthResource?.max ?? 0;
     const fxT = typeof getFxTime === 'function' ? getFxTime() : 0;
     const hp = impactTracker.visualHp(pe.id, rawHp, maxHp, fxT);
-    const stamina = Number(stam?.stamina ?? 0);
-    const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
-    const maxStamina = Number(stam?.maxStamina ?? 100) + maxStaminaBonus;
+    const stamina = Number(staminaResource?.current ?? 0);
+    const maxStamina = Number(staminaResource?.max ?? 0);
     const encumbrance = resolveEncumbrance(getCarriedWeight(world, pe.id), getCarryCapacity(world, pe.id));
     const encumbered = snapshotStatusState(world, pe.id)?.allStatuses
       ?.some((status) => status.type === "encumbered") === true;
@@ -450,19 +454,6 @@ export function createHudFeeds(world, deps) {
     }
   }
 
-  /**
-   * Average roll for a dice spec like "2d6" → 7.
-   * @param {string} spec
-   * @returns {number}
-   */
-  function averageDice(spec) {
-    const m = /^\s*(\d+)d(\d+)\s*$/i.exec(String(spec || ""));
-    if (!m) return 1;
-    const count = Math.max(1, parseInt(m[1], 10) | 0);
-    const sides = Math.max(2, parseInt(m[2], 10) | 0);
-    return count * (sides + 1) / 2;
-  }
-
   function updateCombatHUD() {
     const pe = playerEntity(world);
     if (!pe) return;
@@ -473,25 +464,17 @@ export function createHudFeeds(world, deps) {
     const rangedId = Number(eq?.ranged || 0);
     const combat = resolveCombatSnapshot(world, pe.id, { mode: "melee" });
 
-    // Compute actual expected damage: avg dice + flat bonus, scaled by mult
     const wInfo = wid ? world.get(wid, ItemInfo) : null;
-    const dmgDice = wInfo?.damageDice ? String(wInfo.damageDice) : (wid ? "1d2" : "1d2");
-    const avgRoll = averageDice(dmgDice);
-    const flatBonus = Number(combat?.damageFlatBonus ?? 0);
-    const damageMult = Number(combat?.damageMult ?? 1);
-    const atk = Math.max(0, Math.floor((avgRoll + flatBonus) * damageMult));
+    const damageProjection = resolveExpectedWeaponDamage(world, pe.id, wid, { mode: "melee" });
+    const atk = damageProjection.displayedDamage;
 
     const luck = Number(combat?.luck ?? canonical?.luck ?? 0);
     const evade = Number(canonical?.evade ?? 0);
     const armorClass = Number(combat?.armorClass ?? (10 + evade));
-    const defenseContribution = Math.max(0, Math.round(armorClass - 10));
-    // DEF% is an at-a-glance composite: physical reduction plus to-hit defense.
-    const CANONICAL_HIT = 100;
-    const afterBlunt = resolveResistance(world, pe.id, CANONICAL_HIT, 'blunt');
-    const afterSlash = resolveResistance(world, pe.id, CANONICAL_HIT, 'slash');
-    const afterPierce = resolveResistance(world, pe.id, CANONICAL_HIT, 'pierce');
-    const physicalReduction = Math.round(CANONICAL_HIT - (afterBlunt + afterSlash + afterPierce) / 3);
-    const def = Math.max(0, physicalReduction + defenseContribution);
+    const avoidance = evade;
+    // Armor is a representative flat physical reduction, before typed multipliers.
+    // Kinetic DR remains an internal contributor; the UI does not expose that term.
+    const armor = Math.max(0, Number(canonical?.mitigation || 0) + Number(canonical?.kineticDR || 0));
     const critPct = (Number(combat?.critChance ?? canonical?.critChancePhysical ?? 0) * 100) + luck;
     const posture = String(combat?.posture?.stance || "balanced");
     const mitigation = Number(canonical?.mitigation ?? 0);
@@ -535,16 +518,20 @@ export function createHudFeeds(world, deps) {
     }
 
     if (lastCombatHud.weaponId !== wid || lastCombatHud.rangedId !== rangedId || lastCombatHud.rangedCount !== rangedCount ||
-      lastCombatHud.atk !== atk || lastCombatHud.def !== def || lastCombatHud.luck !== luck ||
+      lastCombatHud.atk !== atk || lastCombatHud.def !== avoidance || lastCombatHud.armor !== armor || lastCombatHud.luck !== luck ||
       lastCombatHud.ac !== armorClass || lastCombatHud.critPct !== critPct ||
       lastCombatHud.statusSig !== statusSig || lastCombatHud.ammo !== ammo || lastCombatHud.coatingSig !== coatingSig || lastCombatHud.posture !== posture) {
-      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def, luck, ac: armorClass, critPct, statusSig, ammo, coatingSig, posture };
+      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def: avoidance, armor, luck, ac: armorClass, critPct, statusSig, ammo, coatingSig, posture };
       try {
         window.dispatchEvent(new CustomEvent("ui:updateCombatHUD", { detail: {
           attack: atk,
-          weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, attack: atk, coating: wCoating } : null,
+          damage: atk,
+          weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, damage: atk, attack: atk, coating: wCoating } : null,
           ranged: rangedId ? { id: rangedId, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
-          defense: def,
+          // Legacy field retained for listeners; it now carries Avoidance only.
+          defense: avoidance,
+          avoidance,
+          armor,
           mitigation,
           luck,
           armorClass,

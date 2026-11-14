@@ -72,7 +72,7 @@ function collectSubtree(world, rootId, seen, out) {
   }
 }
 
-export function gatherStatTopology(world, actorId) {
+export function gatherStatTopology(world, actorId, options = {}) {
   const id = Number(actorId || 0) | 0;
   if (!(id > 0) || !world?.isAlive?.(id)) return [];
 
@@ -81,7 +81,7 @@ export function gatherStatTopology(world, actorId) {
 
   collectSubtree(world, id, seen, out);
 
-  const eq = world.get(id, Equipment);
+  const eq = options.equipmentOverride || world.get(id, Equipment);
   if (!eq) return out;
 
   for (let i = 0; i < NON_AMMO_GEAR_SLOTS.length; i++) {
@@ -93,8 +93,8 @@ export function gatherStatTopology(world, actorId) {
   return out;
 }
 
-export function gatherDerivedExpressions(world, actorId) {
-  const topology = gatherStatTopology(world, actorId);
+export function gatherDerivedExpressions(world, actorId, options = {}) {
+  const topology = gatherStatTopology(world, actorId, options);
   /** @type {Array<{entityId:number, expr:any}>} */
   const out = [];
 
@@ -213,7 +213,7 @@ function applyFinalHygiene(sheet) {
   sheet.baseDamageMax = Math.max(Number(sheet.baseDamageMin || 0), Number(sheet.baseDamageMax || 0));
 }
 
-export function resolveDerivedStats(world, actorId) {
+export function resolveDerivedStats(world, actorId, options = {}) {
   const id = Number(actorId || 0) | 0;
   const sheet = createResolvedStatsSheet();
 
@@ -223,7 +223,7 @@ export function resolveDerivedStats(world, actorId) {
 
   applyBaseStats(sheet, world.get(id, BaseStats));
 
-  const expressions = gatherDerivedExpressions(world, id);
+  const expressions = gatherDerivedExpressions(world, id, options);
   for (let i = 0; i < expressions.length; i++) {
     evalDerivedExpression(sheet, expressions[i].expr);
   }
@@ -308,7 +308,8 @@ export function getResolvedStatsVirtual(world) {
   return world?.[RESOLVED_STATS_VIRTUAL] || null;
 }
 
-export function getResolvedStats(world, entityId) {
+export function getResolvedStats(world, entityId, options = {}) {
+  if (options.equipmentOverride) return resolveDerivedStats(world, entityId, options);
   const Virtual = getResolvedStatsVirtual(world);
   if (Virtual && typeof world?.vget === "function") return world.vget(entityId, Virtual);
   return resolveDerivedStats(world, entityId);

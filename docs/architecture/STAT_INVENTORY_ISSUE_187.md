@@ -1,0 +1,330 @@
+# Issue #187: Current Stat Inventory and Resolution Map
+
+Status: Phase-A baseline plus Phase-B resource/stat slices, 2026-11-14
+
+This document records the current implementation before broad Issue #187
+canonicalization or presentation changes. It is an inventory and map, not a
+replacement stat contract. Values and behavior below describe the current
+code paths and should be treated as compatibility constraints until an
+explicit follow-up changes them.
+
+## Baseline health
+
+- 990 source files are covered by the agent health scan.
+- 103 systems are registered across the scheduler phases.
+- Layer-boundary violations: 0.
+- Rules nondeterminism hazards: 0.
+- Focused stat/equipment/resource tests pass: 36 tests, 0 failures.
+- The project has 460 test files and approximately 194,000 lines of JavaScript
+  under `src/`.
+
+The project is large, but the architecture guardrails are currently healthy.
+The complexity relevant to this issue is concentrated in the stat resolution,
+equipment/passive, resource regeneration, and UI projection paths.
+
+## Resolution topology
+
+```text
+BaseStats + DerivedExpression topology
+             |
+             v
+     resolveDerivedStats()
+             |
+             +--> synthesize primary-stat channels
+             |
+             +--> ResolvedStats virtual
+
+equipped ItemInfo.bonuses + affix passive scripts
+             |
+             v
+     resolvePassiveBonuses()
+             |
+             +--> PassiveBonuses virtual
+             +--> Equipment.*Derived compatibility fields
+
+ResolvedStats + PassiveBonuses
+             |
+             v
+     resolveCanonicalStats()
+             |
+             v
+     resolveCombatSnapshot(mode, target)
+             |
+             +--> melee/ranged hit and combat consumers
+             +--> HUD and character data projections
+
+Mana/Stamina/Vitality components + PassiveBonuses
+             |
+             +--> resource regeneration systems
+             +--> HUD/resource projections
+```
+
+The architecture memo explicitly describes `ResolvedStats` as the stat-tree
+direction and `PassiveBonuses` as the compatibility bridge. Consumers should
+not treat `Equipment.*Derived` as canonical truth.
+
+## Current channel inventory
+
+| Category | Current identifiers / fields | Main authority today | Main consumers | Phase-A classification |
+| --- | --- | --- | --- | --- |
+| Primary attributes | `strength`, `dexterity`, `intelligence`, `vitality` | `BaseStats` → `resolveDerivedStats()`; equipment dexterity is merged in `resolveCanonicalStats()` | combat, character data, spell/healing scripts | coherent names, but multiple intelligence sources exist (`BaseStats`, `Brain`) |
+| Resources | `hp`, `mana`, `stamina` | `Vitality`, `Mana`, `Stamina` | damage/healing, expenditure, HUD, character sheet | first-class state; not one stat record |
+| Resource maximums | `maxHp`, `maxMana`, `maxStamina` and `*Derived` equipment bonuses | `effectiveMaxHp/ Mana/ Stamina()` plus resource systems | HUD, regeneration, inventory data, Vitality validation | duplicated projection paths; character data currently omits effective max HP bonus |
+| Resource recovery | `manaRegen`, `staminaRegen`, cooldowns | resource components + passive bonuses + resolved modifiers + hunger/encumbrance systems | regeneration systems, character sheet | runtime-effective rate is not yet one shared read model |
+| Accuracy / hit | `accuracy`, `attackBonus`, `spellHit`, `spellAvoid` | `resolveCanonicalStats()` and `resolveCombatSnapshot()` | melee, ranged, spell systems, HUD/sheet | `Attack` is presentation-ambiguous; physical and spell scopes differ |
+| Damage capability | `damagePower`, `damageFlatBonus`, `damageMult`, `damageDice`, `baseDamageMin/Max` | canonical stats/combat snapshot plus item `ItemInfo.damageDice` | melee/ranged execution, HUD | HUD has a local expected-value projection; no shared UI projection yet |
+| Critical | `critChancePhysical`, `critChanceSpell`, legacy `critChance`, `critMultPhysical`, `critMultSpell`, legacy `critMultiplier` | derived stat synthesis + passive bonuses + combat snapshot | physical/spell damage, HUD/sheet | scope and legacy alias semantics need documentation and parity audit |
+| Avoidance / defense | `evade`, `armorClass`, `defense`, `mitigation` | combat snapshot plus canonical stats | melee/ranged hit resolution, sheet/HUD | `Defense`, `Evade`, and `Armor Class` overlap in ordinary presentation |
+| Physical reduction | `kineticDR`, `mitigation`, typed physical resistances | canonical stats and damage resistance pipeline | damage resolution, character sheet | `Kinetic DR` is player-facing despite not being a universal scalar projection |
+| Typed defenses | `fireResist`, `coldResist`, `poisonResist`, `acidResist`, `radiationResist`, `electricOhms`, `bluntResist`, `slashResist`, `pierceResist` | canonical stats plus damage resistance resolution | `dealDamage()`, character sheet | preserve mechanics; presentation and units need explicit contract |
+| Penetration | `physicalPenetration`, `bluntPenetration`, `slashPenetration`, `piercePenetration` | canonical stats | damage resolution and combat | direct channels exist and should remain first-class |
+| Magic capability | `spellPower`, `spellRadius`, `spellHit`, `spellAvoid` | derived/passive canonical stats | spell scripts and presentation | `spellPower` is expression-supported and now canonical, but gear vocabulary requires audit |
+| Healing | `HealingModifiers`; direct `Brain.intelligence` scaling in some spells | `applyHealing()` for mutation/modifiers; individual spell scripts for amount | healing spells, effects, procs | canonical application exists; amount formulas are intentionally non-uniform and need mapping |
+| Contextual stats | `visionRange`, `hungerRate`, speed, encumbrance/carry fields | canonical/passive stats plus dedicated components/systems | FOV, hunger, stamina, movement, UI | specialized behavior; not all belong in ordinary capability display |
+| Exceptional mechanics | proc topology, `Hamingja`, deity effects, affix scripts, auras | child ECS topology and script bridges | combat/effects/proc systems | preserve passive/proc split; do not flatten into global stats |
+
+## Exact canonical and authored key sets
+
+The following are the current code-defined key sets, rather than a guessed
+taxonomy.
+
+### `ResolvedStats` defaults
+
+`src/rules/utils/derivedStats.js` currently defines these channels:
+
+```text
+strength, intelligence, dexterity, vitality
+accuracy, damagePower
+physicalPenetration, bluntPenetration, slashPenetration, piercePenetration
+evade, mitigation
+critChancePhysical, critChanceSpell, critMultPhysical, critMultSpell
+spellHit, spellAvoid, spellPower, luck
+kineticDR, fireResist, poisonResist, acidResist, radiationResist,
+electricOhms, bluntResist, slashResist, pierceResist
+spellRadius, visionRange, hungerRate
+staminaRegen, manaRegen
+critChance, critMultiplier, baseDamageMin, baseDamageMax
+```
+
+`BaseStats` additionally contains `perception`, but `perception` is not in
+`RESOLVED_STAT_DEFAULTS` and is therefore not part of the current canonical
+derived-stat sheet.
+
+### Supported ordinary equipment/affix bonus keys
+
+`src/rules/utils/passiveBonuses.js` maps these authored keys into passive
+derived channels:
+
+```text
+dexterity, accuracy, damagePower
+physicalPenetration, bluntPenetration, slashPenetration, piercePenetration
+evade, mitigation, maxHp, critChance, critMult
+manaRegen, maxMana, staminaRegen, maxStamina
+kineticDR, fireResist, coldResist, poisonResist, acidResist,
+radiationResist, electricOhms, bluntResist, slashResist, pierceResist
+luck, spellHit, spellAvoid, spellRadius, visionRange, hungerRate
+polymorphControl, polymorphPower, polymorphResistance, polymorphStability
+```
+
+Compatibility aliases are also accepted:
+
+```text
+attack  -> accuracy + damagePower
+defense -> evade
+```
+
+Important gaps requiring an explicit Phase-B decision at the time of the
+baseline:
+
+- `spellPower` is present in `ResolvedStats` and accepted as a
+  `DerivedExpression` target, but it is not an ordinary `ItemInfo.bonuses`
+  key in `BONUS_KEY_MAP`. *(Resolved in the Phase-B slice: direct equipment
+  `spellPower` now flows through `PassiveBonuses` and `resolveCanonicalStats`.)*
+- `strength`, `intelligence`, and `vitality` are canonical primary channels,
+  but ordinary equipment bonus normalization does not currently map them.
+- `coldResist` is represented in passive defaults and added by the canonical
+  merge, but is absent from `RESOLVED_STAT_DEFAULTS`; its authored and runtime
+  consumers still need a complete source audit.
+
+Unknown ordinary item bonus keys are ignored by `normalizeBonusKey()` rather
+than rejected. That is a compatibility behavior that must be measured before
+changing it.
+
+### Units and current normalization
+
+The code establishes these units or normalization rules:
+
+| Channel family | Current unit/normalization evidence |
+| --- | --- |
+| Primary attributes | integer-like attribute points; component defaults are numeric and stat synthesis uses integer floors for bonuses |
+| Accuracy, Damage Power, Evade, Mitigation, Penetration | numeric combat points; no universal display unit is declared |
+| Critical chance | fraction internally, clamped to `0..0.95`; HUD converts to percent |
+| Critical multiplier | additive amount above the legacy `1.5` baseline in derived stats; combat/UI add it to a displayed base multiplier |
+| Resistances | channel-specific numeric values; elemental examples are authored as fractions, while `electricOhms` uses larger integer values |
+| Resource capacities | numeric resource units; current resource values are integer-truncated in some UI projections |
+| Resource regeneration | resource units per simulation turn before temporary hunger/encumbrance multipliers |
+| Dice | `count` and `sides`; mathematical mean is `count * (sides + 1) / 2` |
+| Damage multipliers | multiplicative factors applied by the combat snapshot; target-specific and proc outcomes are separate concerns |
+
+The table intentionally marks underspecified channels instead of inventing
+units. Establishing those missing units is a Phase-B contract task.
+
+## Producer-to-consumer map
+
+### Primary and secondary stat path
+
+- `BaseStats` provides primary attributes and legacy critical/damage defaults.
+- `DerivedExpression` children are collected from actor/equipment topology in
+  `gatherDerivedExpressions()` and applied in deterministic stage/priority/entity
+  order.
+- `resolveDerivedStats()` synthesizes Dexterity into Accuracy/Evade and
+  Strength/Vitality/Intelligence into combat and spell channels.
+- `ItemInfo.bonuses` and affix passive scripts are normalized by
+  `resolvePassiveBonuses()`.
+- Legacy equipment aliases are still active: `attack` contributes to both
+  Accuracy and Damage Power; `defense` contributes to Evade.
+- `resolveCanonicalStats()` merges both projections and adds passive/resource
+  channels used by combat-facing consumers.
+- `resolveCombatSnapshot()` adds mode, status, posture, aura, target, and
+  conditional combat behavior.
+
+### Resource path
+
+- `Vitality`, `Mana`, and `Stamina` own current state and base capacities.
+- Equipment/affix `maxHp`, `maxMana`, and `maxStamina` values are collected by
+  `PassiveBonuses`.
+- `effectiveMaxHp()`, `effectiveMaxMana()`, and `effectiveMaxStamina()` provide
+  shared helpers, but not every presentation consumer uses them.
+- Mana regeneration adds component rate, passive bonus, resolved modifier, and
+  hunger multiplier, with post-spend cooldown.
+- Stamina regeneration adds component rate, passive bonus, resolved modifier,
+  and encumbrance multiplier, with post-spend cooldown.
+- The HUD and character data currently reconstruct parts of these formulas
+  independently.
+
+### Damage and defense path
+
+- Weapon `ItemInfo.damageDice` supplies the intrinsic distribution.
+- `resolveCombatSnapshot()` supplies flat damage and conditional multipliers.
+- `expectedDamageFromDice()` evaluates every possible roll through the same
+  floor/clamp/multiplier ordering used by the presentation contract.
+- `resolveExpectedWeaponDamage()` combines that distribution with the actor's
+  canonical combat snapshot for ordinary successful-hit damage. It excludes
+  target mitigation, hit chance, criticals, procs, and other conditional
+  outcomes. Actual damage remains stochastic and uses the rules combat pipeline.
+- `dealDamage()` owns actual HP reduction, resistance resolution, events, and
+  death behavior.
+- `resolveResistance()` and typed resistance channels must remain distinct from
+  avoidance and armor presentation.
+
+### Healing path
+
+- `applyHealing()` owns healing mutation and `HealingModifiers` multipliers/
+  suppression.
+- Spell scripts provide several amount formulas; at least some directly read
+  `Brain.intelligence`.
+- Proc/effect/system callers route mutation through `applyHealing()`.
+- There is no evidence in the current path that a universal Healing Power
+  channel should be introduced; the audit must first classify existing scoped
+  formulas.
+
+## Ambiguities and compatibility constraints
+
+1. `Attack` means a to-hit modifier in the character sheet, while HUD `attack`
+   is expected weapon damage.
+2. `Defense`, `Evade`, `Armor Class`, and `Mitigation` are simultaneously
+   exposed even though they answer different or overlapping questions.
+3. Legacy HUD `DEF%` combined physical reduction with an AC contribution, which
+   mixed incompatible units; it is no longer emitted as a presentation value.
+4. `Kinetic DR` remains an internal/mechanical channel. Ordinary presentation
+   uses a qualified flat-physical Armor projection instead.
+5. Character data uses raw `Vitality.maxHp`, while HUD uses effective HP max.
+6. Mana/Stamina displayed recovery does not include every temporary runtime
+   modifier used by the corresponding regeneration system.
+7. `attack` and `defense` equipment aliases are intentionally compatible but
+   semantically ambiguous; migration must not silently split or double them.
+8. `spellPower` is a valid derived channel but ordinary equipment authoring and
+   passive normalization need a complete key audit.
+9. Physical and spell critical channels exist separately, while shared passive
+   critical bonuses currently contribute to both.
+10. Healing application is canonical, but spell amount formulas are not uniform.
+
+## Baseline verification
+
+The following focused tests passed before Phase-A documentation changes:
+
+```text
+deno test --allow-read --no-check \
+  tests/derivedStats.test.mjs \
+  tests/statPipeline.test.mjs \
+  tests/equipmentSystem.test.mjs \
+  tests/manaRegen.test.mjs \
+  tests/encumbrance.test.mjs \
+  tests/inventoryDataProvider.test.mjs
+
+36 passed, 0 failed
+```
+
+Relevant existing guardrails include `statPipelineArchitectureGuards.test.mjs`,
+`passiveBonusesArchitectureGuards.test.mjs`, `resistanceProjection.test.mjs`,
+`applyHealing.test.mjs`, and `combat.test.mjs`.
+
+## Phase-A follow-up boundaries
+
+The next phase can now be split without re-discovering the topology:
+
+1. Define the canonical vocabulary and units from this inventory.
+2. Add shared effective resource/recovery read models and parity tests.
+3. Add a shared expected-damage projection without changing stochastic combat.
+4. Resolve defensive display concepts and remove the invalid HUD composite.
+5. Audit critical and healing scopes before changing itemization semantics.
+
+No gameplay behavior is changed by this document.
+
+## Phase-B slices completed
+
+- `resolveResourceStats()` now provides one read-only resource projection for
+  Health, Mana, and Stamina, including effective caps, nominal recovery,
+  context multipliers, cooldown suppression, and suppression reasons.
+- Mana and Stamina regeneration systems consume that projection while keeping
+  mutation and cooldown countdown in their existing systems.
+- HUD and character-data projections consume the same effective resource caps
+  and recovery values.
+- Direct equipment `spellPower` is now a supported passive bonus and is merged
+  into canonical spell power.
+
+## Phase-C and Phase-D slices completed
+
+- `resolveExpectedWeaponDamage()` is the shared deterministic expected-damage
+  projection used by HUD, item details, and comparisons. Dice distributions and
+  seeded stochastic combat remain unchanged.
+- Item comparisons use an equipment overlay against the same actor. The
+  canonical derived/passive/combat pipeline evaluates the hypothetical item
+  without mutating the live `Equipment` component.
+
+## Phase-E presentation slices completed
+
+- The combat HUD no longer presents the invalid `DEF%` composite. Its compact
+  vocabulary is Damage and Avoidance; the payload also provides a qualified
+  Armor projection for detail consumers.
+- Character presentation groups Attributes, Resources, Capabilities, and
+  Additional Details. Attack/damage are no longer the same player-facing
+  concept: weapon Damage is expected successful-hit damage, Accuracy is the
+  to-hit channel, Avoidance is hit prevention, and Armor is representative flat
+  physical reduction (`mitigation + kineticDR`) before typed multipliers.
+- Resource rows use the shared effective recovery projection, including
+  context-specific suppression and cooldown semantics.
+
+## Phase-F verification record
+
+The Phase-F regression pass covered 173 tests across melee, ranged, typed
+defenses, spells, healing, resources, equipment, affixes, proc packages, save
+load, and canonical stat projections with zero failures. Architecture and
+doctrine guardrails also passed: 13 architecture tests, 4 event-doctrine tests,
+56 death/resource-adjacent guard tests, 10 agent-tool tests, and the world-state
+ratchet. Agent health reported zero rules nondeterminism hazards and zero layer
+boundary violations.
+
+The remaining balance questions are intentionally not resolved here: numerical
+item budgets and scaling belong to issue #172, and a universal healing-power
+stat is not justified by the current non-uniform spell formulas.

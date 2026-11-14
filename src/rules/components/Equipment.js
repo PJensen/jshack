@@ -46,6 +46,7 @@ export const Equipment = defineComponent('Equipment', {
   piercePenetrationDerived: 0,
   evadeDerived: 0,
   mitigationDerived: 0,
+  spellPowerDerived: 0,
   maxHpDerived: 0,
   critChanceDerived: 0,
   critMultDerived: 0,

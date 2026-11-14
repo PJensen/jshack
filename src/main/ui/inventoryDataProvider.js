@@ -46,6 +46,8 @@ import { getSavegameRegistryNames, serializeSavegameWorld } from "../wiring/save
 import { isChestIdentity } from "../../shared/chests.js";
 import { readAISettings, writeAISettings } from "../../shared/aiSettings.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
+import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
+import { expectedDamageFromDice, resolveExpectedWeaponDamage } from "../../rules/utils/expectedDamage.js";
 import { QuestDefRef } from "../../rules/components/QuestDefRef.js";
 import { QuestState } from "../../rules/components/QuestState.js";
 import { QuestVars } from "../../rules/components/QuestVars.js";
@@ -172,6 +174,7 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       bonuses: {},
       affixes: [],
       damageDice: null,
+      damageExpected: null,
       staminaCost: null,
       twoHanded: false,
       coating: null,
@@ -197,8 +200,12 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       { text: `Charges: ${charges.current}/${charges.max}`, color: charges.current > 0 ? '#cfe8ff' : '#888888' },
       ...(contentStatus || []),
     ];
+    const damageProjection = base?.damageDice
+      ? expectedDamageFromDice(base.damageDice)
+      : null;
     return {
       ...base,
+      damageExpected: damageProjection?.displayedDamage ?? null,
       canUse,
       glyph: String(base?.glyph || p?.glyph || ""),
       glyphColor: String(base?.glyphColor || p?.fg || "#cfe8ff"),
@@ -212,7 +219,7 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
     ring: ['ring1', 'ring2'],
   });
 
-  function buildEquippedComparison(eq, slot, currentItemId) {
+  function buildEquippedComparison(actorId, eq, slot, currentItemId) {
     const fields = _slotMap[slot];
     if (!fields) return null;
     for (const field of fields) {
@@ -220,10 +227,22 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (!Number.isInteger(eqId) || eqId <= 0 || eqId === currentItemId) continue;
       const eqInfo = world.get(eqId, ItemInfo);
       if (!eqInfo) continue;
+      const damageMode = slot === "ranged" ? "ranged" : "melee";
+      const currentProjection = resolveExpectedWeaponDamage(world, actorId, eqId, { mode: damageMode });
+      const candidateEquipment = { ...eq, [field]: currentItemId };
+      const candidateProjection = resolveExpectedWeaponDamage(world, actorId, currentItemId, {
+        mode: damageMode,
+        equipmentOverride: candidateEquipment,
+      });
       return {
+        equipmentField: field,
         name: resolveItemDisplayName(world, eqId),
         bonuses: eqInfo.bonuses || {},
         damageDice: eqInfo.damageDice || null,
+        damageExpected: currentProjection.damageDice ? currentProjection.displayedDamage : null,
+        candidateDamageExpected: candidateProjection.damageDice
+          ? candidateProjection.displayedDamage
+          : null,
         staminaCost: eqInfo.staminaCost ?? null,
         twoHanded: !!eqInfo.twoHanded,
         affixes: resolveAffixes(eqInfo.affixes),
@@ -431,7 +450,10 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (eq) {
         for (const it of items) {
           if (it.equipped || !(it.type === 'equip' || it.type === 'ammo' || it.type === 'wand' || it.slot === 'ranged')) continue;
-          it.equippedComparison = buildEquippedComparison(eq, it.slot, it.id);
+          it.equippedComparison = buildEquippedComparison(p.id, eq, it.slot, it.id);
+          if (it.equippedComparison?.candidateDamageExpected != null) {
+            it.effectiveDamageExpected = it.equippedComparison.candidateDamageExpected;
+          }
         }
       }
       ground = buildGroundPickupDetailAt(p.id, p.pos.x, p.pos.y);
@@ -478,6 +500,11 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       maxMana: 0,
       stamina: 0,
       maxStamina: 0,
+      manaRegenNominal: 0,
+      staminaRegenNominal: 0,
+      damage: 0,
+      avoidance: 0,
+      armor: 0,
       attack: 0,
       defense: 0,
       armorClass: 10,
@@ -525,16 +552,17 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (spellItem) {
         equippedBySlot.brain = { item: spellItem, blocked: false };
       }
-      const maxManaBonus = Number(passive?.maxManaDerived ?? 0);
-      const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
+      const healthResource = resolveResourceStats(world, p.id, "health");
+      const manaResource = resolveResourceStats(world, p.id, "mana");
+      const staminaResource = resolveResourceStats(world, p.id, "stamina");
       const rawHunger = Math.max(0, Number(hunger?.hunger || 0) | 0);
       const hungerLevel = (hunger?.satiation > 0) ? "satiated" : getHungerLevel(rawHunger);
-      stats.hp = Math.max(0, Number(vit?.hp || 0) | 0);
-      stats.maxHp = Math.max(0, Number(vit?.maxHp || 0) | 0);
-      stats.mana = Math.max(0, Number(mana?.mana || 0) | 0);
-      stats.maxMana = Math.max(0, (Number(mana?.maxMana || 0) | 0) + maxManaBonus);
-      stats.stamina = Math.max(0, Number(stamina?.stamina || 0) | 0);
-      stats.maxStamina = Math.max(0, (Number(stamina?.maxStamina || 0) | 0) + maxStaminaBonus);
+      stats.hp = Math.max(0, Number(healthResource?.current ?? vit?.hp ?? 0) | 0);
+      stats.maxHp = Math.max(0, Number(healthResource?.max ?? 0) | 0);
+      stats.mana = Math.max(0, Number(manaResource?.current ?? mana?.mana ?? 0) | 0);
+      stats.maxMana = Math.max(0, Number(manaResource?.max ?? 0) | 0);
+      stats.stamina = Math.max(0, Number(staminaResource?.current ?? stamina?.stamina ?? 0) | 0);
+      stats.maxStamina = Math.max(0, Number(staminaResource?.max ?? 0) | 0);
       stats.strength = Number(canonical?.strength || 0);
       stats.dexterity = Number(canonical?.dexterity || 0);
       stats.intelligence = Number(canonical?.intelligence || 0);
@@ -547,14 +575,19 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       stats.attack = Math.max(0, Number(combat?.attackBonus ?? (1 + stats.accuracy)));
       stats.defense = Math.max(0, Number(stats.evade));
       stats.armorClass = Math.max(0, Number(combat?.armorClass ?? (10 + stats.defense)));
+      stats.damage = resolveExpectedWeaponDamage(world, p.id, Number(eq?.weapon || 0), { mode: "melee" }).displayedDamage;
+      stats.avoidance = stats.evade;
+      stats.armor = Math.max(0, Number(canonical?.mitigation || 0) + Number(canonical?.kineticDR || 0));
       stats.luck = Number(combat?.luck ?? canonical?.luck ?? 0);
       stats.critChancePercent = (Number(combat?.critChance ?? canonical?.critChancePhysical ?? 0) * 100) + stats.luck;
       stats.critMult = Number(combat?.critMult ?? canonical?.critMultPhysical ?? 0);
       stats.damageFlatBonus = Number(combat?.damageFlatBonus ?? 0);
-      stats.manaRegen = Number(mana?.manaRegen ?? 0) + Number(passive?.manaRegenDerived ?? 0);
-      stats.manaRegenDerived = Number(passive?.manaRegenDerived ?? 0);
-      stats.staminaRegen = Number(stamina?.staminaRegen ?? 0) + Number(passive?.staminaRegenDerived ?? 0);
-      stats.staminaRegenDerived = Number(passive?.staminaRegenDerived ?? 0);
+      stats.manaRegen = Number(manaResource?.effectiveRecovery ?? 0);
+      stats.manaRegenNominal = Number(manaResource?.nominalRecovery ?? 0);
+      stats.manaRegenDerived = Number(manaResource?.passiveRecovery ?? 0);
+      stats.staminaRegen = Number(staminaResource?.effectiveRecovery ?? 0);
+      stats.staminaRegenNominal = Number(staminaResource?.nominalRecovery ?? 0);
+      stats.staminaRegenDerived = Number(staminaResource?.passiveRecovery ?? 0);
       const encumbrance = buildEncumbranceData(world, p.id);
       stats.carryWeight = encumbrance.current;
       stats.carryLimit = encumbrance.limit;
