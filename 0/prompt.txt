@@ -1,9 +1,0 @@
-added comments to the GH issue -- please address those concretely -- commit and push when done!
-
----
-
-????? singleton quantities (except ammo) right?
-
----
-
-approved -- make it all so as outlined in the commentary.
