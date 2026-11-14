@@ -72,7 +72,8 @@ Deno.test("migrated rules files do not read Equipment.*Derived directly", async 
 
     const usesPassive = text.includes("getPassiveBonuses(")
       || text.includes("resolveDerivedStats(")
-      || text.includes("resolveCanonicalStats(");
+      || text.includes("resolveCanonicalStats(")
+      || text.includes("resolveResourceStats(");
     if (!usesPassive) offenders.push(`${relPath}::missing passive resolver usage`);
   }
 

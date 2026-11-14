@@ -1,8 +1,5 @@
 import { Mana } from '../components/Mana.js';
-import { HUNGER_MANA_MULT } from '../data/food.js';
-import { getPassiveBonuses } from '../utils/passiveBonuses.js';
-import { getResolvedStats } from '../utils/derivedStats.js';
-import { statusStrength } from '../utils/statusFacade.js';
+import { resolveResourceStats } from '../utils/resourceStats.js';
 
 
 /**
@@ -21,25 +18,11 @@ export function manaRegenerationSystem(world) {
             continue;
         }
 
-        const passive = getPassiveBonuses(world, entity);
-        const maxBonus = Number(passive?.maxManaDerived ?? 0);
-        const effectiveMaxMana = manaComp.maxMana + maxBonus;
+        const resource = resolveResourceStats(world, entity, "mana");
+        if (!resource) continue;
 
-        if (manaComp.mana < effectiveMaxMana) {
-            const baseRate = Number(manaComp.manaRegen ?? 0);
-            const bonus = Number(passive?.manaRegenDerived ?? 0);
-            const derivedRegenMod = Number(getResolvedStats(world, entity)?.manaRegen ?? 0);
-            // Hunger penalty: famished halves regen, starving/wasting stops it
-            let _hungerMult = 1.0;
-            const _hungerTypes = Object.keys(HUNGER_MANA_MULT);
-            for (let i = 0; i < _hungerTypes.length; i++) {
-                const _type = _hungerTypes[i];
-                if (statusStrength(world, entity, _type) > 0) {
-                    _hungerMult = Math.min(_hungerMult, Number(HUNGER_MANA_MULT[_type] || 1));
-                }
-            }
-            const rate = Math.max(0, (baseRate + bonus + derivedRegenMod) * _hungerMult);
-            manaComp.mana = Math.min(effectiveMaxMana, manaComp.mana + rate);
+        if (resource.current < resource.max) {
+            manaComp.mana = Math.min(resource.max, manaComp.mana + resource.effectiveRecovery);
         }
     }
 }

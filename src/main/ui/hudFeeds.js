@@ -16,7 +16,8 @@ import { Pet } from "../../rules/components/Pet.js";
 import { PetState } from "../../rules/components/PetState.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
 import { resolveResistance } from "../../rules/utils/dealDamage.js";
-import { getPassiveBonuses, effectiveMaxHp, effectiveMaxMana } from "../../rules/utils/passiveBonuses.js";
+import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
+import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
 import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
 import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
@@ -425,17 +426,20 @@ export function createHudFeeds(world, deps) {
     if (!pe) return;
     /** @type {{ hp?:number, maxHp?:number }|null} */
     const vit = /** @type any */ (world.get(pe.id, Vitality));
-    const mana = getPlayerMana();
-    const stam = /** @type any */ (world.get(pe.id, Stamina));
+    const manaResource = resolveResourceStats(world, pe.id, "mana");
+    const mana = manaResource
+      ? { mana: manaResource.current, maxMana: manaResource.max }
+      : getPlayerMana();
+    const staminaResource = resolveResourceStats(world, pe.id, "stamina");
     const passive = getPassiveBonuses(world, pe.id);
 
     const rawHp = Number(vit?.hp ?? 0);
-    const maxHp = vit ? effectiveMaxHp(world, pe.id, vit) : 0;
+    const healthResource = resolveResourceStats(world, pe.id, "health");
+    const maxHp = healthResource?.max ?? 0;
     const fxT = typeof getFxTime === 'function' ? getFxTime() : 0;
     const hp = impactTracker.visualHp(pe.id, rawHp, maxHp, fxT);
-    const stamina = Number(stam?.stamina ?? 0);
-    const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
-    const maxStamina = Number(stam?.maxStamina ?? 100) + maxStaminaBonus;
+    const stamina = Number(staminaResource?.current ?? 0);
+    const maxStamina = Number(staminaResource?.max ?? 0);
     const encumbrance = resolveEncumbrance(getCarriedWeight(world, pe.id), getCarryCapacity(world, pe.id));
     const encumbered = snapshotStatusState(world, pe.id)?.allStatuses
       ?.some((status) => status.type === "encumbered") === true;

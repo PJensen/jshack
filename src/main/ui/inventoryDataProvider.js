@@ -46,6 +46,7 @@ import { getSavegameRegistryNames, serializeSavegameWorld } from "../wiring/save
 import { isChestIdentity } from "../../shared/chests.js";
 import { readAISettings, writeAISettings } from "../../shared/aiSettings.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
+import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
 import { QuestDefRef } from "../../rules/components/QuestDefRef.js";
 import { QuestState } from "../../rules/components/QuestState.js";
 import { QuestVars } from "../../rules/components/QuestVars.js";
@@ -525,16 +526,17 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (spellItem) {
         equippedBySlot.brain = { item: spellItem, blocked: false };
       }
-      const maxManaBonus = Number(passive?.maxManaDerived ?? 0);
-      const maxStaminaBonus = Number(passive?.maxStaminaDerived ?? 0);
+      const healthResource = resolveResourceStats(world, p.id, "health");
+      const manaResource = resolveResourceStats(world, p.id, "mana");
+      const staminaResource = resolveResourceStats(world, p.id, "stamina");
       const rawHunger = Math.max(0, Number(hunger?.hunger || 0) | 0);
       const hungerLevel = (hunger?.satiation > 0) ? "satiated" : getHungerLevel(rawHunger);
-      stats.hp = Math.max(0, Number(vit?.hp || 0) | 0);
-      stats.maxHp = Math.max(0, Number(vit?.maxHp || 0) | 0);
-      stats.mana = Math.max(0, Number(mana?.mana || 0) | 0);
-      stats.maxMana = Math.max(0, (Number(mana?.maxMana || 0) | 0) + maxManaBonus);
-      stats.stamina = Math.max(0, Number(stamina?.stamina || 0) | 0);
-      stats.maxStamina = Math.max(0, (Number(stamina?.maxStamina || 0) | 0) + maxStaminaBonus);
+      stats.hp = Math.max(0, Number(healthResource?.current ?? vit?.hp ?? 0) | 0);
+      stats.maxHp = Math.max(0, Number(healthResource?.max ?? 0) | 0);
+      stats.mana = Math.max(0, Number(manaResource?.current ?? mana?.mana ?? 0) | 0);
+      stats.maxMana = Math.max(0, Number(manaResource?.max ?? 0) | 0);
+      stats.stamina = Math.max(0, Number(staminaResource?.current ?? stamina?.stamina ?? 0) | 0);
+      stats.maxStamina = Math.max(0, Number(staminaResource?.max ?? 0) | 0);
       stats.strength = Number(canonical?.strength || 0);
       stats.dexterity = Number(canonical?.dexterity || 0);
       stats.intelligence = Number(canonical?.intelligence || 0);
@@ -551,10 +553,12 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       stats.critChancePercent = (Number(combat?.critChance ?? canonical?.critChancePhysical ?? 0) * 100) + stats.luck;
       stats.critMult = Number(combat?.critMult ?? canonical?.critMultPhysical ?? 0);
       stats.damageFlatBonus = Number(combat?.damageFlatBonus ?? 0);
-      stats.manaRegen = Number(mana?.manaRegen ?? 0) + Number(passive?.manaRegenDerived ?? 0);
-      stats.manaRegenDerived = Number(passive?.manaRegenDerived ?? 0);
-      stats.staminaRegen = Number(stamina?.staminaRegen ?? 0) + Number(passive?.staminaRegenDerived ?? 0);
-      stats.staminaRegenDerived = Number(passive?.staminaRegenDerived ?? 0);
+      stats.manaRegen = Number(manaResource?.effectiveRecovery ?? 0);
+      stats.manaRegenNominal = Number(manaResource?.nominalRecovery ?? 0);
+      stats.manaRegenDerived = Number(manaResource?.passiveRecovery ?? 0);
+      stats.staminaRegen = Number(staminaResource?.effectiveRecovery ?? 0);
+      stats.staminaRegenNominal = Number(staminaResource?.nominalRecovery ?? 0);
+      stats.staminaRegenDerived = Number(staminaResource?.passiveRecovery ?? 0);
       const encumbrance = buildEncumbranceData(world, p.id);
       stats.carryWeight = encumbrance.current;
       stats.carryLimit = encumbrance.limit;
