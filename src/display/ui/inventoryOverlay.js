@@ -1,7 +1,7 @@
 import {
   appendCharacterMenuTabs, markScrollable, quickPinKeyForItem,
-  decorateButton, humanize, sanitize, bracketize,
-  hide, hideItemTooltip, rarityStyle, renderItemDetails,
+  decorateButton, humanize,
+  hide, hideItemTooltip, renderItemDetails,
   installDetachableKeyHandler, pulseRow, UI, UX_THEME, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
 import { getInventoryDefaultAction, isInventoryItemEquippable, isInventoryItemUsable } from './inventoryUtils.js';
@@ -192,8 +192,8 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
   // Scrollable bag grid. Tiles are presentation-only and do not create inventory cells.
   const list = document.createElement('div');
   list.style.display = 'grid';
-  list.style.gridTemplateColumns = 'repeat(auto-fill, minmax(76px, 1fr))';
-  list.style.gap = '6px';
+  list.style.gridTemplateColumns = 'repeat(auto-fill, minmax(44px, 1fr))';
+  list.style.gap = '3px';
   list.style.maxHeight = compact ? '42vh' : '58vh';
   list.style.overflowY = 'auto';
   list.style.overflowX = 'hidden';
@@ -218,8 +218,8 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     const row = document.createElement('button');
     row.type = 'button';
     Object.assign(row.style, {
-      display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px',
-      width: '100%', minHeight: '82px', padding: '7px 5px',
+      display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center',
+      width: '100%', minHeight: '42px', padding: '2px',
       boxSizing: 'border-box',
       background: UI.DEFAULT_BG, color: UI.TEXT, border: UI.BORDER, borderRadius: UI.RADIUS,
       cursor: 'pointer', touchAction: 'none', textAlign: 'center',
@@ -243,6 +243,12 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     }
     icon.setAttribute('aria-hidden', 'true');
 
+    const iconWrap = document.createElement('span');
+    Object.assign(iconWrap.style, {
+      position: 'relative', width: '38px', height: '38px', display: 'inline-block', flex: '0 0 38px',
+    });
+    iconWrap.appendChild(icon);
+
     const star = document.createElement('span');
     star.textContent = it.equipped ? '★' : '';
     star.style.color = '#ffd27d';
@@ -254,16 +260,6 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     pin.style.color = UX_THEME.accent;
     pin.title = isPinned ? 'Pinned to quick slot' : '';
     Object.assign(pin.style, { position: 'absolute', top: '3px', right: '4px', fontSize: '11px' });
-
-    const name = document.createElement('span');
-    const rs = rarityStyle(it.rarityName);
-    name.textContent = bracketize(sanitize(it.name || it.description || it.type));
-    Object.assign(name.style, rs);
-    name.style.maxWidth = '100%';
-    name.style.overflow = 'hidden';
-    name.style.textOverflow = 'ellipsis';
-    name.style.whiteSpace = 'nowrap';
-    name.style.fontSize = '11px';
 
     const modifierIcons = [
       ...(Array.isArray(it.socketedGems) ? it.socketedGems : []).map((gem) => ({
@@ -288,40 +284,39 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
         icon.setAttribute('aria-label', String(modifier.label));
         modifiers.appendChild(icon);
       }
-      Object.assign(modifiers.style, { position: 'absolute', bottom: '3px', left: '3px' });
-      row.appendChild(modifiers);
+      Object.assign(modifiers.style, { position: 'absolute', bottom: '1px', left: '1px' });
+      iconWrap.appendChild(modifiers);
     }
 
-    const slot = document.createElement('span');
-    slot.style.opacity = '0.7'; slot.textContent = '';
-
     const qty = document.createElement('span');
-    Object.assign(qty.style, { position: 'absolute', right: '4px', bottom: '3px', opacity: '0.95', fontWeight: 'bold', fontSize: '11px', background: 'rgba(0,0,0,.65)', borderRadius: '8px', padding: '1px 4px' });
     const count = Math.max(0, Number(it.count ?? 1) | 0);
-    qty.textContent = it.type === 'wand' ? `${count} ch` : `×${count}`;
+    const showQuantity = count > 1 || it.type === 'ammo' || it.type === 'wand';
+    if (showQuantity) {
+      Object.assign(qty.style, { position: 'absolute', right: '-1px', bottom: '-1px', opacity: '0.95', fontWeight: 'bold', fontSize: '10px', lineHeight: '13px', background: 'rgba(0,0,0,.78)', borderRadius: '7px', padding: '0 3px', zIndex: '2' });
+      qty.textContent = it.type === 'wand' ? `${count} ch` : `×${count}`;
+      iconWrap.appendChild(qty);
+    }
 
     const unpaidTag = document.createElement('span');
     if (it.unpaid) {
       const bill = Number(it.unpaidPrice || 0);
-      unpaidTag.textContent = bill > 0 ? `UNPAID ${bill}g` : 'UNPAID';
+      unpaidTag.textContent = '!';
+      unpaidTag.title = bill > 0 ? `UNPAID ${bill}g` : 'UNPAID';
       unpaidTag.style.color = '#ffbf5a';
       unpaidTag.style.fontWeight = 'bold';
-      unpaidTag.style.fontSize = '11px';
-      unpaidTag.style.marginLeft = '6px';
+      Object.assign(unpaidTag.style, { position: 'absolute', left: '3px', bottom: '2px', fontSize: '12px', lineHeight: '12px' });
     }
 
-    row.appendChild(icon);
+    row.appendChild(iconWrap);
     row.appendChild(star);
     row.appendChild(pin);
-    row.appendChild(name);
     if (it.coating && it.coating.kind) {
       const dot = document.createElement('span');
       dot.textContent = '\u2022';
       dot.style.color = it.coating.color || '#66dd66';
-      dot.style.fontSize = '14px';
+      Object.assign(dot.style, { position: 'absolute', left: '3px', top: '2px', fontSize: '14px', lineHeight: '12px' });
       row.appendChild(dot);
     }
-    row.appendChild(slot);
     if (it.unpaid) row.appendChild(unpaidTag);
     const cdRemaining = Number(it.cooldownTurnsRemaining ?? 0);
     const cdMax = Number(it.cooldownTurnsMax ?? 0);
@@ -332,10 +327,9 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
       cdSpan.textContent = cdSym;
       cdSpan.title = `Cooldown: ${cdRemaining} turns remaining`;
       cdSpan.style.color = '#ff9f3b';
+      Object.assign(cdSpan.style, { position: 'absolute', right: '3px', top: '2px', fontSize: '11px', lineHeight: '12px' });
       row.appendChild(cdSpan);
     }
-    row.appendChild(qty);
-
     row.title = `${nameFor(it)}${count > 1 ? ` · ${count} items` : ''} · hold and drag to move this stack`;
     row.setAttribute('aria-label', row.title);
     row.addEventListener('click', () => { if (!moving) setSel(idx, { revealDetail: compact }); });
@@ -347,12 +341,28 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     let moving = false;
     let moveTarget = '';
     row.draggable = true;
+    let dragGhost = null;
+    const createDragGhost = () => {
+      if (dragGhost) return dragGhost;
+      dragGhost = /** @type {HTMLElement} */ (iconWrap.cloneNode(true));
+      Object.assign(dragGhost.style, { position: 'fixed', left: '-1000px', top: '-1000px', pointerEvents: 'none', zIndex: '99999', opacity: '0.9', transform: 'scale(1.08)', filter: 'drop-shadow(0 3px 5px rgba(0,0,0,.55))' });
+      document.body.appendChild(dragGhost);
+      return dragGhost;
+    };
+    const removeDragGhost = () => {
+      dragGhost?.remove();
+      dragGhost = null;
+    };
     row.addEventListener('dragstart', (event) => {
       moving = true; row.style.opacity = '0.55';
       event.dataTransfer?.setData('text/plain', itemKey(it));
-      if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        const preview = createDragGhost();
+        event.dataTransfer.setDragImage(preview, 19, 19);
+      }
     });
-    row.addEventListener('dragend', () => { moving = false; row.style.opacity = '1'; });
+    row.addEventListener('dragend', () => { moving = false; row.style.opacity = '1'; removeDragGhost(); });
     row.addEventListener('dragover', (event) => { event.preventDefault(); row.style.outline = UI.SEL_OUTLINE; });
     row.addEventListener('dragleave', () => { if (idx !== sel) row.style.outline = 'none'; });
     row.addEventListener('drop', (event) => {
@@ -370,13 +380,14 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     row.addEventListener('pointerdown', (event) => {
       try { row.setPointerCapture(event.pointerId); } catch {}
       holdTimer = setTimeout(() => {
-        moving = true; row.draggable = true; row.style.outline = UI.SEL_OUTLINE; row.style.transform = 'scale(1.03)';
+        moving = true; row.draggable = true; row.style.outline = UI.SEL_OUTLINE; row.style.transform = 'scale(1.03)'; createDragGhost();
       }, 420);
     });
     row.addEventListener('pointermove', (event) => {
       if (!moving) return;
       const target = /** @type {HTMLElement|null} */ (document.elementFromPoint(event.clientX, event.clientY))?.closest?.('[data-stack-key]');
       moveTarget = String(target?.dataset?.stackKey || '');
+      if (dragGhost) { dragGhost.style.left = `${event.clientX + 10}px`; dragGhost.style.top = `${event.clientY + 10}px`; }
       if (moveTarget && moveTarget !== itemKey(it)) target.style.outline = UI.SEL_OUTLINE;
     });
     row.addEventListener('pointerup', () => {
@@ -390,9 +401,9 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
           renderInventory(panel, allItems, ground, slotFilter, scrollOfIdentifyId, encumbrance, pinnedKeys);
         }
       }
-      moving = false; moveTarget = ''; row.style.transform = ''; row.style.opacity = '1';
+      moving = false; moveTarget = ''; row.style.transform = ''; row.style.opacity = '1'; removeDragGhost();
     });
-    row.addEventListener('pointercancel', () => { clearTimeout(holdTimer); row.style.transform = ''; });
+    row.addEventListener('pointercancel', () => { clearTimeout(holdTimer); row.style.transform = ''; removeDragGhost(); });
     list.appendChild(row);
     return row;
   });
