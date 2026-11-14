@@ -87,6 +87,80 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     el.appendChild(row);
   }
 
+  const allItems = items;
+  const viewState = (/** @type {any} */ (panel))._inventoryViewState || {
+    category: 'all', sort: 'default', search: '', orderKeys: [],
+  };
+  const state = (/** @type {any} */ (panel))._inventoryViewState = viewState;
+  const itemKey = (it) => String(it?.entityIds?.[0] || it?.id || '');
+  const categoryFor = (it) => {
+    const type = String(it?.type || '').toLowerCase();
+    const slot = String(it?.slot || '').toLowerCase();
+    if (['equip', 'ammo', 'wand'].includes(type) || slot) return 'gear';
+    if (['potion', 'food', 'scroll', 'book', 'learn', 'tool'].includes(type)) return 'consumables';
+    if (['gem', 'spell'].includes(type) || type.includes('magic')) return 'magic';
+    return 'misc';
+  };
+  const nameFor = (it) => String(it?.name || it?.description || it?.type || 'item');
+  const rarityRank = (it) => ({ legendary: 5, epic: 4, rare: 3, uncommon: 2, common: 1 }[String(it?.rarityName || '').toLowerCase()] || 0);
+  const knownKeys = allItems.map(itemKey);
+  const orderKeys = Array.isArray(state.orderKeys) ? state.orderKeys.map(String) : [];
+  for (const key of knownKeys) if (key && !orderKeys.includes(key)) orderKeys.push(key);
+  state.orderKeys = orderKeys;
+  const orderRank = new Map(orderKeys.map((key, index) => [key, index]));
+  const stableCompare = (a, b) => String(itemKey(a)).localeCompare(String(itemKey(b)), undefined, { numeric: true });
+  const filteredItems = allItems.filter((it) => {
+    const categoryMatch = state.category === 'all' || categoryFor(it) === state.category;
+    const needle = String(state.search || '').trim().toLowerCase();
+    return categoryMatch && (!needle || nameFor(it).toLowerCase().includes(needle));
+  });
+  const sortedItems = filteredItems.slice().sort((a, b) => {
+    if (state.sort === 'name') return nameFor(a).localeCompare(nameFor(b)) || stableCompare(a, b);
+    if (state.sort === 'type') return String(a?.type || '').localeCompare(String(b?.type || '')) || nameFor(a).localeCompare(nameFor(b)) || stableCompare(a, b);
+    if (state.sort === 'rarity') return rarityRank(b) - rarityRank(a) || nameFor(a).localeCompare(nameFor(b)) || stableCompare(a, b);
+    if (state.sort === 'quantity') return Number(b?.count || 0) - Number(a?.count || 0) || nameFor(a).localeCompare(nameFor(b)) || stableCompare(a, b);
+    return (orderRank.get(itemKey(a)) ?? 100000) - (orderRank.get(itemKey(b)) ?? 100000) || stableCompare(a, b);
+  });
+  items = sortedItems;
+  countChip.textContent = `${items.length} of ${allItems.length} stack${allItems.length === 1 ? '' : 's'}`;
+
+  // The bag controls are presentation-only; inventory capacity remains authoritative in rules.
+  const controls = document.createElement('div');
+  Object.assign(controls.style, {
+    display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '8px',
+  });
+  const search = document.createElement('input');
+  search.type = 'search'; search.placeholder = 'Search your bag'; search.value = String(state.search || '');
+  search.setAttribute('aria-label', 'Search inventory');
+  Object.assign(search.style, { flex: '1 1 150px', minWidth: '130px', boxSizing: 'border-box', padding: '7px 9px', color: UI.TEXT, background: UI.DEFAULT_BG, border: UI.BORDER, borderRadius: UI.RADIUS });
+  const category = document.createElement('select');
+  category.setAttribute('aria-label', 'Inventory category');
+  const categories = [['all', 'All'], ['gear', 'Weapons & Gear'], ['consumables', 'Consumables'], ['magic', 'Magic'], ['misc', 'Materials & Misc']];
+  for (const [value, label] of categories) { const option = document.createElement('option'); option.value = value; option.textContent = label; category.appendChild(option); }
+  category.value = categories.some(([value]) => value === state.category) ? state.category : 'all';
+  const sort = document.createElement('select');
+  sort.setAttribute('aria-label', 'Sort inventory');
+  for (const [value, label] of [['default', 'Sort: Default'], ['type', 'Sort: Type'], ['name', 'Sort: Name'], ['rarity', 'Sort: Rarity'], ['quantity', 'Sort: Quantity']]) { const option = document.createElement('option'); option.value = value; option.textContent = label; sort.appendChild(option); }
+  sort.value = state.sort || 'default';
+  controls.append(search, category, sort);
+  el.appendChild(controls);
+  const refreshView = () => {
+    state.search = search.value;
+    state.category = category.value;
+    state.sort = sort.value;
+    renderInventory(panel, allItems, ground, slotFilter, scrollOfIdentifyId, encumbrance, pinnedKeys);
+  };
+  search.addEventListener('input', () => {
+    refreshView();
+    const nextSearch = panel.querySelector('input[type="search"]');
+    if (nextSearch instanceof HTMLInputElement) {
+      nextSearch.focus();
+      nextSearch.setSelectionRange(nextSearch.value.length, nextSearch.value.length);
+    }
+  });
+  category.addEventListener('change', refreshView);
+  sort.addEventListener('change', refreshView);
+
   if (!items.length) {
     (/** @type {any} */ (panel))._inventorySelectionKey = '';
     (/** @type {any} */ (panel))._inventorySelectionIndex = 0;
@@ -115,12 +189,12 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
   });
   el.appendChild(layout);
 
-  // Keyboard-driven list
+  // Scrollable bag grid. Tiles are presentation-only and do not create inventory cells.
   const list = document.createElement('div');
-  list.style.display = 'flex';
-  list.style.flexDirection = 'column';
-  list.style.gap = '4px';
-  list.style.maxHeight = compact ? '28vh' : '58vh';
+  list.style.display = 'grid';
+  list.style.gridTemplateColumns = 'repeat(auto-fill, minmax(76px, 1fr))';
+  list.style.gap = '6px';
+  list.style.maxHeight = compact ? '42vh' : '58vh';
   list.style.overflowY = 'auto';
   list.style.overflowX = 'hidden';
   list.style.paddingRight = '2px';
@@ -141,43 +215,55 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
   let sel = 0;
 
   const rows = items.map((it, idx) => {
-    const row = document.createElement('div');
+    const row = document.createElement('button');
+    row.type = 'button';
     Object.assign(row.style, {
-      display: 'flex', alignItems: 'center', gap: '8px',
-      width: '100%', padding: '6px 8px',
+      display: 'flex', position: 'relative', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px',
+      width: '100%', minHeight: '82px', padding: '7px 5px',
       boxSizing: 'border-box',
-      background: UI.DEFAULT_BG, color: UI.TEXT, border: UI.BORDER, borderRadius: UI.RADIUS
+      background: UI.DEFAULT_BG, color: UI.TEXT, border: UI.BORDER, borderRadius: UI.RADIUS,
+      cursor: 'pointer', touchAction: 'none', textAlign: 'center',
     });
     if (it.unpaid) {
       row.style.borderColor = '#d9963b';
       row.style.background = 'rgba(65, 35, 10, 0.75)';
     }
     row.dataset.itemId = String(it.id);
+    row.dataset.stackKey = itemKey(it);
     row.tabIndex = 0;
     const pinKey = quickPinKeyForItem(it);
     const isPinned = pinKey ? pinnedSet.has(pinKey) : false;
 
+    const icon = document.createElement('span');
+    const iconId = it.identified === false ? '' : String(it.iconId || it.identity || '');
+    const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, iconId, String(it.glyph || '◆'), 38);
+    if (!hasIcon) {
+      icon.textContent = String(it.glyph || (it.type === 'potion' ? '◈' : it.type === 'scroll' ? '▤' : it.type === 'gem' ? '◇' : '◆'));
+      Object.assign(icon.style, { fontSize: '30px', lineHeight: '38px', color: it.glyphColor || UX_THEME.accent });
+    }
+    icon.setAttribute('aria-hidden', 'true');
+
     const star = document.createElement('span');
-    star.textContent = it.equipped ? '*' : ' ';
-    star.style.width = '1ch';
+    star.textContent = it.equipped ? '★' : '';
     star.style.color = '#ffd27d';
     star.title = it.equipped ? 'Equipped' : '';
+    Object.assign(star.style, { position: 'absolute', top: '3px', left: '4px', fontSize: '12px' });
 
     const pin = document.createElement('span');
     pin.textContent = isPinned ? '\uD83D\uDCCC' : ' ';
-    pin.style.width = '1ch';
     pin.style.color = UX_THEME.accent;
     pin.title = isPinned ? 'Pinned to quick slot' : '';
+    Object.assign(pin.style, { position: 'absolute', top: '3px', right: '4px', fontSize: '11px' });
 
     const name = document.createElement('span');
     const rs = rarityStyle(it.rarityName);
     name.textContent = bracketize(sanitize(it.name || it.description || it.type));
     Object.assign(name.style, rs);
-    name.style.flex = '1 1 auto';
-    name.style.minWidth = '0';
+    name.style.maxWidth = '100%';
     name.style.overflow = 'hidden';
     name.style.textOverflow = 'ellipsis';
     name.style.whiteSpace = 'nowrap';
+    name.style.fontSize = '11px';
 
     const modifierIcons = [
       ...(Array.isArray(it.socketedGems) ? it.socketedGems : []).map((gem) => ({
@@ -202,17 +288,17 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
         icon.setAttribute('aria-label', String(modifier.label));
         modifiers.appendChild(icon);
       }
+      Object.assign(modifiers.style, { position: 'absolute', bottom: '3px', left: '3px' });
       row.appendChild(modifiers);
     }
 
     const slot = document.createElement('span');
-    slot.style.opacity = '0.7'; slot.textContent = it.slot ? `(${it.slot})` : '';
+    slot.style.opacity = '0.7'; slot.textContent = '';
 
     const qty = document.createElement('span');
-    qty.style.marginLeft = 'auto';
-    qty.style.opacity = '0.8';
+    Object.assign(qty.style, { position: 'absolute', right: '4px', bottom: '3px', opacity: '0.95', fontWeight: 'bold', fontSize: '11px', background: 'rgba(0,0,0,.65)', borderRadius: '8px', padding: '1px 4px' });
     const count = Math.max(0, Number(it.count ?? 1) | 0);
-    qty.textContent = it.type === 'wand' ? `${count} ch` : `x${count}`;
+    qty.textContent = it.type === 'wand' ? `${count} ch` : `×${count}`;
 
     const unpaidTag = document.createElement('span');
     if (it.unpaid) {
@@ -224,6 +310,7 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
       unpaidTag.style.marginLeft = '6px';
     }
 
+    row.appendChild(icon);
     row.appendChild(star);
     row.appendChild(pin);
     row.appendChild(name);
@@ -249,11 +336,63 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     }
     row.appendChild(qty);
 
-    row.addEventListener('click', () => { setSel(idx, { revealDetail: compact }); });
+    row.title = `${nameFor(it)}${count > 1 ? ` · ${count} items` : ''} · hold and drag to move this stack`;
+    row.setAttribute('aria-label', row.title);
+    row.addEventListener('click', () => { if (!moving) setSel(idx, { revealDetail: compact }); });
     row.addEventListener('dblclick', () => {
       setSel(idx);
       defaultAction();
     });
+    let holdTimer = 0;
+    let moving = false;
+    let moveTarget = '';
+    row.draggable = true;
+    row.addEventListener('dragstart', (event) => {
+      moving = true; row.style.opacity = '0.55';
+      event.dataTransfer?.setData('text/plain', itemKey(it));
+      if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+    });
+    row.addEventListener('dragend', () => { moving = false; row.style.opacity = '1'; });
+    row.addEventListener('dragover', (event) => { event.preventDefault(); row.style.outline = UI.SEL_OUTLINE; });
+    row.addEventListener('dragleave', () => { if (idx !== sel) row.style.outline = 'none'; });
+    row.addEventListener('drop', (event) => {
+      event.preventDefault();
+      const from = String(event.dataTransfer?.getData('text/plain') || '');
+      const to = itemKey(it);
+      if (from && to && from !== to) {
+        const next = Array.isArray(state.orderKeys) ? state.orderKeys.map(String) : [];
+        const fromIndex = next.indexOf(from); const toIndex = next.indexOf(to);
+        if (fromIndex >= 0 && toIndex >= 0) [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+        state.orderKeys = next;
+        renderInventory(panel, allItems, ground, slotFilter, scrollOfIdentifyId, encumbrance, pinnedKeys);
+      }
+    });
+    row.addEventListener('pointerdown', (event) => {
+      try { row.setPointerCapture(event.pointerId); } catch {}
+      holdTimer = setTimeout(() => {
+        moving = true; row.draggable = true; row.style.outline = UI.SEL_OUTLINE; row.style.transform = 'scale(1.03)';
+      }, 420);
+    });
+    row.addEventListener('pointermove', (event) => {
+      if (!moving) return;
+      const target = /** @type {HTMLElement|null} */ (document.elementFromPoint(event.clientX, event.clientY))?.closest?.('[data-stack-key]');
+      moveTarget = String(target?.dataset?.stackKey || '');
+      if (moveTarget && moveTarget !== itemKey(it)) target.style.outline = UI.SEL_OUTLINE;
+    });
+    row.addEventListener('pointerup', () => {
+      clearTimeout(holdTimer);
+      if (moving && moveTarget && moveTarget !== itemKey(it)) {
+        const next = state.orderKeys.map(String);
+        const fromIndex = next.indexOf(itemKey(it)); const toIndex = next.indexOf(moveTarget);
+        if (fromIndex >= 0 && toIndex >= 0) {
+          [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+          state.orderKeys = next;
+          renderInventory(panel, allItems, ground, slotFilter, scrollOfIdentifyId, encumbrance, pinnedKeys);
+        }
+      }
+      moving = false; moveTarget = ''; row.style.transform = ''; row.style.opacity = '1';
+    });
+    row.addEventListener('pointercancel', () => { clearTimeout(holdTimer); row.style.transform = ''; });
     list.appendChild(row);
     return row;
   });
