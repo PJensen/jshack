@@ -5,7 +5,7 @@ import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
 import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
 
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
@@ -2033,15 +2033,26 @@ export function renderItemDetails(container, it) {
   });
   const glyphText = String(it.glyph || '').trim();
   const identity = String(it.identity || it.details?.identity || '');
-  if (glyphText || ITEM_ICON_ATLAS.entries.has(identity)) {
+  const isSpell = String(it.type || '') === 'spell';
+  const iconAtlas = isSpell ? SPELL_ICON_ATLAS : ITEM_ICON_ATLAS;
+  const safeIdentity = it.identified === false ? '' : identity;
+  const iconId = isSpell
+    ? String(it.iconId || it.spellId || String(it.id || '').replace(/^spell:/, ''))
+    : safeIdentity;
+  const safeFallback = isSpell
+    ? (glyphText || String(it.symbol || '✦'))
+    : (it.identified === false
+      ? ({ potion: '◈', scroll: '▤', wand: '⚡', gem: '◇', ammo: '➶', food: '♨' }[String(it.type || '')] || '◇')
+      : glyphText);
+  if (safeFallback || iconAtlas.entries.has(iconId)) {
     const glyphSpan = document.createElement('span');
-    const hasAtlasIcon = applyAtlasIcon(glyphSpan, ITEM_ICON_ATLAS, identity, glyphText, 24);
+    const hasAtlasIcon = applyAtlasIcon(glyphSpan, iconAtlas, iconId, safeFallback, isSpell ? 28 : 24);
     Object.assign(glyphSpan.style, {
       color: String(it.glyphColor || '#cfe8ff'),
       fontSize: '14px',
       lineHeight: '1',
     });
-    if (!hasAtlasIcon) glyphSpan.textContent = glyphText;
+    if (!hasAtlasIcon) glyphSpan.textContent = safeFallback;
     title.appendChild(glyphSpan);
   }
   const nameSpan = document.createElement('span');
