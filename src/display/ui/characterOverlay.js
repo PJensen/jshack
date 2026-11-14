@@ -5,7 +5,33 @@ import {
   CHARACTER_SLOT_ORDER, installDetachableKeyHandler, pulseRow,
   UI, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
+
+/**
+ * Resolve the primary equipment-row artwork without exposing unidentified gear.
+ * @param {any} item
+ * @param {string} slot
+ * @returns {{ atlas: any, id: string, fallback: string, size: number }}
+ */
+export function resolveEquipmentIcon(item, slot) {
+  const type = String(item?.type || '').toLowerCase();
+  const isSpell = slot === 'brain' || type === 'spell';
+  if (isSpell) {
+    const id = String(item?.iconId || item?.spellId || item?.id || '').replace(/^spell:/, '');
+    return { atlas: SPELL_ICON_ATLAS, id, fallback: String(item?.symbol || item?.glyph || '✦'), size: 30 };
+  }
+
+  const safeFallback = {
+    potion: '◈', scroll: '▤', wand: '⚡', gem: '◇', ammo: '➶', food: '♨',
+  }[type] || (item?.slot ? '◆' : '◇');
+  const identified = item?.identified !== false;
+  return {
+    atlas: ITEM_ICON_ATLAS,
+    id: identified ? String(item?.iconId || item?.identity || '') : '',
+    fallback: identified ? String(item?.glyph || safeFallback) : safeFallback,
+    size: 30,
+  };
+}
 
 /**
  * @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel
@@ -540,6 +566,17 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
     const slotText = humanize(rowData.slot);
     slot.textContent = slotText ? `${slotText.charAt(0).toUpperCase()}${slotText.slice(1)}:` : `${rowData.slot}:`;
 
+    const primaryIcon = resolveEquipmentIcon(rowData.item, rowData.slot);
+    const icon = document.createElement('span');
+    const hasPrimaryIcon = rowData.item && applyAtlasIcon(
+      icon, primaryIcon.atlas, primaryIcon.id, primaryIcon.fallback, primaryIcon.size,
+    );
+    if (rowData.item && !hasPrimaryIcon) {
+      icon.textContent = primaryIcon.fallback;
+      Object.assign(icon.style, { display: 'inline-block', width: `${primaryIcon.size}px`, height: `${primaryIcon.size}px`, lineHeight: `${primaryIcon.size}px`, fontSize: '24px', textAlign: 'center', color: rowData.item.glyphColor || '#cfe8ff', flex: '0 0 auto' });
+    }
+    icon.setAttribute('aria-hidden', 'true');
+
     const name = document.createElement('span');
     name.style.flex = '1 1 auto';
     name.style.minWidth = '0';
@@ -556,6 +593,7 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
     }
 
     row.appendChild(slot);
+    if (rowData.item) row.appendChild(icon);
     row.appendChild(name);
     const modifierIcons = [
       ...(Array.isArray(rowData.item?.socketedGems) ? rowData.item.socketedGems : []).map((gem) => ({
