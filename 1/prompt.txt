@@ -1,0 +1,3 @@
+I love it -- merge commit, should be:
+
+merge: {feature description here}
