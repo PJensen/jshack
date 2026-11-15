@@ -19,48 +19,47 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-            import base64, hashlib, io, json, pathlib, subprocess, zipfile
-            from PIL import Image, ImageChops
-            sheet_path = pathlib.Path("assets/icons/items/sheet.webp")
-            manifest_path = pathlib.Path("assets/icons/items/manifest.js")
-            out = pathlib.Path("out/assets/icons/items")
-            out.mkdir(parents=True, exist_ok=True)
-            assert subprocess.check_output(["git", "hash-object", str(sheet_path)], text=True).strip() == "912cace7ba6c2388a2df1a7dcda08b448d1a81d6", "Source WebP is not the verified master blob"
-            assert subprocess.check_output(["git", "hash-object", str(manifest_path)], text=True).strip() == "0bd53514e5db83b31232b0359711106a83ca4503", "Source manifest is not the verified master blob"
-            raw = sheet_path.read_bytes()
-            original = Image.open(io.BytesIO(raw)).convert("RGBA")
-            assert original.size == (768,672), original.size
-            source = manifest_path.read_text(encoding="utf-8")
-            prefix, body = source.split("export default ", 1)
-            manifest = json.loads(body.rstrip().removesuffix(";"))
-            assert len(manifest["entries"]) == 512
-            seen = {e["id"] for e in manifest["entries"]}
-            assert not any(id.startswith("key_") for id in seen)
-            assert len({(e["x"],e["y"]) for e in manifest["entries"]}) == 504
-            new_keys = ["key","key_shop","key_gem_shop","key_apothecary","key_book_shop","key_general_store","key_enchanter_shop"]
-            manifest["entries"].extend({"id":id,"x":0,"y":21} for id in new_keys)
-            key = Image.open(io.BytesIO(base64.b64decode(__import__("os").environ["KEY64"]))).convert("RGBA")
-            assert key.size == (32,32)
-            patched = Image.new("RGBA",(768,704),(0,0,0,255))
-            patched.paste(original,(0,0))
-            patched.paste(key,(0,672))
-            out_sheet=out / "sheet.webp"
-            patched.save(out_sheet, "WEBP", lossless=True, method=6)
-            decoded = Image.open(out_sheet).convert("RGBA")
-            assert decoded.size == (768,704)
-            assert ImageChops.difference(original, decoded.crop((0,0,768,672))).getbbox() is None, "Original master pixels changed"
-            assert ImageChops.difference(key, decoded.crop((0,672,32,704))).getbbox() is None, "Key pixels changed"
-            out_manifest=out / "manifest.js"
-            out_manifest.write_text(prefix+"export default "+json.dumps(manifest,indent=2)+";\n",encoding="utf-8")
-            check = json.loads(out_manifest.read_text().split("export default ",1)[1].rstrip().removesuffix(";"))
-            assert check["entries"][:512] == json.loads(body.rstrip().removesuffix(";"))["entries"]
-            assert len(check["entries"]) == 519
-            with zipfile.ZipFile("out/jshack-items-key-from-master.zip","w",compression=zipfile.ZIP_DEFLATED) as z:
-                z.write(out_sheet,"assets/icons/items/sheet.webp")
-                z.write(out_manifest,"assets/icons/items/manifest.js")
-            print("Validated: master 512 identities preserved, original 768x672 pixels identical, 7 key aliases in 768x704 atlas.")
-                      PY
-      - uses: actions/upload-artifact@v4
+          import base64, hashlib, io, json, pathlib, subprocess, zipfile
+          from PIL import Image, ImageChops
+          sheet_path = pathlib.Path("assets/icons/items/sheet.webp")
+          manifest_path = pathlib.Path("assets/icons/items/manifest.js")
+          out = pathlib.Path("out/assets/icons/items")
+          out.mkdir(parents=True, exist_ok=True)
+          assert subprocess.check_output(["git", "hash-object", str(sheet_path)], text=True).strip() == "912cace7ba6c2388a2df1a7dcda08b448d1a81d6", "Source WebP is not the verified master blob"
+          assert subprocess.check_output(["git", "hash-object", str(manifest_path)], text=True).strip() == "0bd53514e5db83b31232b0359711106a83ca4503", "Source manifest is not the verified master blob"
+          raw = sheet_path.read_bytes()
+          original = Image.open(io.BytesIO(raw)).convert("RGBA")
+          assert original.size == (768,672), original.size
+          source = manifest_path.read_text(encoding="utf-8")
+          prefix, body = source.split("export default ", 1)
+          manifest = json.loads(body.rstrip().removesuffix(";"))
+          assert len(manifest["entries"]) == 512
+          seen = {e["id"] for e in manifest["entries"]}
+          assert not any(id.startswith("key_") for id in seen)
+          assert len({(e["x"],e["y"]) for e in manifest["entries"]}) == 504
+          new_keys = ["key","key_shop","key_gem_shop","key_apothecary","key_book_shop","key_general_store","key_enchanter_shop"]
+          manifest["entries"].extend({"id":id,"x":0,"y":21} for id in new_keys)
+          key = Image.open(io.BytesIO(base64.b64decode(__import__("os").environ["KEY64"]))).convert("RGBA")
+          assert key.size == (32,32)
+          patched = Image.new("RGBA",(768,704),(0,0,0,255))
+          patched.paste(original,(0,0))
+          patched.paste(key,(0,672))
+          out_sheet=out / "sheet.webp"
+          patched.save(out_sheet, "WEBP", lossless=True, method=6)
+          decoded = Image.open(out_sheet).convert("RGBA")
+          assert decoded.size == (768,704)
+          assert ImageChops.difference(original, decoded.crop((0,0,768,672))).getbbox() is None, "Original master pixels changed"
+          assert ImageChops.difference(key, decoded.crop((0,672,32,704))).getbbox() is None, "Key pixels changed"
+          out_manifest=out / "manifest.js"
+          out_manifest.write_text(prefix+"export default "+json.dumps(manifest,indent=2)+";\n",encoding="utf-8")
+          check = json.loads(out_manifest.read_text().split("export default ",1)[1].rstrip().removesuffix(";"))
+          assert check["entries"][:512] == json.loads(body.rstrip().removesuffix(";"))["entries"]
+          assert len(check["entries"]) == 519
+          with zipfile.ZipFile("out/jshack-items-key-from-master.zip","w",compression=zipfile.ZIP_DEFLATED) as z:
+              z.write(out_sheet,"assets/icons/items/sheet.webp")
+              z.write(out_manifest,"assets/icons/items/manifest.js")
+          print("Validated: master 512 identities preserved, original 768x672 pixels identical, 7 key aliases in 768x704 atlas.")
+          PY      - uses: actions/upload-artifact@v4
         with:
           name: jshack-items-key-exact-master
           path: out/jshack-items-key-from-master.zip
