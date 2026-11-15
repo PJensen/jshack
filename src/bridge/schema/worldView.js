@@ -67,6 +67,7 @@ import {
 } from "../../rules/utils/facing.js";
 import { readPlayerPerceptionState } from "../../rules/utils/perceptionState.js";
 import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
+import { hasEquippedProcPackage } from "../../rules/utils/spellProcGear.js";
 import { descendantsWith } from "../../rules/utils/topology.js";
 import { chebyshevDistance, hasMindForEsp, isFixedDecorationEntity, isPerceptionMonster } from "../../rules/utils/perceptionChannels.js";
 import { PERCEPTION_TUNING } from "../../rules/environment/dungeon/perceptionTuning.js";
@@ -517,15 +518,16 @@ function projectDisplayTags(world, id, rec) {
 		}
 	}
 
-	if (!ae || !Array.isArray(ae.effects)) return;
-	for (let i = 0; i < ae.effects.length; i++) {
-		const e = ae.effects[i];
-		if (!e || (Number(e.turnsLeft || 0) | 0) <= 0) continue;
-		if ((Number(e.onsetLeft || 0) | 0) > 0) continue;
-		const t = normalizeDisplayStatusType(canonicalStatusKey(e.key));
-		if (t === 'stasis') continue;
-		if (!t || !DISPLAY_STATUS_TAGS.has(t)) continue;
-		if (!rec.tags.includes(t)) rec.tags.push(t);
+	if (ae && Array.isArray(ae.effects)) {
+		for (let i = 0; i < ae.effects.length; i++) {
+			const e = ae.effects[i];
+			if (!e || (Number(e.turnsLeft || 0) | 0) <= 0) continue;
+			if ((Number(e.onsetLeft || 0) | 0) > 0) continue;
+			const t = normalizeDisplayStatusType(canonicalStatusKey(e.key));
+			if (t === 'stasis') continue;
+			if (!t || !DISPLAY_STATUS_TAGS.has(t)) continue;
+			if (!rec.tags.includes(t)) rec.tags.push(t);
+		}
 	}
 }
 
@@ -870,22 +872,39 @@ function projectProcStateTags(world, id, rec) {
 	// Reuse ActiveEffects already fetched by projectDisplayTags when available
 	const ae = /** @type any */ (rec._ae !== undefined ? rec._ae : world.get(id, ActiveEffects));
 	rec._ae = undefined; // clean up transient field
-	if (!ae || !Array.isArray(ae.effects)) return;
-	for (const e of ae.effects) {
-		const key = String(e?.key || '');
-		if (!ENTITY_PROC_STATE_KEYS.has(key)) continue;
-		const stacks = Math.max(1, Number(e?.stacks || 1));
-		const turnsLeft = Math.max(0, Number(e?.turnsLeft || 0) | 0);
-		const potency = Number.isFinite(Number(e?.potency)) ? Number(e?.potency) : 1;
+	if (ae && Array.isArray(ae.effects)) {
+		for (const e of ae.effects) {
+			const key = String(e?.key || '');
+			if (!ENTITY_PROC_STATE_KEYS.has(key)) continue;
+			const stacks = Math.max(1, Number(e?.stacks || 1));
+			const turnsLeft = Math.max(0, Number(e?.turnsLeft || 0) | 0);
+			const potency = Number.isFinite(Number(e?.potency)) ? Number(e?.potency) : 1;
+			const info = PROC_STATE_INFO_BY_KEY.get(key);
+			if (!rec.procStates) rec.procStates = [];
+			rec.procStates.push({
+				key,
+				stacks,
+				turnsLeft,
+				potency,
+				name: String(info?.name || ""),
+				description: String(info?.description || ""),
+			});
+		}
+	}
+	const vitality = world.get(id, Vitality);
+	const maxHp = Number(vitality?.maxHp || 0);
+	const hp = Number(vitality?.hp || 0);
+	if (maxHp > 0 && hp / maxHp < 0.5 && hasEquippedProcPackage(world, id, "lastStand")) {
+		const key = "last_stand";
 		const info = PROC_STATE_INFO_BY_KEY.get(key);
 		if (!rec.procStates) rec.procStates = [];
 		rec.procStates.push({
 			key,
-			stacks,
-			turnsLeft,
-			potency,
-			name: String(info?.name || ""),
-			description: String(info?.description || ""),
+			stacks: 1,
+			turnsLeft: Infinity,
+			potency: 0.25,
+			name: String(info?.name || "Last Stand"),
+			description: String(info?.description || "Below 50% HP, gain 25% critical chance."),
 		});
 	}
 }

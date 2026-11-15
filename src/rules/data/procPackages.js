@@ -2363,7 +2363,7 @@ const PROC_PACKAGE_SPECS = Object.freeze([
     params: Object.freeze({ healthThresholdPercent: 50, critChancePercent: 25 }),
     summary: "Below {healthThresholdPercent}% HP, gain {critChancePercent}% critical chance.",
     display: Object.freeze({ context: "Equip", format: "{summary}" }),
-    stateKeys: Object.freeze([]),
+    stateKeys: Object.freeze(["last_stand"]),
     hostIdeas: Object.freeze(["bloodied circlets", "desperation mail", "duelist relics"]),
     passiveExpressions: Object.freeze([]),
     procTrees: Object.freeze([
