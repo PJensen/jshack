@@ -5,7 +5,28 @@
   "branch": "master",
   "checkpoints_count": 2,
   "files_touched": [
-    "VERSION"
+    "VERSION",
+    "docs/architecture/STAT_INVENTORY_ISSUE_187.md",
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/overlayUtils.js",
+    "src/display/ui/statusLine.js",
+    "src/main/ui/hudFeeds.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/rules/components/Equipment.js",
+    "src/rules/systems/manaRegenerationSystem.js",
+    "src/rules/systems/staminaRegenerationSystem.js",
+    "src/rules/utils/canonicalStats.js",
+    "src/rules/utils/derivedStats.js",
+    "src/rules/utils/expectedDamage.js",
+    "src/rules/utils/passiveBonuses.js",
+    "src/rules/utils/resolveCombatSnapshot.js",
+    "src/rules/utils/resourceStats.js",
+    "tests/equipmentSystem.test.mjs",
+    "tests/expectedDamage.test.mjs",
+    "tests/hudFeedsSunswordDock.test.mjs",
+    "tests/inventoryDataProvider.test.mjs",
+    "tests/passiveBonusesArchitectureGuards.test.mjs",
+    "tests/resourceStats.test.mjs"
   ],
   "sessions": [
     {
@@ -20,15 +41,16 @@
       "transcript": "/1/full.jsonl",
       "compact_transcript": "/1/transcript.jsonl",
       "content_hash": "/1/content_hash.txt",
-      "prompt": "/1/prompt.txt"
+      "prompt": ""
     }
   ],
   "token_usage": {
-    "input_tokens": 9792,
+    "input_tokens": 2361,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 2816000,
-    "output_tokens": 2605,
-    "api_call_count": 19
+    "cache_read_tokens": 832256,
+    "output_tokens": 570,
+    "api_call_count": 5,
+    "subagent_tokens_complete": true
   },
   "redaction": {
     "replacements": 0,
