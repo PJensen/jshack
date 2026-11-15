@@ -9,7 +9,7 @@ import { GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { createPinnedItemSlots } from './pinnedItemSlots.js';
 import { createMobileSpellRadial } from './mobileRadial.js';
 import { createPinnedSpellDock } from './spellDock.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS, STATUS_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, getIconAtlas, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS, STATUS_ICON_ATLAS } from './atlasIcons.js';
 
 const HUD_BUTTON_BG = 'linear-gradient(180deg, #2a2f35 0%, #1f2329 100%)';
 const HUD_BUTTON_ACTIVE_BG = 'linear-gradient(180deg, #3a3328 0%, #2a231c 100%)';
@@ -1117,7 +1117,7 @@ export function initHUD() {
       iconSpan.style.lineHeight = '1';
       applyAtlasIcon(
         iconSpan,
-        btn.dataset.iconAtlas === 'items' ? ITEM_ICON_ATLAS : SPELL_ICON_ATLAS,
+        getIconAtlas(btn.dataset.iconAtlas || 'spells'),
         btn.dataset.iconId || '',
         icon,
         22,
@@ -1729,7 +1729,7 @@ export function initHUD() {
       if (spell && spell.id) {
         applyAtlasIcon(
           iconSpan,
-          spell.iconAtlas === 'items' ? ITEM_ICON_ATLAS : SPELL_ICON_ATLAS,
+          spell.kind === 'item-use' ? getIconAtlas(spell.iconAtlas || 'items') : SPELL_ICON_ATLAS,
           spell.iconId || spell.id,
           spell.symbol || ACTION_ICONS.cast,
           28,

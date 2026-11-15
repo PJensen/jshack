@@ -5,7 +5,7 @@ import {
   installDetachableKeyHandler, pulseRow, UI, UX_THEME, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
 import { getInventoryDefaultAction, isInventoryItemEquippable, isInventoryItemUsable } from './inventoryUtils.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, getIconAtlas } from './atlasIcons.js';
 
 /** @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel @param {Array<any>} items @param {any} [ground] @param {string} [slotFilter] */
 export function renderInventory(panel, items, ground, slotFilter = '', scrollOfIdentifyId = 0, encumbrance = null, pinnedKeys = []) {
@@ -236,7 +236,7 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
 
     const icon = document.createElement('span');
     const iconId = it.identified === false ? '' : String(it.iconId || it.identity || '');
-    const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, iconId, String(it.glyph || '◆'), 38);
+    const hasIcon = applyAtlasIcon(icon, getIconAtlas(it.iconAtlas || 'items'), iconId, String(it.glyph || '◆'), 38);
     if (!hasIcon) {
       icon.textContent = String(it.glyph || (it.type === 'potion' ? '◈' : it.type === 'scroll' ? '▤' : it.type === 'gem' ? '◇' : '◆'));
       Object.assign(icon.style, { fontSize: '30px', lineHeight: '38px', color: it.glyphColor || UX_THEME.accent });

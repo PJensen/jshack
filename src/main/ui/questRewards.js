@@ -65,6 +65,7 @@ export function describeQuestRewardItem(itemId) {
       name,
       slot,
       iconId: id,
+      iconAtlas: id.startsWith("corpse_") ? "corpses" : "items",
       rarityName,
       description,
       bonuses: def?.bonuses && typeof def.bonuses === "object" ? { ...def.bonuses } : {},

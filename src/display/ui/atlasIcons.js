@@ -1,10 +1,12 @@
 import spellManifest from "../../../assets/icons/spells/manifest.js";
 import itemManifest from "../../../assets/icons/items/manifest.js";
 import statusManifest from "../../../assets/icons/statuses/manifest.js";
+import corpseManifest from "../../../assets/icons/corpses/manifest.js";
 
 const SPELL_SHEET_URL = new URL("../../../assets/icons/spells/sheet.webp", import.meta.url).href;
 const ITEM_SHEET_URL = new URL("../../../assets/icons/items/sheet.webp", import.meta.url).href;
 const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", import.meta.url).href;
+const CORPSE_SHEET_URL = new URL("../../../assets/icons/corpses/sheet.webp", import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();
@@ -25,6 +27,19 @@ function buildAtlas(manifest, sheetUrl) {
 export const SPELL_ICON_ATLAS = buildAtlas(spellManifest, SPELL_SHEET_URL);
 export const ITEM_ICON_ATLAS = buildAtlas(itemManifest, ITEM_SHEET_URL);
 export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
+export const CORPSE_ICON_ATLAS = buildAtlas(corpseManifest, CORPSE_SHEET_URL);
+
+export const ICON_ATLASES = Object.freeze({
+  spells: SPELL_ICON_ATLAS,
+  items: ITEM_ICON_ATLAS,
+  statuses: STATUS_ICON_ATLAS,
+  corpses: CORPSE_ICON_ATLAS,
+});
+
+/** @param {string} name */
+export function getIconAtlas(name) {
+  return ICON_ATLASES[String(name || "").trim()] || ITEM_ICON_ATLAS;
+}
 
 /**
  * Apply a WebP atlas icon to an existing text-fallback element.
@@ -37,7 +52,8 @@ export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
  */
 export function applyAtlasIcon(element, atlas, id, fallback = "", size = 24) {
   if (!element) return false;
-  const entry = atlas?.entries?.get(String(id || "").trim());
+  const normalizedId = String(id || "").trim();
+  const entry = atlas?.entries?.get(normalizedId);
   element.textContent = fallback;
   element.style.backgroundImage = "";
   element.style.backgroundSize = "";

@@ -5,7 +5,7 @@ import {
   CHARACTER_SLOT_ORDER, installDetachableKeyHandler, pulseRow,
   UI, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
-import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, getIconAtlas, SPELL_ICON_ATLAS } from './atlasIcons.js';
 
 /**
  * Resolve the primary equipment-row artwork without exposing unidentified gear.
@@ -26,7 +26,7 @@ export function resolveEquipmentIcon(item, slot) {
   }[type] || (item?.slot ? '◆' : '◇');
   const identified = item?.identified !== false;
   return {
-    atlas: ITEM_ICON_ATLAS,
+    atlas: getIconAtlas(item?.iconAtlas || 'items'),
     id: identified ? String(item?.iconId || item?.identity || '') : '',
     fallback: identified ? String(item?.glyph || safeFallback) : safeFallback,
     size: 30,

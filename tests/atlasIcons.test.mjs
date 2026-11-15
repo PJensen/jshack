@@ -3,6 +3,9 @@ import {
   ITEM_ICON_ATLAS,
   SPELL_ICON_ATLAS,
   STATUS_ICON_ATLAS,
+  CORPSE_ICON_ATLAS,
+  ICON_ATLASES,
+  getIconAtlas,
   applyAtlasIcon,
 } from "../src/display/ui/atlasIcons.js";
 
@@ -22,11 +25,14 @@ Deno.test("icon atlases point at WebP sheets and preserve status fallbacks", () 
   assert(ITEM_ICON_ATLAS.entries.has("scroll_identify"));
   assert(ITEM_ICON_ATLAS.entries.has("potion_health"));
   assert(ITEM_ICON_ATLAS.entries.has("healing_potion"));
+  assert(CORPSE_ICON_ATLAS.entries.has("corpse_rat"));
   assert(STATUS_ICON_ATLAS.entries.has("satiated"));
   assert(STATUS_ICON_ATLAS.entries.has("stunned"));
   assert(STATUS_ICON_ATLAS.entries.has("unknown"));
   assert(SPELL_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/spells/sheet.webp"));
   assert(ITEM_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/items/sheet.webp"));
+  assert(CORPSE_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/corpses/sheet.webp"));
+  assertEquals(ICON_ATLASES.corpses, CORPSE_ICON_ATLAS);
 });
 
 Deno.test("applyAtlasIcon renders a mapped icon and falls back for unknown IDs", () => {
@@ -41,4 +47,11 @@ Deno.test("applyAtlasIcon renders a mapped icon and falls back for unknown IDs",
   const fallback = stubElement();
   assert(!applyAtlasIcon(fallback, SPELL_ICON_ATLAS, "satiated", "🍽️", 28));
   assertEquals(fallback.textContent, "🍽️");
+});
+
+Deno.test("corpse identities use the dedicated corpse atlas through item surfaces", () => {
+  const corpse = stubElement();
+  assert(applyAtlasIcon(corpse, getIconAtlas("corpses"), "corpse_rat", "%", 38));
+  assertStringIncludes(corpse.style.backgroundImage, "/assets/icons/corpses/sheet.webp");
+  assertEquals(corpse.style.backgroundSize, "900% 800%");
 });

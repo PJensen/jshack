@@ -1,4 +1,4 @@
-import { applyAtlasIcon, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, getIconAtlas, SPELL_ICON_ATLAS } from './atlasIcons.js';
 
 export function createPinnedSpellDock(mobileLayoutMq) {
   const SLOT_COUNT = 4;
@@ -397,7 +397,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
 
       if (entry?.kind === 'item-use' && entry?.id) {
         anyAssigned = true;
-        applyAtlasIcon(s.glyphSpan, ITEM_ICON_ATLAS, entry.iconId || entry.identity, entry.symbol || '!', 28);
+        applyAtlasIcon(s.glyphSpan, getIconAtlas(entry.iconAtlas || 'items'), entry.iconId || entry.identity, entry.symbol || '!', 28);
         s.glyphSpan.style.opacity = '1';
         const cdRemaining = Number(entry.cdRemaining || 0);
         const cdMax = Number(entry.cdMax || 0);
@@ -422,7 +422,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
         anyAssigned = true;
         applyAtlasIcon(
           s.glyphSpan,
-          entry.iconAtlas === 'items' ? ITEM_ICON_ATLAS : SPELL_ICON_ATLAS,
+          entry.kind === 'item-use' ? getIconAtlas(entry.iconAtlas || 'items') : SPELL_ICON_ATLAS,
           entry.iconId || entry.id,
           entry.symbol || '\u2726',
           28,
