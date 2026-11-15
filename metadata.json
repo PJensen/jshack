@@ -1,0 +1,51 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7G81EKAYFQFZ02FGSCNTKZX",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 9,
+  "files_touched": [
+    "src/display/ui/atlasIcons.js",
+    "src/display/ui/characterOverlay.js",
+    "src/display/ui/hud.js",
+    "src/display/ui/inventoryOverlay.js",
+    "src/display/ui/overlayRenders.js",
+    "src/display/ui/overlayUtils.js",
+    "src/display/ui/pinnedItemSlots.js",
+    "src/display/ui/spellDock.js",
+    "src/main/ui/inventoryDataProvider.js",
+    "src/main/ui/questRewards.js",
+    "tests/atlasIcons.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 116467,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 8519040,
+    "output_tokens": 20326,
+    "api_call_count": 50,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 1195,
+    "layers": {
+      "betterleaks": 2,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 1199,
+      "key_context": 0,
+      "provider_token": 2,
+      "shell_stdin": 0
+    }
+  }
+}

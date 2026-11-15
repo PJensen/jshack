@@ -1,0 +1,37 @@
+woop -- pull fast forward to master (origin) please
+
+---
+
+quick scan of the repo using the skill looking for components that should have been resources.
+
+---
+
+let on to master first -- I would ignore that rebase, just VERSION file.
+
+---
+
+okay -- now proceed with the aforementioned scan
+
+---
+
+yeah, these are all good entities in my mind at lest.
+
+---
+
+I added the corpse icons :-) they're not exactly "items" so I made a different pathway -- if you dont like this complain, othewise, it seems pretty good to me.
+
+---
+
+approved -- corposes are special enough to warrant a second pathway.
+
+---
+
+should I just add them to the existing spritesheet then? and update the manifest accordngly?
+
+otherwise, it looks like you're kind of programming by exception here; I would rather if we're keeping two sheets -- I would use a mechanism that weights them both evenly in terms of the semantic approach in the code.
+
+NOTE: all corpses starts with "corpse_" (I think) --- confirm -- I just feel like the existing atlas code was so clean lol.
+
+---
+
+approved -- that's the move -- make this consolidation, that way we can support the future more succiently and cleanly,
