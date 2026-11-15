@@ -35,7 +35,7 @@ export function initStatusLine() {
   let depth = 1;
   let gold = 0;
   let atk = 0;
-  let def = 0;
+  let avoidance = 0;
   let luck = 0;
   let armorClass = 10;
   let critPct = 0;
@@ -80,8 +80,8 @@ export function initStatusLine() {
   function renderStats() {
     const parts = [];
     pushSegment(parts, 'DLvl', String(depth));
-    pushSegment(parts, 'Atk', String(atk), atk > 0 ? '#64c87a' : '#98a0ab');
-    pushSegment(parts, 'Def', `${def}%`, def > 0 ? '#64c87a' : '#98a0ab');
+    pushSegment(parts, 'Dmg', String(atk), atk > 0 ? '#64c87a' : '#98a0ab');
+    pushSegment(parts, 'Avoid', fmtSigned(avoidance), avoidance > 0 ? '#64c87a' : '#98a0ab');
     pushSegment(parts, '$', String(gold), '#ffde5a', '#ffde5a');
     pushSegment(parts, 'Score', String(Math.floor(scoreDisplay)), '#5b9ff5');
 
@@ -165,7 +165,7 @@ export function initStatusLine() {
     /** @type {CustomEvent} */ // @ts-ignore
     const e = ev;
     atk = Number(e?.detail?.attack ?? 0);
-    def = Number(e?.detail?.defense ?? 0);
+    avoidance = Number(e?.detail?.avoidance ?? e?.detail?.defense ?? 0);
     luck = Number(e?.detail?.luck ?? 0);
     armorClass = Number(e?.detail?.armorClass ?? (10 + def));
     critPct = Number(e?.detail?.critChancePercent ?? 0);

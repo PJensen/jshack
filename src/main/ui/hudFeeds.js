@@ -15,7 +15,6 @@ import { getHungerLevel } from "../../rules/data/food.js";
 import { Pet } from "../../rules/components/Pet.js";
 import { PetState } from "../../rules/components/PetState.js";
 import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.js";
-import { resolveResistance } from "../../rules/utils/dealDamage.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
 import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
 import { resolveExpectedWeaponDamage } from "../../rules/utils/expectedDamage.js";
@@ -472,14 +471,10 @@ export function createHudFeeds(world, deps) {
     const luck = Number(combat?.luck ?? canonical?.luck ?? 0);
     const evade = Number(canonical?.evade ?? 0);
     const armorClass = Number(combat?.armorClass ?? (10 + evade));
-    const defenseContribution = Math.max(0, Math.round(armorClass - 10));
-    // DEF% is an at-a-glance composite: physical reduction plus to-hit defense.
-    const CANONICAL_HIT = 100;
-    const afterBlunt = resolveResistance(world, pe.id, CANONICAL_HIT, 'blunt');
-    const afterSlash = resolveResistance(world, pe.id, CANONICAL_HIT, 'slash');
-    const afterPierce = resolveResistance(world, pe.id, CANONICAL_HIT, 'pierce');
-    const physicalReduction = Math.round(CANONICAL_HIT - (afterBlunt + afterSlash + afterPierce) / 3);
-    const def = Math.max(0, physicalReduction + defenseContribution);
+    const avoidance = evade;
+    // Armor is a representative flat physical reduction, before typed multipliers.
+    // Kinetic DR remains an internal contributor; the UI does not expose that term.
+    const armor = Math.max(0, Number(canonical?.mitigation || 0) + Number(canonical?.kineticDR || 0));
     const critPct = (Number(combat?.critChance ?? canonical?.critChancePhysical ?? 0) * 100) + luck;
     const posture = String(combat?.posture?.stance || "balanced");
     const mitigation = Number(canonical?.mitigation ?? 0);
@@ -523,16 +518,20 @@ export function createHudFeeds(world, deps) {
     }
 
     if (lastCombatHud.weaponId !== wid || lastCombatHud.rangedId !== rangedId || lastCombatHud.rangedCount !== rangedCount ||
-      lastCombatHud.atk !== atk || lastCombatHud.def !== def || lastCombatHud.luck !== luck ||
+      lastCombatHud.atk !== atk || lastCombatHud.def !== avoidance || lastCombatHud.armor !== armor || lastCombatHud.luck !== luck ||
       lastCombatHud.ac !== armorClass || lastCombatHud.critPct !== critPct ||
       lastCombatHud.statusSig !== statusSig || lastCombatHud.ammo !== ammo || lastCombatHud.coatingSig !== coatingSig || lastCombatHud.posture !== posture) {
-      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def, luck, ac: armorClass, critPct, statusSig, ammo, coatingSig, posture };
+      lastCombatHud = { weaponId: wid, rangedId, rangedCount, atk, def: avoidance, armor, luck, ac: armorClass, critPct, statusSig, ammo, coatingSig, posture };
       try {
         window.dispatchEvent(new CustomEvent("ui:updateCombatHUD", { detail: {
           attack: atk,
+          damage: atk,
           weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, damage: atk, attack: atk, coating: wCoating } : null,
           ranged: rangedId ? { id: rangedId, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
-          defense: def,
+          // Legacy field retained for listeners; it now carries Avoidance only.
+          defense: avoidance,
+          avoidance,
+          armor,
           mitigation,
           luck,
           armorClass,

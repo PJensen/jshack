@@ -500,6 +500,11 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       maxMana: 0,
       stamina: 0,
       maxStamina: 0,
+      manaRegenNominal: 0,
+      staminaRegenNominal: 0,
+      damage: 0,
+      avoidance: 0,
+      armor: 0,
       attack: 0,
       defense: 0,
       armorClass: 10,
@@ -570,6 +575,9 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       stats.attack = Math.max(0, Number(combat?.attackBonus ?? (1 + stats.accuracy)));
       stats.defense = Math.max(0, Number(stats.evade));
       stats.armorClass = Math.max(0, Number(combat?.armorClass ?? (10 + stats.defense)));
+      stats.damage = resolveExpectedWeaponDamage(world, p.id, Number(eq?.weapon || 0), { mode: "melee" }).displayedDamage;
+      stats.avoidance = stats.evade;
+      stats.armor = Math.max(0, Number(canonical?.mitigation || 0) + Number(canonical?.kineticDR || 0));
       stats.luck = Number(combat?.luck ?? canonical?.luck ?? 0);
       stats.critChancePercent = (Number(combat?.critChance ?? canonical?.critChancePhysical ?? 0) * 100) + stats.luck;
       stats.critMult = Number(combat?.critMult ?? canonical?.critMultPhysical ?? 0);
