@@ -28,6 +28,7 @@ import { applyHealing } from "../utils/applyHealing.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { combatSeed, hashString32, mulberry32, rollDice, pct } from "../utils/rng.js";
 import { rollBaggedCrit } from "../utils/critRandomizer.js";
+import { buildProcContext, evaluateCritChanceProcPhase } from "../utils/procPhases.js";
 import { hasCapability, statusStrength } from "../utils/statusFacade.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects } from "../utils/effects.js";
@@ -852,7 +853,11 @@ REGISTRY['phase_strike'] = function phaseStrikeScript(world, actor, spell, inten
     // Crit resolution (gear crit chance + blind bonus)
     let isCrit = false;
     const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
-    const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
+    const critProcBonus = evaluateCritChanceProcPhase(world, actor, buildProcContext("onBeforeCrit", {
+      source: actor, target: h.id, item: weaponId || 0, damage: dmg,
+      damageType, crit: false, tags: ["spell"], scratch: {},
+    }));
+    const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct + (critProcBonus * 100);
     isCrit = rollBaggedCrit(world, actor, "spell", critPct / 100, r);
     const blindCritMultBonus = getBlindedCritMultBonus(blindExposure);
     const critMult = 2 + (atkSnapshot.critMult || 0) + blindCritMultBonus;

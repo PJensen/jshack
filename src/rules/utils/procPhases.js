@@ -38,6 +38,11 @@ export function buildProcContext(kind, {
     };
 }
 
+export function evaluateCritChanceProcPhase(world, actorId, ctx, options = {}) {
+  const out = evaluateEquippedAffixProcs(world, actorId, ctx, options);
+  return Number(out.bonusCritChance || 0);
+}
+
 export function applyPendingDamageProcPhase(world, actorId, ctx, rng, options = {}) {
     const out = evaluateEquippedAffixProcs(world, actorId, ctx, options);
     const bonusDamage = out.cancelled ? 0 : rollBonusDamage(world, out.bonusDamage, rng);

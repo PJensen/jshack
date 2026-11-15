@@ -28,7 +28,7 @@ import {
     runLegacyMonsterHook,
 } from '../utils/legacyAffixDispatch.js';
 import { ensureEquippedAffixTopology } from '../utils/affixTopology.js';
-import { buildProcContext, applyPendingDamageProcPhase, applyReactionProcPhase } from '../utils/procPhases.js';
+import { buildProcContext, evaluateCritChanceProcPhase, applyPendingDamageProcPhase, applyReactionProcPhase } from '../utils/procPhases.js';
 import { breakStealthOnOffense } from '../utils/stealthAmbush.js';
 import {
     calculateBlindedPhysicalDamage,
@@ -466,7 +466,11 @@ function resolveHitRoll(world, {
 
     if (!isCrit) {
         const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
-        const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
+        const critProcBonus = evaluateCritChanceProcPhase(world, source, buildProcContext('onBeforeCrit', {
+            source, target, item: weaponId || 0, damage: dmg,
+            damageType, crit: false, tags: actionTags, scratch: {}, offhand,
+        }));
+        const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct + (critProcBonus * 100);
         isCrit = rollBaggedCrit(world, source, "physical", critPct / 100, r);
     } else {
         rollBaggedCrit(world, source, "physical", 0, r, true);

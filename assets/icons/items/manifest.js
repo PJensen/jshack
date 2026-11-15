@@ -874,6 +874,11 @@ export default {
       "y": 7
     },
     {
+      "id": "last_stand_circlet",
+      "x": 5,
+      "y": 7
+    },
+    {
       "id": "eternal_hunger_crown",
       "x": 6,
       "y": 7

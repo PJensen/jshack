@@ -142,7 +142,7 @@ export const LOOT_TABLES = {
       { type: "equip", weight: 11, pool: ["glacier_sigil"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["flametongue"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["moonroot_staff", "frostbranch"], affixChance: 0 },
-      { type: "equip", weight: 14, pool: ["helm_horned", "helm_mage"], affixChance: 0 },
+      { type: "equip", weight: 14, pool: ["helm_horned", "helm_mage", "last_stand_circlet"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["amulet_warding", "amulet_focus"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["belt_chain", "belt_ranger"], affixChance: 0 },
       { type: "equip", weight: 14, pool: ["gauntlets_steel", "gloves_thieves"], affixChance: 0 },

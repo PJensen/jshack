@@ -29,6 +29,7 @@ import {
   exprAddConst,
   gateChance,
   gateEventKind,
+  gateHealthBelowPct,
   gateHasActionTag,
 } from "../utils/statProcAuthoring.js";
 
@@ -62,6 +63,7 @@ export const PROC_PACKAGE_KEYS = Object.freeze({
   Cinderwake: "procPackage:cinderwake",
   WitchKing: "procPackage:witchKing",
   GamblerMantle: "procPackage:gamblerMantle",
+  LastStand: "procPackage:lastStand",
 });
 
 function getEffect(world, entityId, key) {
@@ -221,6 +223,15 @@ registerScript(PROC_PACKAGE_KEYS.GamblerMantle, {
       return;
     }
     ctx.proc.multiplyDamage(1 - normalPenaltyPercent / 100);
+  },
+});
+
+registerScript(PROC_PACKAGE_KEYS.LastStand, {
+  [ScriptVerb.ProcEvaluate]: (_world, ctx) => {
+    if (String(ctx?.kind || "") !== "onBeforeCrit") return;
+    const params = ctx?.params || {};
+    const critChancePercent = Math.max(0, Number(params.critChancePercent ?? 25));
+    ctx.proc.addCritChance(critChancePercent / 100);
   },
 });
 
@@ -2344,6 +2355,24 @@ const PROC_PACKAGE_SPECS = Object.freeze([
     passiveExpressions: Object.freeze([]),
     procTrees: Object.freeze([
       Object.freeze({ trigger: "onBeforeHit", script: PROC_PACKAGE_KEYS.GamblerMantle, priority: 10 }),
+    ]),
+  }),
+  Object.freeze({
+    id: "lastStand",
+    name: "Last Stand",
+    params: Object.freeze({ healthThresholdPercent: 50, critChancePercent: 25 }),
+    summary: "Below {healthThresholdPercent}% HP, gain {critChancePercent}% critical chance.",
+    display: Object.freeze({ context: "Equip", format: "{summary}" }),
+    stateKeys: Object.freeze([]),
+    hostIdeas: Object.freeze(["bloodied circlets", "desperation mail", "duelist relics"]),
+    passiveExpressions: Object.freeze([]),
+    procTrees: Object.freeze([
+      Object.freeze({
+        trigger: "onBeforeCrit",
+        script: PROC_PACKAGE_KEYS.LastStand,
+        priority: 10,
+        gates: Object.freeze([gateHealthBelowPct(0.5, { subject: "source" })]),
+      }),
     ]),
   }),
 ]);

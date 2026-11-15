@@ -128,6 +128,16 @@ defineItem('blood_circlet', {
   procPackages: ['ritualOverdraw'],
 });
 
+defineItem('last_stand_circlet', {
+  name: 'Last Stand Circlet', type: 'head',
+  glyph: '^', color: '#d47858', glow: '#8f3f32', scale: 0.7,
+  material: 'iron', rarity: 4,
+  bonuses: { defense: 1, maxHp: 6 },
+  weight: 0.8,
+  description: 'A copper-red circlet that wakes only when the wearer is already bleeding.',
+  procPackages: ['lastStand'],
+});
+
 defineItem('eternal_hunger_crown', {
   name: 'Crown of Eternal Hunger', type: 'head',
   glyph: '^', color: '#c9ae65', glow: '#8f763f', scale: 0.7,

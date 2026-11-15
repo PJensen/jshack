@@ -24,7 +24,7 @@ import { areFactionsHostile } from '../utils/factionHostility.js';
 import { createStatusEvent } from '../../shared/events/statusEvent.js';
 import { runAmmoScripts } from '../utils/projectileScriptDispatch.js';
 import { ensureEquippedAffixTopology } from '../utils/affixTopology.js';
-import { buildProcContext, applyPendingDamageProcPhase, applyReactionProcPhase } from '../utils/procPhases.js';
+import { buildProcContext, evaluateCritChanceProcPhase, applyPendingDamageProcPhase, applyReactionProcPhase } from '../utils/procPhases.js';
 import { getAmmoDef } from '../data/ammo.js';
 import { createItemById } from '../utils/itemFactory.js';
 import { breakStealthOnOffense } from '../utils/stealthAmbush.js';
@@ -353,7 +353,11 @@ export function rangedAttackSystem(world) {
 
           let strayIsCrit = false;
           const strayBlindCritBonusPct = getBlindedCritChanceBonusPct(strayBlindExposure);
-          const strayCritPct = (strayAtkSnapshot.critChance * 100) + (strayAtkSnapshot.luck || 0) + strayBlindCritBonusPct;
+          const strayCritProcBonus = evaluateCritChanceProcPhase(world, attacker, buildProcContext('onBeforeCrit', {
+            source: attacker, target: strayId, item: weaponId, damage: strayDamage,
+            damageType: 'pierce', crit: false, tags: ['ranged', 'projectile'], scratch: {},
+          }));
+          const strayCritPct = (strayAtkSnapshot.critChance * 100) + (strayAtkSnapshot.luck || 0) + strayBlindCritBonusPct + (strayCritProcBonus * 100);
           strayIsCrit = rollBaggedCrit(world, attacker, "physical", strayCritPct / 100, r);
           const strayBlindCritMultBonus = getBlindedCritMultBonus(strayBlindExposure);
           const strayCritMult = 2 + (strayAtkSnapshot.critMult || 0) + strayBlindCritMultBonus;
@@ -496,7 +500,11 @@ export function rangedAttackSystem(world) {
     // Secondary crit check: critChanceDerived (decimal) + luck (integer %)
     if (!isCrit) {
       const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
-      const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
+      const critProcBonus = evaluateCritChanceProcPhase(world, attacker, buildProcContext('onBeforeCrit', {
+        source: attacker, target: defender, item: weaponId, damage: dmg,
+        damageType: 'pierce', crit: false, tags: ['ranged', 'projectile'], scratch: {},
+      }));
+      const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct + (critProcBonus * 100);
       isCrit = rollBaggedCrit(world, attacker, "physical", critPct / 100, r);
     } else {
       rollBaggedCrit(world, attacker, "physical", 0, r, true);

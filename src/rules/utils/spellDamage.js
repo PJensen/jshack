@@ -3,6 +3,7 @@ import { Faction } from "../components/Faction.js";
 import { Position } from "../components/Position.js";
 import { combatSeed, hashString32, mulberry32 } from "./rng.js";
 import { rollBaggedCrit } from "./critRandomizer.js";
+import { evaluateEquippedAffixProcs } from "./affixTopology.js";
 import { createStatusEvent } from "../../shared/events/statusEvent.js";
 import { areFactionsHostile } from "./factionHostility.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
@@ -170,7 +171,16 @@ export function rollSpellCriticalFromContext(world, targetId, context = {}, salt
   const key = String(context?.spellId || context?.cause || "spell");
   const sourceId = Number(context?.sourceId || 0) | 0;
   const rng = mulberry32(combatSeed(world.seed, world.step, sourceId, targetId, hashString32(key) ^ (salt >>> 0)));
-  return rollBaggedCrit(world, sourceId, "spell", critPct / 100, rng);
+  const procResult = evaluateEquippedAffixProcs(world, sourceId, {
+    kind: "onBeforeCrit",
+    source: sourceId,
+    target: Number(targetId || 0) | 0,
+    item: 0,
+    damage: { amount: 0, type: String(context?.type || "physical"), crit: false },
+    tags: new Set(["spell"]),
+    scratch: {},
+  });
+  return rollBaggedCrit(world, sourceId, "spell", (critPct + (Number(procResult.bonusCritChance || 0) * 100)) / 100, rng);
 }
 
 /**
