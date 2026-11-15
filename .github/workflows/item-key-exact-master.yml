@@ -59,7 +59,8 @@ jobs:
               z.write(out_sheet,"assets/icons/items/sheet.webp")
               z.write(out_manifest,"assets/icons/items/manifest.js")
           print("Validated: master 512 identities preserved, original 768x672 pixels identical, 7 key aliases in 768x704 atlas.")
-          PY      - uses: actions/upload-artifact@v4
+          PY
+      - uses: actions/upload-artifact@v4
         with:
           name: jshack-items-key-exact-master
           path: out/jshack-items-key-from-master.zip
