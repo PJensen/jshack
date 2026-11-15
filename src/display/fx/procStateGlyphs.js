@@ -33,6 +33,11 @@ export const PROC_STATE_VIS = {
 	serpent_hide:       { glyph: '\u{1F40D}',    r: 100, g: 170, b: 85  },  // 🐍 serpent-hide ward
 	serpent_riposte:    { glyph: '\u2694',       r: 145, g: 215, b: 125 },  // ⚔ primed riposte
 	serpent_specters:   { glyph: '\u{1F47B}',    r: 125, g: 220, b: 145 },  // 👻 spectral serpents
+	witch_king_mark:    { glyph: '\u2620',       r: 175, g: 85,  b: 225 },  // ☠ shadow detonation mark
+	reversal_ready:     { glyph: '\u21C4',       r: 120, g: 220, b: 255 },  // ⇄ primed reversal
+	blood_tithe_debt:   { glyph: '\u2665',       r: 235, g: 55,  b: 75  },  // ♥ stored blood debt
+	patience:           { glyph: '\u26A1',       r: 115, g: 185, b: 255 },  // ⚡ patient thunder charge
+	deadeye_count:      { glyph: '\u2316',       r: 220, g: 235, b: 255 },  // ⌖ ranged-hit progress
 };
 
 const DEFAULT_PROC_VIS = Object.freeze({ glyph: '\u2736', r: 170, g: 185, b: 220 });
