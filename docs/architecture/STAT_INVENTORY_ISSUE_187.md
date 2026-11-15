@@ -206,10 +206,12 @@ units. Establishing those missing units is a Phase-B contract task.
 
 - Weapon `ItemInfo.damageDice` supplies the intrinsic distribution.
 - `resolveCombatSnapshot()` supplies flat damage and conditional multipliers.
-- The HUD currently computes `floor((averageDice + flatBonus) * damageMult)`.
-- Actual damage remains stochastic and uses the rules combat pipeline; the HUD
-  calculation is presentation-only and is not yet a shared expected-damage
-  contract.
+- `expectedDamageFromDice()` evaluates every possible roll through the same
+  floor/clamp/multiplier ordering used by the presentation contract.
+- `resolveExpectedWeaponDamage()` combines that distribution with the actor's
+  canonical combat snapshot for ordinary successful-hit damage. It excludes
+  target mitigation, hit chance, criticals, procs, and other conditional
+  outcomes. Actual damage remains stochastic and uses the rules combat pipeline.
 - `dealDamage()` owns actual HP reduction, resistance resolution, events, and
   death behavior.
 - `resolveResistance()` and typed resistance channels must remain distinct from
@@ -232,10 +234,10 @@ units. Establishing those missing units is a Phase-B contract task.
    is expected weapon damage.
 2. `Defense`, `Evade`, `Armor Class`, and `Mitigation` are simultaneously
    exposed even though they answer different or overlapping questions.
-3. HUD `DEF%` combines physical reduction with an AC contribution, which mixes
-   incompatible units.
-4. `Kinetic DR` is an internal/mechanical channel presented as if it were a
-   universal defensive percentage.
+3. Legacy HUD `DEF%` combined physical reduction with an AC contribution, which
+   mixed incompatible units; it is no longer emitted as a presentation value.
+4. `Kinetic DR` remains an internal/mechanical channel. Ordinary presentation
+   uses a qualified flat-physical Armor projection instead.
 5. Character data uses raw `Vitality.maxHp`, while HUD uses effective HP max.
 6. Mana/Stamina displayed recovery does not include every temporary runtime
    modifier used by the corresponding regeneration system.
@@ -290,3 +292,39 @@ No gameplay behavior is changed by this document.
   and recovery values.
 - Direct equipment `spellPower` is now a supported passive bonus and is merged
   into canonical spell power.
+
+## Phase-C and Phase-D slices completed
+
+- `resolveExpectedWeaponDamage()` is the shared deterministic expected-damage
+  projection used by HUD, item details, and comparisons. Dice distributions and
+  seeded stochastic combat remain unchanged.
+- Item comparisons use an equipment overlay against the same actor. The
+  canonical derived/passive/combat pipeline evaluates the hypothetical item
+  without mutating the live `Equipment` component.
+
+## Phase-E presentation slices completed
+
+- The combat HUD no longer presents the invalid `DEF%` composite. Its compact
+  vocabulary is Damage and Avoidance; the payload also provides a qualified
+  Armor projection for detail consumers.
+- Character presentation groups Attributes, Resources, Capabilities, and
+  Additional Details. Attack/damage are no longer the same player-facing
+  concept: weapon Damage is expected successful-hit damage, Accuracy is the
+  to-hit channel, Avoidance is hit prevention, and Armor is representative flat
+  physical reduction (`mitigation + kineticDR`) before typed multipliers.
+- Resource rows use the shared effective recovery projection, including
+  context-specific suppression and cooldown semantics.
+
+## Phase-F verification record
+
+The Phase-F regression pass covered 173 tests across melee, ranged, typed
+defenses, spells, healing, resources, equipment, affixes, proc packages, save
+load, and canonical stat projections with zero failures. Architecture and
+doctrine guardrails also passed: 13 architecture tests, 4 event-doctrine tests,
+56 death/resource-adjacent guard tests, 10 agent-tool tests, and the world-state
+ratchet. Agent health reported zero rules nondeterminism hazards and zero layer
+boundary violations.
+
+The remaining balance questions are intentionally not resolved here: numerical
+item budgets and scaling belong to issue #172, and a universal healing-power
+stat is not justified by the current non-uniform spell formulas.
