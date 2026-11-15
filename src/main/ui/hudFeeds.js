@@ -18,6 +18,7 @@ import { resolveCombatSnapshot } from "../../rules/utils/resolveCombatSnapshot.j
 import { resolveResistance } from "../../rules/utils/dealDamage.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
 import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
+import { resolveExpectedWeaponDamage } from "../../rules/utils/expectedDamage.js";
 import { getCarryCapacity, resolveEncumbrance } from "../../rules/utils/encumbrance.js";
 import { snapshotStatusState } from "../../rules/utils/statusFacade.js";
 import { resolveCanonicalStats } from "../../rules/utils/canonicalStats.js";
@@ -454,19 +455,6 @@ export function createHudFeeds(world, deps) {
     }
   }
 
-  /**
-   * Average roll for a dice spec like "2d6" → 7.
-   * @param {string} spec
-   * @returns {number}
-   */
-  function averageDice(spec) {
-    const m = /^\s*(\d+)d(\d+)\s*$/i.exec(String(spec || ""));
-    if (!m) return 1;
-    const count = Math.max(1, parseInt(m[1], 10) | 0);
-    const sides = Math.max(2, parseInt(m[2], 10) | 0);
-    return count * (sides + 1) / 2;
-  }
-
   function updateCombatHUD() {
     const pe = playerEntity(world);
     if (!pe) return;
@@ -477,13 +465,9 @@ export function createHudFeeds(world, deps) {
     const rangedId = Number(eq?.ranged || 0);
     const combat = resolveCombatSnapshot(world, pe.id, { mode: "melee" });
 
-    // Compute actual expected damage: avg dice + flat bonus, scaled by mult
     const wInfo = wid ? world.get(wid, ItemInfo) : null;
-    const dmgDice = wInfo?.damageDice ? String(wInfo.damageDice) : (wid ? "1d2" : "1d2");
-    const avgRoll = averageDice(dmgDice);
-    const flatBonus = Number(combat?.damageFlatBonus ?? 0);
-    const damageMult = Number(combat?.damageMult ?? 1);
-    const atk = Math.max(0, Math.floor((avgRoll + flatBonus) * damageMult));
+    const damageProjection = resolveExpectedWeaponDamage(world, pe.id, wid, { mode: "melee" });
+    const atk = damageProjection.displayedDamage;
 
     const luck = Number(combat?.luck ?? canonical?.luck ?? 0);
     const evade = Number(canonical?.evade ?? 0);
@@ -546,7 +530,7 @@ export function createHudFeeds(world, deps) {
       try {
         window.dispatchEvent(new CustomEvent("ui:updateCombatHUD", { detail: {
           attack: atk,
-          weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, attack: atk, coating: wCoating } : null,
+          weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, damage: atk, attack: atk, coating: wCoating } : null,
           ranged: rangedId ? { id: rangedId, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
           defense: def,
           mitigation,
