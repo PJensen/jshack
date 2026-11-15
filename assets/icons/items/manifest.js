@@ -2562,6 +2562,41 @@ export default {
       "id": "witchfire_sword",
       "x": 23,
       "y": 20
+    },
+    {
+      "id": "key",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_shop",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_gem_shop",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_apothecary",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_book_shop",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_general_store",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_enchanter_shop",
+      "x": 0,
+      "y": 21
     }
   ]
 };
