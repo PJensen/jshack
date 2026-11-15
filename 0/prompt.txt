@@ -1,0 +1,11 @@
+give me a piece of proc gear that gives 25% crit when below 50% health please -- I want to experient with the new "crit bag" -- at some future date we may want to generalize this concept of bags -- and also, I'm still not convinced the bag needed to be an ecs entity proper -- like we have other ecs "things" for runtime state (I cant recall the exact domain name we used)
+
+---
+
+when you're done making the item, O -- juts looking, it's called a "resource" in "ecs-js" --
+
+---
+
+is the item here in the room with us? I don't see it yet.
+
+let me give you my followup thoughts about resource v component -- I was considering the crit-bag "runtime" state -- and not nessisarily something persisted between sessions -- I felt like a resource could do it fairly cleanly (e.g.) "crit bag" or more general "pseudo random bag" -- with various underlying implmentations to make itself useful in a broad number of ways.
