@@ -1,0 +1,39 @@
+have you ever heard of bag of marbels instead of pure RNG?
+
+---
+
+Find uses for each and repoty back to me -- no implmentation, just research
+
+---
+
+critical strikes?
+
+---
+
+What implementation do we have now?
+
+---
+
+do you want to try something to prevent draughts?
+
+---
+
+(and streaks) ;-)
+
+try *something* here -- super curious -- heard about it last nigh
+
+---
+
+why not toss is right on the existing stats component?
+
+---
+
+why make another component?
+
+---
+
+I was thinking about the stats component -- anyway -- let me review.
+
+---
+
+tell you what -- commit it -- push it -- I'll playtest -- if you think it's ready. :-)
