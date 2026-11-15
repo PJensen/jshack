@@ -1,6 +1,6 @@
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
-import { CritRandomizerState } from "../src/rules/components/CritRandomizerState.js";
+import { CritRandomizerResource } from "../src/rules/resources/critRandomizer.js";
 import { rollBaggedCrit } from "../src/rules/utils/critRandomizer.js";
 import { mulberry32 } from "../src/rules/utils/rng.js";
 
@@ -15,9 +15,11 @@ Deno.test("crit bag keeps one-in-ten frequency per completed cycle", () => {
   }
 
   assertEquals(crits, 1);
-  const state = world.get(actor, CritRandomizerState);
+  const state = world.resource(CritRandomizerResource).get(actor);
   assertEquals(state.physicalCritsRemaining, 0);
   assertEquals(state.physicalNonCritsRemaining, 0);
+  assertEquals(world.hasResource(CritRandomizerResource), true);
+  assertEquals(world.resources().find((entry) => entry.resource === CritRandomizerResource)?.serializable, false);
 });
 
 Deno.test("crit bag bounds low-chance droughts and high-chance streaks", () => {
@@ -53,7 +55,7 @@ Deno.test("crit bag tracks physical and spell channels independently", () => {
 
   assertEquals(rollBaggedCrit(world, actor, "physical", 0.5, rng), false);
   assertEquals(rollBaggedCrit(world, actor, "spell", 0.5, rng), false);
-  const state = world.get(actor, CritRandomizerState);
+  const state = world.resource(CritRandomizerResource).get(actor);
   assertEquals(state.physicalChance, 0.5);
   assertEquals(state.spellChance, 0.5);
   assertEquals(state.physicalCritsRemaining, 1);

@@ -25,7 +25,6 @@ export { SecretDoor } from './SecretDoor.js';
 export { SleepState } from './SleepState.js';
 export { ItemInfo } from './ItemInfo.js';
 export { Equipment } from './Equipment.js';
-export { CritRandomizerState } from './CritRandomizerState.js';
 export { EquipmentRoot } from './EquipmentRoot.js';
 export { EquippedSlotNode } from './EquippedSlotNode.js';
 export { Material } from './Material.js';

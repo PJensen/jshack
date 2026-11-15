@@ -1,4 +1,4 @@
-import { CritRandomizerState } from "../components/CritRandomizerState.js";
+import { CritRandomizerResource } from "../resources/critRandomizer.js";
 
 const MAX_BAG_SIZE = 100;
 
@@ -36,10 +36,18 @@ function resetBag(state, keys, chance) {
 export function rollBaggedCrit(world, actorId, kind, chance, rng, forcedCrit = false) {
   const resolvedChance = normalizedChance(chance);
   if (!(actorId > 0)) return forcedCrit || (resolvedChance >= 1) || (resolvedChance > 0 && rng() < resolvedChance);
-  let state = world.get(actorId, CritRandomizerState);
+  const states = world.resource(CritRandomizerResource);
+  let state = states.get(actorId);
   if (!state) {
-    world.add(actorId, CritRandomizerState, {});
-    state = world.get(actorId, CritRandomizerState);
+    state = {
+      physicalChance: -1,
+      physicalCritsRemaining: 0,
+      physicalNonCritsRemaining: 0,
+      spellChance: -1,
+      spellCritsRemaining: 0,
+      spellNonCritsRemaining: 0,
+    };
+    states.set(actorId, state);
   }
   const keys = stateKeys(kind);
 
