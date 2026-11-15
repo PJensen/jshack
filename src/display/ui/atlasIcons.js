@@ -52,11 +52,17 @@ export function getIconAtlas(name) {
 export function resolveIconReference(item, defaultAtlas = "items") {
   const type = String(item?.type || "").toLowerCase();
   const identified = item?.identified !== false;
-  const atlasName = String(item?.iconAtlas || (type === "spell" ? "spells" : defaultAtlas) || "items");
+  const identity = String(item?.identity || item?.details?.identity || "").trim();
+  const inferredAtlas = identity.startsWith("corpse_")
+    ? "corpses"
+    : type === "spell" ? "spells" : defaultAtlas;
+  const atlasName = String(identity.startsWith("corpse_")
+    ? "corpses"
+    : item?.iconAtlas || inferredAtlas || "items");
   const isSpellAtlas = atlasName === "spells";
   const rawId = isSpellAtlas
     ? (item?.iconId || item?.spellId || item?.id || "")
-    : (item?.iconId || item?.identity || item?.details?.identity || item?.id || "");
+    : (item?.iconId || identity || item?.id || "");
   return {
     atlas: getIconAtlas(atlasName),
     id: identified ? String(rawId).replace(/^spell:/, "") : "",
