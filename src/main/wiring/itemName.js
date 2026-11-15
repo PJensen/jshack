@@ -656,6 +656,7 @@ export function buildItemDisplayData(world, itemId) {
   return {
     id: itemId,
     identity,
+    iconAtlas: identity.startsWith("corpse_") ? "corpses" : "items",
     type: info.type || 'item',
     name: resolveItemDisplayName(world, itemId),
     slot: info.slot || '',

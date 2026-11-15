@@ -23,6 +23,16 @@ import { installContent } from "../src/content/install.js";
 import { buildCatalogItem } from "../src/rules/data/itemCatalogLoader.js";
 import { attachEnchantmentNode } from "../src/rules/utils/enchantmentTopology.js";
 
+Deno.test("buildItemDisplayData assigns corpse items to the corpse icon atlas", () => {
+  const world = new World({ seed: 2 });
+  const corpse = world.create();
+  world.add(corpse, NamedIdentity, { identity: "corpse_rat", name: "Rat Corpse" });
+  world.add(corpse, ItemInfo, { type: "food", count: 1, weight: 1 });
+
+  const data = buildItemDisplayData(world, corpse);
+  assertEquals(data?.iconAtlas, "corpses");
+});
+
 Deno.test("buildItemDisplayData enriches spell-linked items with target effects", () => {
   resetIdentification();
   const world = new World({ seed: 1 });
