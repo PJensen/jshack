@@ -581,7 +581,7 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
     const primaryIcon = resolveEquipmentIcon(rowData.item, rowData.slot);
     const icon = document.createElement('span');
     const hasPrimaryIcon = rowData.item && applyAtlasIcon(
-      icon, primaryIcon.atlas, primaryIcon.id, primaryIcon.fallback, primaryIcon.size,
+      icon, primaryIcon, primaryIcon.fallback, primaryIcon.size,
     );
     if (rowData.item && !hasPrimaryIcon) {
       icon.textContent = primaryIcon.fallback;
@@ -625,7 +625,7 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
       for (const modifier of modifierIcons) {
         const icon = document.createElement('span');
         const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: modifier.id });
-        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
+        const hasIcon = applyAtlasIcon(icon, iconRef, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.title = String(modifier.label);
         icon.setAttribute('aria-label', String(modifier.label));

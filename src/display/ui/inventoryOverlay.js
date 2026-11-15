@@ -236,7 +236,7 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
 
     const icon = document.createElement('span');
     const iconRef = resolveIconReference(it);
-    const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, String(it.glyph || '◆'), 38);
+    const hasIcon = applyAtlasIcon(icon, iconRef, String(it.glyph || '◆'), 38);
     if (!hasIcon) {
       icon.textContent = String(it.glyph || (it.type === 'potion' ? '◈' : it.type === 'scroll' ? '▤' : it.type === 'gem' ? '◇' : '◆'));
       Object.assign(icon.style, { fontSize: '30px', lineHeight: '38px', color: it.glyphColor || UX_THEME.accent });
@@ -279,7 +279,7 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
       for (const modifier of modifierIcons) {
         const icon = document.createElement('span');
         const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: modifier.id });
-        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
+        const hasIcon = applyAtlasIcon(icon, iconRef, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.title = String(modifier.label);
         icon.setAttribute('aria-label', String(modifier.label));

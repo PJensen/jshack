@@ -2034,16 +2034,14 @@ export function renderItemDetails(container, it) {
   const glyphText = String(it.glyph || '').trim();
   const isSpell = String(it.type || '') === 'spell';
   const iconRef = resolveIconReference(it);
-  const iconAtlas = iconRef.atlas;
-  const iconId = iconRef.id;
   const safeFallback = isSpell
     ? (glyphText || String(it.symbol || '✦'))
     : (it.identified === false
       ? ({ potion: '◈', scroll: '▤', wand: '⚡', gem: '◇', ammo: '➶', food: '♨' }[String(it.type || '')] || '◇')
       : glyphText);
-  if (safeFallback || iconAtlas.entries.has(iconId)) {
+  if (safeFallback || iconRef.atlas.entries.has(iconRef.id)) {
     const glyphSpan = document.createElement('span');
-    const hasAtlasIcon = applyAtlasIcon(glyphSpan, iconAtlas, iconId, safeFallback, isSpell ? 28 : 24);
+    const hasAtlasIcon = applyAtlasIcon(glyphSpan, iconRef, safeFallback, isSpell ? 28 : 24);
     Object.assign(glyphSpan.style, {
       color: String(it.glyphColor || '#cfe8ff'),
       fontSize: '14px',
@@ -2246,7 +2244,7 @@ export function renderItemDetails(container, it) {
         line.style.gap = '5px';
         const icon = document.createElement('span');
         const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: mechanic.iconId });
-        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
+        const hasIcon = applyAtlasIcon(icon, iconRef, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.style.color = '#d9ffd9';
         icon.style.flex = '0 0 auto';
@@ -2353,7 +2351,7 @@ export function renderItemDetails(container, it) {
       });
       const icon = document.createElement('span');
         const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: gem?.iconId || '' });
-        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '◆', 16);
+        const hasIcon = applyAtlasIcon(icon, iconRef, '◆', 16);
       if (!hasIcon) icon.textContent = '◆';
       icon.style.color = '#8de0ff';
       icon.style.flex = '0 0 auto';

@@ -257,7 +257,7 @@ export function createMobileSpellRadial(mobileLayoutMq) {
 
       const sym = document.createElement('span');
       const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
-      applyAtlasIcon(sym, iconRef.atlas, iconRef.id, spell.symbol || '\u2726', 30);
+      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 30);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
       item.appendChild(sym);
@@ -335,7 +335,7 @@ export function createMobileSpellRadial(mobileLayoutMq) {
     _canCast = canCast;
 
     const iconRef = resolveIconReference({ ...(e?.detail || {}), iconAtlas: 'spells' });
-    applyAtlasIcon(glyphSpan, iconRef.atlas, iconRef.id, symbol || '\u2726', 38);
+    applyAtlasIcon(glyphSpan, iconRef, symbol || '\u2726', 38);
     trigger.title = name || 'Cast';
     trigger.style.opacity = _activeSpellId ? (canCast ? '1' : '0.6') : '0.4';
 

@@ -1118,8 +1118,7 @@ export function initHUD() {
       iconSpan.style.lineHeight = '1';
       applyAtlasIcon(
         iconSpan,
-        iconRef.atlas,
-        iconRef.id,
+        iconRef,
         icon,
         22,
       );
@@ -1731,8 +1730,7 @@ export function initHUD() {
         const itemIconRef = spell.kind === 'item-use' ? resolveIconReference(spell) : null;
         applyAtlasIcon(
           iconSpan,
-          itemIconRef?.atlas || SPELL_ICON_ATLAS,
-          itemIconRef?.id || spell.iconId || spell.id,
+          itemIconRef || resolveIconReference({ ...spell, iconAtlas: 'spells' }),
           spell.symbol || ACTION_ICONS.cast,
           28,
         );
@@ -2108,7 +2106,7 @@ function ensureEffectsStack(container) {
 
     const glyph = document.createElement('div');
     const iconRef = resolveIconReference({ iconAtlas: 'statuses', iconId });
-    applyAtlasIcon(glyph, iconRef.atlas, iconRef.id, spec.glyph, 34);
+    applyAtlasIcon(glyph, iconRef, spec.glyph, 34);
     Object.assign(glyph.style, { fontSize: scaledPx(28), lineHeight: '1', filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))', color: glyphColor });
 
     const label = document.createElement('div');
@@ -2690,7 +2688,7 @@ function renderQuickChip(it, h) {
   const glyph = document.createElement('span');
   const glyphText = String(it.glyph || '⬢');
   const iconRef = resolveIconReference(it);
-  const hasAtlasIcon = applyAtlasIcon(glyph, iconRef.atlas, iconRef.id, glyphText, 30);
+  const hasAtlasIcon = applyAtlasIcon(glyph, iconRef, glyphText, 30);
   Object.assign(glyph.style, {
     fontSize: '18px',
     lineHeight: '1',

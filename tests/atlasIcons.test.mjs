@@ -38,7 +38,7 @@ Deno.test("icon atlases point at WebP sheets and preserve status fallbacks", () 
 
 Deno.test("applyAtlasIcon renders a mapped icon and falls back for unknown IDs", () => {
   const mapped = stubElement();
-  assert(applyAtlasIcon(mapped, SPELL_ICON_ATLAS, "lightning", "⚡", 28));
+  assert(applyAtlasIcon(mapped, { atlas: SPELL_ICON_ATLAS, id: "lightning" }, "⚡", 28));
   assertEquals(mapped.textContent, "");
   assertEquals(mapped.style.width, "28px");
   assertEquals(mapped.style.height, "28px");
@@ -46,13 +46,13 @@ Deno.test("applyAtlasIcon renders a mapped icon and falls back for unknown IDs",
   assertStringIncludes(mapped.style.backgroundImage, "sheet.webp");
 
   const fallback = stubElement();
-  assert(!applyAtlasIcon(fallback, SPELL_ICON_ATLAS, "satiated", "🍽️", 28));
+  assert(!applyAtlasIcon(fallback, { atlas: SPELL_ICON_ATLAS, id: "satiated" }, "🍽️", 28));
   assertEquals(fallback.textContent, "🍽️");
 });
 
 Deno.test("corpse identities use the dedicated corpse atlas through item surfaces", () => {
   const corpse = stubElement();
-  assert(applyAtlasIcon(corpse, getIconAtlas("corpses"), "corpse_rat", "%", 38));
+  assert(applyAtlasIcon(corpse, resolveIconReference({ iconAtlas: "corpses", iconId: "corpse_rat" }), "%", 38));
   assertStringIncludes(corpse.style.backgroundImage, "/assets/icons/corpses/sheet.webp");
   assertEquals(corpse.style.backgroundSize, "900% 800%");
 });

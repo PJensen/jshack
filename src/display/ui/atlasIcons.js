@@ -66,15 +66,15 @@ export function resolveIconReference(item, defaultAtlas = "items") {
 /**
  * Apply a WebP atlas icon to an existing text-fallback element.
  * @param {HTMLElement} element
- * @param {{entries: Map<string, {x:number,y:number}>, columns:number, rows:number, sheetUrl:string}} atlas
- * @param {string} id
+ * @param {{atlas:any, id:string}} iconRef
  * @param {string} fallback
  * @param {number} size
  * @returns {boolean}
  */
-export function applyAtlasIcon(element, atlas, id, fallback = "", size = 24) {
+export function applyAtlasIcon(element, iconRef, fallback = "", size = 24) {
   if (!element) return false;
-  const normalizedId = String(id || "").trim();
+  const atlas = iconRef?.atlas;
+  const normalizedId = String(iconRef?.id || "").trim();
   const entry = atlas?.entries?.get(normalizedId);
   element.textContent = fallback;
   element.style.backgroundImage = "";

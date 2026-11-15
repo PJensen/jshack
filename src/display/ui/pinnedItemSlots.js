@@ -326,7 +326,7 @@ export function createPinnedItemSlots() {
       btn.setAttribute('aria-label', btn.title);
       const icon = document.createElement('span');
       const iconRef = resolveIconReference(item);
-      applyAtlasIcon(icon, iconRef.atlas, iconRef.id, item.glyph || '⬢', 28);
+      applyAtlasIcon(icon, iconRef, item.glyph || '⬢', 28);
       Object.assign(icon.style, {
         lineHeight: '1',
         fontSize: '20px',

@@ -564,7 +564,7 @@ function appendRewardIcon(parent, item, size = 22) {
   const icon = document.createElement('span');
   const iconRef = resolveIconReference(item?.tooltip || item);
   const fallback = String(item?.tooltip?.glyph || item?.glyph || '');
-  applyAtlasIcon(icon, iconRef.atlas, iconRef.id, fallback, size);
+  applyAtlasIcon(icon, iconRef, fallback, size);
   Object.assign(icon.style, { flex: '0 0 auto', verticalAlign: 'middle' });
   parent.appendChild(icon);
 }
