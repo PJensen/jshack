@@ -2162,9 +2162,19 @@ export function renderItemDetails(container, it) {
   if (isWeapon && (it.damageDice || it.staminaCost != null)) {
     if (it.damageDice) {
       const line = document.createElement('div');
-      line.textContent = `Damage: ${String(it.damageDice)}`;
+      const expected = Number.isFinite(Number(it.damageExpected))
+        ? Number(it.damageExpected)
+        : null;
+      line.textContent = `Damage: ${expected == null ? String(it.damageDice) : expected}`;
       line.style.color = '#ffd7a0';
       container.appendChild(line);
+      if (expected != null) {
+        const detail = document.createElement('div');
+        detail.textContent = `Distribution: ${String(it.damageDice)}`;
+        detail.style.color = '#c8bda8';
+        detail.style.fontSize = '11px';
+        container.appendChild(detail);
+      }
     }
     if (it.staminaCost != null) {
       const line = document.createElement('div');
@@ -2416,10 +2426,21 @@ export function renderItemDetails(container, it) {
 
     if ((it.damageDice || cmp.damageDice) && it.damageDice !== cmp.damageDice) {
       const line = document.createElement('div');
-      line.textContent = `Damage: ${it.damageDice || 'none'} vs ${cmp.damageDice || 'none'}`;
+      const currentDamage = Number.isFinite(Number(it.damageExpected)) ? Number(it.damageExpected) : null;
+      const equippedDamage = Number.isFinite(Number(cmp.damageExpected)) ? Number(cmp.damageExpected) : null;
+      line.textContent = currentDamage != null && equippedDamage != null
+        ? `Damage: ${currentDamage} vs ${equippedDamage}`
+        : `Damage: ${it.damageDice || 'none'} vs ${cmp.damageDice || 'none'}`;
       line.style.color = '#cccccc';
       line.style.fontSize = '11px';
       container.appendChild(line);
+      if (currentDamage != null && equippedDamage != null) {
+        const detail = document.createElement('div');
+        detail.textContent = `Distribution: ${it.damageDice || 'none'} vs ${cmp.damageDice || 'none'}`;
+        detail.style.color = '#9d9588';
+        detail.style.fontSize = '10px';
+        container.appendChild(detail);
+      }
     }
 
     if (it.staminaCost != null && cmp.staminaCost != null && it.staminaCost !== cmp.staminaCost) {

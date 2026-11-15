@@ -47,6 +47,7 @@ import { isChestIdentity } from "../../shared/chests.js";
 import { readAISettings, writeAISettings } from "../../shared/aiSettings.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
 import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
+import { expectedDamageFromDice } from "../../rules/utils/expectedDamage.js";
 import { QuestDefRef } from "../../rules/components/QuestDefRef.js";
 import { QuestState } from "../../rules/components/QuestState.js";
 import { QuestVars } from "../../rules/components/QuestVars.js";
@@ -173,6 +174,7 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       bonuses: {},
       affixes: [],
       damageDice: null,
+      damageExpected: null,
       staminaCost: null,
       twoHanded: false,
       coating: null,
@@ -198,8 +200,12 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       { text: `Charges: ${charges.current}/${charges.max}`, color: charges.current > 0 ? '#cfe8ff' : '#888888' },
       ...(contentStatus || []),
     ];
+    const damageProjection = base?.damageDice
+      ? expectedDamageFromDice(base.damageDice)
+      : null;
     return {
       ...base,
+      damageExpected: damageProjection?.displayedDamage ?? null,
       canUse,
       glyph: String(base?.glyph || p?.glyph || ""),
       glyphColor: String(base?.glyphColor || p?.fg || "#cfe8ff"),
@@ -225,6 +231,9 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
         name: resolveItemDisplayName(world, eqId),
         bonuses: eqInfo.bonuses || {},
         damageDice: eqInfo.damageDice || null,
+        damageExpected: eqInfo.damageDice
+          ? expectedDamageFromDice(eqInfo.damageDice).displayedDamage
+          : null,
         staminaCost: eqInfo.staminaCost ?? null,
         twoHanded: !!eqInfo.twoHanded,
         affixes: resolveAffixes(eqInfo.affixes),
