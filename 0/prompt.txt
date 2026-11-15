@@ -1,0 +1,5 @@
+lets make that resource migration now please -- away from component -- stop me if I'm doing something dumb.
+
+---
+
+okay -- no need to carry a deprecated compatability component.
