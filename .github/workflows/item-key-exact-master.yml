@@ -1,0 +1,67 @@
+name: Generate exact-master item-key package
+on:
+  push:
+    branches:
+      - chore/item-key-exact-master-20261115
+    paths:
+      - .github/workflows/item-key-exact-master.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install pillow
+      - name: Generate and verify patched WebP from master
+        env:
+          KEY64: "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"
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64, hashlib, io, json, pathlib, subprocess, zipfile
+          from PIL import Image, ImageChops
+          sheet_path = pathlib.Path("assets/icons/items/sheet.webp")
+          manifest_path = pathlib.Path("assets/icons/items/manifest.js")
+          out = pathlib.Path("out/assets/icons/items")
+          out.mkdir(parents=True, exist_ok=True)
+          assert subprocess.check_output(["git", "hash-object", str(sheet_path)], text=True).strip() == "912cace7ba6c2388a2df1a7dcda08b448d1a81d6", "Source WebP is not the verified master blob"
+          assert subprocess.check_output(["git", "hash-object", str(manifest_path)], text=True).strip() == "0bd53514e5db83b31232b0359711106a83ca4503", "Source manifest is not the verified master blob"
+          raw = sheet_path.read_bytes()
+          original = Image.open(io.BytesIO(raw)).convert("RGBA")
+          assert original.size == (768,672), original.size
+          source = manifest_path.read_text(encoding="utf-8")
+          prefix, body = source.split("export default ", 1)
+          manifest = json.loads(body.rstrip().removesuffix(";"))
+          assert len(manifest["entries"]) == 512
+          seen = {e["id"] for e in manifest["entries"]}
+          assert not any(id.startswith("key_") for id in seen)
+          assert len({(e["x"],e["y"]) for e in manifest["entries"]}) == 504
+          new_keys = ["key","key_shop","key_gem_shop","key_apothecary","key_book_shop","key_general_store","key_enchanter_shop"]
+          manifest["entries"].extend({"id":id,"x":0,"y":21} for id in new_keys)
+          key = Image.open(io.BytesIO(base64.b64decode(__import__("os").environ["KEY64"]))).convert("RGBA")
+          assert key.size == (32,32)
+          patched = Image.new("RGBA",(768,704),(0,0,0,255))
+          patched.paste(original,(0,0))
+          patched.paste(key,(0,672))
+          out_sheet=out / "sheet.webp"
+          patched.save(out_sheet, "WEBP", lossless=True, method=6)
+          decoded = Image.open(out_sheet).convert("RGBA")
+          assert decoded.size == (768,704)
+          assert original.tobytes() == decoded.crop((0,0,768,672)).tobytes(), "Original master pixels changed"
+          assert key.tobytes() == decoded.crop((0,672,32,704)).tobytes(), "Key pixels changed"
+          out_manifest=out / "manifest.js"
+          out_manifest.write_text(prefix+"export default "+json.dumps(manifest,indent=2)+";\n",encoding="utf-8")
+          check = json.loads(out_manifest.read_text().split("export default ",1)[1].rstrip().removesuffix(";"))
+          assert check["entries"][:512] == json.loads(body.rstrip().removesuffix(";"))["entries"]
+          assert len(check["entries"]) == 519
+          with zipfile.ZipFile("out/jshack-items-key-from-master.zip","w",compression=zipfile.ZIP_DEFLATED) as z:
+              z.write(out_sheet,"assets/icons/items/sheet.webp")
+              z.write(out_manifest,"assets/icons/items/manifest.js")
+          print("Validated: master 512 identities preserved, original 768x672 pixels identical, 7 key aliases in 768x704 atlas.")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jshack-items-key-exact-master
+          path: out/jshack-items-key-from-master.zip
+          retention-days: 7
