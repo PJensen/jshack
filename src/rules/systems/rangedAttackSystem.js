@@ -44,6 +44,7 @@ import { bresenhamLine } from '../../shared/math/bresenham.js';
 import { resolveProjectileImpact } from '../utils/projectileImpact.js';
 import { getAmmoAffinity } from '../utils/ammoAffinities.js';
 import { updateSpatialIndex } from '../utils/spatialIndex.js';
+import { rollBaggedCrit } from '../utils/critRandomizer.js';
 
 const RANGED_PROJECTILE_SPEED = 18;
 const RANGED_PROJECTILE_MIN_DURATION = 0.06;
@@ -353,7 +354,7 @@ export function rangedAttackSystem(world) {
           let strayIsCrit = false;
           const strayBlindCritBonusPct = getBlindedCritChanceBonusPct(strayBlindExposure);
           const strayCritPct = (strayAtkSnapshot.critChance * 100) + (strayAtkSnapshot.luck || 0) + strayBlindCritBonusPct;
-          if (strayCritPct > 0) strayIsCrit = pct(r, strayCritPct);
+          strayIsCrit = rollBaggedCrit(world, attacker, "physical", strayCritPct / 100, r);
           const strayBlindCritMultBonus = getBlindedCritMultBonus(strayBlindExposure);
           const strayCritMult = 2 + (strayAtkSnapshot.critMult || 0) + strayBlindCritMultBonus;
           if (strayIsCrit) strayDamage = Math.max(1, Math.floor(strayDamage * strayCritMult));
@@ -496,7 +497,9 @@ export function rangedAttackSystem(world) {
     if (!isCrit) {
       const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
       const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
-      if (critPct > 0) isCrit = pct(r, critPct);
+      isCrit = rollBaggedCrit(world, attacker, "physical", critPct / 100, r);
+    } else {
+      rollBaggedCrit(world, attacker, "physical", 0, r, true);
     }
     const blindCritMultBonus = getBlindedCritMultBonus(blindExposure);
     const critMult = 2 + (atkSnapshot.critMult || 0) + blindCritMultBonus;

@@ -27,6 +27,7 @@ import { dealDamage } from "../utils/dealDamage.js";
 import { applyHealing } from "../utils/applyHealing.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { combatSeed, hashString32, mulberry32, rollDice, pct } from "../utils/rng.js";
+import { rollBaggedCrit } from "../utils/critRandomizer.js";
 import { hasCapability, statusStrength } from "../utils/statusFacade.js";
 import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects } from "../utils/effects.js";
@@ -852,7 +853,7 @@ REGISTRY['phase_strike'] = function phaseStrikeScript(world, actor, spell, inten
     let isCrit = false;
     const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
     const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
-    if (critPct > 0) isCrit = pct(r, critPct);
+    isCrit = rollBaggedCrit(world, actor, "spell", critPct / 100, r);
     const blindCritMultBonus = getBlindedCritMultBonus(blindExposure);
     const critMult = 2 + (atkSnapshot.critMult || 0) + blindCritMultBonus;
     if (isCrit) dmg = Math.max(1, Math.floor(dmg * critMult));

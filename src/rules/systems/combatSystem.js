@@ -48,6 +48,7 @@ import { resolvePlayerActiveDeity, scoreDeityStanding } from './deitySystem.js';
 import { forEachInRadius } from '../utils/spatialIndex.js';
 import { resolveWeaponFamily } from '../data/weaponFamilies.js';
 import { classifyActorTargetAction, OFFENSE_ATTRIBUTION } from '../utils/offenseClassifier.js';
+import { rollBaggedCrit } from '../utils/critRandomizer.js';
 
 const BUMP_ATTACK_INSTALLED = Symbol.for('jshack:combat:bumpAttack:installed');
 
@@ -466,7 +467,9 @@ function resolveHitRoll(world, {
     if (!isCrit) {
         const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
         const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct;
-        if (critPct > 0) isCrit = pct(r, critPct);
+        isCrit = rollBaggedCrit(world, source, "physical", critPct / 100, r);
+    } else {
+        rollBaggedCrit(world, source, "physical", 0, r, true);
     }
     const blindCritMultBonus = getBlindedCritMultBonus(blindExposure);
     const critMult = 2 + (atkSnapshot.critMult || 0) + blindCritMultBonus;

@@ -2,6 +2,7 @@ import { Brain } from "../components/Brain.js";
 import { Faction } from "../components/Faction.js";
 import { Position } from "../components/Position.js";
 import { combatSeed, hashString32, mulberry32 } from "./rng.js";
+import { rollBaggedCrit } from "./critRandomizer.js";
 import { createStatusEvent } from "../../shared/events/statusEvent.js";
 import { areFactionsHostile } from "./factionHostility.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
@@ -169,7 +170,7 @@ export function rollSpellCriticalFromContext(world, targetId, context = {}, salt
   const key = String(context?.spellId || context?.cause || "spell");
   const sourceId = Number(context?.sourceId || 0) | 0;
   const rng = mulberry32(combatSeed(world.seed, world.step, sourceId, targetId, hashString32(key) ^ (salt >>> 0)));
-  return (rng() * 100) < critPct;
+  return rollBaggedCrit(world, sourceId, "spell", critPct / 100, rng);
 }
 
 /**
