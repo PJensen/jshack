@@ -42,6 +42,28 @@ export function getIconAtlas(name) {
 }
 
 /**
+ * Resolve the canonical atlas and identity for an item-shaped display record.
+ * Callers still own their fallback glyph and size, but atlas selection and
+ * unidentified-item protection live here.
+ * @param {any} item
+ * @param {string} [defaultAtlas]
+ * @returns {{atlas:any, id:string}}
+ */
+export function resolveIconReference(item, defaultAtlas = "items") {
+  const type = String(item?.type || "").toLowerCase();
+  const identified = item?.identified !== false;
+  const atlasName = String(item?.iconAtlas || (type === "spell" ? "spells" : defaultAtlas) || "items");
+  const isSpellAtlas = atlasName === "spells";
+  const rawId = isSpellAtlas
+    ? (item?.iconId || item?.spellId || item?.id || "")
+    : (item?.iconId || item?.identity || item?.details?.identity || item?.id || "");
+  return {
+    atlas: getIconAtlas(atlasName),
+    id: identified ? String(rawId).replace(/^spell:/, "") : "",
+  };
+}
+
+/**
  * Apply a WebP atlas icon to an existing text-fallback element.
  * @param {HTMLElement} element
  * @param {{entries: Map<string, {x:number,y:number}>, columns:number, rows:number, sheetUrl:string}} atlas

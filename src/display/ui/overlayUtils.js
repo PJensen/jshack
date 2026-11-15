@@ -5,7 +5,7 @@ import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
 import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
-import { applyAtlasIcon, getIconAtlas, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
@@ -2032,13 +2032,10 @@ export function renderItemDetails(container, it) {
     marginBottom: '4px',
   });
   const glyphText = String(it.glyph || '').trim();
-  const identity = String(it.identity || it.details?.identity || '');
   const isSpell = String(it.type || '') === 'spell';
-  const iconAtlas = isSpell ? SPELL_ICON_ATLAS : getIconAtlas(it.iconAtlas || 'items');
-  const safeIdentity = it.identified === false ? '' : identity;
-  const iconId = isSpell
-    ? String(it.iconId || it.spellId || String(it.id || '').replace(/^spell:/, ''))
-    : safeIdentity;
+  const iconRef = resolveIconReference(it);
+  const iconAtlas = iconRef.atlas;
+  const iconId = iconRef.id;
   const safeFallback = isSpell
     ? (glyphText || String(it.symbol || '✦'))
     : (it.identified === false
@@ -2248,7 +2245,8 @@ export function renderItemDetails(container, it) {
         line.style.alignItems = 'flex-start';
         line.style.gap = '5px';
         const icon = document.createElement('span');
-        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(mechanic.iconId), '✧', 16);
+        const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: mechanic.iconId });
+        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.style.color = '#d9ffd9';
         icon.style.flex = '0 0 auto';
@@ -2354,7 +2352,8 @@ export function renderItemDetails(container, it) {
         fontSize: '12px',
       });
       const icon = document.createElement('span');
-      const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(gem?.iconId || ''), '◆', 16);
+        const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: gem?.iconId || '' });
+        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '◆', 16);
       if (!hasIcon) icon.textContent = '◆';
       icon.style.color = '#8de0ff';
       icon.style.flex = '0 0 auto';

@@ -6,6 +6,7 @@ import {
   CORPSE_ICON_ATLAS,
   ICON_ATLASES,
   getIconAtlas,
+  resolveIconReference,
   applyAtlasIcon,
 } from "../src/display/ui/atlasIcons.js";
 
@@ -54,4 +55,14 @@ Deno.test("corpse identities use the dedicated corpse atlas through item surface
   assert(applyAtlasIcon(corpse, getIconAtlas("corpses"), "corpse_rat", "%", 38));
   assertStringIncludes(corpse.style.backgroundImage, "/assets/icons/corpses/sheet.webp");
   assertEquals(corpse.style.backgroundSize, "900% 800%");
+});
+
+Deno.test("resolveIconReference centralizes corpse and unidentified item selection", () => {
+  const corpse = resolveIconReference({ type: "food", identity: "corpse_rat", iconAtlas: "corpses" });
+  assertEquals(corpse.atlas, CORPSE_ICON_ATLAS);
+  assertEquals(corpse.id, "corpse_rat");
+
+  const hidden = resolveIconReference({ type: "food", identity: "corpse_rat", iconAtlas: "corpses", identified: false });
+  assertEquals(hidden.atlas, CORPSE_ICON_ATLAS);
+  assertEquals(hidden.id, "");
 });

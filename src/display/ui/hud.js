@@ -9,7 +9,7 @@ import { GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { createPinnedItemSlots } from './pinnedItemSlots.js';
 import { createMobileSpellRadial } from './mobileRadial.js';
 import { createPinnedSpellDock } from './spellDock.js';
-import { applyAtlasIcon, getIconAtlas, ITEM_ICON_ATLAS, SPELL_ICON_ATLAS, STATUS_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, SPELL_ICON_ATLAS, resolveIconReference } from './atlasIcons.js';
 
 const HUD_BUTTON_BG = 'linear-gradient(180deg, #2a2f35 0%, #1f2329 100%)';
 const HUD_BUTTON_ACTIVE_BG = 'linear-gradient(180deg, #3a3328 0%, #2a231c 100%)';
@@ -1111,14 +1111,15 @@ export function initHUD() {
       const visibleText = isMobile ? mobileText : desktopText;
       const icon = isMobile ? mobileIcon : desktopIcon;
       const barLabel = btn.dataset.barLabel || '';
+      const iconRef = resolveIconReference({ iconAtlas: btn.dataset.iconAtlas || 'spells', iconId: btn.dataset.iconId || '' });
       btn.textContent = '';
       const iconSpan = document.createElement('span');
       iconSpan.textContent = icon;
       iconSpan.style.lineHeight = '1';
       applyAtlasIcon(
         iconSpan,
-        getIconAtlas(btn.dataset.iconAtlas || 'spells'),
-        btn.dataset.iconId || '',
+        iconRef.atlas,
+        iconRef.id,
         icon,
         22,
       );
@@ -1727,10 +1728,11 @@ export function initHUD() {
       const onCooldown = cdRemaining > 0 && cdMax > 0;
 
       if (spell && spell.id) {
+        const itemIconRef = spell.kind === 'item-use' ? resolveIconReference(spell) : null;
         applyAtlasIcon(
           iconSpan,
-          spell.kind === 'item-use' ? getIconAtlas(spell.iconAtlas || 'items') : SPELL_ICON_ATLAS,
-          spell.iconId || spell.id,
+          itemIconRef?.atlas || SPELL_ICON_ATLAS,
+          itemIconRef?.id || spell.iconId || spell.id,
           spell.symbol || ACTION_ICONS.cast,
           28,
         );
@@ -2105,7 +2107,8 @@ function ensureEffectsStack(container) {
     el.title = `${spec.name} \u2022 ${total} turns`;
 
     const glyph = document.createElement('div');
-    applyAtlasIcon(glyph, STATUS_ICON_ATLAS, iconId, spec.glyph, 34);
+    const iconRef = resolveIconReference({ iconAtlas: 'statuses', iconId });
+    applyAtlasIcon(glyph, iconRef.atlas, iconRef.id, spec.glyph, 34);
     Object.assign(glyph.style, { fontSize: scaledPx(28), lineHeight: '1', filter: 'drop-shadow(0 1px 0 rgba(0,0,0,.6))', color: glyphColor });
 
     const label = document.createElement('div');
@@ -2686,7 +2689,8 @@ function renderQuickChip(it, h) {
 
   const glyph = document.createElement('span');
   const glyphText = String(it.glyph || '⬢');
-  const hasAtlasIcon = applyAtlasIcon(glyph, getIconAtlas(it.iconAtlas || 'items'), String(it.identity || ''), glyphText, 30);
+  const iconRef = resolveIconReference(it);
+  const hasAtlasIcon = applyAtlasIcon(glyph, iconRef.atlas, iconRef.id, glyphText, 30);
   Object.assign(glyph.style, {
     fontSize: '18px',
     lineHeight: '1',

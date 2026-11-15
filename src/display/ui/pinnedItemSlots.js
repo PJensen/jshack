@@ -1,5 +1,5 @@
 import { renderItemDetails } from './overlay.js';
-import { applyAtlasIcon, getIconAtlas } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 import {
   getQuickPinKey, buildStartingPinnedQuickItems, upsertPinnedQuickItemLifo,
   reconcilePinnedQuickItemsWithInventory, applyPinnedQuickItemUse,
@@ -325,8 +325,8 @@ export function createPinnedItemSlots() {
       btn.title = `${item.name || 'Item'} x${normalizePositiveCount(item.count)}`;
       btn.setAttribute('aria-label', btn.title);
       const icon = document.createElement('span');
-      const iconId = String(item.iconId || item.identity || item.details?.identity || '');
-      applyAtlasIcon(icon, getIconAtlas(item.iconAtlas || 'items'), iconId, item.glyph || '⬢', 28);
+      const iconRef = resolveIconReference(item);
+      applyAtlasIcon(icon, iconRef.atlas, iconRef.id, item.glyph || '⬢', 28);
       Object.assign(icon.style, {
         lineHeight: '1',
         fontSize: '20px',

@@ -1,4 +1,4 @@
-import { applyAtlasIcon, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
 export function createMobileSpellRadial(mobileLayoutMq) {
   const MICRO_UX_STYLE_ID = 'jshack-mobile-spell-radial-micro-ux';
@@ -256,7 +256,8 @@ export function createMobileSpellRadial(mobileLayoutMq) {
       item.dataset.baseBg = isActive ? '#152035' : '#101626';
 
       const sym = document.createElement('span');
-      applyAtlasIcon(sym, SPELL_ICON_ATLAS, spell.iconId || spell.id, spell.symbol || '\u2726', 30);
+      const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
+      applyAtlasIcon(sym, iconRef.atlas, iconRef.id, spell.symbol || '\u2726', 30);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
       item.appendChild(sym);
@@ -333,7 +334,8 @@ export function createMobileSpellRadial(mobileLayoutMq) {
     _activeSpellId = e?.detail?.id || null;
     _canCast = canCast;
 
-    applyAtlasIcon(glyphSpan, SPELL_ICON_ATLAS, e?.detail?.iconId || e?.detail?.id, symbol || '\u2726', 38);
+    const iconRef = resolveIconReference({ ...(e?.detail || {}), iconAtlas: 'spells' });
+    applyAtlasIcon(glyphSpan, iconRef.atlas, iconRef.id, symbol || '\u2726', 38);
     trigger.title = name || 'Cast';
     trigger.style.opacity = _activeSpellId ? (canCast ? '1' : '0.6') : '0.4';
 

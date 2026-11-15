@@ -5,7 +5,7 @@ import {
   installDetachableKeyHandler, pulseRow, UI, UX_THEME, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
 import { getInventoryDefaultAction, isInventoryItemEquippable, isInventoryItemUsable } from './inventoryUtils.js';
-import { applyAtlasIcon, getIconAtlas } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
 /** @param {HTMLDivElement & {_inner?:HTMLDivElement}} panel @param {Array<any>} items @param {any} [ground] @param {string} [slotFilter] */
 export function renderInventory(panel, items, ground, slotFilter = '', scrollOfIdentifyId = 0, encumbrance = null, pinnedKeys = []) {
@@ -235,8 +235,8 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
     const isPinned = pinKey ? pinnedSet.has(pinKey) : false;
 
     const icon = document.createElement('span');
-    const iconId = it.identified === false ? '' : String(it.iconId || it.identity || '');
-    const hasIcon = applyAtlasIcon(icon, getIconAtlas(it.iconAtlas || 'items'), iconId, String(it.glyph || '◆'), 38);
+    const iconRef = resolveIconReference(it);
+    const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, String(it.glyph || '◆'), 38);
     if (!hasIcon) {
       icon.textContent = String(it.glyph || (it.type === 'potion' ? '◈' : it.type === 'scroll' ? '▤' : it.type === 'gem' ? '◇' : '◆'));
       Object.assign(icon.style, { fontSize: '30px', lineHeight: '38px', color: it.glyphColor || UX_THEME.accent });
@@ -278,7 +278,8 @@ export function renderInventory(panel, items, ground, slotFilter = '', scrollOfI
       Object.assign(modifiers.style, { display: 'inline-flex', gap: '2px', flex: '0 0 auto' });
       for (const modifier of modifierIcons) {
         const icon = document.createElement('span');
-        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(modifier.id), '✧', 16);
+        const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: modifier.id });
+        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.title = String(modifier.label);
         icon.setAttribute('aria-label', String(modifier.label));

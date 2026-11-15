@@ -5,7 +5,7 @@ import {
   CHARACTER_SLOT_ORDER, installDetachableKeyHandler, pulseRow,
   UI, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
-import { applyAtlasIcon, getIconAtlas, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
 /**
  * Resolve the primary equipment-row artwork without exposing unidentified gear.
@@ -18,16 +18,18 @@ export function resolveEquipmentIcon(item, slot) {
   const isSpell = slot === 'brain' || type === 'spell';
   if (isSpell) {
     const id = String(item?.iconId || item?.spellId || item?.id || '').replace(/^spell:/, '');
-    return { atlas: SPELL_ICON_ATLAS, id, fallback: String(item?.symbol || item?.glyph || '✦'), size: 30 };
+    const iconRef = resolveIconReference({ ...item, iconAtlas: 'spells', iconId: id });
+    return { atlas: iconRef.atlas, id: iconRef.id, fallback: String(item?.symbol || item?.glyph || '✦'), size: 30 };
   }
 
   const safeFallback = {
     potion: '◈', scroll: '▤', wand: '⚡', gem: '◇', ammo: '➶', food: '♨',
   }[type] || (item?.slot ? '◆' : '◇');
   const identified = item?.identified !== false;
+  const iconRef = resolveIconReference(item);
   return {
-    atlas: getIconAtlas(item?.iconAtlas || 'items'),
-    id: identified ? String(item?.iconId || item?.identity || '') : '',
+    atlas: iconRef.atlas,
+    id: iconRef.id,
     fallback: identified ? String(item?.glyph || safeFallback) : safeFallback,
     size: 30,
   };
@@ -622,7 +624,8 @@ export function renderEquipment(panel, equippedBySlot, playerName, scrollOfIdent
       Object.assign(modifiers.style, { display: 'inline-flex', gap: '2px', flex: '0 0 auto' });
       for (const modifier of modifierIcons) {
         const icon = document.createElement('span');
-        const hasIcon = applyAtlasIcon(icon, ITEM_ICON_ATLAS, String(modifier.id), '✧', 16);
+        const iconRef = resolveIconReference({ iconAtlas: 'items', iconId: modifier.id });
+        const hasIcon = applyAtlasIcon(icon, iconRef.atlas, iconRef.id, '✧', 16);
         if (!hasIcon) icon.textContent = '✧';
         icon.title = String(modifier.label);
         icon.setAttribute('aria-label', String(modifier.label));

@@ -1,4 +1,4 @@
-import { applyAtlasIcon, getIconAtlas, SPELL_ICON_ATLAS } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
 export function createPinnedSpellDock(mobileLayoutMq) {
   const SLOT_COUNT = 4;
@@ -171,7 +171,8 @@ export function createPinnedSpellDock(mobileLayoutMq) {
       });
 
       const sym = document.createElement('span');
-      applyAtlasIcon(sym, SPELL_ICON_ATLAS, spell.iconId || spell.id, spell.symbol || '\u2726', 30);
+      const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
+      applyAtlasIcon(sym, iconRef.atlas, iconRef.id, spell.symbol || '\u2726', 30);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
       item.appendChild(sym);
@@ -242,7 +243,8 @@ export function createPinnedSpellDock(mobileLayoutMq) {
     const s = slots[slotIndex];
     if (!spell) return;
     s.spellId = spell.id;
-    applyAtlasIcon(s.glyphSpan, SPELL_ICON_ATLAS, spell.iconId || spell.id, spell.symbol || '\u2726', 28);
+      const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
+      applyAtlasIcon(s.glyphSpan, iconRef.atlas, iconRef.id, spell.symbol || '\u2726', 28);
     s.glyphSpan.style.opacity = '1';
     s.btn.style.opacity = '1';
     s.btn.style.borderColor = '#2d3b52';
@@ -397,7 +399,8 @@ export function createPinnedSpellDock(mobileLayoutMq) {
 
       if (entry?.kind === 'item-use' && entry?.id) {
         anyAssigned = true;
-        applyAtlasIcon(s.glyphSpan, getIconAtlas(entry.iconAtlas || 'items'), entry.iconId || entry.identity, entry.symbol || '!', 28);
+        const iconRef = resolveIconReference(entry);
+        applyAtlasIcon(s.glyphSpan, iconRef.atlas, iconRef.id, entry.symbol || '!', 28);
         s.glyphSpan.style.opacity = '1';
         const cdRemaining = Number(entry.cdRemaining || 0);
         const cdMax = Number(entry.cdMax || 0);
@@ -420,13 +423,10 @@ export function createPinnedSpellDock(mobileLayoutMq) {
         }
       } else if (entry && entry.id) {
         anyAssigned = true;
-        applyAtlasIcon(
-          s.glyphSpan,
-          entry.kind === 'item-use' ? getIconAtlas(entry.iconAtlas || 'items') : SPELL_ICON_ATLAS,
-          entry.iconId || entry.id,
-          entry.symbol || '\u2726',
-          28,
-        );
+        const iconRef = entry.kind === 'item-use'
+          ? resolveIconReference(entry)
+          : resolveIconReference({ ...entry, iconAtlas: 'spells' });
+        applyAtlasIcon(s.glyphSpan, iconRef.atlas, iconRef.id, entry.symbol || '\u2726', 28);
         s.glyphSpan.style.opacity = '1';
         const cost = Number(entry.cost || 0);
         const resource = String(entry.costKind || 'mana');

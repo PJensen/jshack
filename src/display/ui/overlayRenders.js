@@ -19,7 +19,7 @@ import {
   readInputMode, readWalkInterval, writeInputMode, writeWalkInterval,
   WALK_INTERVAL_MIN, WALK_INTERVAL_MAX,
 } from '../input/inputSettings.js';
-import { applyAtlasIcon, getIconAtlas } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 import { DEFAULT_AI_ENDPOINT } from '../../shared/aiSettings.js';
 import { versionLoaded } from '../../shared/version.js';
 import { SAVEGAME_KEY } from '../../shared/savegameKeys.js';
@@ -562,9 +562,9 @@ function questNodeLabel(node, status) {
 
 function appendRewardIcon(parent, item, size = 22) {
   const icon = document.createElement('span');
-  const identity = String(item?.tooltip?.identity || item?.itemId || '');
+  const iconRef = resolveIconReference(item?.tooltip || item);
   const fallback = String(item?.tooltip?.glyph || item?.glyph || '');
-  applyAtlasIcon(icon, getIconAtlas(item?.tooltip?.iconAtlas || 'items'), identity, fallback, size);
+  applyAtlasIcon(icon, iconRef.atlas, iconRef.id, fallback, size);
   Object.assign(icon.style, { flex: '0 0 auto', verticalAlign: 'middle' });
   parent.appendChild(icon);
 }
