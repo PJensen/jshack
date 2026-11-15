@@ -2426,7 +2426,9 @@ export function renderItemDetails(container, it) {
 
     if ((it.damageDice || cmp.damageDice) && it.damageDice !== cmp.damageDice) {
       const line = document.createElement('div');
-      const currentDamage = Number.isFinite(Number(it.damageExpected)) ? Number(it.damageExpected) : null;
+      const currentDamage = Number.isFinite(Number(it.effectiveDamageExpected))
+        ? Number(it.effectiveDamageExpected)
+        : Number.isFinite(Number(it.damageExpected)) ? Number(it.damageExpected) : null;
       const equippedDamage = Number.isFinite(Number(cmp.damageExpected)) ? Number(cmp.damageExpected) : null;
       line.textContent = currentDamage != null && equippedDamage != null
         ? `Damage: ${currentDamage} vs ${equippedDamage}`

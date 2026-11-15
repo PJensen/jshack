@@ -47,7 +47,7 @@ import { isChestIdentity } from "../../shared/chests.js";
 import { readAISettings, writeAISettings } from "../../shared/aiSettings.js";
 import { getPassiveBonuses } from "../../rules/utils/passiveBonuses.js";
 import { resolveResourceStats } from "../../rules/utils/resourceStats.js";
-import { expectedDamageFromDice } from "../../rules/utils/expectedDamage.js";
+import { expectedDamageFromDice, resolveExpectedWeaponDamage } from "../../rules/utils/expectedDamage.js";
 import { QuestDefRef } from "../../rules/components/QuestDefRef.js";
 import { QuestState } from "../../rules/components/QuestState.js";
 import { QuestVars } from "../../rules/components/QuestVars.js";
@@ -219,7 +219,7 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
     ring: ['ring1', 'ring2'],
   });
 
-  function buildEquippedComparison(eq, slot, currentItemId) {
+  function buildEquippedComparison(actorId, eq, slot, currentItemId) {
     const fields = _slotMap[slot];
     if (!fields) return null;
     for (const field of fields) {
@@ -227,12 +227,21 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (!Number.isInteger(eqId) || eqId <= 0 || eqId === currentItemId) continue;
       const eqInfo = world.get(eqId, ItemInfo);
       if (!eqInfo) continue;
+      const damageMode = slot === "ranged" ? "ranged" : "melee";
+      const currentProjection = resolveExpectedWeaponDamage(world, actorId, eqId, { mode: damageMode });
+      const candidateEquipment = { ...eq, [field]: currentItemId };
+      const candidateProjection = resolveExpectedWeaponDamage(world, actorId, currentItemId, {
+        mode: damageMode,
+        equipmentOverride: candidateEquipment,
+      });
       return {
+        equipmentField: field,
         name: resolveItemDisplayName(world, eqId),
         bonuses: eqInfo.bonuses || {},
         damageDice: eqInfo.damageDice || null,
-        damageExpected: eqInfo.damageDice
-          ? expectedDamageFromDice(eqInfo.damageDice).displayedDamage
+        damageExpected: currentProjection.damageDice ? currentProjection.displayedDamage : null,
+        candidateDamageExpected: candidateProjection.damageDice
+          ? candidateProjection.displayedDamage
           : null,
         staminaCost: eqInfo.staminaCost ?? null,
         twoHanded: !!eqInfo.twoHanded,
@@ -441,7 +450,10 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       if (eq) {
         for (const it of items) {
           if (it.equipped || !(it.type === 'equip' || it.type === 'ammo' || it.type === 'wand' || it.slot === 'ranged')) continue;
-          it.equippedComparison = buildEquippedComparison(eq, it.slot, it.id);
+          it.equippedComparison = buildEquippedComparison(p.id, eq, it.slot, it.id);
+          if (it.equippedComparison?.candidateDamageExpected != null) {
+            it.effectiveDamageExpected = it.equippedComparison.candidateDamageExpected;
+          }
         }
       }
       ground = buildGroundPickupDetailAt(p.id, p.pos.x, p.pos.y);

@@ -91,7 +91,7 @@ export function expectedDamageFromDice(spec, options = {}) {
  * @param {import('../../lib/ecs-js/index.js').World} world
  * @param {number} attackerId
  * @param {number} weaponId
- * @param {{ mode?: "melee"|"ranged" }} [context]
+ * @param {{ mode?: "melee"|"ranged", equipmentOverride?: object }} [context]
  */
 export function resolveExpectedWeaponDamage(world, attackerId, weaponId, context = {}) {
   const actor = Number(attackerId || 0) | 0;
@@ -100,7 +100,10 @@ export function resolveExpectedWeaponDamage(world, attackerId, weaponId, context
   const eq = world.get(actor, Equipment);
   const info = itemId > 0 ? world.get(itemId, ItemInfo) : null;
   const dice = String(info?.damageDice || (world.has(actor, Player) ? "1d2" : (eq?.naturalDamageDice || "1d8")));
-  const snapshot = resolveCombatSnapshot(world, actor, { mode });
+  const snapshot = resolveCombatSnapshot(world, actor, {
+    mode,
+    equipmentOverride: context.equipmentOverride,
+  });
   const minimumDamage = mode === "ranged" ? 1 : 0;
   return Object.freeze({
     mode,

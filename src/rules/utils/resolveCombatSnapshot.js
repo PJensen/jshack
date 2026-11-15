@@ -73,7 +73,7 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
   const targetIsRodent = targetIdentity && getMonster(String(targetIdentity))?.tags?.includes("rodent");
   const felineRodentBonus = feline && targetIsRodent;
 
-  const resolvedStats = resolveCanonicalStats(world, id);
+  const resolvedStats = resolveCanonicalStats(world, id, context);
 
   const accuracy = Number(resolvedStats?.accuracy || 0);
   const damagePower = Number(resolvedStats?.damagePower || 0);

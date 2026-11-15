@@ -147,13 +147,13 @@ function runAffixPassives(world, acc, touched, entityId, itemId, affixIds) {
   }
 }
 
-export function resolvePassiveBonuses(world, entityId) {
+export function resolvePassiveBonuses(world, entityId, options = {}) {
   const id = Number(entityId || 0) | 0;
   const acc = createPassiveBonusBag();
   if (!(id > 0) || !world?.isAlive?.(id)) return Object.freeze(acc);
 
   const touched = new Set();
-  const eq = world.get(id, Equipment);
+  const eq = options.equipmentOverride || world.get(id, Equipment);
 
   if (eq) {
     for (let i = 0; i < NON_AMMO_GEAR_SLOTS.length; i++) {
@@ -193,7 +193,8 @@ export function getPassiveBonusesVirtual(world) {
   return world?.[PASSIVE_BONUSES_VIRTUAL] || null;
 }
 
-export function getPassiveBonuses(world, entityId) {
+export function getPassiveBonuses(world, entityId, options = {}) {
+  if (options.equipmentOverride) return resolvePassiveBonuses(world, entityId, options);
   const Virtual = getPassiveBonusesVirtual(world);
   if (Virtual && typeof world?.vget === "function") return world.vget(entityId, Virtual);
   return resolvePassiveBonuses(world, entityId);

@@ -9,10 +9,10 @@ import { resolveDerivedStats } from "./derivedStats.js";
  * @param {import('../../lib/ecs-js/index.js').World} world
  * @param {number} entityId
  */
-export function resolveCanonicalStats(world, entityId) {
+export function resolveCanonicalStats(world, entityId, options = {}) {
   const id = Number(entityId || 0) | 0;
-  const resolved = resolveDerivedStats(world, id);
-  const passive = getPassiveBonuses(world, id);
+  const resolved = resolveDerivedStats(world, id, options);
+  const passive = getPassiveBonuses(world, id, options);
 
   const baseDexterity = Number(resolved?.dexterity || 0);
   const dexterityDerived = Number(passive?.dexterityDerived || 0);
