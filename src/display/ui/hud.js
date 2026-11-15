@@ -2686,7 +2686,7 @@ function renderQuickChip(it, h) {
 
   const glyph = document.createElement('span');
   const glyphText = String(it.glyph || '⬢');
-  const hasAtlasIcon = applyAtlasIcon(glyph, ITEM_ICON_ATLAS, String(it.identity || ''), glyphText, 30);
+  const hasAtlasIcon = applyAtlasIcon(glyph, getIconAtlas(it.iconAtlas || 'items'), String(it.identity || ''), glyphText, 30);
   Object.assign(glyph.style, {
     fontSize: '18px',
     lineHeight: '1',
