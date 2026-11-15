@@ -3,10 +3,9 @@
   "checkpoint_id": "01M7FV8A88FWY1EG7T8PJ329EA",
   "session_id": "01a1df5a-db20-74e1-9d21-68bee9af412d",
   "strategy": "manual-commit",
-  "created_at": "2026-11-15T14:54:49.775438996Z",
+  "created_at": "2026-11-15T14:54:51.373919794Z",
   "branch": "master",
   "checkpoints_count": 7,
-  "save_step_count": 2,
   "files_touched": [
     "src/rules/components/CritRandomizerState.js",
     "src/rules/components/index.js",
@@ -20,14 +19,15 @@
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "2abc5f0f235b",
-  "compact_transcript_start": 0,
+  "checkpoint_transcript_start": 311,
+  "transcript_lines_at_start": 311,
+  "compact_transcript_start": 51,
   "token_usage": {
-    "input_tokens": 114940,
+    "input_tokens": 852,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 3267968,
-    "output_tokens": 17365,
-    "api_call_count": 40,
-    "subagent_tokens_complete": true
+    "cache_read_tokens": 117888,
+    "output_tokens": 353,
+    "api_call_count": 1
   },
   "redaction": {
     "replacements": 15,
