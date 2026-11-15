@@ -1,0 +1,7 @@
+fantastic -- do you think we should make that an status effect? feel me? as in having a VIS entry and icon? or --- some other VFX like a glow, or something else? maybe a little icon (like the shield icon that pops up above the player glyph)
+
+---
+
+agree "active passive indicator" makese sense here -- make it so! 
+
+the implementation loks pretty good -- I do think we should migrate it to a resource -- after we make the indicator at least.
