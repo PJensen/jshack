@@ -1,0 +1,1 @@
+shopkeepers that are sleeping and away from the shop somhow ask for payment why leaving (having broken in) -- this is not the intended behavior!
