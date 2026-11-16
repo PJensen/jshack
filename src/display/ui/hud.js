@@ -2264,6 +2264,7 @@ function createQuickSlot(opts = {}) {
       weight: item?.weight || 0,
       bonuses: item?.bonuses || null,
       damageDice: item?.damageDice || null,
+      damageExpected: item?.damageExpected ?? null,
       damageType: item?.damageType || null,
       staminaCost: item?.staminaCost ?? null,
       twoHanded: item?.twoHanded || false,

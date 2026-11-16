@@ -3,6 +3,7 @@ import { getGem, describeGemDetailLines, describeGemMechanics } from "../../rule
 import { getProcPackage } from "../../rules/data/procPackages.js";
 import { getEnchantScrollDef } from "../../rules/content/enchanting/enchantCatalog.js";
 import { listQuestRewardBonusItems, listQuestRewardOptions } from "../../rules/quests/rewardOptions.js";
+import { expectedDamageFromDice } from "../../rules/utils/expectedDamage.js";
 
 /**
  * @param {any} questDef
@@ -70,6 +71,7 @@ export function describeQuestRewardItem(itemId) {
       description,
       bonuses: def?.bonuses && typeof def.bonuses === "object" ? { ...def.bonuses } : {},
       damageDice: def?.damageDice || null,
+      damageExpected: def?.damageDice ? expectedDamageFromDice(def.damageDice).displayedDamage : null,
       staminaCost: def?.staminaCost ?? null,
       twoHanded: !!def?.twoHanded,
       weight: Number(def?.weight || 0),

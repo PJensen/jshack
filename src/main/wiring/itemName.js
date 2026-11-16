@@ -25,6 +25,7 @@ import { getEffectDefinition } from "../../rules/data/effectInstances.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 import { getGem, describeGemDetailLines, describeGemMechanics } from "../../rules/data/gems.js";
 import { getEnchantScrollDef, listEnchantScrollDefs } from "../../rules/content/enchanting/enchantCatalog.js";
+import { expectedDamageFromDice } from "../../rules/utils/expectedDamage.js";
 
 const ENCHANT_SCROLL_ICON_BY_AFFIX = new Map(
   listEnchantScrollDefs().map((def) => [String(def.affixId || ''), String(def.itemId || '')]),
@@ -675,6 +676,9 @@ export function buildItemDisplayData(world, itemId) {
         })
       : [],
     damageDice: identified ? (info.damageDice || null) : null,
+    damageExpected: identified && info.damageDice
+      ? expectedDamageFromDice(info.damageDice).displayedDamage
+      : null,
     staminaCost: identified ? (info.staminaCost ?? null) : null,
     twoHanded: identified ? !!info.twoHanded : false,
     coating: identified && info.coating && typeof info.coating === 'object' ? { ...info.coating } : null,

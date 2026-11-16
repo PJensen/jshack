@@ -33,6 +33,17 @@ Deno.test("buildItemDisplayData assigns corpse items to the corpse icon atlas", 
   assertEquals(data?.iconAtlas, "corpses");
 });
 
+Deno.test("buildItemDisplayData exposes average weapon damage while preserving dice notation", () => {
+  const world = new World({ seed: 19 });
+  const weapon = world.create();
+  world.add(weapon, NamedIdentity, { identity: "staff_oak", name: "Oak Staff" });
+  world.add(weapon, ItemInfo, { type: "weapon", slot: "weapon", damageDice: "1d6", identified: true });
+  const data = buildItemDisplayData(world, weapon);
+
+  assertEquals(data?.damageDice, "1d6");
+  assertEquals(data?.damageExpected, 4);
+});
+
 Deno.test("buildItemDisplayData enriches spell-linked items with target effects", () => {
   resetIdentification();
   const world = new World({ seed: 1 });

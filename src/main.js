@@ -156,6 +156,7 @@ import { PetCommandIntent } from "./rules/components/Intents/PetCommandIntent.js
 import { Owner } from "./rules/components/Owner.js";
 import { getHungerLevel } from "./rules/data/food.js";
 import { resolveItemDisplayName, buildItemDisplayData, resolveAffixes } from "./main/wiring/itemName.js";
+import { expectedDamageFromDice } from "./rules/utils/expectedDamage.js";
 import { getCatalogItem as _getCatalogItem } from "./rules/data/itemCatalog.js";
 import { ScriptState } from "./rules/components/ScriptState.js";
 import { evaluateSound, thresholdForTier } from "./rules/utils/sound.js";
@@ -1894,6 +1895,9 @@ function buildQuickChipEquippedComparison(ownerId, itemId, slot) {
       name: resolveItemDisplayName(world, eqId),
       bonuses: eqInfo.bonuses || {},
       damageDice: eqInfo.damageDice || null,
+      damageExpected: eqInfo.damageDice
+        ? expectedDamageFromDice(eqInfo.damageDice).displayedDamage
+        : null,
       staminaCost: eqInfo.staminaCost ?? null,
       twoHanded: !!eqInfo.twoHanded,
       affixes: resolveAffixes(eqInfo.affixes),
