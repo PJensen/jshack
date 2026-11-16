@@ -1,0 +1,13 @@
+excellent, there is also an action bar -- we should think about adding icons for these as well - do you mind listing them so I can have codex make it happen :-)
+
+character -- we've got it
+pet -- has 4 states
+stance -- balance, aggro,  gaurded
+pray -- pray
+shoot -- my feeling here is we could use the equipped wand or equipped bow -- showing either charges or ammo in the bottom right hand corner.
+
+my idea for you is to list th proposed new icons -- leaving our ranged of course.
+
+---
+
+all set -- make it happen!
