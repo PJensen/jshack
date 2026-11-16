@@ -17,4 +17,5 @@ Deno.test("UX atlas exposes the character-sheet icon contract", () => {
   }
   assertEquals(UX_ICON_ATLAS.columns, 6);
   assertEquals(UX_ICON_ATLAS.rows, 10);
+  assert(new URL(UX_ICON_ATLAS.sheetUrl).searchParams.has("v"), "UX sheet should be versioned");
 });

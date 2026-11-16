@@ -9,7 +9,8 @@ const SPELL_SHEET_URL = new URL("../../../assets/icons/spells/sheet.webp", impor
 const ITEM_SHEET_URL = new URL("../../../assets/icons/items/sheet.webp", import.meta.url).href;
 const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", import.meta.url).href;
 const CORPSE_SHEET_URL = new URL("../../../assets/icons/corpses/sheet.webp", import.meta.url).href;
-const UX_SHEET_URL = new URL("../../../assets/icons/ux/sheet.webp", import.meta.url).href;
+const UX_SHEET_URL = new URL("../../../assets/icons/ux/sheet.webp", import.meta.url);
+UX_SHEET_URL.searchParams.set("v", String(globalThis.VERSION || "dev"));
 const CLASS_SHEET_URL = new URL("../../../assets/icons/classes/sheet.webp", import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
@@ -48,7 +49,7 @@ export const SPELL_ICON_ATLAS = buildAtlas(spellManifest, SPELL_SHEET_URL);
 export const ITEM_ICON_ATLAS = buildAtlas(itemManifest, ITEM_SHEET_URL);
 export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
 export const CORPSE_ICON_ATLAS = buildAtlas(corpseManifest, CORPSE_SHEET_URL);
-export const UX_ICON_ATLAS = buildSpriteAtlas(uxManifest, UX_SHEET_URL);
+export const UX_ICON_ATLAS = buildSpriteAtlas(uxManifest, UX_SHEET_URL.href);
 export const CLASS_ICON_ATLAS = buildSpriteAtlas(classManifest, CLASS_SHEET_URL);
 export const CLASS_NORMAL_MAP_URL = new URL("../../../assets/icons/classes/normal.png", import.meta.url).href;
 
