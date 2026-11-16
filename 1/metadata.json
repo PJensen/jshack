@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7JCZRXPVFJDBBC9HEVYBDHH",
+  "session_id": "01a1e4cb-0999-70b3-8cf0-57be9e3e6d18",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-16T14:43:17.486150723Z",
+  "branch": "master",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "src/display/ui/hud.js",
+    "src/main.js",
+    "src/main/ui/questRewards.js",
+    "src/main/wiring/itemName.js",
+    "tests/itemNameSpellDisplay.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "4905e9f51151",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 76437,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2312576,
+    "output_tokens": 7081,
+    "api_call_count": 36,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 2
+  }
+}

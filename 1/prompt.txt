@@ -1,0 +1,9 @@
+one small issue on our implementation of [https://github.com/PJensen/jshack/issues/187](https://github.com/PJensen/jshack/issues/187) remains -- namely that weapons still show damage as "1d6" instead of the average damage.&#x20;
+
+NOTE: underlying weapon, etc, still uses the DND notation. this is expected
+
+I saw the notation still present in the item tooltips.
+
+---
+
+under `assets/icons/**` please tweak gitignore to only include `sheet.webp` an `manifest.js` for each of those sub-trees.
