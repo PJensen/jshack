@@ -65,6 +65,7 @@ function parseSeed(raw) {
 export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm }) {
   let classIndex = Math.floor(Math.random() * classes.length);
   let classIconRafId = null;
+  let classIconPauseUntil = 0;
   const classIconStates = [];
   const classIconMaps = Promise.all([
     loadImage(CLASS_ICON_ATLAS.sheetUrl),
@@ -805,6 +806,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   }
 
   function updateSpiritLight(state, now) {
+    if (now < classIconPauseUntil) return;
     const dt = Math.min(0.05, Math.max(0.008, (now - state.lastNow) / 1000 || 0.016));
     state.lastNow = now;
     const dx = state.targetX - state.x;
@@ -901,6 +903,18 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   }).catch(() => {});
 
   function scrollTo(idx, opts = {}) {
+    const previousState = classIconStates[classIndex];
+    const nextState = classIconStates[idx];
+    if (previousState && nextState && previousState !== nextState) {
+      nextState.x = previousState.x;
+      nextState.y = previousState.y;
+      nextState.vx = 0;
+      nextState.vy = 0;
+      nextState.targetX = previousState.x;
+      nextState.targetY = previousState.y;
+      nextState.lastNow = 0;
+      classIconPauseUntil = (typeof performance !== 'undefined' ? performance.now() : 0) + 360;
+    }
     classIndex = idx;
     scrollTrack.style.transform = `translateX(-${classIndex * 100}%)`;
     refreshConfirmCta();
