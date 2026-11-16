@@ -8,6 +8,7 @@ import { areFactionsHostile } from "./factionHostility.js";
 import { forEachInRadius } from "./spatialIndex.js";
 import { buildBlocksVisionMap, blockedCallback } from "./vision.js";
 import { getEffectiveVisionRange } from "./blind.js";
+import { sleepPreventsPerception } from "./sleep.js";
 
 /**
  * Shared brain-backed sight query for actor cognition.
@@ -25,6 +26,7 @@ export function perceiveEntity(world, actorId, targetId, opts = {}) {
   const target = Number(targetId || 0) | 0;
   if (!(actor > 0) || !(target > 0) || actor === target) return null;
   if (!world.has(actor, Brain)) return null;
+  if (sleepPreventsPerception(world, actor)) return null;
 
   const actorPos = world.get(actor, Position);
   const targetPos = world.get(target, Position);

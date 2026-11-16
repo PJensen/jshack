@@ -14,6 +14,7 @@ import { Collider } from "../src/rules/components/Collider.js";
 import { addToInventory } from "../src/rules/utils/inventoryFacade.js";
 import { recordShopDebt } from "../src/rules/utils/shopDebt.js";
 import { Alignment, LawChaosAxis, GoodEvilAxis } from "../src/rules/components/Alignment.js";
+import { SleepState } from "../src/rules/components/SleepState.js";
 
 function addShopkeeper(world, x = 3, y = 2, visionRange = 8) {
   const shopkeeperId = world.create();
@@ -162,6 +163,41 @@ Deno.test("shopkeeperSystem allows exiting with unpaid items when shopkeeper doe
 
   assert(world.has(playerId, MoveIntent), "unwitnessed shoplifting should not consume movement");
   assert(blocked.length === 0, "unwitnessed shoplifting should not emit blocked exit");
+});
+
+Deno.test("shopkeeperSystem allows leaving when the shopkeeper is asleep away from the shop", () => {
+  const world = new World({ seed: 42 });
+  const playerId = world.create();
+  const itemId = world.create();
+  const shopkeeperId = addShopkeeper(world, 4, 2);
+
+  world.add(shopkeeperId, SleepState, { asleep: true });
+  world.add(playerId, Player, {});
+  world.add(playerId, Position, { x: 2, y: 2 });
+  world.add(playerId, Inventory, { capacity: 20 });
+  world.add(playerId, MoveIntent, { dx: -1, dy: 0 });
+
+  world.add(itemId, ItemInfo, { type: "equip", count: 1, value: 50 });
+  world.add(itemId, Unpaid, { shopkeeperId, price: 75 });
+  addToInventory(world, playerId, itemId);
+
+  const roomId = world.create();
+  world.add(roomId, RoomMetadata, {
+    roomType: "shop",
+    x: 2,
+    y: 2,
+    w: 3,
+    h: 3,
+    shopkeeperId,
+  });
+
+  const blocked = [];
+  world.on("shop:exit-blocked", (ev) => blocked.push(ev));
+
+  shopkeeperSystem(world);
+
+  assert(world.has(playerId, MoveIntent), "sleeping shopkeeper should not consume the exit move");
+  assert(blocked.length === 0, "sleeping shopkeeper should not demand payment for an unattended shop");
 });
 
 Deno.test("shopkeeperSystem blocks exiting shop with unpaid attached debt even when item is gone", () => {
