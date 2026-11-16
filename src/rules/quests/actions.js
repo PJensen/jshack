@@ -1,9 +1,12 @@
 import { QuestState } from "../components/QuestState.js";
 import { QuestVars } from "../components/QuestVars.js";
 import { QuestLog } from "../components/QuestLog.js";
+import { ItemInfo } from "../components/ItemInfo.js";
+import { NamedIdentity } from "../components/NamedIdentity.js";
 import { createItemById } from "../utils/itemFactory.js";
 import { addToInventory } from "../utils/inventoryFacade.js";
 import { listQuestRewardBonusItems, listQuestRewardOptions } from "./rewardOptions.js";
+import { identify } from "../data/identification.js";
 
 function cloneData(data) {
   if (!data || typeof data !== "object") return {};
@@ -62,6 +65,30 @@ function rewardOptions(ctx) {
   return listQuestRewardOptions(ctx.def, ctx.vars);
 }
 
+export function identifyGrantedItem(world, itemId, shouldIdentify = true) {
+  if (!shouldIdentify) return;
+  const identity = String(world.get(itemId, NamedIdentity)?.identity || "");
+  if (identity) identify(identity);
+  const info = world.get(itemId, ItemInfo);
+  if (info && info.identified !== true) world.mutate(itemId, ItemInfo, (record) => {
+    record.identified = true;
+  });
+}
+
+export function grantItem(itemId, count = 1, opts = {}) {
+  return (ctx) => {
+    const created = createItemById(ctx.world, itemId, { count });
+    if (!(created > 0) || !addToInventory(ctx.world, Number(ctx.bind.player || 0) | 0, created)) {
+      if (created > 0) {
+        try { ctx.world.destroy(created); } catch {}
+      }
+      return false;
+    }
+    identifyGrantedItem(ctx.world, created, opts.identified !== false);
+    return true;
+  };
+}
+
 export function isSelectedReward(ctx) {
   const rewardId = String(ctx.payload?.rewardId || "");
   return ctx.def?.journal?.rewardChoice === true
@@ -88,6 +115,7 @@ export function grantSelectedReward() {
         }
         return false;
       }
+      identifyGrantedItem(ctx.world, itemId, item.identified !== false);
       granted.push(itemId);
     }
     const gold = Math.max(0, Number(ctx.def?.journal?.rewardGold || ctx.vars?.rewardGold || 0) | 0);

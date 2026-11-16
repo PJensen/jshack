@@ -72,4 +72,8 @@ Deno.test("resolveIconReference centralizes corpse and unidentified item selecti
   const hidden = resolveIconReference({ type: "food", identity: "corpse_rat", iconAtlas: "corpses", identified: false });
   assertEquals(hidden.atlas, CORPSE_ICON_ATLAS);
   assertEquals(hidden.id, "");
+
+  const unknownScroll = resolveIconReference({ type: "scroll", identity: "scroll_fire", identified: false });
+  assertEquals(unknownScroll.atlas, ITEM_ICON_ATLAS);
+  assertEquals(unknownScroll.id, "scroll_unknown");
 });

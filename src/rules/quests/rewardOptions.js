@@ -22,6 +22,7 @@ export function listQuestRewardOptions(questDef, vars = {}) {
           .map((item) => ({
             itemId: String(item.itemId),
             count: Math.max(1, Number(item.count || 1) | 0),
+            ...(item.identified === false ? { identified: false } : {}),
           })),
       };
     }).filter((choice) => choice.items.length > 0);
@@ -41,6 +42,7 @@ export function listQuestRewardOptions(questDef, vars = {}) {
     items: [{
       itemId: String(item.itemId),
       count: Math.max(1, Number(item.count || vars?.rewardItemCounts?.[item.itemId] || 1) | 0),
+      ...(item.identified === false ? { identified: false } : {}),
     }],
   }));
 }
@@ -57,6 +59,7 @@ export function listQuestRewardBonusItems(questDef, vars = {}) {
     itemId: String(item.itemId),
     count: Math.max(1, Number(item.count || 1) | 0),
     label: String(item.label || "").trim(),
+    ...(item.identified === false ? { identified: false } : {}),
   }));
 }
 

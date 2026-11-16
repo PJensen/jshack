@@ -144,6 +144,10 @@ Deno.test("priest dialog runs the starter fetch quest from offer to turn-in", ()
   }
   assert(goldTotal >= 100, "starter priest quest should award gold");
   assert(inventoryHasIdentity(world, player, "potion_holy_water", 1), "starter priest quest should award an item");
+  const holyWaterId = inventoryItems(world, player).find((itemId) => (
+    String(world.get(itemId, NamedIdentity)?.identity || "") === "potion_holy_water"
+  ));
+  assertEquals(world.get(holyWaterId, ItemInfo)?.identified, true, "priest quest reward should be identified");
 });
 
 Deno.test("priest fetch quest accepts and turns in a book already in inventory", () => {

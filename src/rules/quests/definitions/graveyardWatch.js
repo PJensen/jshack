@@ -7,7 +7,7 @@ import { attachEntityToCurrentFloor } from "../../utils/floorEntities.js";
 import { addToInventory } from "../../utils/inventoryFacade.js";
 import { createItemById } from "../../utils/itemFactory.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
-import { emit, setVar } from "../actions.js";
+import { emit, identifyGrantedItem, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { STARTER_PRIEST_FETCH_QUEST_ID, getQuestRecord } from "../runtime.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
@@ -138,7 +138,9 @@ export const GraveyardWatchQuest = registerQuest({
                   const goldId = createItemById(ctx.world, "gold", { count: REWARD_GOLD });
                   if (goldId > 0) addToInventory(ctx.world, playerId, goldId);
                   const rewardId = createItemById(ctx.world, REWARD_ITEM_ID);
-                  if (rewardId > 0) addToInventory(ctx.world, playerId, rewardId);
+                  if (rewardId > 0 && addToInventory(ctx.world, playerId, rewardId)) {
+                    identifyGrantedItem(ctx.world, rewardId);
+                  }
                 }
               },
               emit("quest:completed", (ctx) => ({

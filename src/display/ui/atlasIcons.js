@@ -65,7 +65,9 @@ export function resolveIconReference(item, defaultAtlas = "items") {
     : (item?.iconId || identity || item?.id || "");
   return {
     atlas: getIconAtlas(atlasName),
-    id: identified ? String(rawId).replace(/^spell:/, "") : "",
+    id: identified
+      ? String(rawId).replace(/^spell:/, "")
+      : type === "scroll" ? "scroll_unknown" : "",
   };
 }
 

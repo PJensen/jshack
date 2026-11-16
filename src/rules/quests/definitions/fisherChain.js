@@ -1,12 +1,10 @@
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { QuestVars } from "../../components/QuestVars.js";
 import { QuestState } from "../../components/QuestState.js";
-import { createItemById } from "../../utils/itemFactory.js";
-import { addToInventory } from "../../utils/inventoryFacade.js";
 import { consumeInventoryIdentity, inventoryHasIdentity } from "../../utils/townEconomy.js";
 import { forEachPlayerKill } from "../../utils/killCredit.js";
 import { firstPlayerId } from "../../utils/worldAccess.js";
-import { emit, incVar, setVar } from "../actions.js";
+import { emit, grantItem, incVar, setVar } from "../actions.js";
 import { registerQuest } from "../registry.js";
 import { getQuestRecord, instantiateQuest } from "../runtime.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
@@ -35,19 +33,6 @@ function playerPayload(ctx) {
 
 function fisherSpeaker(ctx) {
   return Number(ctx.payload?.speakerId || 0) === Number(ctx.bind.giver || 0);
-}
-
-function grantItem(itemId, count = 1) {
-  return (ctx) => {
-    const created = createItemById(ctx.world, itemId, { count });
-    if (!(created > 0) || !addToInventory(ctx.world, Number(ctx.bind.player || 0) | 0, created)) {
-      if (created > 0) {
-        try { ctx.world.destroy(created); } catch {}
-      }
-      return false;
-    }
-    return true;
-  };
 }
 
 function fishingCatchIdentity(world, payload) {
