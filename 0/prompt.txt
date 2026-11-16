@@ -1,0 +1,17 @@
+resolve that merge conflict and push when ready
+
+---
+
+it was 11 commits I pushed, I only saw one drifted conflict on VERSION
+
+---
+
+no -- be careful here -- really see what's happening please.
+
+---
+
+walk me through it -- how did this all come together>
+
+---
+
+no -- the branch, #187
