@@ -756,6 +756,40 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   });
   const spiritOverlayCtx = spiritOverlay.getContext('2d');
   scrollViewport.appendChild(spiritOverlay);
+
+  function launchBootSpiritHandoff() {
+    const source = document.getElementById('boot-sigil');
+    if (!source || !document.body || typeof spiritOverlay.getBoundingClientRect !== 'function') return;
+    const from = source.getBoundingClientRect();
+    const to = spiritOverlay.getBoundingClientRect();
+    const orb = document.createElement('div');
+    Object.assign(orb.style, {
+      position: 'fixed', left: '0', top: '0', width: '14px', height: '14px',
+      borderRadius: '50%', pointerEvents: 'none', zIndex: '10001',
+      background: '#f2d9aa',
+      boxShadow: '0 0 10px #f2d9aa, 0 0 30px rgba(226, 161, 100, 0.84)',
+    });
+    document.body.appendChild(orb);
+    const fromX = from.left + from.width / 2 - 7;
+    const fromY = from.top + from.height / 2 - 7;
+    const toX = to.left + to.width / 2 - 7;
+    const toY = to.top + to.height / 2 - 7;
+    orb.style.transform = `translate(${fromX}px, ${fromY}px)`;
+    try {
+      const animation = orb.animate(
+        [
+          { transform: `translate(${fromX}px, ${fromY}px) scale(1)`, opacity: 0.95 },
+          { transform: `translate(${(fromX + toX) / 2 - 34}px, ${(fromY + toY) / 2 - 42}px) scale(0.62)`, opacity: 0.5, offset: 0.52 },
+          { transform: `translate(${toX}px, ${toY}px) scale(1.25)`, opacity: 0 },
+        ],
+        { duration: 1050, easing: 'cubic-bezier(0.2, 0.75, 0.25, 1)', fill: 'forwards' },
+      );
+      animation.finished.then(() => orb.remove()).catch(() => orb.remove());
+    } catch {
+      orb.remove();
+    }
+  }
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(launchBootSpiritHandoff);
   carouselWrap.appendChild(prevBtn);
   carouselWrap.appendChild(scrollViewport);
   carouselWrap.appendChild(nextBtn);
