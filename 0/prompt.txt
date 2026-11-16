@@ -1,0 +1,9 @@
+added `icons/classes` :-) -- greate for character creator -- we
+
+---
+
+we will be adding a normal map and a moving spirit guide after we do the basic thing.
+
+---
+
+I would do the basic thing first, class icons in character creator.
