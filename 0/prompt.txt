@@ -1,0 +1,51 @@
+boot has a circle,character creator has a true spirit -- true or false?
+
+---
+
+I wonder, is there a way we can use the same visual representation?
+
+---
+
+I love the handoff btw.
+
+---
+
+excellent, make it so
+
+---
+
+oh shit, one more wild idea, when switching classes, let the spirir "ride" the UV map ;-)
+
+---
+
+does that make sense?
+
+also, on boot, I would use the rings to our advantage to communicate something we're loading a ton of shit at that moment.
+
+---
+
+I dont love it -- stash it
+
+---
+
+stash it all
+
+---
+
+just stash it please.
+
+---
+
+boot working on live site, class icons are NOT working on the live site -- explain why
+
+---
+
+jshack.net
+
+---
+
+add -- .gitignore, lets fix please.
+
+---
+
+commit and push when done please :-)
