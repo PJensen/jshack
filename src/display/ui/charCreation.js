@@ -851,13 +851,16 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       }
     }
     state.ctx.clearRect(0, 0, 84, 84);
+    state.ctx.putImageData(image, 0, 0);
     const glow = state.ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16);
-    glow.addColorStop(0, 'rgba(255, 214, 137, 0.42)');
-    glow.addColorStop(0.28, 'rgba(255, 152, 64, 0.22)');
+    glow.addColorStop(0, 'rgba(255, 238, 177, 0.95)');
+    glow.addColorStop(0.18, 'rgba(255, 184, 76, 0.62)');
+    glow.addColorStop(0.42, 'rgba(255, 125, 38, 0.30)');
     glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
+    state.ctx.globalCompositeOperation = 'lighter';
     state.ctx.fillStyle = glow;
     state.ctx.fillRect(0, 0, 84, 84);
-    state.ctx.putImageData(image, 0, 0);
+    state.ctx.globalCompositeOperation = 'source-over';
   }
 
   function animateClassIcons(now) {
