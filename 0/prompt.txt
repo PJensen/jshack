@@ -1,0 +1,5 @@
+give me a give command for a buddy -- some wild items
+
+---
+
+blinding ray no longer allows targteing
