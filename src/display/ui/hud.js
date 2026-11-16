@@ -904,7 +904,7 @@ export function initHUD() {
         searchIsLongPress = true;
         waitHoldRing.setProgress(1);
         setSearchButtonHoldVisual(true);
-        waitBtn.style.background = HUD_BUTTON_ACTIVE_BG;
+        waitBtn.style.background = '#000';
         // Immediately emit one wait, then repeat
         try { window.dispatchEvent(new CustomEvent('ui:wait')); } catch (e) { console.debug('[hud] dispatch ui:wait:', e); }
         searchRepeatTimer = setInterval(() => {
@@ -919,7 +919,7 @@ export function initHUD() {
       if (searchProgressTimer) { cancelAnimationFrame(searchProgressTimer); searchProgressTimer = null; }
       waitHoldRing.reset();
       setSearchButtonHoldVisual(false);
-      waitBtn.style.background = HUD_BUTTON_BG;
+      waitBtn.style.background = '#000';
       if (!searchIsLongPress) {
         // Short tap → search
         try { window.dispatchEvent(new CustomEvent('ui:search')); } catch (e) { console.debug('[hud] dispatch ui:search:', e); }
@@ -933,7 +933,7 @@ export function initHUD() {
       if (searchProgressTimer) { cancelAnimationFrame(searchProgressTimer); searchProgressTimer = null; }
       waitHoldRing.reset();
       setSearchButtonHoldVisual(false);
-      waitBtn.style.background = HUD_BUTTON_BG;
+      waitBtn.style.background = '#000';
       searchIsLongPress = false;
     }
 
@@ -971,13 +971,13 @@ export function initHUD() {
   function resetBackground() {
     const currentState = petBtn.dataset.state || 'following';
     if (currentState === 'fleeing') {
-      petBtn.style.background = 'linear-gradient(180deg, #4a1f1b 0%, #2a1513 100%)';
+      petBtn.style.background = '#000';
     } else if (currentState === 'guarding') {
-      petBtn.style.background = 'linear-gradient(180deg, #2f3b46 0%, #1f252b 100%)';
+      petBtn.style.background = '#000';
     } else if (currentState === 'aggressive') {
-      petBtn.style.background = HUD_BUTTON_ACTIVE_BG;
+      petBtn.style.background = '#000';
     } else {
-      petBtn.style.background = HUD_BUTTON_BG;
+      petBtn.style.background = '#000';
     }
   }
 
@@ -998,7 +998,7 @@ export function initHUD() {
       petHoldRing.setProgress(1);
       window.dispatchEvent(new CustomEvent('ui:openPetMenu'));
       // Visual feedback for long press
-      petBtn.style.background = '#1a2636';
+      petBtn.style.background = '#000';
     }, LONG_PRESS_DURATION);
   }
 
@@ -1077,13 +1077,13 @@ export function initHUD() {
       position: 'relative',
       minHeight: '44px',
       minWidth: '44px',
-      fontSize: '22px',
+      fontSize: '36px',
       lineHeight: '1',
       display: 'grid',
       placeItems: 'center',
       whiteSpace: 'nowrap',
       touchAction: 'manipulation',
-      background: HUD_BUTTON_BG,
+      background: '#000',
       color: '#dce5ef',
       border: HUD_BUTTON_BORDER,
       borderRadius: UX_THEME.radius,
@@ -1127,12 +1127,15 @@ export function initHUD() {
       btn.textContent = '';
       const iconSpan = document.createElement('span');
       iconSpan.textContent = icon;
-      iconSpan.style.lineHeight = '1';
+      Object.assign(iconSpan.style, {
+        lineHeight: '1',
+        transform: 'translateY(-4px)',
+      });
       applyAtlasIcon(
         iconSpan,
         iconRef,
         icon,
-        22,
+        36,
       );
       btn.appendChild(iconSpan);
       const countBadge = String(btn.dataset.countBadge || '').trim();
@@ -1289,7 +1292,7 @@ export function initHUD() {
       btn.style.width = '100%';
       btn.style.minWidth = '0';
       btn.style.padding = '8px 4px';
-      btn.style.fontSize = '20px';
+      btn.style.fontSize = '36px';
       btn.style.overflow = 'hidden';
       btn.style.textOverflow = 'ellipsis';
     }
@@ -1330,7 +1333,7 @@ export function initHUD() {
     const e = /** @type {CustomEvent} */ (ev);
     const active = e?.detail?.active === true;
     attackBtn.style.borderColor = active ? '#d8b961' : '#6f7d8d';
-    attackBtn.style.background = active ? HUD_BUTTON_ACTIVE_BG : HUD_BUTTON_BG;
+    attackBtn.style.background = '#000';
   });
   // Update button based on pet state
   window.addEventListener('ui:updatePetButton', (ev) => {
@@ -1357,13 +1360,13 @@ export function initHUD() {
     refreshCommandLabels();
     // Color code by state
     if (state === 'fleeing') {
-      petBtn.style.background = 'linear-gradient(180deg, #4a1f1b 0%, #2a1513 100%)';
+      petBtn.style.background = '#000';
     } else if (state === 'guarding') {
-      petBtn.style.background = 'linear-gradient(180deg, #2f3b46 0%, #1f252b 100%)';
+      petBtn.style.background = '#000';
     } else if (state === 'aggressive') {
-      petBtn.style.background = HUD_BUTTON_ACTIVE_BG;
+      petBtn.style.background = '#000';
     } else {
-      petBtn.style.background = HUD_BUTTON_BG;
+      petBtn.style.background = '#000';
     }
   });
 
@@ -1372,9 +1375,7 @@ export function initHUD() {
     prayBtn.dataset.openingHighlight = enabled ? 'true' : 'false';
     prayBtn.style.transform = enabled ? 'translateY(-1px) scale(1.04)' : '';
     prayBtn.style.borderColor = enabled ? '#d8b961' : '#6f7d8d';
-    prayBtn.style.background = enabled
-      ? 'linear-gradient(180deg, #4b3a12 0%, #2a1f0a 100%)'
-      : HUD_BUTTON_BG;
+    prayBtn.style.background = '#000';
     prayBtn.style.boxShadow = enabled
       ? '0 0 0 2px rgba(243,212,107,0.28), 0 0 18px rgba(243,212,107,0.45)'
       : '0 8px 22px rgba(0,0,0,0.32), inset 0 0 0 1px rgba(188,206,224,0.06)';
