@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M7JZ10F3H21QCE493X99AH6F",
+  "session_id": "01a1e5d6-5523-73d0-8630-f5dfcb47c555",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-16T19:58:28.410003459Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/ui/atlasIcons.js",
+    "tests/uxIconAtlas.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "29376ac727be",
+  "checkpoint_transcript_start": 213,
+  "transcript_lines_at_start": 213,
+  "compact_transcript_start": 36,
+  "token_usage": {
+    "input_tokens": 12740,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 422272,
+    "output_tokens": 1728,
+    "api_call_count": 6,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 5286,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 5286,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 6
+  }
+}
