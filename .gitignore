@@ -60,4 +60,8 @@ tools/greenlight/
 .signal-control-tower/logs/events.jsonl
 signal-control-tower.json
 package.json
-assets/icons/originals/**
+## Keep only the canonical icon atlas and manifest in each icon subtree.
+assets/icons/**
+!assets/icons/**/
+!assets/icons/**/sheet.webp
+!assets/icons/**/manifest.js

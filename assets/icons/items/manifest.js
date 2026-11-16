@@ -1,5 +1,6 @@
 // Zero-based column/row coordinates; pixel origin = x * size, y * size.
-// Atlas: js-hack-items.png (768 x 672); canonical item identities.
+// Atlas: items/sheet.webp (768 x 704); 32px tiles, 24 columns x 22 rows.
+// Shop keys share one illustrated icon cell; existing atlas positions are unchanged.
 export default {
   "size": 32,
   "entries": [
@@ -874,11 +875,6 @@ export default {
       "y": 7
     },
     {
-      "id": "last_stand_circlet",
-      "x": 5,
-      "y": 7
-    },
-    {
       "id": "eternal_hunger_crown",
       "x": 6,
       "y": 7
@@ -1724,16 +1720,6 @@ export default {
       "y": 14
     },
     {
-      "id": "potion_health",
-      "x": 6,
-      "y": 14
-    },
-    {
-      "id": "healing_potion",
-      "x": 6,
-      "y": 14
-    },
-    {
       "id": "potion_water",
       "x": 7,
       "y": 14
@@ -1984,17 +1970,7 @@ export default {
       "y": 16
     },
     {
-      "id": "scroll_enchant_fierce",
-      "x": 8,
-      "y": 16
-    },
-    {
       "id": "scroll_enchant_flame_ward",
-      "x": 9,
-      "y": 16
-    },
-    {
-      "id": "scroll_enchant_lucky",
       "x": 9,
       "y": 16
     },
@@ -2004,17 +1980,7 @@ export default {
       "y": 16
     },
     {
-      "id": "scroll_enchant_guarded",
-      "x": 10,
-      "y": 16
-    },
-    {
       "id": "scroll_enchant_frost",
-      "x": 11,
-      "y": 16
-    },
-    {
-      "id": "scroll_enchant_attuned",
       "x": 11,
       "y": 16
     },
@@ -2040,11 +2006,6 @@ export default {
     },
     {
       "id": "scroll_heal",
-      "x": 16,
-      "y": 16
-    },
-    {
-      "id": "scroll_enchant_healthy",
       "x": 16,
       "y": 16
     },
@@ -2562,6 +2523,46 @@ export default {
       "id": "witchfire_sword",
       "x": 23,
       "y": 20
+    },
+    {
+      "id": "last_stand_circlet",
+      "x": 5,
+      "y": 7
+    },
+    {
+      "id": "potion_health",
+      "x": 6,
+      "y": 14
+    },
+    {
+      "id": "healing_potion",
+      "x": 6,
+      "y": 14
+    },
+    {
+      "id": "scroll_enchant_fierce",
+      "x": 8,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_lucky",
+      "x": 9,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_guarded",
+      "x": 10,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_attuned",
+      "x": 11,
+      "y": 16
+    },
+    {
+      "id": "scroll_enchant_healthy",
+      "x": 16,
+      "y": 16
     },
     {
       "id": "key",
