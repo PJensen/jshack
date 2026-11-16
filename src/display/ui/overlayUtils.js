@@ -5,7 +5,7 @@ import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
 import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
-import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference, UX_ICON_ATLAS } from './atlasIcons.js';
 
 export const PANEL_Z_BASE = 1200;
 export let _panelZCounter = PANEL_Z_BASE;
@@ -99,7 +99,7 @@ export function appendCharacterMenuTabs(host, activeKey) {
     }
 
     const icon = document.createElement('span');
-    icon.textContent = tab.icon;
+    applyAtlasIcon(icon, { atlas: UX_ICON_ATLAS, id: tab.key }, tab.icon, 28);
     icon.style.lineHeight = '1';
     icon.style.fontSize = '16px';
     icon.style.fontFamily = GAME_ICON_FONT_FAMILY;

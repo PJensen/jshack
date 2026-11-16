@@ -38,3 +38,20 @@ export const CHARACTER_MENU_TAB_GLYPHS = Object.freeze({
   quests: '\u{1F4DC}',
   settings: '\u2699\uFE0F',
 });
+
+export const CHARACTER_SHEET_GLYPHS = Object.freeze({
+  strength: '♜',
+  dexterity: '➶',
+  intelligence: '▤',
+  vitality: '❖',
+  health: '♥',
+  mana: '◆',
+  stamina: 'ϟ',
+  damage: '⚔',
+  accuracy: '◎',
+  avoidance: '➹',
+  armor: '♜',
+  critical: '✹',
+  criticalStrike: '✹',
+  spellPower: '✦',
+});

@@ -5,7 +5,8 @@ import {
   CHARACTER_SLOT_ORDER, installDetachableKeyHandler, pulseRow,
   UI, dispatchCharacterMenuTabCycle,
 } from './overlayUtils.js';
-import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
+import { applyAtlasIcon, resolveIconReference, UX_ICON_ATLAS } from './atlasIcons.js';
+import { CHARACTER_SHEET_GLYPHS } from './iconGlyphs.js';
 
 /**
  * Resolve the primary equipment-row artwork without exposing unidentified gear.
@@ -101,22 +102,20 @@ export function renderCharacterSheet(panel, data) {
     });
     const moonEmoji = String(calendar?.moonEmoji || '');
     const moonLabel = String(calendar?.moonLabel || '');
-    calendarCard.textContent = `${moonEmoji ? `${moonEmoji} ` : ''}${String(calendar.formatted)}${moonLabel ? ` \u00b7 ${moonLabel}` : ''}`;
+    const moonPhase = String(calendar?.moonPhase || '');
+    const moonId = ({
+      new: 'moonNew', waxing_crescent: 'moonWaxingCrescent', first_quarter: 'moonFirstQuarter',
+      waxing_gibbous: 'moonWaxingGibbous', full: 'moonFull', waning_gibbous: 'moonWaningGibbous',
+      last_quarter: 'moonLastQuarter', waning_crescent: 'moonWaningCrescent',
+    })[moonPhase] || '';
+    const moonIcon = document.createElement('span');
+    const hasMoonIcon = applyAtlasIcon(moonIcon, { atlas: UX_ICON_ATLAS, id: moonId }, moonEmoji, 30);
+    if (!hasMoonIcon) moonIcon.textContent = moonEmoji;
+    moonIcon.style.verticalAlign = 'middle';
+    moonIcon.style.marginRight = '8px';
+    calendarCard.append(moonIcon, document.createTextNode(`${String(calendar.formatted)}${moonLabel ? ` \u00b7 ${moonLabel}` : ''}`));
     el.appendChild(calendarCard);
   }
-
-  const statCard = document.createElement('div');
-  Object.assign(statCard.style, {
-    padding: '8px',
-    border: UI.BORDER,
-    borderRadius: UI.RADIUS,
-    background: UI.DEFAULT_BG,
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-    gap: '6px 12px',
-    fontSize: '13px',
-  });
-  el.appendChild(statCard);
 
   function deltaColor(value, baseline = 0) {
     const n = Number(value || 0);
@@ -125,25 +124,75 @@ export function renderCharacterSheet(panel, data) {
     return null;
   }
 
-  // [label, value, color|null]  — null = default text color
-  const statRows = [
-    ['__header', 'Attributes'],
-    ['Strength', `${Number(stats.strength || 0)}`, deltaColor(stats.strength)],
-    ['Dexterity', `${Number(stats.dexterity || 0)}`, deltaColor(stats.dexterity)],
-    ['Intelligence', `${Number(stats.intelligence || 0)}`, deltaColor(stats.intelligence)],
-    ['Vitality', `${Number(stats.vitalityStat || 0)}`, deltaColor(stats.vitalityStat)],
-    ['__header', 'Resources'],
-    ['Health', `${Number(stats.hp || 0)}/${Number(stats.maxHp || 0)}`],
-    ['Mana', `${Number(stats.mana || 0)}/${Number(stats.maxMana || 0)}  +${Number(stats.manaRegen || 0).toFixed(2)}/t`],
-    ['Stamina', `${Number(stats.stamina || 0)}/${Number(stats.maxStamina || 0)}  +${Number(stats.staminaRegen || 0).toFixed(1)}/t`],
-    ['__header', 'Capabilities'],
-    ['Damage', `${Number(stats.damage || 0)}`, deltaColor(stats.damage)],
-    ['Accuracy', `${Number(stats.accuracy || 0)}`, deltaColor(stats.accuracy)],
-    ['Avoidance', `${Number(stats.avoidance || 0)}`, deltaColor(stats.avoidance)],
-    ['Armor', `${Number(stats.armor || 0)}`, deltaColor(stats.armor)],
-    ['Critical Strike', `${Number(stats.critChancePercent || 0).toFixed(1)}%`, deltaColor(stats.critChancePercent)],
-    ['Spell Power', `${Number(stats.spellPower || 0)}`, deltaColor(stats.spellPower)],
-    ['__header', 'Additional Details'],
+  function addSection(titleText, columns = 'repeat(2, minmax(0, 1fr))') {
+    const section = document.createElement('section');
+    Object.assign(section.style, {
+      marginTop: '10px', padding: '8px', border: UI.BORDER, borderRadius: UI.RADIUS,
+      background: UI.DEFAULT_BG,
+    });
+    const heading = document.createElement('div');
+    heading.textContent = titleText.toUpperCase();
+    Object.assign(heading.style, { marginBottom: '7px', color: '#9ecbff', fontWeight: 'bold', letterSpacing: '0.04em' });
+    section.appendChild(heading);
+    const grid = document.createElement('div');
+    Object.assign(grid.style, { display: 'grid', gridTemplateColumns: columns, gap: '6px' });
+    section.appendChild(grid);
+    el.appendChild(section);
+    return grid;
+  }
+
+  function addMetric(grid, label, value, glyph, color = null) {
+    const row = document.createElement('div');
+    Object.assign(row.style, { display: 'flex', alignItems: 'center', gap: '8px', minWidth: '0', padding: '7px 8px', border: UI.BORDER, borderRadius: UI.RADIUS });
+    const icon = document.createElement('span');
+    const hasIcon = applyAtlasIcon(icon, { atlas: UX_ICON_ATLAS, id: glyph }, CHARACTER_SHEET_GLYPHS[glyph] || glyph || '·', 28);
+    if (!hasIcon) Object.assign(icon.style, { color: '#cfe8ff', fontSize: '20px', textAlign: 'center', lineHeight: '1' });
+    Object.assign(icon.style, { width: '28px', height: '28px', flex: '0 0 28px', textAlign: 'center' });
+    const labelEl = document.createElement('span');
+    labelEl.textContent = `${label}:`;
+    labelEl.style.minWidth = '0';
+    const valueEl = document.createElement('span');
+    valueEl.textContent = value;
+    Object.assign(valueEl.style, { marginLeft: 'auto', color: color || UI.TEXT, fontWeight: 'bold', whiteSpace: 'nowrap' });
+    row.append(icon, labelEl, valueEl);
+    grid.appendChild(row);
+  }
+
+  const compactSheet = window.innerWidth < 620;
+  const attributes = addSection('Attributes', compactSheet ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))');
+  addMetric(attributes, 'Strength', `${Number(stats.strength || 0)}`, 'strength', deltaColor(stats.strength));
+  addMetric(attributes, 'Dexterity', `${Number(stats.dexterity || 0)}`, 'dexterity', deltaColor(stats.dexterity));
+  addMetric(attributes, 'Intelligence', `${Number(stats.intelligence || 0)}`, 'intelligence', deltaColor(stats.intelligence));
+  addMetric(attributes, 'Vitality', `${Number(stats.vitalityStat || 0)}`, 'vitality', deltaColor(stats.vitalityStat));
+
+  const resources = addSection('Resources', '1fr');
+  function addResource(label, glyph, current, maximum, color, suffix = '') {
+    const row = document.createElement('div');
+    Object.assign(row.style, { display: 'grid', gridTemplateColumns: compactSheet ? '22px 86px minmax(40px, 1fr) auto' : '22px 118px minmax(80px, 1fr) auto', alignItems: 'center', gap: '8px', padding: '6px 8px', border: UI.BORDER, borderRadius: UI.RADIUS });
+    const icon = document.createElement('span');
+    const hasIcon = applyAtlasIcon(icon, { atlas: UX_ICON_ATLAS, id: glyph }, CHARACTER_SHEET_GLYPHS[glyph] || glyph, 28);
+    if (!hasIcon) icon.style.fontSize = '20px';
+    Object.assign(icon.style, { width: '28px', height: '28px', color, textAlign: 'center' });
+    const name = document.createElement('span'); name.textContent = `${label}:`;
+    const track = document.createElement('div'); Object.assign(track.style, { height: '14px', overflow: 'hidden', border: '1px solid rgba(190,210,230,0.7)', borderRadius: '999px', background: 'rgba(54,66,76,0.72)' });
+    const fill = document.createElement('div'); const ratio = maximum > 0 ? Math.max(0, Math.min(1, current / maximum)) : 0; Object.assign(fill.style, { width: `${ratio * 100}%`, height: '100%', background: color, borderRadius: 'inherit' }); track.appendChild(fill);
+    const value = document.createElement('span'); value.textContent = `${current}/${maximum}${suffix}`; value.style.whiteSpace = 'nowrap';
+    row.append(icon, name, track, value); resources.appendChild(row);
+  }
+  addResource('Health', 'health', Number(stats.hp || 0), Number(stats.maxHp || 0), '#d94c4c', `  ${Math.round((Number(stats.hp || 0) / Math.max(1, Number(stats.maxHp || 0))) * 100)}%`);
+  addResource('Mana', 'mana', Number(stats.mana || 0), Number(stats.maxMana || 0), '#2e8de6', `  +${Number(stats.manaRegen || 0).toFixed(2)}/t`);
+  addResource('Stamina', 'stamina', Number(stats.stamina || 0), Number(stats.maxStamina || 0), '#dca52d', `  +${Number(stats.staminaRegen || 0).toFixed(1)}/t`);
+
+  const capabilities = addSection('Capabilities', compactSheet ? '1fr' : 'repeat(2, minmax(0, 1fr))');
+  addMetric(capabilities, 'Damage', `${Number(stats.damage || 0)}`, 'damage', deltaColor(stats.damage));
+  addMetric(capabilities, 'Accuracy', `${Number(stats.accuracy || 0)}`, 'accuracy', deltaColor(stats.accuracy));
+  addMetric(capabilities, 'Avoidance', `${Number(stats.avoidance || 0)}`, 'avoidance', deltaColor(stats.avoidance));
+  addMetric(capabilities, 'Armor', `${Number(stats.armor || 0)}`, 'armor', deltaColor(stats.armor));
+  addMetric(capabilities, 'Critical Strike', `${Number(stats.critChancePercent || 0).toFixed(1)}%`, 'criticalStrike', deltaColor(stats.critChancePercent));
+  addMetric(capabilities, 'Spell Power', `${Number(stats.spellPower || 0)}`, 'spellPower', deltaColor(stats.spellPower));
+
+  const details = addSection('Additional Details', compactSheet ? '1fr' : 'repeat(2, minmax(0, 1fr))');
+  const detailRows = [
     ['Damage Power', `${Number(stats.damagePower || 0)}`, deltaColor(stats.damagePower)],
     ['Mitigation', `${Number(stats.mitigation || 0)}`, deltaColor(stats.mitigation)],
     ['Luck', `${Number(stats.luck || 0)}`, deltaColor(stats.luck)],
@@ -151,33 +200,13 @@ export function renderCharacterSheet(panel, data) {
     ['Dmg Bonus', `${Number(stats.damageFlatBonus || 0)}`, deltaColor(stats.damageFlatBonus)],
     ['Carry', `${Number(stats.carryWeight || 0).toFixed(1)}/${Number(stats.carryLimit || 0).toFixed(1)} kg · ${humanize(String(stats.carryState || 'unburdened'))}`],
     ['Max HP Bonus', `${Number(stats.maxHpDerived || 0)}`, deltaColor(stats.maxHpDerived)],
-    ['Speed', `${Number(stats.speed || 1)}`, deltaColor(stats.speed, 1) === '#64c87a' ? '#e06a6a' : deltaColor(stats.speed, 1) === '#e06a6a' ? '#64c87a' : null],
+    ['Speed', `${Number(stats.speed || 1)}`, null],
     ['Gold', `${Number(stats.gold || 0)}`],
     ['Hunger', `${humanize(String(stats.hungerLevel || 'normal'))} (${Number(stats.hunger || 0)})`],
     ['Depth', `${Number(stats.depth || 0)}`],
     ['Turn', `${Number(stats.turn || 0)}`],
   ];
-  for (const [label, value, color] of statRows) {
-    if (label === '__header') {
-      const header = document.createElement('div');
-      header.textContent = value.toUpperCase();
-      header.style.gridColumn = '1 / -1';
-      header.style.marginTop = '8px';
-      header.style.color = '#9ecbff';
-      header.style.fontWeight = 'bold';
-      statCard.appendChild(header);
-      continue;
-    }
-    const row = document.createElement('div');
-    const lbl = document.createElement('span');
-    lbl.textContent = `${label}: `;
-    const val = document.createElement('span');
-    val.textContent = value;
-    if (color) val.style.color = color;
-    row.appendChild(lbl);
-    row.appendChild(val);
-    statCard.appendChild(row);
-  }
+  for (const [label, value, color] of detailRows) addMetric(details, label, value, '·', color);
 
   // Resistances — only show non-zero entries
   const resistRows = [

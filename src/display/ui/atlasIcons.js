@@ -2,11 +2,13 @@ import spellManifest from "../../../assets/icons/spells/manifest.js";
 import itemManifest from "../../../assets/icons/items/manifest.js";
 import statusManifest from "../../../assets/icons/statuses/manifest.js";
 import corpseManifest from "../../../assets/icons/corpses/manifest.js";
+import uxManifest from "../../../assets/icons/ux/manifest.js";
 
 const SPELL_SHEET_URL = new URL("../../../assets/icons/spells/sheet.webp", import.meta.url).href;
 const ITEM_SHEET_URL = new URL("../../../assets/icons/items/sheet.webp", import.meta.url).href;
 const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", import.meta.url).href;
 const CORPSE_SHEET_URL = new URL("../../../assets/icons/corpses/sheet.webp", import.meta.url).href;
+const UX_SHEET_URL = new URL("../../../assets/icons/ux/sheet.webp", import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();
@@ -24,16 +26,34 @@ function buildAtlas(manifest, sheetUrl) {
   return Object.freeze({ entries, columns, rows, sheetUrl });
 }
 
+function buildSpriteAtlas(manifest, sheetUrl) {
+  const entries = new Map();
+  const sprites = manifest?.sprites && typeof manifest.sprites === "object" ? manifest.sprites : {};
+  for (const [id, sprite] of Object.entries(sprites)) {
+    const x = Math.max(0, Number(sprite?.column) | 0);
+    const y = Math.max(0, Number(sprite?.row) | 0);
+    entries.set(String(id), { x, y });
+  }
+  return Object.freeze({
+    entries,
+    columns: Math.max(1, Number(manifest?.columns) | 0),
+    rows: Math.max(1, Number(manifest?.rows) | 0),
+    sheetUrl,
+  });
+}
+
 export const SPELL_ICON_ATLAS = buildAtlas(spellManifest, SPELL_SHEET_URL);
 export const ITEM_ICON_ATLAS = buildAtlas(itemManifest, ITEM_SHEET_URL);
 export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
 export const CORPSE_ICON_ATLAS = buildAtlas(corpseManifest, CORPSE_SHEET_URL);
+export const UX_ICON_ATLAS = buildSpriteAtlas(uxManifest, UX_SHEET_URL);
 
 export const ICON_ATLASES = Object.freeze({
   spells: SPELL_ICON_ATLAS,
   items: ITEM_ICON_ATLAS,
   statuses: STATUS_ICON_ATLAS,
   corpses: CORPSE_ICON_ATLAS,
+  ux: UX_ICON_ATLAS,
 });
 
 /** @param {string} name */
