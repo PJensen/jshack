@@ -6,7 +6,7 @@ import { pickRandomCharacterName } from '../../shared/utils/characterNames.js';
 import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/client.js';
 import { ORACULAR_MESSAGES, formatOracularMessageHtml } from '../../shared/data/hints.js';
 import { play, preload, startLoop, stopLoop } from '../audio/audioEngine.js';
-import { applyAtlasIcon, CLASS_ICON_ATLAS } from './atlasIcons.js';
+import { CLASS_ICON_ATLAS, CLASS_NORMAL_MAP_URL } from './atlasIcons.js';
 
 /**
  * @param {{
@@ -40,6 +40,19 @@ const UI = Object.freeze({
 
 function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    if (typeof Image !== 'function') {
+      reject(new Error('image loading is unavailable'));
+      return;
+    }
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error(`failed to load ${url}`));
+    image.src = url;
+  });
+}
+
 /** Parse the seed input — accepts hex (0x...) or plain integers. Returns null if invalid. */
 function parseSeed(raw) {
   const s = (raw || '').trim();
@@ -51,6 +64,12 @@ function parseSeed(raw) {
 
 export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm }) {
   let classIndex = Math.floor(Math.random() * classes.length);
+  let classIconRafId = null;
+  const classIconStates = [];
+  const classIconMaps = Promise.all([
+    loadImage(CLASS_ICON_ATLAS.sheetUrl),
+    loadImage(CLASS_NORMAL_MAP_URL),
+  ]);
   let oracleTimer = null;
   const savedName = readSavedName();
   const fallbackName = savedName || pickRandomCharacterName();
@@ -678,14 +697,12 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       marginBottom: '6px',
       filter: 'saturate(0.85) brightness(0.92)',
     });
-    const hasClassIcon = applyAtlasIcon(
-      icon,
-      { atlas: CLASS_ICON_ATLAS, id: cls.iconId || cls.id },
-      cls.icon || cls.name[0],
-      84,
-    );
-    if (!hasClassIcon) icon.textContent = cls.icon || cls.name[0];
+    icon.textContent = cls.icon || cls.name[0];
     icon.setAttribute('aria-label', `${cls.name} class icon`);
+    classIconStates.push({
+      cls, element: icon, canvas: null, pixels: null, normals: null,
+      x: 42, y: 42, vx: 0, vy: 0, targetX: 42, targetY: 42, lastNow: 0,
+    });
 
     const name = document.createElement('div');
     Object.assign(name.style, {
@@ -744,6 +761,105 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     dots.push(dot);
   }
   box.appendChild(dotsRow);
+
+  function prepareClassIcon(state, colorImage, normalImage) {
+    const sprite = CLASS_ICON_ATLAS.entries.get(state.cls.iconId || state.cls.id);
+    if (!sprite) return;
+    const source = document.createElement('canvas');
+    source.width = 256;
+    source.height = 256;
+    const sourceCtx = source.getContext('2d', { willReadFrequently: true });
+    const output = document.createElement('canvas');
+    output.width = 84;
+    output.height = 84;
+    const outputCtx = output.getContext('2d');
+    if (!sourceCtx || !outputCtx) return;
+
+    sourceCtx.clearRect(0, 0, 256, 256);
+    sourceCtx.drawImage(colorImage, sprite.x * 256, sprite.y * 256, 256, 256, 0, 0, 256, 256);
+    const pixels = sourceCtx.getImageData(0, 0, 256, 256).data;
+    sourceCtx.clearRect(0, 0, 256, 256);
+    sourceCtx.drawImage(normalImage, sprite.x * 256, sprite.y * 256, 256, 256, 0, 0, 256, 256);
+    const normals = sourceCtx.getImageData(0, 0, 256, 256).data;
+    state.canvas = output;
+    state.ctx = outputCtx;
+    state.pixels = pixels;
+    state.normals = normals;
+    chooseSpiritTarget(state);
+    state.element.replaceChildren(output);
+    Object.assign(output.style, { width: '84px', height: '84px', imageRendering: 'pixelated' });
+  }
+
+  function chooseSpiritTarget(state) {
+    for (let attempt = 0; attempt < 24; attempt++) {
+      const x = 5 + Math.floor(Math.random() * 74);
+      const y = 5 + Math.floor(Math.random() * 74);
+      const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
+      if (state.pixels?.[sourceIndex + 3] > 12) {
+        state.targetX = x;
+        state.targetY = y;
+        return;
+      }
+    }
+    state.targetX = 42;
+    state.targetY = 42;
+  }
+
+  function updateSpiritLight(state, now) {
+    const dt = Math.min(0.05, Math.max(0.008, (now - state.lastNow) / 1000 || 0.016));
+    state.lastNow = now;
+    const dx = state.targetX - state.x;
+    const dy = state.targetY - state.y;
+    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+    state.vx += (dx / distance) * dt * 20;
+    state.vy += (dy / distance) * dt * 20;
+    state.vx *= Math.pow(0.12, dt);
+    state.vy *= Math.pow(0.12, dt);
+    state.x = Math.max(4, Math.min(80, state.x + state.vx * dt));
+    state.y = Math.max(4, Math.min(80, state.y + state.vy * dt));
+    if (distance < 7 || Math.random() < dt * 0.08) chooseSpiritTarget(state);
+  }
+
+  function renderClassIcon(state, now) {
+    if (!state.canvas || !state.pixels || !state.normals) return;
+    updateSpiritLight(state, now);
+    const image = state.ctx.createImageData(84, 84);
+    const lightX = state.x;
+    const lightY = state.y;
+    for (let y = 0; y < 84; y++) {
+      for (let x = 0; x < 84; x++) {
+        const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
+        const outputIndex = (y * 84 + x) * 4;
+        const alpha = state.pixels[sourceIndex + 3];
+        if (alpha === 0) continue;
+        const nx = state.normals[sourceIndex] / 127.5 - 1;
+        const ny = state.normals[sourceIndex + 1] / 127.5 - 1;
+        const nz = state.normals[sourceIndex + 2] / 127.5 - 1;
+        const dx = lightX - x;
+        const dy = lightY - y;
+        const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+        const diffuse = Math.max(0, (nx * dx / distance) + (ny * dy / distance) + nz * 0.65);
+        const falloff = Math.max(0, 1 - distance / 76);
+        const brightness = 0.38 + diffuse * falloff * 1.25;
+        image.data[outputIndex] = Math.min(255, state.pixels[sourceIndex] * brightness + 18 * falloff);
+        image.data[outputIndex + 1] = Math.min(255, state.pixels[sourceIndex + 1] * brightness + 8 * falloff);
+        image.data[outputIndex + 2] = Math.min(255, state.pixels[sourceIndex + 2] * brightness);
+        image.data[outputIndex + 3] = alpha;
+      }
+    }
+    state.ctx.putImageData(image, 0, 0);
+  }
+
+  function animateClassIcons(now) {
+    classIconRafId = requestAnimationFrame(animateClassIcons);
+    const state = classIconStates[classIndex];
+    if (state) renderClassIcon(state, now);
+  }
+
+  classIconMaps.then(([colorImage, normalImage]) => {
+    for (const state of classIconStates) prepareClassIcon(state, colorImage, normalImage);
+    if (typeof requestAnimationFrame === 'function') classIconRafId = requestAnimationFrame(animateClassIcons);
+  }).catch(() => {});
 
   function scrollTo(idx, opts = {}) {
     classIndex = idx;
@@ -1405,6 +1521,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     // Stop character creation soundscape
     stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 1.0 });
     if (bgRafId !== null) cancelAnimationFrame(bgRafId);
+    if (classIconRafId !== null) cancelAnimationFrame(classIconRafId);
     if (oracleTimer !== null) clearInterval(oracleTimer);
     if (ctaPulseAnim) { try { ctaPulseAnim.cancel(); } catch {} ctaPulseAnim = null; }
     window.removeEventListener('resize', resizeBgCanvas);

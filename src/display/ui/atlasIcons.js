@@ -50,6 +50,7 @@ export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
 export const CORPSE_ICON_ATLAS = buildAtlas(corpseManifest, CORPSE_SHEET_URL);
 export const UX_ICON_ATLAS = buildSpriteAtlas(uxManifest, UX_SHEET_URL);
 export const CLASS_ICON_ATLAS = buildSpriteAtlas(classManifest, CLASS_SHEET_URL);
+export const CLASS_NORMAL_MAP_URL = new URL("../../../assets/icons/classes/normal.png", import.meta.url).href;
 
 export const ICON_ATLASES = Object.freeze({
   spells: SPELL_ICON_ATLAS,
