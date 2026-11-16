@@ -671,13 +671,14 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   // Scroll viewport — shows one slide at a time, smooth scroll between them
   const scrollViewport = document.createElement('div');
   Object.assign(scrollViewport.style, {
-    flex: '1', minWidth: '0',
+    flex: '1', width: '100%', minWidth: '0',
     overflow: 'hidden',
   });
 
   const scrollTrack = document.createElement('div');
   Object.assign(scrollTrack.style, {
     display: 'flex',
+    width: '100%',
     transition: 'transform 320ms cubic-bezier(0.25, 0.9, 0.3, 1)',
     willChange: 'transform',
   });
@@ -693,6 +694,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
     const icon = document.createElement('div');
     Object.assign(icon.style, {
+      display: 'flex', justifyContent: 'center', alignItems: 'center',
+      width: '100%', height: '84px',
       fontSize: '48px', lineHeight: '1.1',
       marginBottom: '6px',
       filter: 'saturate(0.85) brightness(0.92)',
@@ -847,6 +850,13 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         image.data[outputIndex + 3] = alpha;
       }
     }
+    state.ctx.clearRect(0, 0, 84, 84);
+    const glow = state.ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16);
+    glow.addColorStop(0, 'rgba(255, 214, 137, 0.42)');
+    glow.addColorStop(0.28, 'rgba(255, 152, 64, 0.22)');
+    glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
+    state.ctx.fillStyle = glow;
+    state.ctx.fillRect(0, 0, 84, 84);
     state.ctx.putImageData(image, 0, 0);
   }
 
