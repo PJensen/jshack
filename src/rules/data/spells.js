@@ -406,7 +406,7 @@ export const SPELL_DEFS = {
     schools: ['bestial'],
     manaCost: 0,
     minIntelligence: 0,
-    range: 5,
+    range: 8,
     impactDamage: 6,
     stunTurns: 1,
     script: 'boar_charge',
@@ -1192,6 +1192,28 @@ export const SPELL_DEFS = {
     effects: [
       { kind: 'damage', element: 'physical', amount: '4 base, weapon-scaled' },
       { kind: 'status', status: 'bleed', duration: '4 turns' },
+    ],
+  },
+  charge: {
+    id: 'charge',
+    name: 'Charge',
+    symbol: '\u21E2',    // ⇢
+    schools: ['martial'],
+    manaCost: 0,
+    costResource: 'stamina',
+    staminaCost: 10,
+    minIntelligence: 0,
+    range: 8,
+    cooldown: 8,
+    impactDamage: 6,
+    stunTurns: 1,
+    script: 'charge',
+    targeting: 'enemy',
+    description: 'Lower your shoulder and thunder across the dungeon into a nearby foe.',
+    effects: [
+      { kind: 'movement', mode: 'dash', note: 'Rushes in a straight line toward a hostile target' },
+      { kind: 'damage', element: 'physical', amount: '6 base, weapon-scaled impact' },
+      { kind: 'status', status: 'stun', duration: '1 turn on hit' },
     ],
   },
   bloodthirst: {

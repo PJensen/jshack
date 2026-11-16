@@ -84,6 +84,7 @@ import { Owner } from "../components/Owner.js";
 import { Reanimated } from "../components/Reanimated.js";
 import { attachProcNode } from "../utils/statProcAuthoring.js";
 import { RendCast } from "../../events/RendCast.js";
+import { ChargeCast } from "../../events/ChargeCast.js";
 
 /** @returns {any|null} */
 function _getWeather(world) {
@@ -4460,6 +4461,81 @@ REGISTRY['rend'] = function rendScript(world, actor, spell, intent) {
     actor, targetId, at: { x: tpos.x | 0, y: tpos.y | 0 },
     amount: result.amount | 0, hit: result.applied, bleeding,
     missed: result.reason === 'missed',
+  }));
+};
+
+REGISTRY['charge'] = function chargeScript(world, actor, spell, intent) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return;
+  const actorFaction = String(world.get(actor, Faction)?.key || 'player').trim();
+  const targetId = Number(intent?.targetId || 0) | 0;
+  const targetPos = world.get(targetId, Position);
+  const targetVit = world.get(targetId, Vitality);
+  const targetFac = world.get(targetId, Faction);
+  const from = { x: apos.x | 0, y: apos.y | 0 };
+  const range = Math.max(2, Number(spell?.range || 5) | 0);
+  if (!(targetId > 0) || !targetPos || !targetVit || (targetVit.hp | 0) <= 0 || !targetFac
+    || !areFactionsHostile(actorFaction, String(targetFac.key || ''))) {
+    world.emit(new ChargeCast({ actor, targetId, from, to: from, fizzle: true }));
+    return;
+  }
+
+  const dxRaw = (targetPos.x | 0) - from.x;
+  const dyRaw = (targetPos.y | 0) - from.y;
+  if (Math.max(Math.abs(dxRaw), Math.abs(dyRaw)) < 2) {
+    world.emit(new ChargeCast({ actor, targetId, from, to: from, fizzle: true }));
+    return;
+  }
+  const dx = Math.abs(dxRaw) >= Math.abs(dyRaw) ? Math.sign(dxRaw) : 0;
+  const dy = dx === 0 ? Math.sign(dyRaw) : 0;
+  let x = from.x;
+  let y = from.y;
+  for (let i = 0; i < range; i++) {
+    const nx = x + dx;
+    const ny = y + dy;
+    if (!isWalkable(nx, ny)) break;
+    let blocked = false;
+    for (const [id, pos, col, vit] of world.query(Position, Collider, Vitality)) {
+      if (id === actor || id === targetId) continue;
+      if ((pos.x | 0) !== nx || (pos.y | 0) !== ny) continue;
+      if (col?.solid || (vit?.hp | 0) > 0) { blocked = true; break; }
+    }
+    if (blocked) break;
+    x = nx;
+    y = ny;
+    if (Math.max(Math.abs((targetPos.x | 0) - x), Math.abs((targetPos.y | 0) - y)) <= 1) break;
+  }
+  const to = { x, y };
+  if (to.x === from.x && to.y === from.y) {
+    world.emit(new ChargeCast({ actor, targetId, from, to, fizzle: true }));
+    return;
+  }
+  world.set(actor, Position, to);
+  world.emit('moved', { id: actor, from, to });
+
+  const result = dealDamage(world, buildSpellDamageSpec(world, actor, targetId, {
+    spell,
+    baseAmount: Number(spell?.impactDamage || 6) | 0,
+    type: 'physical',
+    cause: 'spell:charge',
+    at: { x: targetPos.x | 0, y: targetPos.y | 0 },
+    salt: targetId ^ 0xc4a2,
+  }));
+  let stunned = false;
+  if (result.applied && !result.killed) {
+    const ae = ensureActiveEffectList(world, targetId);
+    if (ae) {
+      upsertTimedEffect(ae.effects, {
+        key: 'stun',
+        turnsLeft: Math.max(1, Number(spell?.stunTurns || 1) | 0),
+        potency: 1, stacks: 1, startedAtTurn: world.step, sourceId: actor,
+      });
+      stunned = true;
+    }
+  }
+  world.emit(new ChargeCast({
+    actor, targetId, from, to, amount: result.amount | 0,
+    hit: result.applied, stunned, missed: result.reason === 'missed',
   }));
 };
 

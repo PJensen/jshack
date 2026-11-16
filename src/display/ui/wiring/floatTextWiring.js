@@ -9,6 +9,7 @@ import { installGoreWiring, isGoreDisabled } from "./goreEngine.js";
 import { installPetUiBridge } from "./petUiBridge.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
 import { RendCast } from "../../../events/RendCast.js";
+import { ChargeCast } from "../../../events/ChargeCast.js";
 
 const FLOAT_TEXT_WIRING_KEY = Symbol.for('jshack:display:floatTextWiring');
 const FLOAT_TEXT_CONTROLLERS = new WeakMap();
@@ -732,6 +733,13 @@ function installFloatTextListeners({ world, ftext, fx, getPosition, isVisibleAt,
       life: 1.2,
       scaleStart: 1.5,
       scaleEnd: 1.0,
+    });
+  });
+
+  world.on(ChargeCast, ({ to, fizzle, hit }) => {
+    if (fizzle || !hit || !to || !canShowAt(to.x, to.y)) return;
+    ftext.addStatus(to.x, to.y - 0.45, 'CHARGE!', {
+      color: '#ddaa33', life: 1.2, scaleStart: 1.5, scaleEnd: 1.0,
     });
   });
 

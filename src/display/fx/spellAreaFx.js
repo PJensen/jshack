@@ -10,6 +10,7 @@ import { VoidHoleCast } from "../../events/VoidHoleCast.js";
 import { FrostNovaCast } from "../../events/FrostNovaCast.js";
 import { ResurrectionCast } from "../../events/ResurrectionCast.js";
 import { RendCast } from "../../events/RendCast.js";
+import { ChargeCast } from "../../events/ChargeCast.js";
 
 /**
  * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)) }} deps
@@ -3346,6 +3347,15 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
         }
       }
       startShake(cam, 3, 0.08);
+    });
+
+    world.on(ChargeCast, ({ to, fizzle, hit }) => {
+      if (fizzle || !hit || !to) return;
+      _cleaveFx.push(new ArcSweepFx({
+        x: to.x, y: to.y, startAngle: -0.8, sweepAngle: 1.6,
+        radius: 1.0, ttl: 0.2, color: [255, 210, 90],
+      }));
+      startShake(cam, 5, 0.12);
     });
 
     world.on('spell:bloodthirst', ({ at }) => {

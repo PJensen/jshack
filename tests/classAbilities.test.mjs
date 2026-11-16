@@ -27,6 +27,7 @@ import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
 import { RendCast } from "../src/events/RendCast.js";
+import { ChargeCast } from "../src/events/ChargeCast.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -101,6 +102,22 @@ Deno.test("rend damages an adjacent hostile and applies bleed", () => {
   assertEquals(bleed.turnsLeft, 4);
   assertEquals(events.length, 1);
   assertEquals(events[0].targetId, enemy);
+});
+
+Deno.test("charge rushes to a distant hostile and stuns on impact", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const enemy = makeEnemy(world, 8, 5, 30);
+  const events = [];
+  world.on(ChargeCast, (event) => events.push(event));
+
+  runSpellScript(world, caster, SPELL_DEFS.charge, { targetId: enemy });
+
+  assertEquals(world.get(caster, Position).x, 7);
+  assert(world.get(enemy, Vitality).hp < 30, 'charge should deal impact damage');
+  assert(effectKeys(world, enemy).includes('stun'), 'charge should stun its target');
+  assertEquals(events.length, 1);
+  assertEquals(events[0].to.x, 7);
 });
 
 Deno.test("war_cry resets hunting enemies to alerted", () => {

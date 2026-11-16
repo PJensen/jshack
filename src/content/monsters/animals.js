@@ -69,15 +69,15 @@ defineMonster('boar', {
   massKg: 110,
   resistances: { kinetic: { DR: 2 } },
   speed: 2,
-  learnedSpellIds: ['boar_charge', 'boar_bite'],
+  learnedSpellIds: ['charge', 'boar_bite'],
   hooks: {
     whileLOS: [
       castSpellOnLOS({
-        spellId: 'boar_charge',
-        abilityId: 'boar_charge',
+        spellId: 'charge',
+        abilityId: 'charge',
         abilityName: 'Charge',
         minRange: 2,
-        maxRange: 5,
+        maxRange: 8,
         cooldownTurns: 6,
         telegraphTurns: 1,
         chance: 0.65,

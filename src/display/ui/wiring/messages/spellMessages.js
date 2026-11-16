@@ -4,6 +4,7 @@
  */
 import { ResurrectionCast } from "../../../../events/ResurrectionCast.js";
 import { RendCast } from "../../../../events/RendCast.js";
+import { ChargeCast } from "../../../../events/ChargeCast.js";
 
 export function installSpellMessages(ctx) {
   const { world, log, nameOfEntity, bracketizeName, getSpell, compGet, richSpell, NamedIdentity, playerEntity, Status } = ctx;
@@ -473,6 +474,13 @@ export function installSpellMessages(ctx) {
     } else if (bleeding) {
       log('Your blade tears open a bleeding wound!', 'combat');
     }
+  });
+
+  world.on(ChargeCast, ({ actor, fizzle, hit, stunned }) => {
+    if (nameOfEntity(actor) !== 'You') return;
+    if (fizzle) log('You cannot get a running start here.', 'system');
+    else if (hit && stunned) log('You crash into your foe and leave them reeling!', 'combat');
+    else log('You thunder forward, but the impact glances off.', 'combat');
   });
 
   world.on('spell:bloodthirst', ({ actor }) => {

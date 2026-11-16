@@ -131,7 +131,7 @@ Deno.test("new immersive monsters expose intended role patterns", () => {
 
 Deno.test("boar has close-range bite ability alongside charge", () => {
   const boar = getMonster("boar");
-  assert(Array.isArray(boar?.learnedSpellIds) && boar.learnedSpellIds.includes("boar_charge"), "boar should keep charge ability");
+  assert(Array.isArray(boar?.learnedSpellIds) && boar.learnedSpellIds.includes("charge"), "boar should keep charge ability");
   assert(Array.isArray(boar?.learnedSpellIds) && boar.learnedSpellIds.includes("boar_bite"), "boar should have close-range bite ability");
   assert(Array.isArray(boar?.hooks?.whileLOS) && boar.hooks.whileLOS.length > 0, "boar should drive abilities from LOS AI hooks");
 });
