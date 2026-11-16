@@ -102,7 +102,9 @@
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-					background: radial-gradient(ellipse 120% 80% at 50% 38%, #11182a 0%, #090c14 68%);
+					background:
+						radial-gradient(circle at 50% 42%, rgba(76, 68, 102, 0.18) 0, rgba(20, 17, 27, 0.08) 24%, transparent 52%),
+						radial-gradient(ellipse 120% 90% at 50% 45%, #17121b 0%, #09080d 64%, #050508 100%);
 					opacity: 1;
 					transition: opacity 180ms ease;
 					font: 12px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -124,40 +126,93 @@
 				}
 
 				#boot-brand {
-					margin: 0 0 24px;
-					font-size: 20px;
-					letter-spacing: 0.08em;
+					margin: 0 0 18px;
+					letter-spacing: 0.22em;
 					text-align: center;
-					color: #8bd4ff;
-					text-shadow: 0 0 8px rgba(139, 212, 255, 0.55);
-					animation: bootBrandPulse 1.2s ease-in-out infinite;
+					color: #c5b7d4;
+					text-shadow: 0 0 18px rgba(180, 145, 211, 0.32);
+				}
+
+				#boot-sigil {
+					position: relative;
+					display: grid;
+					place-items: center;
+					width: 154px;
+					height: 154px;
+					margin: 0 auto 14px;
+					border: 1px solid rgba(190, 164, 218, 0.18);
+					border-radius: 50%;
+					background: radial-gradient(circle, rgba(155, 127, 184, 0.10), transparent 58%);
+					box-shadow: 0 0 42px rgba(116, 78, 145, 0.16), inset 0 0 30px rgba(205, 177, 225, 0.05);
+					animation: bootSigilBreathe 5s ease-in-out infinite;
+				}
+
+				#boot-sigil::before,
+				#boot-sigil::after {
+					content: '';
+					position: absolute;
+					inset: 13px;
+					border: 1px solid rgba(220, 197, 235, 0.30);
+					border-left-color: transparent;
+					border-bottom-color: transparent;
+					border-radius: 50%;
+					animation: bootArcDrift 12s linear infinite;
+				}
+
+				#boot-sigil::after {
+					inset: 30px;
+					border-color: rgba(137, 190, 202, 0.25);
+					border-right-color: transparent;
+					animation-duration: 18s;
+					animation-direction: reverse;
+				}
+
+				#boot-sigil .ember {
+					width: 14px;
+					height: 14px;
+					border-radius: 50%;
+					background: #f2d9aa;
+					box-shadow: 0 0 9px #f2d9aa, 0 0 28px rgba(226, 161, 100, 0.78);
+					animation: bootEmberWander 7s ease-in-out infinite;
+				}
+
+				#boot-sigil .ember::after {
+					content: '';
+					display: block;
+					width: 64px;
+					height: 64px;
+					margin: -25px;
+					border: 1px solid rgba(242, 217, 170, 0.18);
+					border-radius: 50%;
+				}
+
+				#boot-whisper {
+					display: block;
+					font-size: 10px;
+					letter-spacing: 0.28em;
+					color: #9686a5;
+					text-transform: uppercase;
 				}
 
 				#boot-brand .at {
-					display: inline-block;
-					font-size: clamp(80px, 28vw, 180px);
-					line-height: 0.82;
-					color: #cffff4;
-					text-shadow:
-						0 0 20px rgba(170, 255, 220, 0.55),
-						0 0 60px rgba(139, 212, 255, 0.25);
+					display: none;
 				}
 
 				#boot-label {
-					letter-spacing: 0.06em;
+					letter-spacing: 0.12em;
 					opacity: 0.9;
 					margin-bottom: 16px;
-					font-size: 13px;
+					font-size: 12px;
 					text-transform: uppercase;
-					color: #9fc6df;
+					color: #c6b9cf;
 				}
 
 				#boot-track {
-					width: min(600px, 80vw);
-					height: 4px;
+					width: min(460px, 72vw);
+					height: 2px;
 					border: none;
 					border-radius: 2px;
-					background: rgba(178, 212, 255, 0.12);
+					background: rgba(201, 181, 224, 0.13);
 					overflow: hidden;
 				}
 
@@ -165,16 +220,32 @@
 					width: 0%;
 					height: 100%;
 					border-radius: 2px;
-					background: linear-gradient(90deg, #4ea8ff 0%, #86e9ff 100%);
+					background: linear-gradient(90deg, #8a6c9d 0%, #e5c996 100%);
 					transition: width 90ms linear;
-					box-shadow: 0 0 8px rgba(134, 233, 255, 0.4);
+					box-shadow: 0 0 8px rgba(229, 201, 150, 0.45);
 				}
 
 				#boot-fill.indeterminate {
 					width: 100%;
-					background: linear-gradient(90deg, transparent 0%, #4ea8ff 40%, #86e9ff 50%, #4ea8ff 60%, transparent 100%);
+					background: linear-gradient(90deg, transparent 0%, #8a6c9d 40%, #e5c996 50%, #8a6c9d 60%, transparent 100%);
 					background-size: 200% 100%;
-					animation: bootShimmer 1.4s ease-in-out infinite;
+					animation: bootShimmer 2.8s ease-in-out infinite;
+				}
+
+				@keyframes bootSigilBreathe {
+					0%, 100% { transform: scale(0.98); opacity: 0.78; }
+					50% { transform: scale(1.02); opacity: 1; }
+				}
+
+				@keyframes bootArcDrift {
+					from { transform: rotate(0deg); }
+					to { transform: rotate(360deg); }
+				}
+
+				@keyframes bootEmberWander {
+					0%, 100% { transform: translate(-18px, 8px); }
+					32% { transform: translate(20px, -12px); }
+					68% { transform: translate(5px, 22px); }
 				}
 
 				@keyframes bootShimmer {
@@ -231,10 +302,6 @@
 					touch-action: none;
 				}
 
-				@keyframes bootBrandPulse {
-					0%, 100% { opacity: 0.7; transform: translateY(0); }
-					50% { opacity: 1; transform: translateY(-1px); }
-				}
 		</style>
 	</head>
 
@@ -242,7 +309,10 @@
 		<canvas id="stage"></canvas>
 		<div id="boot-loader">
 			<div id="boot-card">
-					<div id="boot-brand"><span class="at">@</span></div>
+					<div id="boot-brand">
+						<div id="boot-sigil" aria-hidden="true"><span class="ember"></span></div>
+						<span id="boot-whisper">something is waking</span>
+					</div>
 					<div id="boot-label">Loading...</div>
 				<div id="boot-track"><div id="boot-fill" class="indeterminate"></div></div>
 				<div id="boot-fraction" style="visibility:hidden">0%</div>
