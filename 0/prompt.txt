@@ -1,0 +1,23 @@
+dig and pile do a great job, I feel like lava should use the same type of holes if possible.
+
+---
+
+see how they're more organic? same with water tiles honestly -- this is a HARD one, but give it a shot.
+
+---
+
+settile lava should be a dig PLUS set bottom of hole to lava -- right?
+
+---
+
+that would certainly make the coastline look awesome too, and lava, and dungeon water tiles. I dunno, this would be awesome if you think you can swing it.
+
+---
+
+I would do the same for all water as well, across the whole game -- personally, else, we've got an unused feature.
+
+NOTE: this is not quite right; you're off by half a tile,
+
+---
+
+I would go futher too, when dig x and dig+x I'd try and "connect" them somehow -- right?
