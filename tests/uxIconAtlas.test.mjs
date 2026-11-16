@@ -8,9 +8,11 @@ Deno.test("UX atlas exposes the character-sheet icon contract", () => {
     "strength", "dexterity", "intelligence", "vitality",
     "health", "mana", "stamina", "damage", "accuracy", "avoidance",
     "criticalStrike", "spellPower", "moonFull",
+    "damagePower", "mitigation", "luck", "critMultiplier", "damageBonus", "carry",
+    "maxHpBonus", "speed", "gold", "hunger", "depth", "turn",
   ]) {
     assert(UX_ICON_ATLAS.entries.has(id), `missing UX icon: ${id}`);
   }
   assertEquals(UX_ICON_ATLAS.columns, 6);
-  assertEquals(UX_ICON_ATLAS.rows, 5);
+  assertEquals(UX_ICON_ATLAS.rows, 7);
 });

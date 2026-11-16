@@ -193,20 +193,20 @@ export function renderCharacterSheet(panel, data) {
 
   const details = addSection('Additional Details', compactSheet ? '1fr' : 'repeat(2, minmax(0, 1fr))');
   const detailRows = [
-    ['Damage Power', `${Number(stats.damagePower || 0)}`, deltaColor(stats.damagePower)],
-    ['Mitigation', `${Number(stats.mitigation || 0)}`, deltaColor(stats.mitigation)],
-    ['Luck', `${Number(stats.luck || 0)}`, deltaColor(stats.luck)],
-    ['Crit Mult', `\u00d7${(2 + Number(stats.critMult || 0)).toFixed(1)}`, deltaColor(stats.critMult)],
-    ['Dmg Bonus', `${Number(stats.damageFlatBonus || 0)}`, deltaColor(stats.damageFlatBonus)],
-    ['Carry', `${Number(stats.carryWeight || 0).toFixed(1)}/${Number(stats.carryLimit || 0).toFixed(1)} kg · ${humanize(String(stats.carryState || 'unburdened'))}`],
-    ['Max HP Bonus', `${Number(stats.maxHpDerived || 0)}`, deltaColor(stats.maxHpDerived)],
-    ['Speed', `${Number(stats.speed || 1)}`, null],
-    ['Gold', `${Number(stats.gold || 0)}`],
-    ['Hunger', `${humanize(String(stats.hungerLevel || 'normal'))} (${Number(stats.hunger || 0)})`],
-    ['Depth', `${Number(stats.depth || 0)}`],
-    ['Turn', `${Number(stats.turn || 0)}`],
+    ['Damage Power', `${Number(stats.damagePower || 0)}`, deltaColor(stats.damagePower), 'damagePower'],
+    ['Mitigation', `${Number(stats.mitigation || 0)}`, deltaColor(stats.mitigation), 'mitigation'],
+    ['Luck', `${Number(stats.luck || 0)}`, deltaColor(stats.luck), 'luck'],
+    ['Crit Mult', `\u00d7${(2 + Number(stats.critMult || 0)).toFixed(1)}`, deltaColor(stats.critMult), 'critMultiplier'],
+    ['Dmg Bonus', `${Number(stats.damageFlatBonus || 0)}`, deltaColor(stats.damageFlatBonus), 'damageBonus'],
+    ['Carry', `${Number(stats.carryWeight || 0).toFixed(1)}/${Number(stats.carryLimit || 0).toFixed(1)} kg · ${humanize(String(stats.carryState || 'unburdened'))}`, null, 'carry'],
+    ['Max HP Bonus', `${Number(stats.maxHpDerived || 0)}`, deltaColor(stats.maxHpDerived), 'maxHpBonus'],
+    ['Speed', `${Number(stats.speed || 1)}`, null, 'speed'],
+    ['Gold', `${Number(stats.gold || 0)}`, null, 'gold'],
+    ['Hunger', `${humanize(String(stats.hungerLevel || 'normal'))} (${Number(stats.hunger || 0)})`, null, 'hunger'],
+    ['Depth', `${Number(stats.depth || 0)}`, null, 'depth'],
+    ['Turn', `${Number(stats.turn || 0)}`, null, 'turn'],
   ];
-  for (const [label, value, color] of detailRows) addMetric(details, label, value, '·', color);
+  for (const [label, value, color, iconId] of detailRows) addMetric(details, label, value, iconId, color);
 
   // Resistances — only show non-zero entries
   const resistRows = [
