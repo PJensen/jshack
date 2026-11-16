@@ -9,6 +9,7 @@ import { isGoreDisabled } from "../ui/wiring/goreEngine.js";
 import { VoidHoleCast } from "../../events/VoidHoleCast.js";
 import { FrostNovaCast } from "../../events/FrostNovaCast.js";
 import { ResurrectionCast } from "../../events/ResurrectionCast.js";
+import { RendCast } from "../../events/RendCast.js";
 
 /**
  * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)) }} deps
@@ -3313,6 +3314,38 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
         }
       }
       startShake(cam, 3, 0.10);
+    });
+
+    world.on(RendCast, ({ at, targetId, fizzle }) => {
+      if (fizzle || !at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
+      const target = typeof getPosition === 'function' ? getPosition(Number(targetId || 0)) : null;
+      const end = target || at;
+      const angle = Math.atan2(end.y - at.y, end.x - at.x);
+      _cleaveFx.push(new ArcSweepFx({
+        x: at.x, y: at.y,
+        startAngle: angle - 0.55,
+        sweepAngle: 1.1,
+        radius: 1.15,
+        ttl: 0.22,
+        color: [255, 90, 70],
+      }));
+      if (!isGoreDisabled()) {
+        for (let i = 0; i < 7; i++) {
+          const spread = (Math.random() - 0.5) * 0.9;
+          const speed = 0.45 + Math.random() * 0.75;
+          fx.pool.spawn(new Particle({
+            x: end.x, y: end.y,
+            vx: Math.cos(angle + spread) * speed,
+            vy: Math.sin(angle + spread) * speed,
+            ay: 0.15,
+            life: 0.14 + Math.random() * 0.18,
+            size0: 0.08, size1: 0.02,
+            r: 255, g: 55 + ((Math.random() * 45) | 0), b: 40,
+            a0: 0.9,
+          }));
+        }
+      }
+      startShake(cam, 3, 0.08);
     });
 
     world.on('spell:bloodthirst', ({ at }) => {

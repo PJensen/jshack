@@ -41,6 +41,7 @@ _book('book_hearthstone',   'Spellbook of Hearthstone',   'rare',   'Grants the 
 _book('book_iron_flesh',    'Spellbook of Iron Flesh',    'magic',  'Teaches Iron Flesh — harden your body into living metal.');
 _book('book_bloodthirst',   'Spellbook of Bloodthirst',   'rare',   'Teaches Bloodthirst — each blow heals the striker.');
 _book('book_cleave',        'Spellbook of Cleave',        'magic',  'Teaches Cleave — a sweeping arc that hits all adjacent foes.');
+_book('book_rend',          'Warrior\'s Manual of Rend', 'magic',  'Teaches Rend — tear open a deep wound that keeps bleeding after the strike lands.');
 _book('book_war_cry',       'Spellbook of War Cry',       'magic',  'Teaches War Cry — a shout that weakens nearby enemies.');
 _book('book_barkskin',      'Spellbook of Barkskin',      'magic',  'Teaches Barkskin — wrap yourself in living wood for armor and thorns.');
 _book('book_thorn_burst',   'Spellbook of Thorn Burst',   'magic',  'Teaches Thorn Burst — explode thorns outward from your body.');

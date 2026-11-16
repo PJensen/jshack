@@ -8,6 +8,7 @@ import { normalizeStatusEvent } from "../../../shared/events/statusEvent.js";
 import { installGoreWiring, isGoreDisabled } from "./goreEngine.js";
 import { installPetUiBridge } from "./petUiBridge.js";
 import { defineExtension } from "../../../lib/ecs-js/index.js";
+import { RendCast } from "../../../events/RendCast.js";
 
 const FLOAT_TEXT_WIRING_KEY = Symbol.for('jshack:display:floatTextWiring');
 const FLOAT_TEXT_CONTROLLERS = new WeakMap();
@@ -24,7 +25,6 @@ function _throttle(tag, cooldownMs = 3000) {
   _cooldowns.set(tag, now);
   return true;
 }
-
 const _staminaLines = [
   'Too exhausted!',
   'Your arms feel heavy...',
@@ -723,6 +723,16 @@ function installFloatTextListeners({ world, ftext, fx, getPosition, isVisibleAt,
         scaleEnd: 1.0,
       });
     }
+  });
+
+  world.on(RendCast, ({ at, fizzle, bleeding }) => {
+    if (fizzle || !bleeding || !at || !canShowAt(at.x, at.y)) return;
+    ftext.addStatus(at.x, at.y - 0.45, 'REND!', {
+      color: '#cc2222',
+      life: 1.2,
+      scaleStart: 1.5,
+      scaleEnd: 1.0,
+    });
   });
 
   world.on('spell:bloodthirst', ({ at }) => {

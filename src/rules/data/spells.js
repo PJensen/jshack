@@ -1175,6 +1175,25 @@ export const SPELL_DEFS = {
       { kind: 'damage', element: 'physical', amount: '5 base, INT-scaled; hits all adjacent hostiles' },
     ],
   },
+  rend: {
+    id: 'rend',
+    name: 'Rend',
+    symbol: '\u2694',    // ⚔
+    schools: ['martial'],
+    manaCost: 0,
+    costResource: 'stamina',
+    staminaCost: 6,
+    minIntelligence: 0,
+    range: 1,
+    cooldown: 4,
+    script: 'rend',
+    targeting: 'enemy',
+    description: 'Tear open a deep wound that keeps bleeding after the strike lands.',
+    effects: [
+      { kind: 'damage', element: 'physical', amount: '4 base, weapon-scaled' },
+      { kind: 'status', status: 'bleed', duration: '4 turns' },
+    ],
+  },
   bloodthirst: {
     id: 'bloodthirst',
     name: 'Bloodthirst',

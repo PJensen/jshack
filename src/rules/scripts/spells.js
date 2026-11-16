@@ -83,6 +83,7 @@ import { spawnMonsterEntity } from "../utils/spawnMonsterEntity.js";
 import { Owner } from "../components/Owner.js";
 import { Reanimated } from "../components/Reanimated.js";
 import { attachProcNode } from "../utils/statProcAuthoring.js";
+import { RendCast } from "../../events/RendCast.js";
 
 /** @returns {any|null} */
 function _getWeather(world) {
@@ -4416,6 +4417,50 @@ REGISTRY['cleave'] = function cleaveScript(world, actor, spell, _intent) {
     at: { x: apos.x, y: apos.y },
     hits,
   });
+};
+
+REGISTRY['rend'] = function rendScript(world, actor, spell, intent) {
+  const apos = /** @type any */ (world.get(actor, Position));
+  if (!apos) return;
+  const actorFaction = String(world.get(actor, Faction)?.key || 'player').trim();
+  const targetId = Number(intent?.targetId || 0) | 0;
+  const tpos = world.get(targetId, Position);
+  const tvit = world.get(targetId, Vitality);
+  const tfac = world.get(targetId, Faction);
+  const range = Math.max(1, Number(spell?.range || 1) | 0);
+  const dist = tpos
+    ? Math.max(Math.abs((apos.x | 0) - (tpos.x | 0)), Math.abs((apos.y | 0) - (tpos.y | 0)))
+    : Infinity;
+  if (!(targetId > 0) || !tpos || !tvit || (tvit.hp | 0) <= 0 || !tfac
+    || !areFactionsHostile(actorFaction, String(tfac.key || '')) || dist > range) {
+    world.emit(new RendCast({ actor, targetId, fizzle: true }));
+    return;
+  }
+
+  const result = dealDamage(world, buildSpellDamageSpec(world, actor, targetId, {
+    spell,
+    baseAmount: 4,
+    type: 'physical',
+    cause: 'spell:rend',
+    at: { x: tpos.x | 0, y: tpos.y | 0 },
+    salt: targetId ^ 0x72656e64,
+  }));
+  let bleeding = false;
+  if (result.applied && !result.killed) {
+    const ae = ensureActiveEffectList(world, targetId);
+    if (ae) {
+      upsertTimedEffect(ae.effects, createSpellDotEffect(world, actor, spell, {
+        key: 'bleed', turnsLeft: 4, potency: 2, stacks: 1,
+        cause: 'spell:rend', type: 'physical',
+      }));
+      bleeding = true;
+    }
+  }
+  world.emit(new RendCast({
+    actor, targetId, at: { x: tpos.x | 0, y: tpos.y | 0 },
+    amount: result.amount | 0, hit: result.applied, bleeding,
+    missed: result.reason === 'missed',
+  }));
 };
 
 REGISTRY['bloodthirst'] = function bloodthirstScript(world, actor, spell, _intent) {

@@ -26,6 +26,7 @@ import { dealDamage } from "../src/rules/utils/dealDamage.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
+import { RendCast } from "../src/events/RendCast.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -82,6 +83,24 @@ Deno.test("war_cry weakens enemies within radius", () => {
 
   assert(effectKeys(world, near).includes('weaken'), 'near enemy should be weakened');
   assert(!effectKeys(world, far).includes('weaken'), 'far enemy should not be weakened');
+});
+
+Deno.test("rend damages an adjacent hostile and applies bleed", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const enemy = makeEnemy(world, 6, 5, 30);
+  const before = world.get(enemy, Vitality).hp;
+  const events = [];
+  world.on(RendCast, (event) => events.push(event));
+
+  runSpellScript(world, caster, SPELL_DEFS.rend, { targetId: enemy });
+
+  assert(world.get(enemy, Vitality).hp < before, 'rend should deal damage');
+  const bleed = world.get(enemy, ActiveEffects)?.effects?.find((e) => e.key === 'bleed');
+  assert(bleed, 'rend should apply bleed');
+  assertEquals(bleed.turnsLeft, 4);
+  assertEquals(events.length, 1);
+  assertEquals(events[0].targetId, enemy);
 });
 
 Deno.test("war_cry resets hunting enemies to alerted", () => {

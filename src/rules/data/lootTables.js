@@ -357,6 +357,7 @@ export const LOOT_TABLES = {
       { type: "item", weight: 22, itemId: "book_iron_flesh" },
       { type: "item", weight: 18, itemId: "book_bloodthirst" },
       { type: "item", weight: 25, itemId: "book_cleave" },
+      { type: "item", weight: 24, itemId: "book_rend" },
       { type: "item", weight: 22, itemId: "book_war_cry" },
       { type: "item", weight: 20, itemId: "book_earthshatter" },
       { type: "item", weight: 12, itemId: "book_rampage" },

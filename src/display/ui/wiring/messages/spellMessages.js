@@ -3,6 +3,7 @@
  * Lines ~377-918 from the original installMessageWiring.
  */
 import { ResurrectionCast } from "../../../../events/ResurrectionCast.js";
+import { RendCast } from "../../../../events/RendCast.js";
 
 export function installSpellMessages(ctx) {
   const { world, log, nameOfEntity, bracketizeName, getSpell, compGet, richSpell, NamedIdentity, playerEntity, Status } = ctx;
@@ -462,6 +463,15 @@ export function installSpellMessages(ctx) {
       log(`Your weapon arcs through ${hits.length} ${hits.length === 1 ? 'body' : 'bodies'} in a single stroke!`, 'combat');
     } else {
       log('Your weapon sweeps through empty air.', 'system');
+    }
+  });
+
+  world.on(RendCast, ({ actor, fizzle, bleeding }) => {
+    if (nameOfEntity(actor) !== 'You') return;
+    if (fizzle) {
+      log('You slash at empty air.', 'system');
+    } else if (bleeding) {
+      log('Your blade tears open a bleeding wound!', 'combat');
     }
   });
 

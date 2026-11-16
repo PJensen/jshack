@@ -183,6 +183,7 @@ export const basePalette = {
   book_iron_flesh:      { glyph: "?", fg: "#aab0b8", glow: "#6a7080", baseScale: 0.7 },
   book_bloodthirst:     { glyph: "?", fg: "#cc3333", glow: "#881818", baseScale: 0.7 },
   book_cleave:          { glyph: "?", fg: "#dd7744", glow: "#aa4422", baseScale: 0.7 },
+  book_rend:            { glyph: "📖", fg: "#cc3333", glow: "#881818", baseScale: 0.7 },
   book_war_cry:         { glyph: "?", fg: "#ff6655", glow: "#cc3322", baseScale: 0.7 },
   book_barkskin:        { glyph: "?", fg: "#8bc76a", glow: "#5a8840", baseScale: 0.7 },
   book_thorn_burst:     { glyph: "?", fg: "#cc5577", glow: "#882244", baseScale: 0.7 },
