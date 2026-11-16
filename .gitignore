@@ -65,3 +65,4 @@ assets/icons/**
 !assets/icons/**/
 !assets/icons/**/sheet.webp
 !assets/icons/**/manifest.js
+!assets/icons/classes/normal.png
