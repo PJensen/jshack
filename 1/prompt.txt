@@ -1,0 +1,3 @@
+hey, dig and pile are supposed to be under player
+
+as regards rendering
