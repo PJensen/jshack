@@ -1,0 +1,11 @@
+FYI: you missed a little bit of what I was sayinng about spirit stayind behind, what I meant was we're on a carosel, when the player swipes or moves to a new class, my idea was to leave the spirit where it was, as if it's above class selector, but remains present above the class icon while the new one comes into place.
+
+---
+
+on class swap, I would pulse smaller, like it's going further back, but but come forward when the new class lands.
+
+---
+
+FYII I think the rings should move with the class icon.
+
+spritit lighy is the only thing that sticks around.
