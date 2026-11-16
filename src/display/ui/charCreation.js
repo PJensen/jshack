@@ -107,6 +107,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   let entropyHash = 0x811C9DC5; // FNV-1a offset basis
   const ENTROPY_TARGET = 64;
   let runeFlash = 0;
+  let spiritFlash = 0;
+  let spiritFlashTriggered = false;
   let runeRotation = 0;
 
   function feedEntropy(rawVal) {
@@ -135,7 +137,6 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     display: 'block', margin: '0 auto',
   });
   const runeCtx = runeCanvas.getContext('2d');
-  let runeLabelEl = null; // set when DOM element is created
 
   function resizeBgCanvas() {
     bgCanvas.width = window.innerWidth;
@@ -152,23 +153,23 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   const stars = [];
   const spellMotes = [];
 
-  for (let i = 0; i < 22; i++) {
+  for (let i = 0; i < 10; i++) {
     smoke.push({
       x: Math.random() * window.innerWidth,
       y: window.innerHeight * (0.35 + Math.random() * 0.8),
-      vy: -(6 + Math.random() * 15),
+      vy: -(2 + Math.random() * 6),
       sway: (Math.random() - 0.5) * 14,
       phase: Math.random() * Math.PI * 2,
       radius: 80 + Math.random() * 170,
       alpha: 0.07 + Math.random() * 0.11,
     });
   }
-  for (let i = 0; i < 76; i++) {
+  for (let i = 0; i < 28; i++) {
     embers.push({
       x: Math.random() * window.innerWidth,
       y: window.innerHeight * (0.55 + Math.random() * 0.5),
       vx: (Math.random() - 0.5) * 10,
-      vy: -(28 + Math.random() * 76),
+      vy: -(8 + Math.random() * 22),
       life: Math.random(),
       size: 0.8 + Math.random() * 2.6,
       heat: 0.3 + Math.random() * 0.7,
@@ -222,7 +223,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     p.x = Math.random() * w;
     p.y = h * (0.75 + Math.random() * 0.3);
     p.vx = (Math.random() - 0.5) * 10;
-    p.vy = -(28 + Math.random() * 76);
+    p.vy = -(8 + Math.random() * 22);
     p.life = 0;
     p.size = 0.8 + Math.random() * 2.6;
     p.heat = 0.3 + Math.random() * 0.7;
@@ -330,7 +331,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     // embers
     for (const p of embers) {
       p.life += dt * (0.28 + p.heat * 0.45);
-      p.flicker += dt * (5.2 + p.heat * 4.5);
+      p.flicker += dt * (1.4 + p.heat * 1.8);
       p.x += (p.vx + Math.sin(p.flicker) * 7) * dt;
       p.y += p.vy * dt;
 
@@ -345,9 +346,9 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
       const size = p.size * (0.75 + p.heat * 0.8) * (0.8 + pulse * 0.4);
       const glow = bgCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 6);
-      glow.addColorStop(0, `rgba(255, 240, 196, ${alpha * 0.96})`);
-      glow.addColorStop(0.2, `rgba(255, 148, 56, ${alpha * 0.92})`);
-      glow.addColorStop(0.58, `rgba(255, 88, 24, ${alpha * 0.48})`);
+      glow.addColorStop(0, `rgba(255, 240, 196, ${alpha * 0.34})`);
+      glow.addColorStop(0.2, `rgba(255, 148, 56, ${alpha * 0.30})`);
+      glow.addColorStop(0.58, `rgba(255, 88, 24, ${alpha * 0.16})`);
       glow.addColorStop(1, 'rgba(255, 60, 18, 0)');
       bgCtx.fillStyle = glow;
       bgCtx.beginPath();
@@ -421,8 +422,9 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
     const progress = clamp01(entropyPool.length / ENTROPY_TARGET);
     const litSegs = Math.min(16, Math.floor(progress * 16));
-    runeRotation += dt * (0.15 + progress * 0.35);
+    runeRotation += dt * (0.035 + progress * 0.075);
     runeFlash = Math.max(0, runeFlash - dt * 3.5);
+    spiritFlash = Math.max(0, spiritFlash - dt * 1.8);
 
     // color lerp: steel-blue → amber
     const runeHue = 210 - progress * 172;
@@ -498,17 +500,9 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     if (entropyPool.length > 0 && !seedInput.matches(':focus')) {
       seedInput.value = '0x' + (entropyHash >>> 0).toString(16).toUpperCase();
     }
-    if (runeLabelEl) {
-      if (progress >= 1 && runeLabelEl.dataset.state !== 'sealed') {
-        runeLabelEl.textContent = 'Fate sealed';
-        runeLabelEl.style.color = activeCol;
-        runeLabelEl.dataset.state = 'sealed';
-      } else if (progress > 0 && progress < 1) {
-        const dots = '\u2022'.repeat(litSegs) + '\u00B7'.repeat(16 - litSegs);
-        runeLabelEl.textContent = dots;
-        runeLabelEl.style.color = activeCol;
-        runeLabelEl.dataset.state = 'weaving';
-      }
+    if (progress >= 1 && !spiritFlashTriggered) {
+      spiritFlashTriggered = true;
+      spiritFlash = 1;
     }
   }
   bgLoop();
@@ -695,13 +689,15 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     const icon = document.createElement('div');
     Object.assign(icon.style, {
       display: 'flex', justifyContent: 'center', alignItems: 'center',
-      width: '100%', height: '84px',
+      width: '100%', height: '128px',
       fontSize: '48px', lineHeight: '1.1',
       marginBottom: '6px',
       filter: 'saturate(0.85) brightness(0.92)',
     });
     icon.textContent = cls.icon || cls.name[0];
     icon.setAttribute('aria-label', `${cls.name} class icon`);
+    // Each class owns its spirit state. The carousel only pauses/resumes it;
+    // changing classes must never reset the spirit's chosen position.
     classIconStates.push({
       cls, element: icon, canvas: null, pixels: null, normals: null,
       x: 42, y: 42, vx: 0, vy: 0, targetX: 42, targetY: 42, lastNow: 0,
@@ -773,8 +769,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     source.height = 256;
     const sourceCtx = source.getContext('2d', { willReadFrequently: true });
     const output = document.createElement('canvas');
-    output.width = 84;
-    output.height = 84;
+    output.width = 128;
+    output.height = 128;
     const outputCtx = output.getContext('2d');
     if (!sourceCtx || !outputCtx) return;
 
@@ -790,7 +786,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     state.normals = normals;
     chooseSpiritTarget(state);
     state.element.replaceChildren(output);
-    Object.assign(output.style, { width: '84px', height: '84px', imageRendering: 'pixelated' });
+    Object.assign(output.style, { width: '128px', height: '128px', imageRendering: 'pixelated' });
   }
 
   function chooseSpiritTarget(state) {
@@ -827,8 +823,9 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     if (!state.canvas || !state.pixels || !state.normals) return;
     updateSpiritLight(state, now);
     const image = state.ctx.createImageData(84, 84);
-    const lightX = state.x;
-    const lightY = state.y;
+    const artOffset = 22;
+    const lightX = artOffset + state.x;
+    const lightY = artOffset + state.y;
     for (let y = 0; y < 84; y++) {
       for (let x = 0; x < 84; x++) {
         const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
@@ -838,8 +835,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         const nx = state.normals[sourceIndex] / 127.5 - 1;
         const ny = state.normals[sourceIndex + 1] / 127.5 - 1;
         const nz = state.normals[sourceIndex + 2] / 127.5 - 1;
-        const dx = lightX - x;
-        const dy = lightY - y;
+        const dx = state.x - x;
+        const dy = state.y - y;
         const distance = Math.sqrt(dx * dx + dy * dy) || 1;
         const diffuse = Math.max(0, (nx * dx / distance) + (ny * dy / distance) + nz * 0.65);
         const falloff = Math.max(0, 1 - distance / 76);
@@ -850,17 +847,46 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         image.data[outputIndex + 3] = alpha;
       }
     }
-    state.ctx.clearRect(0, 0, 84, 84);
-    state.ctx.putImageData(image, 0, 0);
-    const glow = state.ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16);
-    glow.addColorStop(0, 'rgba(255, 238, 177, 0.95)');
-    glow.addColorStop(0.18, 'rgba(255, 184, 76, 0.62)');
-    glow.addColorStop(0.42, 'rgba(255, 125, 38, 0.30)');
+    state.ctx.clearRect(0, 0, 128, 128);
+    state.ctx.putImageData(image, artOffset, artOffset);
+    const flash = 1 + spiritFlash * 2.8;
+    const glow = state.ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16 + spiritFlash * 10);
+    glow.addColorStop(0, `rgba(255, 238, 177, ${Math.min(1, 0.95 * flash)})`);
+    glow.addColorStop(0.18, `rgba(255, 184, 76, ${Math.min(1, 0.62 * flash)})`);
+    glow.addColorStop(0.42, `rgba(255, 125, 38, ${Math.min(0.8, 0.30 * flash)})`);
     glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
     state.ctx.globalCompositeOperation = 'lighter';
     state.ctx.fillStyle = glow;
-    state.ctx.fillRect(0, 0, 84, 84);
+    state.ctx.fillRect(0, 0, 128, 128);
     state.ctx.globalCompositeOperation = 'source-over';
+
+    const progress = clamp01(entropyPool.length / ENTROPY_TARGET);
+    const litSegs = Math.min(16, Math.floor(progress * 16));
+    const runeHue = 210 - progress * 172;
+    state.ctx.save();
+    state.ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 16; i++) {
+      const baseAngle = (i / 16) * Math.PI * 2 + runeRotation;
+      const arcStart = baseAngle + 0.12;
+      const arcEnd = baseAngle + (Math.PI * 2 / 16) - 0.12;
+      const isLit = i < litSegs;
+      state.ctx.strokeStyle = isLit
+        ? `hsla(${runeHue}, 72%, 76%, ${0.62 + spiritFlash * 0.38})`
+        : `hsla(210, 20%, 48%, ${0.18 + progress * 0.12})`;
+      state.ctx.lineWidth = isLit ? 2.5 : 1;
+      state.ctx.lineCap = 'round';
+      state.ctx.beginPath();
+      state.ctx.arc(64, 64, 53, arcStart, arcEnd);
+      state.ctx.stroke();
+    }
+    if (spiritFlash > 0) {
+      state.ctx.strokeStyle = `hsla(${runeHue}, 90%, 84%, ${spiritFlash * 0.7})`;
+      state.ctx.lineWidth = 5;
+      state.ctx.beginPath();
+      state.ctx.arc(64, 64, 53, runeRotation, runeRotation + Math.PI * 1.8);
+      state.ctx.stroke();
+    }
+    state.ctx.restore();
   }
 
   function animateClassIcons(now) {
@@ -1010,22 +1036,6 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   goreRow.appendChild(goreLabel);
   box.appendChild(goreRow);
   box.appendChild(document.createElement('br'));
-
-  // ---- entropy rune widget ----
-  const runeWrap = document.createElement('div');
-  Object.assign(runeWrap.style, {
-    textAlign: 'center', marginBottom: '14px', userSelect: 'none',
-  });
-  runeLabelEl = document.createElement('div');
-  Object.assign(runeLabelEl.style, {
-    fontSize: '10px', color: UI.low, marginTop: '4px',
-    letterSpacing: '0.12em', textTransform: 'uppercase',
-    transition: 'color 600ms',
-  });
-  runeLabelEl.textContent = 'Weaving fate\u2026';
-  runeWrap.appendChild(runeCanvas);
-  runeWrap.appendChild(runeLabelEl);
-  box.appendChild(runeWrap);
 
   // ---- confirm button (with inline hard-mode checkbox) ----
   const confirmBtn = document.createElement('button');
