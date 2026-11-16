@@ -1,0 +1,11 @@
+I've added the normal map for `classes` icons.
+
+---
+
+make it so; 
+
+we could do a torch actually, that might be a bit cleaner.
+
+---
+
+I would let the spirit drift around, almost like it has a spirit of it's own, not in circles, but maybe exploring the normal map itself, like it's curious perhaps.
