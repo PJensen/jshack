@@ -1,0 +1,10 @@
+1. for scrolls NOT identified, please use the brand new "scroll_unkown" icon -- the icons as they were communicated too much before identification happened. since icons are now canonical, and there is a single pathway to show them, it should be fairly easy to do.
+2. for quest rewards that are potions or really anythnig needing identification, make sure whatever it is is identified to the player as it is handed over to them. there should be rare exceptions where an NPC is giving a player an unidentified something -- I'm not saying we should disallow it, but I am saying that the default position is that NPCs give players identified things. (e.g) when the priest hands over a blessed potion, it should be identified. I dont think this should be on a case by case basis -- but I do think that the inverse, "giving player unkown thing" *is* an opted in, case-by-case thing.
+
+---
+
+NOPE: not what I saw saying -- I'm talking exclusively about scrolls in the top item -- I just added "scroll_unknown" to the manifest -- it was previously showing the actual scroll icon despite being UNKNOWN.
+
+---
+
+it's two totally sperate work items.
