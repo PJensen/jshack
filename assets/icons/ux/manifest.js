@@ -1,13 +1,15 @@
-// JS Hack UX icons. Zero-based coordinates; lossless WebP with alpha.
-// ES module: import manifest from "./manifest.js";
-// Canvas: ctx.drawImage(image, s.x, s.y, s.width, s.height, x, y, size, size);
-// Use imageSmoothingEnabled = false for pixel-art rendering.
+// JS Hack UX sprite atlas. All coordinates are zero-based pixels.
+// Original 30 sprites retain their exact pixels and coordinates.
+// import manifest, { sprites } from "./manifest.js";
+// const s = sprites.damagePower;
+// ctx.imageSmoothingEnabled = false;
+// ctx.drawImage(image, s.x, s.y, s.width, s.height, x, y, size, size);
 const manifest = {
   "image": "sheet.webp",
   "width": 1536,
-  "height": 1280,
+  "height": 1792,
   "columns": 6,
-  "rows": 5,
+  "rows": 7,
   "cellWidth": 256,
   "cellHeight": 256,
   "sprites": {
@@ -250,10 +252,109 @@ const manifest = {
       "height": 256,
       "column": 5,
       "row": 4
+    },
+    "damagePower": {
+      "x": 0,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 0,
+      "row": 5
+    },
+    "mitigation": {
+      "x": 256,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 1,
+      "row": 5
+    },
+    "luck": {
+      "x": 512,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 2,
+      "row": 5
+    },
+    "critMultiplier": {
+      "x": 768,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 3,
+      "row": 5
+    },
+    "damageBonus": {
+      "x": 1024,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 4,
+      "row": 5
+    },
+    "carry": {
+      "x": 1280,
+      "y": 1280,
+      "width": 256,
+      "height": 256,
+      "column": 5,
+      "row": 5
+    },
+    "maxHpBonus": {
+      "x": 0,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 0,
+      "row": 6
+    },
+    "speed": {
+      "x": 256,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 1,
+      "row": 6
+    },
+    "gold": {
+      "x": 512,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 2,
+      "row": 6
+    },
+    "hunger": {
+      "x": 768,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 3,
+      "row": 6
+    },
+    "depth": {
+      "x": 1024,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 4,
+      "row": 6
+    },
+    "turn": {
+      "x": 1280,
+      "y": 1536,
+      "width": 256,
+      "height": 256,
+      "column": 5,
+      "row": 6
     }
   },
   "aliases": {
-    "armor": "equipment"
+    "armor": "equipment",
+    "critMult": "critMultiplier",
+    "dmgBonus": "damageBonus",
+    "maxHPBonus": "maxHpBonus"
   },
   "lunarPhases": [
     "moonNew",
@@ -273,7 +374,9 @@ const manifest = {
     "midnight"
   ]
 };
-manifest.sprites.armor = manifest.sprites.equipment;
+for (const [alias, name] of Object.entries(manifest.aliases)) {
+  manifest.sprites[alias] = manifest.sprites[name];
+}
 export const sprites = manifest.sprites;
 export const lunarPhases = manifest.lunarPhases;
 export const dayCycle = manifest.dayCycle;
