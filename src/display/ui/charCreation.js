@@ -65,7 +65,16 @@ function parseSeed(raw) {
 export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm }) {
   let classIndex = Math.floor(Math.random() * classes.length);
   let classIconRafId = null;
+  let spiritSwapAnim = null;
   let classIconPauseUntil = 0;
+  let spiritX = 42;
+  let spiritY = 42;
+  let spiritVx = 0;
+  let spiritVy = 0;
+  let spiritTargetX = 42;
+  let spiritTargetY = 42;
+  let spiritLastNow = 0;
+  let spiritReady = false;
   const classIconStates = [];
   const classIconMaps = Promise.all([
     loadImage(CLASS_ICON_ATLAS.sheetUrl),
@@ -666,7 +675,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   // Scroll viewport — shows one slide at a time, smooth scroll between them
   const scrollViewport = document.createElement('div');
   Object.assign(scrollViewport.style, {
-    flex: '1', width: '100%', minWidth: '0',
+    position: 'relative', flex: '1', width: '100%', minWidth: '0',
     overflow: 'hidden',
   });
 
@@ -736,6 +745,17 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   }
 
   scrollViewport.appendChild(scrollTrack);
+  const spiritOverlay = document.createElement('canvas');
+  spiritOverlay.width = 128;
+  spiritOverlay.height = 128;
+  Object.assign(spiritOverlay.style, {
+    position: 'absolute', top: '8px', left: '50%',
+    width: '128px', height: '128px',
+    transform: 'translateX(-50%)',
+    pointerEvents: 'none', zIndex: '3',
+  });
+  const spiritOverlayCtx = spiritOverlay.getContext('2d');
+  scrollViewport.appendChild(spiritOverlay);
   carouselWrap.appendChild(prevBtn);
   carouselWrap.appendChild(scrollViewport);
   carouselWrap.appendChild(nextBtn);
@@ -785,49 +805,51 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     state.ctx = outputCtx;
     state.pixels = pixels;
     state.normals = normals;
-    chooseSpiritTarget(state);
+    if (!spiritReady) {
+      chooseSpiritTarget(state.pixels);
+      spiritReady = true;
+    }
     state.element.replaceChildren(output);
     Object.assign(output.style, { width: '128px', height: '128px', imageRendering: 'pixelated' });
   }
 
-  function chooseSpiritTarget(state) {
+  function chooseSpiritTarget(pixels) {
     for (let attempt = 0; attempt < 24; attempt++) {
       const x = 5 + Math.floor(Math.random() * 74);
       const y = 5 + Math.floor(Math.random() * 74);
       const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
-      if (state.pixels?.[sourceIndex + 3] > 12) {
-        state.targetX = x;
-        state.targetY = y;
+      if (pixels?.[sourceIndex + 3] > 12) {
+        spiritTargetX = x;
+        spiritTargetY = y;
         return;
       }
     }
-    state.targetX = 42;
-    state.targetY = 42;
+    spiritTargetX = 42;
+    spiritTargetY = 42;
   }
 
   function updateSpiritLight(state, now) {
     if (now < classIconPauseUntil) return;
-    const dt = Math.min(0.05, Math.max(0.008, (now - state.lastNow) / 1000 || 0.016));
-    state.lastNow = now;
-    const dx = state.targetX - state.x;
-    const dy = state.targetY - state.y;
+    const dt = Math.min(0.05, Math.max(0.008, (now - spiritLastNow) / 1000 || 0.016));
+    spiritLastNow = now;
+    const dx = spiritTargetX - spiritX;
+    const dy = spiritTargetY - spiritY;
     const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    state.vx += (dx / distance) * dt * 20;
-    state.vy += (dy / distance) * dt * 20;
-    state.vx *= Math.pow(0.12, dt);
-    state.vy *= Math.pow(0.12, dt);
-    state.x = Math.max(4, Math.min(80, state.x + state.vx * dt));
-    state.y = Math.max(4, Math.min(80, state.y + state.vy * dt));
-    if (distance < 7 || Math.random() < dt * 0.08) chooseSpiritTarget(state);
+    spiritVx += (dx / distance) * dt * 20;
+    spiritVy += (dy / distance) * dt * 20;
+    spiritVx *= Math.pow(0.12, dt);
+    spiritVy *= Math.pow(0.12, dt);
+    spiritX = Math.max(4, Math.min(80, spiritX + spiritVx * dt));
+    spiritY = Math.max(4, Math.min(80, spiritY + spiritVy * dt));
+    if (distance < 7 || Math.random() < dt * 0.08) chooseSpiritTarget(state.pixels);
   }
 
-  function renderClassIcon(state, now) {
+  function renderClassIcon(state) {
     if (!state.canvas || !state.pixels || !state.normals) return;
-    updateSpiritLight(state, now);
     const image = state.ctx.createImageData(84, 84);
     const artOffset = 22;
-    const lightX = artOffset + state.x;
-    const lightY = artOffset + state.y;
+    const lightX = artOffset + spiritX;
+    const lightY = artOffset + spiritY;
     for (let y = 0; y < 84; y++) {
       for (let x = 0; x < 84; x++) {
         const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
@@ -837,8 +859,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         const nx = state.normals[sourceIndex] / 127.5 - 1;
         const ny = state.normals[sourceIndex + 1] / 127.5 - 1;
         const nz = state.normals[sourceIndex + 2] / 127.5 - 1;
-        const dx = state.x - x;
-        const dy = state.y - y;
+        const dx = spiritX - x;
+        const dy = spiritY - y;
         const distance = Math.sqrt(dx * dx + dy * dy) || 1;
         const diffuse = Math.max(0, (nx * dx / distance) + (ny * dy / distance) + nz * 0.65);
         const falloff = Math.max(0, 1 - distance / 76);
@@ -851,16 +873,6 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     }
     state.ctx.clearRect(0, 0, 128, 128);
     state.ctx.putImageData(image, artOffset, artOffset);
-    const flash = 1 + spiritFlash * 2.8;
-    const glow = state.ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16 + spiritFlash * 10);
-    glow.addColorStop(0, `rgba(255, 238, 177, ${Math.min(1, 0.95 * flash)})`);
-    glow.addColorStop(0.18, `rgba(255, 184, 76, ${Math.min(1, 0.62 * flash)})`);
-    glow.addColorStop(0.42, `rgba(255, 125, 38, ${Math.min(0.8, 0.30 * flash)})`);
-    glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
-    state.ctx.globalCompositeOperation = 'lighter';
-    state.ctx.fillStyle = glow;
-    state.ctx.fillRect(0, 0, 128, 128);
-    state.ctx.globalCompositeOperation = 'source-over';
 
     const progress = clamp01(entropyPool.length / ENTROPY_TARGET);
     const litSegs = Math.min(16, Math.floor(progress * 16));
@@ -891,10 +903,31 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     state.ctx.restore();
   }
 
+  function renderSpiritOverlay() {
+    if (!spiritOverlayCtx) return;
+    spiritOverlayCtx.clearRect(0, 0, 128, 128);
+    const lightX = 22 + spiritX;
+    const lightY = 22 + spiritY;
+    const flash = 1 + spiritFlash * 2.8;
+    const glow = spiritOverlayCtx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16 + spiritFlash * 10);
+    glow.addColorStop(0, `rgba(255, 238, 177, ${Math.min(1, 0.95 * flash)})`);
+    glow.addColorStop(0.18, `rgba(255, 184, 76, ${Math.min(1, 0.62 * flash)})`);
+    glow.addColorStop(0.42, `rgba(255, 125, 38, ${Math.min(0.8, 0.30 * flash)})`);
+    glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
+    spiritOverlayCtx.globalCompositeOperation = 'lighter';
+    spiritOverlayCtx.fillStyle = glow;
+    spiritOverlayCtx.fillRect(0, 0, 128, 128);
+
+  }
+
   function animateClassIcons(now) {
     classIconRafId = requestAnimationFrame(animateClassIcons);
     const state = classIconStates[classIndex];
-    if (state) renderClassIcon(state, now);
+    if (state) {
+      updateSpiritLight(state, now);
+      renderClassIcon(state);
+    }
+    renderSpiritOverlay();
   }
 
   classIconMaps.then(([colorImage, normalImage]) => {
@@ -903,17 +936,22 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   }).catch(() => {});
 
   function scrollTo(idx, opts = {}) {
-    const previousState = classIconStates[classIndex];
-    const nextState = classIconStates[idx];
-    if (previousState && nextState && previousState !== nextState) {
-      nextState.x = previousState.x;
-      nextState.y = previousState.y;
-      nextState.vx = 0;
-      nextState.vy = 0;
-      nextState.targetX = previousState.x;
-      nextState.targetY = previousState.y;
-      nextState.lastNow = 0;
+    if (classIconStates[classIndex] && classIconStates[idx] && classIconStates[classIndex] !== classIconStates[idx]) {
+      spiritVx = 0;
+      spiritVy = 0;
+      spiritLastNow = 0;
       classIconPauseUntil = (typeof performance !== 'undefined' ? performance.now() : 0) + 360;
+      if (spiritSwapAnim) { try { spiritSwapAnim.cancel(); } catch {} }
+      try {
+        spiritSwapAnim = spiritOverlay.animate(
+          [
+            { transform: 'translateX(-50%) scale(1)', opacity: 1, filter: 'brightness(1)' },
+            { transform: 'translateX(-50%) scale(0.58)', opacity: 0.42, filter: 'brightness(0.72)', offset: 0.46 },
+            { transform: 'translateX(-50%) scale(1)', opacity: 1, filter: 'brightness(1)' },
+          ],
+          { duration: 520, easing: 'cubic-bezier(0.22, 0.8, 0.28, 1)' },
+        );
+      } catch {}
     }
     classIndex = idx;
     scrollTrack.style.transform = `translateX(-${classIndex * 100}%)`;
@@ -1559,6 +1597,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 1.0 });
     if (bgRafId !== null) cancelAnimationFrame(bgRafId);
     if (classIconRafId !== null) cancelAnimationFrame(classIconRafId);
+    if (spiritSwapAnim) { try { spiritSwapAnim.cancel(); } catch {} spiritSwapAnim = null; }
     if (oracleTimer !== null) clearInterval(oracleTimer);
     if (ctaPulseAnim) { try { ctaPulseAnim.cancel(); } catch {} ctaPulseAnim = null; }
     window.removeEventListener('resize', resizeBgCanvas);
