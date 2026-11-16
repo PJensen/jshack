@@ -2584,8 +2584,8 @@ addEventListener('ui:requestUse', (ev) => {
   const itemId = e?.detail?.itemId;
   if (!Number.isInteger(itemId)) return;
   const abilityId = String(e?.detail?.abilityId || '');
-  if (tryOpenItemChannelTargeter(itemId)) return;
   if (requestItemAbility(itemId, abilityId)) return;
+  if (tryOpenItemChannelTargeter(itemId)) return;
   const action = { type: 'rules.useItem', payload: { itemId, abilityId } };
   const rulesHandler = makeRulesDispatcher(world, () => (playerEntity(world)?.id || 0));
   rulesHandler(action);

@@ -26,7 +26,14 @@ Deno.test("overworld structural entities redraw after lighting but actors do not
   assertEquals(shouldPostLightingRedrawKind(palette, "stair_down", { isOverworld: true, layer: 200 }), true);
   assertEquals(shouldPostLightingRedrawKind(palette, "tree_harvest", { isOverworld: true, layer: 300 }), false);
   assertEquals(shouldPostLightingRedrawKind(palette, "tree_sapling", { isOverworld: true, layer: 300 }), false);
-  assertEquals(shouldPostLightingRedrawKind(palette, "player", { isOverworld: true, layer: 400 }), false);
+  assertEquals(shouldPostLightingRedrawKind(palette, "player", { isOverworld: true, layer: 400 }), true);
+});
+
+Deno.test("player redraws after lighting in dungeon relief too", () => {
+  const palette = buildPalette();
+
+  assertEquals(shouldPostLightingRedrawKind(palette, "player", { isOverworld: false, layer: 400 }), true);
+  assertEquals(shouldPostLightingRedrawKind(palette, "rat", { isOverworld: true, layer: 300 }), false);
 });
 
 Deno.test("dungeon kinds do not opt into the overworld post-lighting redraw path", () => {
