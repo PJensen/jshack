@@ -31,6 +31,28 @@ export const UI_PET_STATE_GLYPHS = Object.freeze({
   idle: '\u{1F4A4}',
 });
 
+export const UI_ACTION_ICON_IDS = Object.freeze({
+  character: 'character',
+  inventory: 'inventory',
+  stanceBalanced: 'stanceBalanced',
+  stanceAggressive: 'stanceAggressive',
+  stanceGuarded: 'stanceGuarded',
+  pray: 'pray',
+  search: 'search',
+  attack: 'attack',
+});
+
+export const UI_PET_STATE_ICON_IDS = Object.freeze({
+  following: 'petFollowing',
+  staying: 'petStaying',
+  fetching: 'petFetching',
+  returning: 'petReturning',
+  guarding: 'petGuarding',
+  aggressive: 'petAggressive',
+  fleeing: 'petFleeing',
+  idle: 'petIdle',
+});
+
 export const CHARACTER_MENU_TAB_GLYPHS = Object.freeze({
   character: '@',
   inventory: '\u{1F392}',

@@ -482,6 +482,7 @@ export function createHudFeeds(world, deps) {
     const rangedCount = Number(rangedInfo?.count || 0);
     const wName = wid ? (world.get(wid, NamedIdentity)?.name || wInfo?.description || wInfo?.type) : "";
     const rangedName = rangedId ? (world.get(rangedId, NamedIdentity)?.name || rangedInfo?.description || rangedInfo?.type) : "";
+    const rangedIdentity = rangedId ? String(world.get(rangedId, NamedIdentity)?.identity || "") : "";
     const wCoating = wInfo?.coating && typeof wInfo.coating === 'object' ? wInfo.coating : null;
     const coatingSig = wCoating ? `${wCoating.kind}:${wCoating.charges || 0}` : "";
     const rangedType = String(rangedInfo?.type || "");
@@ -527,7 +528,7 @@ export function createHudFeeds(world, deps) {
           attack: atk,
           damage: atk,
           weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, damage: atk, attack: atk, coating: wCoating } : null,
-          ranged: rangedId ? { id: rangedId, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
+          ranged: rangedId ? { id: rangedId, iconId: rangedIdentity, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
           // Legacy field retained for listeners; it now carries Avoidance only.
           defense: avoidance,
           avoidance,

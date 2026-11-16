@@ -4,7 +4,7 @@ import { createLinearResourceBars } from './linearResourceBars.js';
 import { HUD_COLUMNS, HUD_GAP, HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
 import { renderItemDetails } from './overlay.js';
 import { ensureItemTooltip, positionTooltip, rarityStyle, UX_THEME } from './overlayUtils.js';
-import { UI_ACTION_GLYPHS, UI_PET_STATE_GLYPHS } from './iconGlyphs.js';
+import { UI_ACTION_GLYPHS, UI_PET_STATE_GLYPHS, UI_ACTION_ICON_IDS, UI_PET_STATE_ICON_IDS } from './iconGlyphs.js';
 import { GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { createPinnedItemSlots } from './pinnedItemSlots.js';
 import { createMobileSpellRadial } from './mobileRadial.js';
@@ -882,8 +882,8 @@ export function initHUD() {
 
     function setSearchButtonHoldVisual(waitMode) {
       const active = !!waitMode;
-      setDesktopIcon(waitBtn, active ? ACTION_ICONS.wait : ACTION_ICONS.search);
-      setMobileIcon(waitBtn, active ? ACTION_ICONS.wait : ACTION_ICONS.search);
+      if (active) setFallbackIcon(waitBtn, ACTION_ICONS.wait);
+      else setUxIcon(waitBtn, UI_ACTION_ICON_IDS.search, ACTION_ICONS.search);
       setBarLabel(waitBtn, active ? 'Wait' : 'Search');
       refreshCommandLabels();
     }
@@ -1100,6 +1100,18 @@ export function initHUD() {
   const setMobileLabel = (btn, text) => { btn.dataset.mobileLabel = String(text || ''); };
   const setDesktopIcon = (btn, text) => { btn.dataset.desktopIcon = String(text || ''); };
   const setMobileIcon = (btn, text) => { btn.dataset.mobileIcon = String(text || ''); };
+  const setUxIcon = (btn, id, fallback) => {
+    btn.dataset.iconAtlas = 'ux';
+    btn.dataset.iconId = String(id || '');
+    setDesktopIcon(btn, fallback);
+    setMobileIcon(btn, fallback);
+  };
+  const setFallbackIcon = (btn, fallback) => {
+    delete btn.dataset.iconAtlas;
+    delete btn.dataset.iconId;
+    setDesktopIcon(btn, fallback);
+    setMobileIcon(btn, fallback);
+  };
   const setBarLabel = (btn, text) => { btn.dataset.barLabel = String(text || ''); };
   const refreshCommandLabels = () => {
     const isMobile = mobileLayoutMq.matches;
@@ -1123,6 +1135,18 @@ export function initHUD() {
         22,
       );
       btn.appendChild(iconSpan);
+      const countBadge = String(btn.dataset.countBadge || '').trim();
+      if (countBadge) {
+        const badge = document.createElement('span');
+        badge.textContent = countBadge;
+        Object.assign(badge.style, {
+          position: 'absolute', bottom: '2px', right: '3px', minWidth: '13px',
+          padding: '1px 3px', borderRadius: '7px', background: 'rgba(8,12,18,0.9)',
+          color: '#fff2b8', fontSize: '9px', lineHeight: '1', fontWeight: 'bold',
+          textAlign: 'center', pointerEvents: 'none',
+        });
+        btn.appendChild(badge);
+      }
       if (barLabel) {
         const labelSpan = document.createElement('span');
         labelSpan.textContent = barLabel;
@@ -1173,17 +1197,17 @@ export function initHUD() {
   setDesktopLabel(quickInteractBtn, 'Door'); setMobileLabel(quickInteractBtn, 'Door');
   setDesktopLabel(postureBtn, 'Posture: Balanced'); setMobileLabel(postureBtn, 'Posture');
   setDesktopLabel(waitBtn, 'Search'); setMobileLabel(waitBtn, 'Search');
-  setDesktopIcon(charBtn, ACTION_ICONS.character); setMobileIcon(charBtn, ACTION_ICONS.character);
-  setDesktopIcon(bagBtn, ACTION_ICONS.bag); setMobileIcon(bagBtn, ACTION_ICONS.bag);
-  setDesktopIcon(petBtn, ACTION_ICONS.petDefault); setMobileIcon(petBtn, ACTION_ICONS.petDefault);
+  setUxIcon(charBtn, UI_ACTION_ICON_IDS.character, ACTION_ICONS.character);
+  setUxIcon(bagBtn, UI_ACTION_ICON_IDS.inventory, ACTION_ICONS.bag);
+  setUxIcon(petBtn, UI_PET_STATE_ICON_IDS.following, ACTION_ICONS.petDefault);
   setDesktopIcon(castBtn, ACTION_ICONS.cast); setMobileIcon(castBtn, ACTION_ICONS.cast);
   setDesktopIcon(spellSelectBtn, ACTION_ICONS.spells); setMobileIcon(spellSelectBtn, ACTION_ICONS.spells);
-  setDesktopIcon(attackBtn, ACTION_ICONS.attack); setMobileIcon(attackBtn, ACTION_ICONS.attack);
+  setUxIcon(attackBtn, UI_ACTION_ICON_IDS.attack, ACTION_ICONS.attack);
   setDesktopIcon(shootBtn, ACTION_ICONS.shoot); setMobileIcon(shootBtn, ACTION_ICONS.shoot);
-  setDesktopIcon(prayBtn, ACTION_ICONS.pray); setMobileIcon(prayBtn, ACTION_ICONS.pray);
+  setUxIcon(prayBtn, UI_ACTION_ICON_IDS.pray, ACTION_ICONS.pray);
   setDesktopIcon(quickInteractBtn, ACTION_ICONS.door); setMobileIcon(quickInteractBtn, ACTION_ICONS.door);
-  setDesktopIcon(postureBtn, ACTION_ICONS.postureBalanced); setMobileIcon(postureBtn, ACTION_ICONS.postureBalanced);
-  setDesktopIcon(waitBtn, ACTION_ICONS.search); setMobileIcon(waitBtn, ACTION_ICONS.search);
+  setUxIcon(postureBtn, UI_ACTION_ICON_IDS.stanceBalanced, ACTION_ICONS.postureBalanced);
+  setUxIcon(waitBtn, UI_ACTION_ICON_IDS.search, ACTION_ICONS.search);
   setBarLabel(charBtn, 'Char');
   setBarLabel(bagBtn, 'Bag');
   setBarLabel(petBtn, 'Pet');
@@ -1327,8 +1351,8 @@ export function initHUD() {
     setDesktopLabel(petBtn, stateLabel);
     setMobileLabel(petBtn, stateLabel);
     const stateIcon = PET_STATE_ICONS[state] || ACTION_ICONS.petDefault;
-    setDesktopIcon(petBtn, stateIcon);
-    setMobileIcon(petBtn, stateIcon);
+    const stateIconId = UI_PET_STATE_ICON_IDS[state] || UI_PET_STATE_ICON_IDS.following;
+    setUxIcon(petBtn, stateIconId, stateIcon);
     petBtn.dataset.state = state; // Store for background reset
     refreshCommandLabels();
     // Color code by state
@@ -1455,11 +1479,21 @@ export function initHUD() {
     // Shoot button label follows ranged item type
     let rangedLabel = 'Shoot';
     let rangedIcon = ACTION_ICONS.shoot;
+    delete shootBtn.dataset.countBadge;
+    delete shootBtn.dataset.iconAtlas;
+    delete shootBtn.dataset.iconId;
     if (ranged?.isWand) {
-      rangedLabel = `Zap (${rangedCount})`;
+      rangedLabel = 'Zap';
       rangedIcon = ACTION_ICONS.zap;
+      shootBtn.dataset.iconAtlas = 'items';
+      shootBtn.dataset.iconId = String(ranged?.iconId || '');
+      shootBtn.dataset.countBadge = String(rangedCount);
+    } else if (ranged) {
+      rangedLabel = 'Shoot';
+      shootBtn.dataset.iconAtlas = 'items';
+      shootBtn.dataset.iconId = String(ranged?.iconId || '');
+      shootBtn.dataset.countBadge = String(ammoCount);
     }
-    else if (ranged) rangedLabel = `Shoot (${ammoCount})`;
     setDesktopLabel(shootBtn, rangedLabel);
     setMobileLabel(shootBtn, rangedLabel);
     setDesktopIcon(shootBtn, rangedIcon);
@@ -1468,22 +1502,19 @@ export function initHUD() {
     if (posture === 'aggressive') {
       setDesktopLabel(postureBtn, 'Posture: Aggressive');
       setMobileLabel(postureBtn, 'Aggressive');
-      setDesktopIcon(postureBtn, ACTION_ICONS.postureAggressive);
-      setMobileIcon(postureBtn, ACTION_ICONS.postureAggressive);
+      setUxIcon(postureBtn, UI_ACTION_ICON_IDS.stanceAggressive, ACTION_ICONS.postureAggressive);
       setBarLabel(postureBtn, 'Aggro');
       postureBtn.style.borderColor = '#69412a';
     } else if (posture === 'guarded') {
       setDesktopLabel(postureBtn, 'Posture: Guarded');
       setMobileLabel(postureBtn, 'Guarded');
-      setDesktopIcon(postureBtn, ACTION_ICONS.postureGuarded);
-      setMobileIcon(postureBtn, ACTION_ICONS.postureGuarded);
+      setUxIcon(postureBtn, UI_ACTION_ICON_IDS.stanceGuarded, ACTION_ICONS.postureGuarded);
       setBarLabel(postureBtn, 'Guard');
       postureBtn.style.borderColor = '#2a4f69';
     } else {
       setDesktopLabel(postureBtn, 'Posture: Balanced');
       setMobileLabel(postureBtn, 'Balanced');
-      setDesktopIcon(postureBtn, ACTION_ICONS.postureBalanced);
-      setMobileIcon(postureBtn, ACTION_ICONS.postureBalanced);
+      setUxIcon(postureBtn, UI_ACTION_ICON_IDS.stanceBalanced, ACTION_ICONS.postureBalanced);
       setBarLabel(postureBtn, 'Balance');
       postureBtn.style.borderColor = '#6f7d8d';
     }
