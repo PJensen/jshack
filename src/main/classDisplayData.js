@@ -20,6 +20,8 @@ export function buildClassDisplayData() {
       name: cls.name,
       glyph: cls.glyph || cls.id[0] || "?",
       icon: cls.icon || cls.name[0],
+      iconAtlas: "classes",
+      iconId: cls.id,
       description: cls.description,
       deityName: deity?.name ?? cls.deityId,
       deityAlignment: deity?.alignment ?? '',

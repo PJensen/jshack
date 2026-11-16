@@ -6,10 +6,11 @@ import { pickRandomCharacterName } from '../../shared/utils/characterNames.js';
 import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/client.js';
 import { ORACULAR_MESSAGES, formatOracularMessageHtml } from '../../shared/data/hints.js';
 import { play, preload, startLoop, stopLoop } from '../audio/audioEngine.js';
+import { applyAtlasIcon, CLASS_ICON_ATLAS } from './atlasIcons.js';
 
 /**
  * @param {{
- *   classes: Array<{ id: string, name: string, icon?: string, description: string, deityName: string, deityAlignment: string }>,
+ *   classes: Array<{ id: string, name: string, icon?: string, iconAtlas?: string, iconId?: string, description: string, deityName: string, deityAlignment: string }>,
  *   defaultSeed?: number,
  *   onConfirm: (result: { name: string, classId: string, seed: number, difficulty: string, onProgress?: (progress: any) => void }) => void,
  * }} opts
@@ -677,7 +678,14 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       marginBottom: '6px',
       filter: 'saturate(0.85) brightness(0.92)',
     });
-    icon.textContent = cls.icon || cls.name[0];
+    const hasClassIcon = applyAtlasIcon(
+      icon,
+      { atlas: CLASS_ICON_ATLAS, id: cls.iconId || cls.id },
+      cls.icon || cls.name[0],
+      84,
+    );
+    if (!hasClassIcon) icon.textContent = cls.icon || cls.name[0];
+    icon.setAttribute('aria-label', `${cls.name} class icon`);
 
     const name = document.createElement('div');
     Object.assign(name.style, {

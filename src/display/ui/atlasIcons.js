@@ -3,12 +3,14 @@ import itemManifest from "../../../assets/icons/items/manifest.js";
 import statusManifest from "../../../assets/icons/statuses/manifest.js";
 import corpseManifest from "../../../assets/icons/corpses/manifest.js";
 import uxManifest from "../../../assets/icons/ux/manifest.js";
+import classManifest from "../../../assets/icons/classes/manifest.js";
 
 const SPELL_SHEET_URL = new URL("../../../assets/icons/spells/sheet.webp", import.meta.url).href;
 const ITEM_SHEET_URL = new URL("../../../assets/icons/items/sheet.webp", import.meta.url).href;
 const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", import.meta.url).href;
 const CORPSE_SHEET_URL = new URL("../../../assets/icons/corpses/sheet.webp", import.meta.url).href;
 const UX_SHEET_URL = new URL("../../../assets/icons/ux/sheet.webp", import.meta.url).href;
+const CLASS_SHEET_URL = new URL("../../../assets/icons/classes/sheet.webp", import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();
@@ -47,6 +49,7 @@ export const ITEM_ICON_ATLAS = buildAtlas(itemManifest, ITEM_SHEET_URL);
 export const STATUS_ICON_ATLAS = buildAtlas(statusManifest, STATUS_SHEET_URL);
 export const CORPSE_ICON_ATLAS = buildAtlas(corpseManifest, CORPSE_SHEET_URL);
 export const UX_ICON_ATLAS = buildSpriteAtlas(uxManifest, UX_SHEET_URL);
+export const CLASS_ICON_ATLAS = buildSpriteAtlas(classManifest, CLASS_SHEET_URL);
 
 export const ICON_ATLASES = Object.freeze({
   spells: SPELL_ICON_ATLAS,
@@ -54,6 +57,7 @@ export const ICON_ATLASES = Object.freeze({
   statuses: STATUS_ICON_ATLAS,
   corpses: CORPSE_ICON_ATLAS,
   ux: UX_ICON_ATLAS,
+  classes: CLASS_ICON_ATLAS,
 });
 
 /** @param {string} name */
