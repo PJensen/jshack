@@ -1,0 +1,1 @@
+I added 12 new icons :-) see `ux/manifest.js`
