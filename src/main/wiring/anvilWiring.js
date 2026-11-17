@@ -1,4 +1,5 @@
 import { isPlayerAdjacentTo } from "./wiringUtils.js";
+import { getCatalogItem } from "../../rules/data/itemCatalog.js";
 
 const INSTALLED = Symbol.for("jshack:main:anvilWiring:installed");
 const EMPTY_MATERIALS = Object.freeze({ iron: 0, lumber: 0 });
@@ -24,7 +25,12 @@ export function installAnvilWiring({ world, playerEntity, dispatchRules, log }) 
         detail: {
           anvilId,
           materials: materials && typeof materials === "object" ? materials : { ...EMPTY_MATERIALS },
-          recipes: Array.isArray(recipes) ? recipes : [],
+          recipes: Array.isArray(recipes) ? recipes.map((recipe) => ({
+            ...recipe,
+            description: String(recipe?.description || getCatalogItem(recipe?.itemId)?.description || ""),
+            requirementLabels: { iron: "Iron Bars", lumber: "Lumber" },
+            requirementIdentities: { iron: "material_iron", lumber: "material_lumber" },
+          })) : [],
         },
       }));
     } catch (e) { console.debug("[anvilWiring] dispatch ui:anvilData:", e); }

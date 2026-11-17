@@ -4,6 +4,7 @@
 import { resolveItemDisplayName } from "./itemName.js";
 import { isPlayerAdjacentTo } from "./wiringUtils.js";
 import { getCatalogItem } from "../../rules/data/itemCatalog.js";
+import { COOKING_INGREDIENTS } from "../../rules/data/cookingRecipes.js";
 
 const INSTALLED = Symbol.for("jshack:main:cookingWiring:installed");
 
@@ -45,6 +46,9 @@ export function installCookingWiring({ world, playerEntity, dispatchRules, log }
         resolvedRecipes.push({
           ...recipe,
           outputName: String(recipe?.outputName || output?.name || recipe?.label || "Cooked Food"),
+          description: String(recipe?.description || output?.description || recipe?.flavor || ""),
+          requirementLabels: Object.fromEntries(Object.entries(COOKING_INGREDIENTS).map(([key, def]) => [key, def.label])),
+          requirementIdentities: Object.fromEntries(Object.entries(COOKING_INGREDIENTS).map(([key, def]) => [key, def.identity || key])),
         });
       }
     }

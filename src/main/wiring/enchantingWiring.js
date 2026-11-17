@@ -1,4 +1,5 @@
 import { isPlayerAdjacentTo } from "./wiringUtils.js";
+import { ENCHANTING_INGREDIENTS } from "../../rules/content/enchanting/enchantCatalog.js";
 
 const INSTALLED = Symbol.for("jshack:main:enchantingWiring:installed");
 const EMPTY_INGREDIENTS = Object.freeze({
@@ -41,7 +42,11 @@ export function installEnchantingWiring({ world, playerEntity, dispatchRules, lo
         detail: {
           benchId,
           ingredients: ingredients && typeof ingredients === "object" ? ingredients : { ...EMPTY_INGREDIENTS },
-          recipes: Array.isArray(recipes) ? recipes : [],
+          recipes: Array.isArray(recipes) ? recipes.map((recipe) => ({
+            ...recipe,
+            requirementLabels: Object.fromEntries(Object.entries(ENCHANTING_INGREDIENTS).map(([key, def]) => [key, def.label])),
+            requirementIdentities: Object.fromEntries(Object.entries(ENCHANTING_INGREDIENTS).map(([key, def]) => [key, def.identity])),
+          })) : [],
           title: String(title || ""),
           subtitle: String(subtitle || ""),
         },
