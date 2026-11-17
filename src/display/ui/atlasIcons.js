@@ -15,8 +15,8 @@ const CLASS_SHEET_URL = new URL("../../../assets/icons/classes/sheet.webp", impo
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();
-  let columns = 1;
-  let rows = 1;
+  let columns = Math.max(1, Number(manifest?.columns) | 0);
+  let rows = Math.max(1, Number(manifest?.rows) | 0);
   for (const entry of Array.isArray(manifest?.entries) ? manifest.entries : []) {
     const id = String(entry?.id || "").trim();
     if (!id) continue;
@@ -122,15 +122,15 @@ export function applyAtlasIcon(element, iconRef, fallback = "", size = 24) {
 
   if (!entry) return false;
 
-  const xPct = atlas.columns > 1 ? (entry.x / (atlas.columns - 1)) * 100 : 0;
-  const yPct = atlas.rows > 1 ? (entry.y / (atlas.rows - 1)) * 100 : 0;
+  // Use exact tile pixels rather than percentage positioning. Percentages
+  // can round differently at small UI sizes and expose adjacent atlas cells.
   Object.assign(element.style, {
     display: "inline-block",
     width: `${size}px`,
     height: `${size}px`,
     backgroundImage: `url("${atlas.sheetUrl}")`,
-    backgroundSize: `${atlas.columns * 100}% ${atlas.rows * 100}%`,
-    backgroundPosition: `${xPct}% ${yPct}%`,
+    backgroundSize: `${atlas.columns * size}px ${atlas.rows * size}px`,
+    backgroundPosition: `-${entry.x * size}px -${entry.y * size}px`,
     backgroundRepeat: "no-repeat",
     imageRendering: "pixelated",
     flex: "0 0 auto",

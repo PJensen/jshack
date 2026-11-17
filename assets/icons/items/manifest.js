@@ -1,8 +1,10 @@
 // Zero-based column/row coordinates; pixel origin = x * size, y * size.
 // Atlas: items/sheet.webp (768 x 704); 32px tiles, 24 columns x 22 rows.
-// Shop keys share one illustrated icon cell; existing atlas positions are unchanged.
+// Keys share one illustrated icon cell; existing atlas positions are unchanged.
 export default {
   "size": 32,
+  "columns": 24,
+  "rows": 22,
   "entries": [
     {
       "id": "ammo_arrows",
@@ -2141,8 +2143,8 @@ export default {
     },
     {
       "id": "wand_arcane",
-      "x": 18,
-      "y": 17
+      "x": 2,
+      "y": 21
     },
     {
       "id": "wand_heal",
@@ -2570,6 +2572,11 @@ export default {
       "y": 16
     },
     {
+      "id": "scroll_unknown",
+      "x": 1,
+      "y": 21
+    },
+    {
       "id": "key",
       "x": 0,
       "y": 21
@@ -2601,6 +2608,11 @@ export default {
     },
     {
       "id": "key_enchanter_shop",
+      "x": 0,
+      "y": 21
+    },
+    {
+      "id": "key_tavern_cellar",
       "x": 0,
       "y": 21
     }
