@@ -28,6 +28,7 @@
     "bench": "deno bench --no-check --allow-read tests/perf/*.bench.mjs",
     "headless": "deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/headless-runner.mjs",
     "agent:play": "deno run --allow-read --allow-write .agents/skills/runtime-tools/scripts/agent-player.mjs",
+    "bench:player-kill": "deno run --no-check --allow-read .agents/skills/runtime-tools/scripts/player-kill-benchmark.mjs",
     "download:audio": "deno run --allow-net --allow-read --allow-write tools/download-dropbox-audio.mjs",
     "audio:trim-silence": "deno run --allow-read --allow-write --allow-run tools/audio-trim-silence.mjs",
     "wrap:nwjs": "deno run --allow-read --allow-write packaging/nwjs/wrap.mjs"
