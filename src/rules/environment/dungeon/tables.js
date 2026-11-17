@@ -248,6 +248,7 @@ export function pickSpawner(rng, depth, monsterFilter = null) {
     return monsterFilter ? monsterFilter(def) : true;
   };
   const monsterParams = pickMonster(rng, depth, spawnerFilter);
+  if (!monsterParams) return null;
 
   // Look up spawner profile based on monster's size class
   const profile = resolveSpawnerProfile(monsterParams.identity, monsterParams.sizeClass);
