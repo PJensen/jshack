@@ -31,6 +31,7 @@ Deno.test("all spells known suppresses entire spellbook sub-table", () => {
     "fireball", "scorch", "magic_missile", "arcane_barrage", "void_hole", "arcane_bolt",
     "iron_flesh", "bloodthirst", "cleave", "war_cry", "earthshatter",
     "rampage", "primal_roar",
+    "rend", "charge",
     "heal", "barkskin", "thorn_burst", "entangle", "verdant_ward",
     "harmony_ward", "poison_blade", "plague_swarm",
     "renewal", "sacred_restoration", "lifebloom",
