@@ -885,6 +885,7 @@ export function renderQuestJournal(panel, quests) {
  * @param {any} quest
  */
 export function renderQuestReward(panel, quest) {
+  (/** @type {any} */ (panel))._questData = quest;
   panel.innerHTML = '';
   Object.assign(panel.style, {
     position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
@@ -917,6 +918,7 @@ export function renderQuestReward(panel, quest) {
   panel.appendChild(rewardHeading);
 
   const selected = String((/** @type {any} */ (panel))._selectedReward || '');
+  const submitting = (/** @type {any} */ (panel))._rewardSubmitting === true;
   const items = Array.isArray(quest?.rewardItems) ? quest.rewardItems : [];
   // Bonus rewards are intentionally not selectable. They have no choiceId;
   // using their itemId as a fallback makes them look like choices and sends
@@ -994,16 +996,12 @@ export function renderQuestReward(panel, quest) {
 
   const actions = document.createElement('div');
   Object.assign(actions.style, { display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '18px' });
-  const close = document.createElement('button');
-  close.type = 'button'; close.textContent = 'Close';
-  Object.assign(close.style, { minHeight: '42px', padding: '8px 14px', borderRadius: '999px', border: UI.BORDER, background: 'transparent', color: '#b6c4d6', font: 'inherit', cursor: 'pointer' });
-  close.addEventListener('click', () => window.dispatchEvent(new CustomEvent('ui:closeQuestReward')));
-  actions.appendChild(close);
   const complete = document.createElement('button');
-  complete.type = 'button'; complete.textContent = 'Complete'; complete.disabled = !selected;
-  Object.assign(complete.style, { minHeight: '42px', padding: '8px 18px', borderRadius: '999px', border: '1px solid #c99d3c', background: selected ? 'rgba(125, 87, 24, 0.95)' : 'rgba(60, 60, 60, 0.6)', color: selected ? '#fff1b0' : '#8994a0', font: 'inherit', fontWeight: '700', cursor: selected ? 'pointer' : 'default' });
+  complete.type = 'button'; complete.textContent = submitting ? 'Completing…' : 'Complete'; complete.disabled = !selected || submitting;
+  Object.assign(complete.style, { minHeight: '42px', padding: '8px 18px', borderRadius: '999px', border: '1px solid #c99d3c', background: selected && !submitting ? 'rgba(125, 87, 24, 0.95)' : 'rgba(60, 60, 60, 0.6)', color: selected && !submitting ? '#fff1b0' : '#8994a0', font: 'inherit', fontWeight: '700', cursor: selected && !submitting ? 'pointer' : 'default' });
   complete.addEventListener('click', () => {
-    if (!selected) { warning.style.display = 'block'; return; }
+    if (!selected || submitting) { warning.style.display = 'block'; return; }
+    (/** @type {any} */ (panel))._rewardSubmitting = true;
     window.dispatchEvent(new CustomEvent('ui:requestQuestReward', { detail: { questId: quest.questId, rewardId: selected } }));
   });
   actions.appendChild(complete);

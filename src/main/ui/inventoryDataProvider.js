@@ -1087,6 +1087,10 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
       _uiEventTarget.dispatchEvent(new CustomEvent('ui:questRewardError', {
         detail: { questId, message: 'Make room in your inventory before claiming this reward.' },
       }));
+    } else {
+      _uiEventTarget.dispatchEvent(new CustomEvent('ui:questRewardCompleted', {
+        detail: { questId, rewardId },
+      }));
     }
     _uiEventTarget.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });

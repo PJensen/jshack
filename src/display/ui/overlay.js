@@ -378,13 +378,22 @@ export function initOverlays() {
     (/** @type {any} */ (questReward))._questId = questId;
     (/** @type {any} */ (questReward))._selectedReward = '';
     (/** @type {any} */ (questReward))._rewardError = '';
+    (/** @type {any} */ (questReward))._rewardSubmitting = false;
+    (/** @type {any} */ (questReward))._questData = null;
     hideCharMenuPanels();
     show(questReward);
     window.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });
   window.addEventListener('ui:closeQuestReward', () => hide(questReward));
   window.addEventListener('ui:questRewardError', (ev) => {
+    (/** @type {any} */ (questReward))._rewardSubmitting = false;
     (/** @type {any} */ (questReward))._rewardError = String(ev?.detail?.message || 'Unable to claim this reward.');
+    const quest = (/** @type {any} */ (questReward))._questData;
+    if (quest) renderQuestReward(questReward, quest);
+  });
+  window.addEventListener('ui:questRewardCompleted', (ev) => {
+    const questId = String(ev?.detail?.questId || '');
+    if (!questId || questId === String((/** @type {any} */ (questReward))._questId || '')) hide(questReward);
   });
   window.addEventListener('ui:openTownBoard', () => {
     hideCharMenuPanels();
@@ -675,8 +684,10 @@ export function initOverlays() {
     if (questReward.style.display === 'block') {
       const questId = String((/** @type {any} */ (questReward))._questId || '');
       const quest = quests.find((entry) => entry.questId === questId && entry.node === 'reward');
-      if (quest) renderQuestReward(questReward, quest);
-      else hide(questReward);
+      if (quest) {
+        (/** @type {any} */ (questReward))._questData = quest;
+        renderQuestReward(questReward, quest);
+      }
     }
   });
   window.addEventListener('ui:townBoardData', (ev) => {
