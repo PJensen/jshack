@@ -213,6 +213,7 @@ export const basePalette = {
   wand_frost: { glyph: "/", fg: "#4da6ff", glow: "#2277cc", baseScale: 0.7 },
   wand_heal: { glyph: "/", fg: "#66ff99", glow: "#44bb66", baseScale: 0.7 },
   wand_stasis: { glyph: "/", fg: "#d0d0ff", glow: "#9090cc", baseScale: 0.7 },
+  wand_arcane: { glyph: "/", fg: "#c8a6ff", glow: "#7650c8", baseScale: 0.7 },
   glacier_sigil: { glyph: "❄", fg: "#9fdcff", glow: "#5b97c8", baseScale: 0.7 },
   conduction_lens: { glyph: "◉", fg: "#e0d88f", glow: "#a08f47", baseScale: 0.7 },
   echo_grimoire: { glyph: "📘", fg: "#b7b0ff", glow: "#7268cc", baseScale: 0.7 },

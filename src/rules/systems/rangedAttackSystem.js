@@ -43,6 +43,7 @@ import { computeImpactVectorXY, computeMissEndpoint, computeProjectileDelay } fr
 import { bresenhamLine } from '../../shared/math/bresenham.js';
 import { resolveProjectileImpact } from '../utils/projectileImpact.js';
 import { getAmmoAffinity } from '../utils/ammoAffinities.js';
+import { resolveCharges, spendCharges } from '../utils/charges.js';
 import { updateSpatialIndex } from '../utils/spatialIndex.js';
 import { rollBaggedCrit } from '../utils/critRandomizer.js';
 
@@ -85,18 +86,22 @@ export function rangedAttackSystem(world) {
     const atkVit = world.get(attacker, Vitality);
     if (!atkVit) { world.remove(attacker, RangedAttackIntent); continue; }
 
-    // Require a bow in the ranged slot
+    // Bows use ammunition; projectile wands use their own charge pool. Other
+    // wands remain spell-use items and never reach this system.
     const eq = world.get(attacker, Equipment);
     ensureEquippedAffixTopology(world, attacker);
     if (requestedTarget > 0) ensureEquippedAffixTopology(world, requestedTarget);
     const weaponId = eq?.ranged || 0;
     const weaponInfo = weaponId ? world.get(weaponId, ItemInfo) : null;
-    if (!weaponInfo || weaponInfo.subtype !== 'bow') {
+    const isProjectileWand = weaponInfo?.type === 'wand' && weaponInfo?.subtype === 'projectile';
+    if (!weaponInfo || (weaponInfo.subtype !== 'bow' && !isProjectileWand)) {
       world.remove(attacker, RangedAttackIntent);
       continue;
     }
 
-    // Find ammo: prefer equipped ammo slot, fall back to first ammo in inventory
+    // Find ammo: prefer equipped ammo slot, fall back to first ammo in inventory.
+    // A projectile wand deliberately bypasses this path and spends its own
+    // Charges component instead.
     const inv = world.get(attacker, Inventory);
     let ammoId = 0;
     let ammoInfo = null;
@@ -111,19 +116,31 @@ export function rangedAttackSystem(world) {
         if (info && info.type === 'ammo') { ammoId = itemId; ammoInfo = info; break; }
       }
     }
-    if (!ammoId || !ammoInfo) {
+    if (!isProjectileWand && (!ammoId || !ammoInfo)) {
       world.emit?.('ranged:no-ammo', { attacker });
       world.remove(attacker, RangedAttackIntent);
       continue;
     }
 
+    if (isProjectileWand) {
+      const charges = resolveCharges(world, weaponId);
+      if (charges.current < 1) {
+        world.remove(attacker, RangedAttackIntent);
+        continue;
+      }
+    }
+
     const ammoIdentity = String(
-      world.get(ammoId, NamedIdentity)?.identity
-      || ammoInfo.subtype
-      || 'ammo_arrows',
+      world.get(isProjectileWand ? weaponId : ammoId, NamedIdentity)?.identity
+      || (ammoInfo?.subtype)
+      || (isProjectileWand ? 'wand_arcane' : 'ammo_arrows'),
     ).toLowerCase();
-    const ammoStyle = ammoInfo.subtype || (ammoIdentity.includes('fire') ? 'fire' : 'plain');
-    const ammoAffinity = getAmmoAffinity(world, attacker, ammoIdentity);
+    const ammoStyle = isProjectileWand
+      ? (weaponInfo.projectileStyle || 'arcane_wand')
+      : (ammoInfo.subtype || (ammoIdentity.includes('fire') ? 'fire' : 'plain'));
+    const ammoAffinity = isProjectileWand ? {} : getAmmoAffinity(world, attacker, ammoIdentity);
+    const projectileKind = isProjectileWand ? 'arcane_mote' : 'arrow';
+    const damageTypeForAttack = weaponInfo.damageType || (isProjectileWand ? 'arcane' : 'pierce');
     const projectileSpeed = RANGED_PROJECTILE_SPEED * (
       ammoStyle === 'blunt'
         ? BLUNT_ARROW_SPEED_MULT
@@ -149,7 +166,7 @@ export function rangedAttackSystem(world) {
         impact: impactPoint,
         ammoAffinity,
       });
-      consumeAmmo(world, attacker, ammoId, ammoInfo);
+      consumeRangedResource(world, attacker, { isProjectileWand, weaponId, ammoId, ammoInfo });
       if (impact.kind === 'wall') world.emit?.('ranged:blocked', { attacker, target: requestedTarget, impact: { x: impact.x, y: impact.y } });
       world.emit?.('ranged:shot', {
         attacker,
@@ -342,7 +359,7 @@ export function rangedAttackSystem(world) {
           const baseDice = weaponInfo.damageDice || '1d6';
           const damageRoll = rollDice(baseDice, r);
           const flatBonus = strayAtkSnapshot.damageFlatBonus;
-          let strayDamage = Math.max(1, damageRoll + flatBonus);
+          let strayDamage = Math.max(1, damageRoll + flatBonus + (Number(weaponInfo.damageBonus || 0) | 0));
           strayDamage += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
           strayDamage = Math.max(1, Math.floor(strayDamage * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
           strayDamage = Math.max(1, Math.floor(strayDamage * strayPositional.damageMult));
@@ -355,7 +372,7 @@ export function rangedAttackSystem(world) {
           const strayBlindCritBonusPct = getBlindedCritChanceBonusPct(strayBlindExposure);
           const strayCritProcBonus = evaluateCritChanceProcPhase(world, attacker, buildProcContext('onBeforeCrit', {
             source: attacker, target: strayId, item: weaponId, damage: strayDamage,
-            damageType: 'pierce', crit: false, tags: ['ranged', 'projectile'], scratch: {},
+            damageType: damageTypeForAttack, crit: false, tags: ['ranged', 'projectile'], scratch: {},
           }));
           const strayCritPct = (strayAtkSnapshot.critChance * 100) + (strayAtkSnapshot.luck || 0) + strayBlindCritBonusPct + (strayCritProcBonus * 100);
           strayIsCrit = rollBaggedCrit(world, attacker, "physical", strayCritPct / 100, r);
@@ -365,7 +382,7 @@ export function rangedAttackSystem(world) {
           strayDamage = calculateBlindedPhysicalDamage(strayDamage, strayBlindExposure);
 
           const strayProcScratch = {};
-          let strayDamageType = 'pierce';
+          let strayDamageType = damageTypeForAttack;
           strayDamage = applyPendingDamageProcPhase(world, attacker, buildProcContext('onBeforeHit', {
             source: attacker,
             target: strayId,
@@ -445,7 +462,7 @@ export function rangedAttackSystem(world) {
               RANGED_PROJECTILE_MAX_DURATION,
             ),
             impactVector: computeImpactVectorXY(ax, ay, sx, sy),
-            projectileKind: 'arrow',
+            projectileKind,
           });
           if (strayActorImpactCtx) {
             strayActorImpactCtx.resolveDamageResult(strayResult);
@@ -469,7 +486,7 @@ export function rangedAttackSystem(world) {
         }
       }
       // Consume ammo on miss (whether or not a behind hit occurs)
-      consumeAmmo(world, attacker, ammoId, ammoInfo);
+      consumeRangedResource(world, attacker, { isProjectileWand, weaponId, ammoId, ammoInfo });
       world.emit?.('ranged:shot', {
         attacker,
         target: defender,
@@ -488,7 +505,7 @@ export function rangedAttackSystem(world) {
     const baseDice = weaponInfo.damageDice || '1d6';
     const damageRoll = rollDice(baseDice, r);
     const flatBonus = atkSnapshot.damageFlatBonus;
-    let dmg = Math.max(1, damageRoll + flatBonus);
+    let dmg = Math.max(1, damageRoll + flatBonus + (Number(weaponInfo.damageBonus || 0) | 0));
     dmg += Math.max(0, Number(ammoAffinity.damageBonus || 0) | 0);
     dmg = Math.max(1, Math.floor(dmg * Math.max(0, Number(ammoAffinity.damageMultiplier || 1))));
     dmg = Math.max(1, Math.floor(dmg * positional.damageMult));
@@ -502,7 +519,7 @@ export function rangedAttackSystem(world) {
       const blindCritBonusPct = getBlindedCritChanceBonusPct(blindExposure);
       const critProcBonus = evaluateCritChanceProcPhase(world, attacker, buildProcContext('onBeforeCrit', {
         source: attacker, target: defender, item: weaponId, damage: dmg,
-        damageType: 'pierce', crit: false, tags: ['ranged', 'projectile'], scratch: {},
+        damageType: damageTypeForAttack, crit: false, tags: ['ranged', 'projectile'], scratch: {},
       }));
       const critPct = (atkSnapshot.critChance * 100) + (atkSnapshot.luck || 0) + blindCritBonusPct + (critProcBonus * 100);
       isCrit = rollBaggedCrit(world, attacker, "physical", critPct / 100, r);
@@ -514,7 +531,7 @@ export function rangedAttackSystem(world) {
     if (isCrit) dmg = Math.max(1, Math.floor(dmg * critMult));
     dmg = calculateBlindedPhysicalDamage(dmg, blindExposure);
     const procScratch = {};
-    let damageType = 'pierce';
+    let damageType = damageTypeForAttack;
     dmg = applyPendingDamageProcPhase(world, attacker, buildProcContext('onBeforeHit', {
       source: attacker,
       target: defender,
@@ -594,7 +611,7 @@ export function rangedAttackSystem(world) {
         RANGED_PROJECTILE_MAX_DURATION,
       ),
       impactVector: computeImpactVectorXY(ax, ay, tx, ty),
-      projectileKind: 'arrow',
+      projectileKind,
     });
     if (actorImpactCtx) {
       actorImpactCtx.resolveDamageResult(result);
@@ -602,13 +619,10 @@ export function rangedAttackSystem(world) {
     }
 
     // Consume ammo
-    consumeAmmo(world, attacker, ammoId, ammoInfo);
-    tryRecoverEmbeddedArrow(world, {
-      attacker,
-      defender,
-      ammoIdentity,
-      rng: r,
-    });
+    consumeRangedResource(world, attacker, { isProjectileWand, weaponId, ammoId, ammoInfo });
+    if (!isProjectileWand) {
+      tryRecoverEmbeddedArrow(world, { attacker, defender, ammoIdentity, rng: r });
+    }
 
     world.emit?.('ranged:shot', {
       attacker,
@@ -635,6 +649,14 @@ function consumeAmmo(world, owner, ammoId, ammoInfo) {
     if (eq && eq.ammo === ammoId) eq.ammo = null;
     world.destroy(ammoId);
   }
+}
+
+function consumeRangedResource(world, owner, { isProjectileWand, weaponId, ammoId, ammoInfo }) {
+  if (isProjectileWand) {
+    spendCharges(world, weaponId, 1);
+    return;
+  }
+  consumeAmmo(world, owner, ammoId, ammoInfo);
 }
 
 function normalizeRecoverableAmmoIdentity(ammoIdentity) {

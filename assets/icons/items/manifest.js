@@ -2140,6 +2140,11 @@ export default {
       "y": 17
     },
     {
+      "id": "wand_arcane",
+      "x": 18,
+      "y": 17
+    },
+    {
       "id": "wand_heal",
       "x": 19,
       "y": 17

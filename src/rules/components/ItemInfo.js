@@ -24,6 +24,8 @@ export const ItemInfo = defineComponent(
     maxSockets: 0, // maximum number of gem sockets this item can hold
     weaponLengthCm: null, // physical weapon length in centimeters (rules -> display)
     weaponVfxProfile: null, // density profile key (grip->tip) for weapon VFX
+    projectileStyle: "", // ranged projectile presentation identity
+    damageBonus: 0, // flat weapon damage added after the dice roll
     weaponFamily: "", // semantic weapon family for combat/audio affordances
     noQuickChip: false, // suppress pickup quick-chip UI for this item
     tags: [], // behavioral flags: "conflict", "sunlight", "levitate", etc.

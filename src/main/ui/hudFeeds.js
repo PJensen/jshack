@@ -3,6 +3,7 @@ import { Vitality } from "../../rules/components/Vitality.js";
 import { Stamina } from "../../rules/components/Stamina.js";
 import { Equipment, NON_AMMO_GEAR_SLOTS } from "../../rules/components/Equipment.js";
 import { ItemInfo } from "../../rules/components/ItemInfo.js";
+import { Charges } from "../../rules/components/Charges.js";
 import { NamedIdentity } from "../../rules/components/NamedIdentity.js";
 import { getCarriedWeight, inventoryItems } from "../../rules/utils/inventoryFacade.js";
 import { DungeonState } from "../../rules/components/DungeonState.js";
@@ -479,7 +480,10 @@ export function createHudFeeds(world, deps) {
     const posture = String(combat?.posture?.stance || "balanced");
     const mitigation = Number(canonical?.mitigation ?? 0);
     const rangedInfo = rangedId ? world.get(rangedId, ItemInfo) : null;
-    const rangedCount = Number(rangedInfo?.count || 0);
+    const rangedCharges = rangedId > 0 ? world.get(rangedId, Charges) : null;
+    const rangedCount = rangedCharges
+      ? Math.max(0, Number(rangedCharges.current || 0) | 0)
+      : Number(rangedInfo?.count || 0);
     const wName = wid ? (world.get(wid, NamedIdentity)?.name || wInfo?.description || wInfo?.type) : "";
     const rangedName = rangedId ? (world.get(rangedId, NamedIdentity)?.name || rangedInfo?.description || rangedInfo?.type) : "";
     const rangedIdentity = rangedId ? String(world.get(rangedId, NamedIdentity)?.identity || "") : "";
@@ -528,7 +532,7 @@ export function createHudFeeds(world, deps) {
           attack: atk,
           damage: atk,
           weapon: wid ? { id: wid, name: wName || null, damageDice: wInfo?.damageDice || null, damage: atk, attack: atk, coating: wCoating } : null,
-          ranged: rangedId ? { id: rangedId, iconId: rangedIdentity, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount } : null,
+          ranged: rangedId ? { id: rangedId, iconId: rangedIdentity, name: rangedName || null, isWand: rangedType === 'wand', count: rangedCount, charges: rangedCharges ? { current: rangedCharges.current, max: rangedCharges.max } : null, instant: rangedInfo?.subtype === 'projectile' } : null,
           // Legacy field retained for listeners; it now carries Avoidance only.
           defense: avoidance,
           avoidance,

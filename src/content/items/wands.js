@@ -1,6 +1,24 @@
 import { defineItem } from '../define.js';
 import { createCastSpellFromIdentityHook, createWandShatterThrowHook } from '../../rules/data/itemCatalogHooks.js';
 
+defineItem('wand_arcane', {
+  name: 'Arcane Wand',
+  type: 'wand',
+  slot: 'ranged',
+  material: 'wood',
+  subtype: 'projectile',
+  rarity: 'rare',
+  weight: 0.4,
+  damageDice: '1d4',
+  damageBonus: 1,
+  damageType: 'arcane',
+  range: 8,
+  staminaCost: 0,
+  projectileStyle: 'arcane_wand',
+  chargePool: { current: 100, max: 100 },
+  description: 'A lightweight wand that fires small arcane motes. Instant attack; 100 charges.',
+});
+
 defineItem('wand_lightning', {
   name: 'Wand of Lightning', type: 'wand', slot: 'ranged', material: 'wood', rarity: 'rare', charges: 3, weight: 0.4,
   description: 'Zaps a bolt of chain lightning. 3 charges.',

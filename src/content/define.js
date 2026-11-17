@@ -233,11 +233,13 @@ export function defineItem(id, def) {
   }
 
   // Equipment-specific
-  if (catalogKind === 'equipment') {
+  if (catalogKind === 'equipment' || (itemType === 'wand' && slot === 'ranged')) {
     catalogEntry.bonuses = def.bonuses || {};
     catalogEntry.damageDice = def.damageDice || null;
     catalogEntry.damageType = def.damageType || null;
+    catalogEntry.damageBonus = Number(def.damageBonus || 0) | 0;
     catalogEntry.staminaCost = def.staminaCost ?? null;
+    if (def.projectileStyle) catalogEntry.projectileStyle = String(def.projectileStyle);
     catalogEntry.twoHanded = def.twoHanded || false;
     catalogEntry.maxSockets = def.maxSockets || 0;
     if (def.combatFlavor) catalogEntry.combatFlavor = def.combatFlavor;

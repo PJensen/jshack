@@ -136,13 +136,27 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     // Arrows
     for (let i = _arrowFx.length - 1; i >= 0; i--) {
       const a = _arrowFx[i];
-      if (fx?.pool && a.progress < 1 && (a.style === "venom" || a.style === "storm" || a.style === "frost")) {
+      if (fx?.pool && a.progress < 1 && (a.style === "venom" || a.style === "storm" || a.style === "frost" || a.style === "arcane_wand")) {
         const hx = a.from.x + (a.to.x - a.from.x) * a.progress;
         const hy = a.from.y + (a.to.y - a.from.y) * a.progress;
         const rate = a.style === "storm" ? 42 : 28;
         const count = Math.max(1, Math.ceil(dt * rate));
         for (let j = 0; j < count; j++) {
-          if (a.style === "storm") {
+          if (a.style === "arcane_wand") {
+            fx.pool.spawn(new Particle({
+              x: hx + (Math.random() - 0.5) * 0.06,
+              y: hy + (Math.random() - 0.5) * 0.06,
+              vx: -a.dx * 0.45 + (Math.random() - 0.5) * 0.35,
+              vy: -a.dy * 0.45 + (Math.random() - 0.5) * 0.35,
+              life: 0.12 + Math.random() * 0.10,
+              size0: 0.035 + Math.random() * 0.025,
+              size1: 0.005,
+              r: 170 + (Math.random() * 50 | 0),
+              g: 125 + (Math.random() * 70 | 0),
+              b: 255,
+              a0: 0.72,
+            }));
+          } else if (a.style === "storm") {
             fx.pool.spawn(new Particle({
               x: hx + (Math.random() - 0.5) * 0.06,
               y: hy + (Math.random() - 0.5) * 0.06,
@@ -841,6 +855,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const isVenom = a.style === 'venom';
       const isStorm = a.style === 'storm';
       const isFrost = a.style === 'frost';
+      const isArcaneWand = a.style === 'arcane_wand';
       // Current head position (lerp from→to)
       const hx = a.from.x + (a.to.x - a.from.x) * progress;
       const hy = a.from.y + (a.to.y - a.from.y) * progress;
@@ -849,7 +864,17 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const tx = hx - a.dx * tailLen;
       const ty = hy - a.dy * tailLen;
 
-      if (isFire) {
+      if (isArcaneWand) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.strokeStyle = 'rgba(120,120,255,0.22)';
+        ctx.lineWidth = 0.13;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+        ctx.fillStyle = 'rgba(235,245,255,0.96)';
+        ctx.beginPath(); ctx.arc(hx, hy, 0.065, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else if (isFire) {
         // Fire arrow: outer glow
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
@@ -936,7 +961,16 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const isVenom = s.style === 'venom';
       const isStorm = s.style === 'storm';
       const isFrost = s.style === 'frost';
-      if (isFire) {
+      const isArcaneWand = s.style === 'arcane_wand';
+      if (isArcaneWand) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = `rgba(170,130,255,${0.42 * alpha})`;
+        ctx.beginPath(); ctx.arc(s.x, s.y, 0.18 * alpha, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = `rgba(240,245,255,${0.34 * alpha})`;
+        ctx.beginPath(); ctx.arc(s.x, s.y, 0.08 * alpha, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else if (isFire) {
         // Fire impact: orange-red burst
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';

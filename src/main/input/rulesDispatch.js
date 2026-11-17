@@ -27,6 +27,7 @@ import { getEntityFacingConeDegrees, getNormalizedEntityFacing } from "../../rul
 import { updateFOV, isVisible as isTileVisible } from "../../rules/environment/dungeon/exploredMap.js";
 import { classifyAttackDirection } from "../../rules/utils/attackActionPolicy.js";
 import { resolveInteractableAffordance } from "../../rules/interaction/interactableAffordance.js";
+import { resolveCharges } from "../../rules/utils/charges.js";
 
 /**
  * Create a rules dispatcher bound to a world and an actor resolver.
@@ -221,9 +222,10 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           break;
         }
 
-        const isWand = rangedInfo.type === "wand";
+        const isWand = rangedInfo.type === "wand" && rangedInfo.subtype !== "projectile";
+        const isProjectileWand = rangedInfo.type === "wand" && rangedInfo.subtype === "projectile";
         const isBow = rangedInfo.subtype === "bow";
-        if (!isWand && !isBow) {
+        if (!isWand && !isBow && !isProjectileWand) {
           world?.emit?.("message", { text: "Nothing equipped in ranged slot.", type: "system" });
           break;
         }
@@ -263,7 +265,7 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           break;
         }
 
-        if (isBow && !lockValid) {
+        if ((isBow || isProjectileWand) && !lockValid) {
           let closestId = 0;
           let closestDistance = Infinity;
           forEachInRadius(world, px, py, maxRange, (id, pos) => {
@@ -288,7 +290,7 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
           }
         }
 
-        if (isBow && lockValid) {
+        if ((isBow || isProjectileWand) && lockValid) {
           world?.add?.(actorId, RangedAttackIntent, {
             targetId: lockedId,
             toX: lockedPos.x | 0,
@@ -362,6 +364,12 @@ export function makeRulesDispatcher(world, getActorId, opts = {}) {
         const { targetId = 0, toX = 0, toY = 0 } = payload;
         const hasCoordinates = Number.isFinite(payload.toX) && Number.isFinite(payload.toY);
         if ((!Number.isInteger(targetId) || targetId <= 0) && !hasCoordinates) break;
+        const rangedId = Number(world?.get?.(actorId, Equipment)?.ranged || 0) | 0;
+        const rangedInfo = rangedId > 0 ? world?.get?.(rangedId, ItemInfo) : null;
+        if (rangedInfo?.type === "wand" && rangedInfo?.subtype === "projectile" && resolveCharges(world, rangedId).current < 1) {
+          world?.emit?.("message", { text: "The Arcane Wand is out of charges.", type: "system" });
+          break;
+        }
         const aimedTargetId = Number(targetId || 0) | 0;
         const aimedTargetPos = aimedTargetId > 0 ? world?.get?.(aimedTargetId, Position) : null;
         const aimedTargetFaction = aimedTargetId > 0 ? world?.get?.(aimedTargetId, Faction)?.key : "";

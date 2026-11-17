@@ -16,6 +16,10 @@ function clampCharge(current, max) {
 
 function findChargeNode(world, ownerId, opts = {}) {
   const filter = typeof opts.filter === "function" ? opts.filter : null;
+  if (world.has(ownerId, Charges)) {
+    const charges = world.get(ownerId, Charges);
+    if (!filter || filter(ownerId, charges)) return [ownerId, charges];
+  }
   for (const [nodeId, charges] of descendantsWith(world, ownerId, Charges)) {
     if (filter && !filter(nodeId, charges)) continue;
     return [nodeId, charges];
