@@ -1,7 +1,6 @@
 import { NamedIdentity } from "../../components/NamedIdentity.js";
 import { Position } from "../../components/Position.js";
 import { QuestVars } from "../../components/QuestVars.js";
-import { RunObjectiveTarget } from "../../components/RunObjectiveTarget.js";
 import { DungeonState } from "../../components/DungeonState.js";
 import { DoorKey } from "../../components/DoorKey.js";
 import { ItemInfo } from "../../components/ItemInfo.js";
@@ -101,10 +100,8 @@ function occupiedPositions(world) {
 
 function ratCount(world) {
   let count = 0;
-  for (const [, ni, target] of world.query(NamedIdentity, Position, RunObjectiveTarget)) {
-    if (String(ni?.identity || "") !== "rat") continue;
-    if (String(target?.questId || "") !== RAT_INFESTATION_QUEST_ID) continue;
-    count++;
+  for (const [, ni] of world.query(NamedIdentity, Position)) {
+    if (String(ni?.identity || "") === "rat") count++;
   }
   return count;
 }
@@ -143,7 +140,6 @@ function spawnRatAt(world, x, y) {
     speed: def.speed,
   });
   if (id > 0) attachEntityToCurrentFloor(world, id);
-  if (id > 0) world.add(id, RunObjectiveTarget, { questId: RAT_INFESTATION_QUEST_ID, role: "rat" });
   return id;
 }
 

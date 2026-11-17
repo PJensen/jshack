@@ -19,44 +19,37 @@ export function pickMonster(rng, depth, monsterFilter = null) {
   const tier = Math.min(Math.floor((depth - 1) / 5), 3);
   let pool = getMonstersByTier(tier).filter(m =>
     (!m.minDepth || depth >= m.minDepth)
-    && (!(depth > 0 && isOverworldOnlyMonster(m)) || (monsterFilter && monsterFilter(m)))
+    && !(depth > 0 && isOverworldOnlyMonster(m))
   );
   if (pool.length === 0) pool = getMonstersByTier(tier); // fallback
   if (monsterFilter) {
     const filtered = pool.filter(monsterFilter);
-    if (filtered.length === 0) {
-      // A filtered shallow region may be sampled through a sentinel roll at
-      // the next tier. Fall back to the base tier without abandoning the
-      // authored filter.
-      if (tier > 0) return pickMonster(rng, Math.max(1, tier * 5), monsterFilter);
-      return null;
-    }
-    pool = filtered;
+    if (filtered.length > 0) pool = filtered;
   }
   let def = rng.choice(pool);
 
   // Rare upgrade: cave_snake or cave_spider has a 5% chance to become a pit viper
   if ((def.id === 'cave_snake' || def.id === 'cave_spider') && rng.next() < 0.05) {
     const rare = getMonster('pit_viper');
-    if (rare && !isGenocided('pit_viper') && (!monsterFilter || monsterFilter(rare))) def = rare;
+    if (rare && !isGenocided('pit_viper')) def = rare;
   }
 
   // Rare upgrade: rat has a 3% chance to become a cave bear
   if (def.id === 'rat' && rng.next() < 0.03) {
     const rare = getMonster('cave_bear');
-    if (rare && !isOverworldOnlyMonster(rare) && !isGenocided('cave_bear') && (!monsterFilter || monsterFilter(rare))) def = rare;
+    if (rare && !isOverworldOnlyMonster(rare) && !isGenocided('cave_bear')) def = rare;
   }
 
   // Rare upgrade: bat has a 2% chance to be an early dragon sighting.
   if (def.id === 'bat' && rng.next() < 0.02) {
     const rare = getMonster('dragon_whelp');
-    if (rare && !isGenocided('dragon_whelp') && (!monsterFilter || monsterFilter(rare))) def = rare;
+    if (rare && !isGenocided('dragon_whelp')) def = rare;
   }
 
   // Rare upgrade: goblin-family spawns have a 12% chance to be a loot goblin.
   if ((def.id === 'goblin' || def.id === 'goblin_archer') && rng.next() < 0.12) {
     const rare = getMonster('loot_goblin');
-    if (rare && !isGenocided('loot_goblin') && (!monsterFilter || monsterFilter(rare))) def = rare;
+    if (rare && !isGenocided('loot_goblin')) def = rare;
   }
 
   return toMonsterSpawnParams(def, depth);
@@ -248,7 +241,6 @@ export function pickSpawner(rng, depth, monsterFilter = null) {
     return monsterFilter ? monsterFilter(def) : true;
   };
   const monsterParams = pickMonster(rng, depth, spawnerFilter);
-  if (!monsterParams) return null;
 
   // Look up spawner profile based on monster's size class
   const profile = resolveSpawnerProfile(monsterParams.identity, monsterParams.sizeClass);
@@ -272,12 +264,10 @@ export function pickSpawner(rng, depth, monsterFilter = null) {
  * @param {number} budget
  * @returns {{ leader: Object|null, followers: Object[] } | null}
  */
-export function pickEncounterGroup(rng, depth, budget, monsterFilter = null) {
+export function pickEncounterGroup(rng, depth, budget) {
   const tier = Math.min(Math.floor((depth - 1) / 5), 3);
   const eligible = getEncountersByKind('dungeon_group').filter(g =>
-    g.tier === tier
-      && budget >= g.minBudget
-      && (!monsterFilter || [g.leader, ...(g.followers || []).map((f) => f.id)].every((id) => monsterFilter(getMonster(id))))
+    g.tier === tier && budget >= g.minBudget
   );
   if (eligible.length === 0) return null;
 

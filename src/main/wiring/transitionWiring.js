@@ -278,12 +278,8 @@ export function createTransitionController({ world, playerEntity, tombstoneRepo,
         : String(pending.entrance?.templateId || currentState?.activeTemplateId || "");
       const activeTemplate = getUnderworldRegionTemplate(activeTemplateId);
       const templateFloors = Math.max(1, Number(activeTemplate?.floors ?? 0) | 0);
-      const currentTemplateId = String(currentState?.activeTemplateId || "");
-      const sameRegion = newDepth === currentDepth
-        && String(pending.planeId || "") === currentPlaneId
-        && activeTemplateId === currentTemplateId;
-      if (pending.direction === 'down' && activeTemplate && currentDepth >= templateFloors && sameRegion) return;
-      if (newDepth < 0 || sameRegion) return;
+      if (pending.direction === 'down' && activeTemplate && currentDepth >= templateFloors) return;
+      if (newDepth < 0 || (newDepth === currentDepth && String(pending.planeId || "") === currentPlaneId)) return;
 
       const hasTargetPos = Number.isFinite(pending.targetPos?.x) && Number.isFinite(pending.targetPos?.y);
       if (hasTargetPos) {
@@ -320,6 +316,7 @@ export function createTransitionController({ world, playerEntity, tombstoneRepo,
           anchorY: activeTemplateId ? (Number(pending.entrance?.anchorY ?? currentState?.regionAnchorY ?? pending.stairPos?.y ?? 0) | 0) : undefined,
           planeId: pending.planeId,
           planeSeed: pending.planeSeed,
+          templateId: pending.templateId,
         });
       }
 

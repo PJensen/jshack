@@ -5,7 +5,6 @@ import { createRng } from '../../../lib/ecs-js/rng.js';
 import { createFrom } from '../../../lib/ecs-js/archetype.js';
 import { Position } from '../../components/Position.js';
 import { NamedIdentity } from '../../components/NamedIdentity.js';
-import { RunObjectiveTarget } from '../../components/RunObjectiveTarget.js';
 import { ItemInfo } from '../../components/ItemInfo.js';
 import { Interactable } from '../../components/Interactable.js';
 import { Collider } from '../../components/Collider.js';
@@ -324,13 +323,6 @@ function pickAuthoredSpawner(rng, depth, pool) {
   return null;
 }
 
-function pickSpecificMonsterForFloor(floorPlan, monsterId) {
-  const filter = floorPlan.profile?.monsterFilter ?? null;
-  const def = getMonster(monsterId);
-  if (filter && !filter(def)) return null;
-  return pickSpecificMonster(monsterId, floorPlan.depth);
-}
-
 function pickMimicDisguiseIdentity(rng, { preferPremium = false } = {}) {
   const catalogItemIds = catalogMimicItemIds();
   const premiumCatalogItemIds = catalogMimicItemIds({ premiumOnly: true });
@@ -593,7 +585,6 @@ function addClosetSurprises(chunk, floorPlan, rng, spawns, isSolid, markSolid) {
     if (placed >= CLOSET_SURPRISE_MAX_PER_CHUNK) break;
     if (rng.next() >= CLOSET_SURPRISE_CHANCE) continue;
     const monster = pickSentinelMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
-    if (!monster) continue;
     spawns.push({ x: c.x, y: c.y, kind: 'monster', params: monster });
     markSolid(c.x, c.y);
     placed++;
@@ -620,8 +611,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
   const spawns = [];
   const diff = floorPlan.difficultyMult;
   const templateId = String(floorPlan.activeTemplateId || "");
-  const monsterFilter = floorPlan.profile?.monsterFilter ?? null;
-  const isStrictMonsterPool = templateId === "tavern_basement";
   const authoredContent = getUnderworldRegionTemplate(templateId)?.content || null;
   const hasAuthoredFeatures = Array.isArray(authoredContent?.features);
   const SPAWNER_CHANCE_PER_MONSTER = 0.35; // Convert room monster budget into a per-room nest chance.
@@ -854,7 +843,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
         attempts++;
       } while (isSolid(mx, my) && attempts < 10);
       const sp = pickSpawner(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
-      if (!sp) continue;
       const isSpiderSpawner = sp.monsterType?.identity === 'spider' || sp.monsterType?.identity === 'cave_spider';
       if (!isSolid(mx, my)) {
         markSolid(mx, my);
@@ -867,7 +855,7 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
     // Encounter group: ~30% chance to spawn a themed group instead of random individuals
     let groupBudgetUsed = 0;
     if (monsterBudget >= 2 && rng.next() < 0.30) {
-      const group = pickEncounterGroup(rng, floorPlan.depth, monsterBudget, monsterFilter);
+      const group = pickEncounterGroup(rng, floorPlan.depth, monsterBudget);
       if (group) {
         const placeGroupMember = (params) => {
           if (groupBudgetUsed >= monsterBudget) return;
@@ -900,7 +888,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
       } while (isSolid(mx, my) && attempts < 10);
       if (isSolid(mx, my)) continue;
       const mp = pickSentinelMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
-      if (!mp) continue;
       if (mp.identity === 'centipede') {
         const segCount = rng.int(4, 7);
         spawns.push({ x: mx, y: my, kind: 'centipede', params: { ...mp, segmentCount: segCount } });
@@ -943,7 +930,7 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
 
     // Trap density: ~33% of rooms get a trap (infrequent enough to lull players)
     // Stair-up rooms are safe — no traps near arrival points.
-    if (!isStrictMonsterPool && !roomIsStarting && rng.next() < 0.33) {
+    if (!roomIsStarting && rng.next() < 0.33) {
       const trapBudget = area >= 64 ? rng.int(1, 2) : 1;
       for (let i = 0; i < trapBudget; i++) {
         let tx, ty, attempts = 0;
@@ -954,10 +941,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
         } while (isSolid(tx, ty) && attempts < 10);
         if (isSolid(tx, ty)) continue;
         const trap = pickTrap(rng, floorPlan.depth);
-        const trapMonsterId = trap.type === "snake"
-          ? "snake"
-          : String(trap.params?.monsterId || "");
-        if (monsterFilter && trapMonsterId && !monsterFilter(getMonster(trapMonsterId))) continue;
         if (trap.type === 'pit' && !isPitTrapLandingViable(worldSeed, floorPlan, tx, ty)) continue;
         spawns.push({ x: tx, y: ty, kind: 'trap', params: trap });
       }
@@ -1072,7 +1055,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
       const idx = rng.int(0, corridorCandidates.length - 1);
       const pos = corridorCandidates.splice(idx, 1)[0];
       const mp = pickSentinelMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
-      if (!mp) continue;
       if (mp.identity === 'centipede') {
         const segCount = rng.int(4, 7);
         spawns.push({ x: pos.x, y: pos.y, kind: 'centipede', params: { ...mp, segmentCount: segCount } });
@@ -1099,7 +1081,7 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
   // Depth 1 guaranteed content: skeleton archer, a rare monster,
   // and two mixed vermin/humanoid nests to preserve rat fodder and variety.
   // Only inject into the origin chunk so they appear once per floor.
-  if (floorPlan.depth === 1 && chunk.chunkX === 0 && chunk.chunkY === 0 && !isStrictMonsterPool) {
+  if (floorPlan.depth === 1 && chunk.chunkX === 0 && chunk.chunkY === 0) {
     const nonEntryRooms = chunk.rooms.filter((r) => (
       r !== entryRoom
       && !roomHasSpawnKind(spawns, r, SACRED_FEATURE_KINDS)
@@ -1112,14 +1094,14 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
       const archerRoom = nextRoom();
       const ax = archerRoom.x + 1 + rng.int(0, Math.max(0, archerRoom.w - 3));
       const ay = archerRoom.y + 1 + rng.int(0, Math.max(0, archerRoom.h - 3));
-      const archerParams = pickSpecificMonsterForFloor(floorPlan, 'skeleton_archer');
+      const archerParams = pickSpecificMonster('skeleton_archer', 1);
       if (archerParams) spawns.push({ x: ax, y: ay, kind: 'monster', params: archerParams });
 
       // Guaranteed rare monster (pit viper)
       const rareRoom = nextRoom();
       const rx = rareRoom.x + 1 + rng.int(0, Math.max(0, rareRoom.w - 3));
       const ry = rareRoom.y + 1 + rng.int(0, Math.max(0, rareRoom.h - 3));
-      const rareParams = pickSpecificMonsterForFloor(floorPlan, 'pit_viper');
+      const rareParams = pickSpecificMonster('pit_viper', 1);
       if (rareParams) spawns.push({ x: rx, y: ry, kind: 'monster', params: rareParams });
 
       // Guaranteed mixed spawners (2 nests, preserving rat fodder and adding variety)
@@ -1368,12 +1350,7 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
       const existing = spawns.filter((spawn) => spawn.kind === "monster" && matches(getMonster(String(spawn?.params?.identity || spawn?.params?.monsterId || "")))).length;
       for (let i = existing; i < target; i++) {
         const params = pickAuthoredMonster(rng, floorPlan.depth, budget.pool);
-        if (params) {
-          if (String(floorPlan.questId || "") === "starter.rat_infestation" && params.identity === "rat") {
-            params.questId = "starter.rat_infestation";
-          }
-          addAt("monster", params);
-        }
+        if (params) addAt("monster", params);
       }
     }
     for (const entry of authoredContent.spawners || []) {
@@ -1729,7 +1706,6 @@ function pickValveSpot(room, exit, isSolid) {
 
 function applyDeadEndTheme(ctx) {
   const { room, rng, spawns, floorPlan, chunk, isSolid, markSolid, theme, worldSeed = 0, featureCounts } = ctx;
-  const isStrictMonsterPool = String(floorPlan.activeTemplateId || '') === 'tavern_basement';
   const reserved = new Set();
   const addDecor = (kind, solid = false, params = {}) => {
     const pos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
@@ -1777,7 +1753,7 @@ function applyDeadEndTheme(ctx) {
       const trapPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (trapPos) {
         const trap = pickTrap(rng, floorPlan.depth);
-        if (!isStrictMonsterPool && (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y))) {
+        if (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y)) {
           spawns.push({ x: trapPos.x, y: trapPos.y, kind: 'trap', params: trap });
         }
       }
@@ -1871,7 +1847,7 @@ function applyDeadEndTheme(ctx) {
       const trapPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (trapPos) {
         const trap = pickTrap(rng, floorPlan.depth);
-        if (!isStrictMonsterPool && (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y))) {
+        if (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y)) {
           spawns.push({ x: trapPos.x, y: trapPos.y, kind: 'trap', params: trap });
         }
       }
@@ -1909,7 +1885,7 @@ function applyDeadEndTheme(ctx) {
       const monsterPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (monsterPos) {
         const undeadId = floorPlan.depth >= 12 ? 'wraith' : 'wight';
-        let gmp = pickSpecificMonsterForFloor(floorPlan, undeadId);
+        let gmp = pickSpecificMonster(undeadId, floorPlan.depth);
         if (!gmp) gmp = pickMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
         if (gmp) spawns.push({ x: monsterPos.x, y: monsterPos.y, kind: 'monster', params: gmp });
       }
@@ -1935,7 +1911,7 @@ function applyDeadEndTheme(ctx) {
       const trapPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (trapPos) {
         const trap = pickTrap(rng, floorPlan.depth);
-        if (!isStrictMonsterPool && (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y))) {
+        if (trap.type !== 'pit' || isPitTrapLandingViable(worldSeed, floorPlan, trapPos.x, trapPos.y)) {
           spawns.push({ x: trapPos.x, y: trapPos.y, kind: 'trap', params: trap });
         }
       }
@@ -1957,7 +1933,7 @@ function applyDeadEndTheme(ctx) {
       );
       const monsterPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (monsterPos) {
-        let gmp = pickSpecificMonsterForFloor(floorPlan, 'dragon_whelp');
+        let gmp = pickSpecificMonster('dragon_whelp', floorPlan.depth);
         if (!gmp) gmp = pickMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
         if (gmp) spawns.push({ x: monsterPos.x, y: monsterPos.y, kind: 'monster', params: gmp });
       }
@@ -2212,7 +2188,6 @@ function applyDeadEndTheme(ctx) {
       break;
     }
     case 'spider_nest': {
-      if (isStrictMonsterPool) break;
       if (roomContainsStairTile(room, chunk)) break;
       removeRoomSpawns(
         spawns,
@@ -2227,7 +2202,7 @@ function applyDeadEndTheme(ctx) {
 
       const eggPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
       if (eggPos) {
-        const gmp = pickSpecificMonsterForFloor(floorPlan, 'spider') || pickMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
+        const gmp = pickSpecificMonster('spider', floorPlan.depth) || pickMonster(rng, floorPlan.depth, floorPlan.profile?.monsterFilter ?? null);
         if (gmp) spawns.push({ x: eggPos.x, y: eggPos.y, kind: 'monster', params: gmp });
       }
       const trapPos = pickRoomInteriorSpot(room, rng, isSolid, reserved);
@@ -2349,9 +2324,6 @@ export function materializeSpawn(world, spawn) {
         guardianRole: p.guardianRole,
         sleep: p.sleep,
       });
-      if (id > 0 && String(raw.questId || "") === "starter.rat_infestation" && p.identity === "rat") {
-        world.add(id, RunObjectiveTarget, { questId: "starter.rat_infestation", role: "rat" });
-      }
       return id;
     }
     case 'centipede': {
