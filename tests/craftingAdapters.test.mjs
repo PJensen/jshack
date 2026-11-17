@@ -1,5 +1,5 @@
 import { assert, assertEquals } from "jsr:@std/assert";
-import { adaptCookingState, adaptEnchantingState, adaptSmithingState } from "../src/display/ui/craftingAdapters.js";
+import { adaptAlchemyState, adaptCookingState, adaptEnchantingState, adaptSmithingState } from "../src/display/ui/craftingAdapters.js";
 
 Deno.test("crafting adapters preserve unavailable recipes for inspection", () => {
   const model = adaptSmithingState({
@@ -53,4 +53,28 @@ Deno.test("enchanting adapter maps canonical reagent identities and action contr
   assertEquals(model.recipes[0].canCraft, true);
   assertEquals(model.recipes[0].requirements.find((req) => req.key === "emberRoot")?.identity, "reagent_ember_root");
   assertEquals(model.recipes[0].action.eventName, "ui:requestCraftEnchant");
+});
+
+Deno.test("alchemy adapter maps potion outputs and canonical reagent identities", () => {
+  const model = adaptAlchemyState({
+    benchId: 8,
+    ingredients: { thornPods: 2, venomFronds: 3 },
+    recipes: [{
+      key: "caustic_venom",
+      label: "Caustic Venom",
+      outputIdentity: "potion_poison",
+      outputName: "Potion of Poison",
+      outputCount: 2,
+      requirements: { thornPods: 2, venomFronds: 3 },
+      requirementLabels: { thornPods: "Thorn Pods", venomFronds: "Venom Fronds" },
+      requirementIdentities: { thornPods: "reagent_thorn_pod", venomFronds: "reagent_venom_frond" },
+      canCraft: true,
+    }],
+  });
+
+  assertEquals(model.actionLabel, "Distill");
+  assertEquals(model.recipes[0].canCraft, true);
+  assertEquals(model.recipes[0].outputCount, 2);
+  assertEquals(model.recipes[0].requirements.find((req) => req.key === "thornPods")?.identity, "reagent_thorn_pod");
+  assertEquals(model.recipes[0].action.eventName, "ui:requestAlchemyBrew");
 });

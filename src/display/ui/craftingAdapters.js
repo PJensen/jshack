@@ -59,6 +59,31 @@ export function adaptEnchantingState(state = {}) {
   };
 }
 
+export function adaptAlchemyState(state = {}) {
+  const ingredients = state.ingredients || {};
+  const recipes = (Array.isArray(state.recipes) ? state.recipes : []).map((recipe) => {
+    const requirements = makeRequirements(
+      recipe.requirements,
+      ingredients,
+      recipe.requirementLabels || {},
+      recipe.requirementIdentities || {},
+    );
+    return baseRecipe(recipe, requirements, {
+      eventName: "ui:requestAlchemyBrew",
+      detail: { benchId: state.benchId, recipe: recipe.key },
+    });
+  });
+  return {
+    discipline: "alchemy",
+    title: "⚗ Alchemy",
+    subtitle: "Choose a recipe to distill ingredients into potions and tonics.",
+    stationId: state.benchId,
+    actionLabel: "Distill",
+    closeEvent: "ui:closeAlchemyBench",
+    recipes,
+  };
+}
+
 export function adaptSmithingState(state = {}) {
   const materials = state.materials || {};
   const recipes = (Array.isArray(state.recipes) ? state.recipes : []).map((recipe) => {

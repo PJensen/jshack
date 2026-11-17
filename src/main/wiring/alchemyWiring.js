@@ -1,4 +1,5 @@
 import { isPlayerAdjacentTo } from "./wiringUtils.js";
+import { ALCHEMY_INGREDIENTS } from "../../rules/content/alchemy/benchGame.js";
 
 const INSTALLED = Symbol.for("jshack:main:alchemyWiring:installed");
 const EMPTY_INGREDIENTS = Object.freeze({
@@ -38,7 +39,11 @@ export function installAlchemyWiring({ world, playerEntity, dispatchRules, log }
         detail: {
           benchId,
           ingredients: ingredients && typeof ingredients === "object" ? ingredients : { ...EMPTY_INGREDIENTS },
-          recipes: Array.isArray(recipes) ? recipes : [],
+          recipes: Array.isArray(recipes) ? recipes.map((recipe) => ({
+            ...recipe,
+            requirementLabels: Object.fromEntries(Object.entries(ALCHEMY_INGREDIENTS).map(([key, def]) => [key, String(def.label).replace(/\b\w/g, (char) => char.toUpperCase())])),
+            requirementIdentities: Object.fromEntries(Object.entries(ALCHEMY_INGREDIENTS).map(([key, def]) => [key, def.identity])),
+          })) : [],
         },
       }));
     } catch (e) { console.debug('[alchemyWiring] dispatch ui:alchemyBenchData:', e); }

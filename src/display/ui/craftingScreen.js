@@ -207,6 +207,14 @@ export function renderCraftingScreen(panel, model = {}) {
   outputName.textContent = String(selected.name || output.name || "Recipe");
   Object.assign(outputName.style, { fontSize: "17px", fontWeight: "800", color: "#f1e1ff" });
   outputText.appendChild(outputName);
+  const outputCount = safeCount(selected.outputCount);
+  if (outputCount > 1) {
+    const outputQuantity = document.createElement("div");
+    outputQuantity.textContent = `Produces: ${outputCount}`;
+    outputQuantity.style.fontSize = "11px";
+    outputQuantity.style.color = "#d8b45a";
+    outputText.appendChild(outputQuantity);
+  }
   const owned = safeCount(selected.owned);
   if (selected.owned != null) {
     const ownedText = document.createElement("div");
