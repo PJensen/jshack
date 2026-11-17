@@ -139,7 +139,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       if (fx?.pool && a.progress < 1 && (a.style === "venom" || a.style === "storm" || a.style === "frost" || a.style === "arcane_wand")) {
         const hx = a.from.x + (a.to.x - a.from.x) * a.progress;
         const hy = a.from.y + (a.to.y - a.from.y) * a.progress;
-        const rate = a.style === "storm" ? 42 : 28;
+        const rate = a.style === "storm" ? 42 : (a.style === "arcane_wand" ? 24 : 28);
         const count = Math.max(1, Math.ceil(dt * rate));
         for (let j = 0; j < count; j++) {
           if (a.style === "arcane_wand") {
@@ -148,13 +148,13 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
               y: hy + (Math.random() - 0.5) * 0.06,
               vx: -a.dx * 0.45 + (Math.random() - 0.5) * 0.35,
               vy: -a.dy * 0.45 + (Math.random() - 0.5) * 0.35,
-              life: 0.12 + Math.random() * 0.10,
-              size0: 0.035 + Math.random() * 0.025,
-              size1: 0.005,
-              r: 170 + (Math.random() * 50 | 0),
-              g: 125 + (Math.random() * 70 | 0),
+              life: 0.30 + Math.random() * 0.20,
+              size0: 0.055 + Math.random() * 0.035,
+              size1: 0.008,
+              r: 185 + (Math.random() * 55 | 0),
+              g: 135 + (Math.random() * 75 | 0),
               b: 255,
-              a0: 0.72,
+              a0: 0.88,
             }));
           } else if (a.style === "storm") {
             fx.pool.spawn(new Particle({
@@ -867,12 +867,14 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       if (isArcaneWand) {
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.strokeStyle = 'rgba(120,120,255,0.22)';
-        ctx.lineWidth = 0.13;
+        ctx.strokeStyle = 'rgba(135,105,255,0.42)';
+        ctx.lineWidth = 0.18;
         ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
-        ctx.fillStyle = 'rgba(235,245,255,0.96)';
-        ctx.beginPath(); ctx.arc(hx, hy, 0.065, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(160,115,255,0.28)';
+        ctx.beginPath(); ctx.arc(hx, hy, 0.19, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(238,245,255,1)';
+        ctx.beginPath(); ctx.arc(hx, hy, 0.09, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       } else if (isFire) {
         // Fire arrow: outer glow
@@ -1471,7 +1473,8 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const profileStyle = String(profile?.projectileStyle || "").toLowerCase();
       const s = (baseStyle === "plain" && profileStyle) ? profileStyle : baseStyle;
       _lastShotStyle.set(Number(target || 0), s);
-      const speed = Number(projectileSpeed || 18);
+      const isArcaneWand = s === 'arcane_wand';
+      const speed = isArcaneWand ? 9 : Number(projectileSpeed || 18);
       // Ground and wall impacts are non-actor hits, not combat misses. Their
       // `hit: false` flag must not send the visual projectile through the
       // miss-spread path; `to` is already the canonical impact point.
@@ -1487,7 +1490,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         style: s,
         speed,
         minDuration: 0.06,
-        maxDuration: 0.4,
+        maxDuration: isArcaneWand ? 0.8 : 0.4,
       });
       if (!hit && impact?.kind === 'ground' && projectile) projectile.leaveLodged = true;
       startShake(
@@ -1904,6 +1907,20 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         x: sw.from.x + (sw.to.x - sw.from.x) * u,
         y: sw.from.y + (sw.to.y - sw.from.y) * u,
         radius: 3, color: [220, 180, 40],
+      });
+    }
+    // Arcane wand — a small moving violet-blue point light.
+    for (let i = 0; i < _arrowFx.length; i++) {
+      const a = _arrowFx[i];
+      if (a.style !== 'arcane_wand') continue;
+      const u = a.progress;
+      out.push({
+        x: a.from.x + (a.to.x - a.from.x) * u,
+        y: a.from.y + (a.to.y - a.from.y) * u,
+        radius: 3.4,
+        color: [178, 125, 255],
+        flicker: 0.84 + 0.16 * Math.sin(u * Math.PI * 12),
+        softness: 3,
       });
     }
     // Elemental arrows — compact moving glow
