@@ -346,6 +346,7 @@ export function generateFloorPlan(worldSeed, depth, priorDownStairPositions = nu
     prefabRooms,
     disconnectedPocket,
     activeTemplateId: template?.templateId || "",
+    questId: String(template?.questId || ""),
     regionAnchorX: anchorX,
     regionAnchorY: anchorY,
     regionKey: floorRegionKey(depth, anchorX, anchorY, template?.templateId || ""),

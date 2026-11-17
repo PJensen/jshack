@@ -17,7 +17,7 @@ defineMonster('rat', {
   glyph: 'r',
   color: '#b89070',
   glow: '#a06030',
-  tags: ['beast', 'vermin', 'rodent', 'overworld'],
+  tags: ['beast', 'vermin', 'rodent'],
   tier: 0,
   intelligence: 2,
   packSense: true,

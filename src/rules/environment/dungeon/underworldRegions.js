@@ -20,8 +20,8 @@ export const UNDERWORLD_REGION_TEMPLATES = {
     targetDepth: 1,
     roomTarget: 5,
     content: {
-      monsters: [{ count: 6, pool: ["rat"] }],
-      spawners: [],
+      monsters: [{ count: 12, pool: ["rat"] }],
+      spawners: [{ count: 1, pool: [ "rat" ] }],
       traps: [],
       features: [ "torch", "barrel", "crate", "pillar" ],
       chests: [{ lootTable: "chest:epic" }],
