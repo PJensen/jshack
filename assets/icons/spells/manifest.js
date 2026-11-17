@@ -476,6 +476,21 @@ export default {
       "id": "blinding_ray",
       "x": 4,
       "y": 9
+    },
+    {
+      "id": "charge",
+      "x": 5,
+      "y": 9
+    },
+    {
+      "id": "polymorph",
+      "x": 6,
+      "y": 9
+    },
+    {
+      "id": "rend",
+      "x": 8,
+      "y": 9
     }
   ]
 };
