@@ -6,7 +6,7 @@ import { World } from "../../../../src/lib/ecs-js/index.js";
 import { configureWorld } from "../../../../src/main/scheduler.js";
 import { createPlayer } from "../../../../src/rules/archetypes/Player.js";
 import { spawnMonsterEntity } from "../../../../src/rules/utils/spawnMonsterEntity.js";
-import { getMonster, resolveMonsterMaxHp } from "../../../../src/rules/data/monsters.js";
+import { getAllMonsters, getMonster, resolveMonsterMaxHp } from "../../../../src/rules/data/monsters.js";
 import { AggroState, AGGRO_LEVELS } from "../../../../src/rules/components/AggroState.js";
 import { Brain } from "../../../../src/rules/components/Brain.js";
 import { Position } from "../../../../src/rules/components/Position.js";
@@ -18,10 +18,7 @@ import { CHUNK_SIZE, TILE_FLOOR } from "../../../../src/rules/environment/dungeo
 
 installContent();
 
-const DEFAULT_MONSTERS = [
-  "rat", "spider", "snake", "cave_bear", "goblin", "orc", "troll", "ogre",
-  "dragon_whelp", "dragon", "skeleton", "wight", "wraith", "demon", "lich",
-];
+const DEFAULT_MONSTERS = getAllMonsters().map((monster) => monster.id).sort();
 
 const config = parseArgs(Deno.args);
 
