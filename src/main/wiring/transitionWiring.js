@@ -316,7 +316,6 @@ export function createTransitionController({ world, playerEntity, tombstoneRepo,
           anchorY: activeTemplateId ? (Number(pending.entrance?.anchorY ?? currentState?.regionAnchorY ?? pending.stairPos?.y ?? 0) | 0) : undefined,
           planeId: pending.planeId,
           planeSeed: pending.planeSeed,
-          templateId: pending.templateId,
         });
       }
 

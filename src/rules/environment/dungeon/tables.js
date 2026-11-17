@@ -31,25 +31,25 @@ export function pickMonster(rng, depth, monsterFilter = null) {
   // Rare upgrade: cave_snake or cave_spider has a 5% chance to become a pit viper
   if ((def.id === 'cave_snake' || def.id === 'cave_spider') && rng.next() < 0.05) {
     const rare = getMonster('pit_viper');
-    if (rare && !isGenocided('pit_viper')) def = rare;
+    if (rare && !isGenocided('pit_viper') && (!monsterFilter || monsterFilter(rare))) def = rare;
   }
 
   // Rare upgrade: rat has a 3% chance to become a cave bear
   if (def.id === 'rat' && rng.next() < 0.03) {
     const rare = getMonster('cave_bear');
-    if (rare && !isOverworldOnlyMonster(rare) && !isGenocided('cave_bear')) def = rare;
+    if (rare && !isOverworldOnlyMonster(rare) && !isGenocided('cave_bear') && (!monsterFilter || monsterFilter(rare))) def = rare;
   }
 
   // Rare upgrade: bat has a 2% chance to be an early dragon sighting.
   if (def.id === 'bat' && rng.next() < 0.02) {
     const rare = getMonster('dragon_whelp');
-    if (rare && !isGenocided('dragon_whelp')) def = rare;
+    if (rare && !isGenocided('dragon_whelp') && (!monsterFilter || monsterFilter(rare))) def = rare;
   }
 
   // Rare upgrade: goblin-family spawns have a 12% chance to be a loot goblin.
   if ((def.id === 'goblin' || def.id === 'goblin_archer') && rng.next() < 0.12) {
     const rare = getMonster('loot_goblin');
-    if (rare && !isGenocided('loot_goblin')) def = rare;
+    if (rare && !isGenocided('loot_goblin') && (!monsterFilter || monsterFilter(rare))) def = rare;
   }
 
   return toMonsterSpawnParams(def, depth);
@@ -69,7 +69,8 @@ export function pickSentinelMonster(rng, depth, monsterFilter = null) {
   if (tier < 3 && sentinelRoll < 0.10) {
     // Bump to next tier boundary for the pick, keeping original depth for HP calc
     const sentinelDepth = (tier + 1) * 5 + 1;
-    return pickMonster(rng, sentinelDepth, monsterFilter);
+    const sentinel = pickMonster(rng, sentinelDepth, monsterFilter);
+    if (!monsterFilter || monsterFilter(getMonster(sentinel?.identity))) return sentinel;
   }
   return pickMonster(rng, depth, monsterFilter);
 }

@@ -167,6 +167,16 @@ Deno.test("pickSentinelMonster is deterministic with same seed", () => {
   assertEquals(m1.identity, m2.identity, 'same seed should produce same monster');
 });
 
+Deno.test("filtered sentinel picks cannot escape an authored monster pool", () => {
+  const ratOnly = (def) => def?.id === "rat";
+  const rng = {
+    next() { return 0; },
+    choice(arr) { return arr[0]; },
+  };
+  const picked = pickSentinelMonster(rng, 1, ratOnly);
+  assertEquals(picked.identity, "rat");
+});
+
 Deno.test("sentinel can produce tier-1 monsters on depth 1 (10% chance)", () => {
   // Run many seeds and check if any depth-1 pick produces a tier-1 monster.
   const tier1ids = new Set(getMonstersByTier(1).map(m => m.id));
