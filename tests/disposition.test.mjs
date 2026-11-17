@@ -108,6 +108,33 @@ Deno.test("shop claims feed shopkeeper disposition and worsen shop terms", () =>
   assertEquals(terms.sellDiscount, 0.45);
 });
 
+Deno.test("thrown shop merchandise records disposition without hunting the player", () => {
+  const world = new World({ seed: 4107 });
+  const player = addActor(world, "player", 4, 5);
+  const shopkeeper = addActor(world, "shopkeeper", 5, 5);
+  world.add(shopkeeper, AggroState, { alertLevel: AGGRO_LEVELS.unaware });
+  installDispositionOffenseListeners(world);
+
+  const pursuit = [];
+  const aggroRequests = [];
+  world.on("shop:pursuit-requested", (ev) => pursuit.push(ev));
+  world.on("disposition:aggro-requested", (ev) => aggroRequests.push(ev));
+  recordShopClaim(world, {
+    actorId: player,
+    shopkeeperId: shopkeeper,
+    amount: 500,
+    claimKind: "thrown_out",
+    reason: "thrown_out",
+    severity: 4,
+    createsDebt: false,
+  });
+
+  assert(getDispositionRecord(world, shopkeeper, player), "shopkeeper should remember the theft");
+  assertEquals(pursuit.length, 0);
+  assertEquals(aggroRequests.length, 0);
+  assertEquals(world.get(shopkeeper, AggroState).alertLevel, AGGRO_LEVELS.unaware);
+});
+
 Deno.test("confirmed protected attack emits offense that disposition listeners consume", () => {
   const world = new World({ seed: 4104 });
   const player = addActor(world, "player", 5, 5, "Player");

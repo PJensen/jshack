@@ -123,6 +123,7 @@ function collectWitnesses(world, actorId, victimId) {
 }
 
 function maybeEscalateAggro(world, subjectId, objectId, rec, offense) {
+  if (String(offense?.reason || "") === "thrown_out") return;
   const severity = clampSeverity(offense?.severity);
   if (severity < OFFENSE_SEVERITY.serious && rec.band !== DISPOSITION_BANDS.furious && rec.band !== DISPOSITION_BANDS.wrathful) {
     return;
@@ -140,6 +141,8 @@ function maybeEscalateAggro(world, subjectId, objectId, rec, offense) {
     } catch {}
   }
   if (aggro && pos) {
+    aggro.targetId = objectId | 0;
+    aggro.targetReason = String(offense?.offenseKind || "offense");
     aggro.alertLevel = AGGRO_LEVELS.hunting;
     aggro.lastKnownX = pos.x | 0;
     aggro.lastKnownY = pos.y | 0;

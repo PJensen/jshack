@@ -96,7 +96,7 @@ Deno.test("shop law records claim and incident without debt when unpaid stock is
   assertEquals(incidents[0].reason, "thrown_out");
   assertEquals(incidents[0].evidence, "seen");
   assertEquals(escaped.length, 1);
-  assertEquals(pursuit.length, 1);
+  assertEquals(pursuit.length, 0);
 });
 
 Deno.test("shop law records a thrown unpaid stack unit without debt", () => {

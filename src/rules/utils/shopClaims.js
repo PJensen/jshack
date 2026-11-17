@@ -77,7 +77,8 @@ export function evaluateShopLawResponse(_world, spec = {}) {
   return Object.freeze({
     severity,
     alarm: confidence !== SHOP_CLAIM_CONFIDENCE.suspicious && severity >= 4,
-    pursuit: confidence !== SHOP_CLAIM_CONFIDENCE.suspicious &&
+    pursuit: reason !== "thrown_out" &&
+      confidence !== SHOP_CLAIM_CONFIDENCE.suspicious &&
       (severity >= 3 || reason === "teleport_exit"),
     escaped,
   });
