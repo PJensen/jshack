@@ -25,7 +25,7 @@ export const REQUIRED_RAT_KILLS = 5;
 export { RAT_CELLAR_LOCK_ID };
 const REWARD_GOLD = 150;
 const REWARD_ITEM_IDS = Object.freeze(["bow_mirror"]);
-const DUNGEON_RAT_INFESTATION_COUNT = 10;
+const DUNGEON_RAT_INFESTATION_COUNT = 6;
 
 const RAT_HOOKS_KEY = Symbol.for("jshack:quests:ratInfestation");
 
