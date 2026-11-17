@@ -15,6 +15,17 @@ Please read these two documents, hard lessons were learned:
 
 If your change violates either of these, it won't be merged.
 
+## No Compatibility Shims
+
+**Do not add compatibility shims, legacy aliases, or workaround layers unless
+there is no practical alternative and the need has been explicitly discussed.**
+Prefer updating the real caller, payload, contract, or boundary directly. A
+new adapter is acceptable only when it represents a genuine architectural
+boundary (for example, mapping a rules payload into a display model), not when
+it exists merely to preserve an obsolete interface. If a temporary migration
+layer is unavoidable, document its removal condition and keep it narrowly
+scoped.
+
 Specifically, PRs that do any of the following will be declined:
 
 - Add npm, webpack, babel, or any build tooling
