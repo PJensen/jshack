@@ -931,7 +931,7 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
 
   world.on('ranged:shot', ({ attacker, target, style }) => {
     const pos = attacker != null ? getPosition(attacker) : null;
-    sfxAt(style === 'arcane_wand' ? "travel:shadow" : "ranged:shot", pos, pp(), null, zg());
+    sfxAt(style === 'arcane_wand' ? "ranged:arcane_wand" : "ranged:shot", pos, pp(), null, zg());
   });
 
   world.on('projectile:spawn', ({ kind, style, from }) => {
