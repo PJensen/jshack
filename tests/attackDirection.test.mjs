@@ -3,12 +3,14 @@ import { World } from "../src/lib/ecs-js/index.js";
 import { makeRulesDispatcher } from "../src/main/input/rulesDispatch.js";
 import { AttackDirectionIntent } from "../src/rules/components/Intents/AttackDirectionIntent.js";
 import { AttackIntent } from "../src/rules/components/Intents/AttackIntent.js";
+import { AggroState, AGGRO_LEVELS } from "../src/rules/components/AggroState.js";
 import { Faction } from "../src/rules/components/Faction.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { attackDirectionSystem } from "../src/rules/systems/attackDirectionSystem.js";
 import { combatSystem } from "../src/rules/systems/combatSystem.js";
+import { installDispositionOffenseListeners } from "../src/rules/utils/disposition.js";
 
 function addActor(world, faction, x, y, name = faction) {
   const id = world.create();
@@ -64,6 +66,23 @@ Deno.test("confirmed attack direction can attack protected non-hostile NPC", () 
   combatSystem(world);
 
   assert(attempted, "combat should attempt the confirmed non-hostile attack");
+});
+
+Deno.test("confirmed hostility removes confirmation from subsequent attacks on that NPC", () => {
+  const world = new World({ seed: 7 });
+  const player = addActor(world, "player", 5, 5, "Player");
+  const shopkeeper = addActor(world, "shopkeeper", 6, 5, "Shopkeeper");
+  installDispositionOffenseListeners(world);
+
+  world.add(player, AttackDirectionIntent, { dx: 1, dy: 0, confirmed: true });
+  attackDirectionSystem(world);
+  combatSystem(world);
+
+  assertEquals(world.get(shopkeeper, AggroState)?.alertLevel, AGGRO_LEVELS.hunting);
+  assertEquals(world.get(shopkeeper, AggroState)?.targetId, player);
+  world.add(player, AttackDirectionIntent, { dx: 1, dy: 0, confirmed: false });
+  attackDirectionSystem(world);
+  assert(world.get(player, AttackIntent), "established combat should not prompt again");
 });
 
 Deno.test("attack direction must be cardinal", () => {

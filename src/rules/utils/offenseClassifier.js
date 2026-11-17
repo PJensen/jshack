@@ -1,4 +1,6 @@
 import { Faction } from "../components/Faction.js";
+import { AggroState, AGGRO_LEVELS } from "../components/AggroState.js";
+import { Disposition } from "../components/Disposition.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import {
   OFFENSE_ATTRIBUTION,
@@ -37,6 +39,24 @@ function offenseDef(kind) {
   return OFFENSE_DEFS[kind] || OFFENSE_DEFS[OFFENSE_KINDS.none];
 }
 
+function alreadyHostileToActor(world, actorId, targetId) {
+  const aggro = world.get(targetId, AggroState);
+  if (aggro && (
+    Number(aggro.targetId || 0) === actorId ||
+    Number(aggro.forcedTargetId || 0) === actorId ||
+    Number(aggro.highestThreatId || 0) === actorId
+  )) return true;
+
+  for (const [, disposition] of world.query(Disposition)) {
+    if (Number(disposition?.subjectId || 0) !== targetId
+      || Number(disposition?.objectId || 0) !== actorId) continue;
+    if (Number(disposition.maxSeverity || 0) >= OFFENSE_SEVERITY.serious
+      || Number(disposition.score || 0) <= -30) return true;
+  }
+
+  return aggro?.alertLevel === AGGRO_LEVELS.hunting && Number(aggro.targetId || 0) === actorId;
+}
+
 export function isProtectedSocialTarget(world, actorId, targetId) {
   const targetFaction = normalizeFaction(world.get(targetId, Faction)?.key);
   if (!PROTECTED_SOCIAL_FACTIONS.has(targetFaction)) return false;
@@ -67,7 +87,8 @@ export function classifyActorTargetAction(world, spec = {}) {
 
   const def = offenseDef(offenseKind);
   const severity = normalizeSeverity(spec.severity ?? def.severity);
-  const requiresConfirm = protectedTarget && severity >= OFFENSE_SEVERITY.minor;
+  const requiresConfirm = protectedTarget && severity >= OFFENSE_SEVERITY.minor
+    && !alreadyHostileToActor(world, actorId, targetId);
 
   return Object.freeze({
     actorId,

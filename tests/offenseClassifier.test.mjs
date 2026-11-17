@@ -1,6 +1,7 @@
 import { assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { Faction } from "../src/rules/components/Faction.js";
+import { AggroState, AGGRO_LEVELS } from "../src/rules/components/AggroState.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import {
   classifyActorTargetAction,
@@ -46,4 +47,35 @@ Deno.test("shop claim classifier maps shop-law reasons into shared offense vocab
   assertEquals(theft.source, "shop_law");
   assertEquals(theft.offenseKind, "theft");
   assertEquals(fraud.offenseKind, "fraud");
+});
+
+Deno.test("already hostile protected targets do not require repeated confirmation", () => {
+  const world = new World({ seed: 3103 });
+  const player = addFactionActor(world, "player", "Player");
+  const villager = addFactionActor(world, "townfolk", "Villager");
+  world.add(villager, AggroState, { alertLevel: AGGRO_LEVELS.hunting, targetId: player });
+
+  const offense = classifyActorTargetAction(world, {
+    actorId: player,
+    targetId: villager,
+    actionKind: "melee_attack",
+  });
+
+  assertEquals(offense.protectedTarget, true);
+  assertEquals(offense.requiresConfirm, false);
+});
+
+Deno.test("peaceful protected targets still require confirmation after hostility ends", () => {
+  const world = new World({ seed: 3104 });
+  const player = addFactionActor(world, "player", "Player");
+  const villager = addFactionActor(world, "townfolk", "Villager");
+  world.add(villager, AggroState, { alertLevel: AGGRO_LEVELS.unaware, targetId: 0 });
+
+  const offense = classifyActorTargetAction(world, {
+    actorId: player,
+    targetId: villager,
+    actionKind: "melee_attack",
+  });
+
+  assertEquals(offense.requiresConfirm, true);
 });
