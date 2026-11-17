@@ -3,10 +3,9 @@
   "checkpoint_id": "01M7NYA76MG4RE06VTVE2E7MQ0",
   "session_id": "01a1ebe1-6331-73e2-9ba0-6f831759f755",
   "strategy": "manual-commit",
-  "created_at": "2026-11-17T23:43:44.039696902Z",
+  "created_at": "2026-11-17T23:43:44.846689518Z",
   "branch": "master",
   "checkpoints_count": 2,
-  "save_step_count": 1,
   "files_touched": [
     "assets/audio/wand_arcane_charge_shoot_reverb_v4.mp3",
     "src/display/audio/audioWiring.js",
@@ -15,15 +14,9 @@
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "bcc8c6734094",
-  "compact_transcript_start": 0,
-  "token_usage": {
-    "input_tokens": 56681,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 665088,
-    "output_tokens": 5292,
-    "api_call_count": 18,
-    "subagent_tokens_complete": true
-  },
+  "checkpoint_transcript_start": 150,
+  "transcript_lines_at_start": 150,
+  "compact_transcript_start": 25,
   "redaction": {
     "replacements": 0,
     "layers": {
