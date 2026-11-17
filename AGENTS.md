@@ -14,6 +14,16 @@ Deeper docs:
 
 ---
 
+## Contribution Rules — Read First
+
+- **Work directly on `master`.** Do not create or use a feature branch or
+  worktree for repository contributions unless the task explicitly requests
+  one.
+- **Bump `VERSION`.** Contributions that change project behavior or shipped
+  content must update the root `VERSION` file in the same change and commit.
+
+---
+
 ## Hard Laws
 
 - **No build step.** Pure ES modules. No webpack, babel, JSX, TypeScript, or
