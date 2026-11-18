@@ -10,6 +10,7 @@ import { setInputLock } from "../input/inputLock.js";
 import { computeMissEndpoint, missSeedFromIds } from "./projectileMiss.js";
 import { ArcaneBarrageCast, MagicMissileCast } from "../../events/ArcaneProjectileCast.js";
 import { FearSpellCast } from "../../events/FearSpellCast.js";
+import { basePalette } from "../palette/base.js";
 
 // Lazy audio imports — must not break projectile VFX if audio fails to load
 let _playTracked = null;
@@ -63,7 +64,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   /** @type {RadialFx[]} */
   const _arcaneMissileImpact = [];
   // The wand itself is the existing item glyph, animated at the launch point.
-  const _arcaneWandSwingFx = [];
+  const _wandSwingFx = [];
 
   // --- Ricochet Theology projectile state ---
   /** @type {ArrowFx[]} */
@@ -135,9 +136,9 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function tick(dt) {
-    for (let i = _arcaneWandSwingFx.length - 1; i >= 0; i--) {
-      _arcaneWandSwingFx[i].ttl -= dt;
-      if (_arcaneWandSwingFx[i].ttl <= 0) _arcaneWandSwingFx.splice(i, 1);
+    for (let i = _wandSwingFx.length - 1; i >= 0; i--) {
+      _wandSwingFx[i].ttl -= dt;
+      if (_wandSwingFx[i].ttl <= 0) _wandSwingFx.splice(i, 1);
     }
 
     // Arrows
@@ -850,30 +851,34 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     const hasFireball = _fireballFx.length || _fireballImpact.length;
     const hasFrostbolt = _frostboltFx.length || _frostboltImpact.length;
     const hasArcaneMissile = _arcaneMissileFx.length || _arcaneMissileImpact.length;
-    const hasArcaneWandSwing = _arcaneWandSwingFx.length;
+    const hasWandSwing = _wandSwingFx.length;
     const hasRicochet = _ricochetFx.length || _ricochetImpact.length;
     const hasWebSpit = _webSpitFx.length || _webSpitImpact.length;
     const hasSwarm = _swarmFx.length || _swarmImpact.length;
-    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasArcaneWandSwing && !hasRicochet && !hasWebSpit && !hasSwarm) return;
+    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasWandSwing && !hasRicochet && !hasWebSpit && !hasSwarm) return;
     ctx.save();
 
     // Animate the actual item glyph. The projectile remains separate and
     // does not draw a second wand.
-    for (const swing of _arcaneWandSwingFx) {
+    for (const swing of _wandSwingFx) {
       const t = 1 - swing.ttl / swing.max;
       const raise = Math.min(1, t / 0.55);
       const flick = Math.max(0, Math.min(1, (t - 0.55) / 0.25));
       const alpha = Math.min(1, t * 8) * Math.min(1, (1 - t) * 4);
       const glyphAngle = swing.angle + 0.82 * (1 - raise) + flick * 0.52;
+      const handX = swing.x + swing.dirX * (0.22 + flick * 0.10)
+        + swing.perpX * 0.16;
+      const handY = swing.y + swing.dirY * (0.22 + flick * 0.10)
+        + swing.perpY * 0.16 - raise * 0.18;
       ctx.save();
-      ctx.translate(swing.x, swing.y);
+      ctx.translate(handX, handY);
       ctx.rotate(glyphAngle);
       ctx.globalAlpha = 0.92 * Math.max(0.45, alpha);
       ctx.font = '0.56px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#c8a6ff';
-      ctx.shadowColor = '#7650c8';
+      ctx.fillStyle = swing.color;
+      ctx.shadowColor = swing.glow;
       ctx.shadowBlur = 0.10;
       ctx.fillText('/', 0, 0);
       ctx.restore();
@@ -1493,7 +1498,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function installListeners() {
-    world.on('ranged:shot', ({ attacker, target, hit, style, projectileSpeed, from, to, missTo, impact }) => {
+    world.on('ranged:shot', ({ attacker, target, hit, wandShot, wandIdentity, style, projectileSpeed, from, to, missTo, impact }) => {
       const apos = (from && Number.isFinite(from.x) && Number.isFinite(from.y))
         ? { x: Number(from.x), y: Number(from.y) }
         : getPosition(Number(attacker || 0));
@@ -1507,6 +1512,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const s = (baseStyle === "plain" && profileStyle) ? profileStyle : baseStyle;
       _lastShotStyle.set(Number(target || 0), s);
       const isArcaneWand = s === 'arcane_wand';
+      const isWandShot = Boolean(wandShot);
       const speed = isArcaneWand ? 9 : Number(projectileSpeed || 18);
       // Ground and wall impacts are non-actor hits, not combat misses. Their
       // `hit: false` flag must not send the visual projectile through the
@@ -1520,8 +1526,15 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const shotDx = end.x - apos.x;
       const shotDy = end.y - apos.y;
       const shotLen = Math.hypot(shotDx, shotDy) || 1;
-      const visualFrom = isArcaneWand
-        ? { x: apos.x + (shotDx / shotLen) * 0.44, y: apos.y + (shotDy / shotLen) * 0.44 }
+      const dirX = shotDx / shotLen;
+      const dirY = shotDy / shotLen;
+      const perpX = -dirY;
+      const perpY = dirX;
+      const wandPalette = basePalette[String(wandIdentity || 'wand_arcane').toLowerCase()]
+        || basePalette.wand_arcane;
+      const visualFrom = isWandShot
+        ? { x: apos.x + dirX * 0.56 + perpX * 0.16,
+          y: apos.y + dirY * 0.56 + perpY * 0.16 - 0.18 }
         : apos;
       const projectile = spawnTransientProjectile({
         from: visualFrom,
@@ -1530,13 +1543,19 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         speed,
         minDuration: 0.06,
         maxDuration: isArcaneWand ? 0.8 : 0.4,
-        delay: isArcaneWand ? 0.18 : 0,
+        delay: isWandShot ? 0.18 : 0,
       });
-      if (isArcaneWand) {
-        _arcaneWandSwingFx.push({
+      if (isWandShot) {
+        _wandSwingFx.push({
           x: apos.x,
           y: apos.y,
-          angle: Math.atan2(end.y - apos.y, end.x - apos.x),
+          angle: Math.atan2(dirY, dirX),
+          dirX,
+          dirY,
+          perpX,
+          perpY,
+          color: wandPalette?.fg || '#c8a6ff',
+          glow: wandPalette?.glow || '#7650c8',
           ttl: 0.42,
           max: 0.42,
         });
