@@ -489,9 +489,14 @@ export function collectLightSources(view, opts = {}) {
       // Potion glow — bioluminescent shimmer
       if (tags.includes('potion_glow')) {
         const col = paletteGlow(kind) || paletteGlow('potion') || [120, 220, 200];
+        // Potion glyphs render at their world position (including item visual
+        // offsets), so keep the point light anchored to that same position.
+        const visualOff = e.visualOff || null;
+        const potionX = e.pos.x + Number(visualOff?.dx || 0);
+        const potionY = e.pos.y + Number(visualOff?.dy || 0);
         // Potions are small items: keep their light tightly concentrated
         // inside one tile instead of washing out the surrounding floor.
-        emitPatterned(out, 'biolum', t, e.id, ex, ey, 0.75, col, 2);
+        emitPatterned(out, 'biolum', t, e.id, potionX, potionY, 0.75, col, 2);
       }
       // Gold glow — gentle pulse
       if (tags.includes('gold_glow')) {
