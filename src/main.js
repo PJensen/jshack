@@ -4001,6 +4001,13 @@ function drawEntityGlyph(atlas, ctx, entity, scale = 1, rotation = 0) {
   }
 
   const kind = resolveRenderableKind(atlas, entity);
+  const isPotion = kind === 'potion' || kind.startsWith('potion_') || hasTag(entity, 'potion_glow');
+  const shimmer = isPotion
+    ? (0.5 + 0.5 * Math.sin(_fxTime * 2.4 + (entity.id | 0) * 0.83))
+    : 0;
+  const shimmerFilter = isPotion
+    ? `brightness(${(0.92 + shimmer * 0.28).toFixed(3)}) saturate(${(1.0 + shimmer * 0.24).toFixed(3)})`
+    : '';
   const invisible = hasTag(entity, 'invisible');
   const shadowCloak = hasTag(entity, 'shadow_cloak');
   const phaseShift = hasTag(entity, 'phase_shift');
@@ -4012,7 +4019,7 @@ function drawEntityGlyph(atlas, ctx, entity, scale = 1, rotation = 0) {
     const redPulse = isPlayerGlyph ? deathVfx.getPlayerGlyphRedPulse(_fxTime) : 0;
     if (tint > 0.01) {
       ctx.save();
-      ctx.filter = `saturate(${1 - tint * 0.5}) sepia(${tint}) hue-rotate(-50deg) brightness(${1 + tint * 0.4})`;
+      ctx.filter = `saturate(${1 - tint * 0.5}) sepia(${tint}) hue-rotate(-50deg) brightness(${1 + tint * 0.4}) ${shimmerFilter}`.trim();
       drawKindScaled(atlas, ctx, kind, entity.pos.x, entity.pos.y, scale, rotation);
       ctx.restore();
     } else {
@@ -4024,7 +4031,14 @@ function drawEntityGlyph(atlas, ctx, entity, scale = 1, rotation = 0) {
         ctx.fill();
         ctx.restore();
       }
-      drawKindScaled(atlas, ctx, kind, entity.pos.x, entity.pos.y, scale, rotation);
+      if (shimmerFilter) {
+        ctx.save();
+        ctx.filter = shimmerFilter;
+        drawKindScaled(atlas, ctx, kind, entity.pos.x, entity.pos.y, scale, rotation);
+        ctx.restore();
+      } else {
+        drawKindScaled(atlas, ctx, kind, entity.pos.x, entity.pos.y, scale, rotation);
+      }
     }
     return;
   }
