@@ -10,7 +10,6 @@ import { setInputLock } from "../input/inputLock.js";
 import { computeMissEndpoint, missSeedFromIds } from "./projectileMiss.js";
 import { ArcaneBarrageCast, MagicMissileCast } from "../../events/ArcaneProjectileCast.js";
 import { FearSpellCast } from "../../events/FearSpellCast.js";
-import { startRangedGlyphSwing } from "./equipBadges.js";
 
 // Lazy audio imports — must not break projectile VFX if audio fails to load
 let _playTracked = null;
@@ -63,6 +62,8 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   const _arcaneMissileFx = [];
   /** @type {RadialFx[]} */
   const _arcaneMissileImpact = [];
+  // The wand itself is the existing item glyph, animated at the launch point.
+  const _arcaneWandSwingFx = [];
 
   // --- Ricochet Theology projectile state ---
   /** @type {ArrowFx[]} */
@@ -134,6 +135,11 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function tick(dt) {
+    for (let i = _arcaneWandSwingFx.length - 1; i >= 0; i--) {
+      _arcaneWandSwingFx[i].ttl -= dt;
+      if (_arcaneWandSwingFx[i].ttl <= 0) _arcaneWandSwingFx.splice(i, 1);
+    }
+
     // Arrows
     for (let i = _arrowFx.length - 1; i >= 0; i--) {
       const a = _arrowFx[i];
@@ -844,11 +850,34 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     const hasFireball = _fireballFx.length || _fireballImpact.length;
     const hasFrostbolt = _frostboltFx.length || _frostboltImpact.length;
     const hasArcaneMissile = _arcaneMissileFx.length || _arcaneMissileImpact.length;
+    const hasArcaneWandSwing = _arcaneWandSwingFx.length;
     const hasRicochet = _ricochetFx.length || _ricochetImpact.length;
     const hasWebSpit = _webSpitFx.length || _webSpitImpact.length;
     const hasSwarm = _swarmFx.length || _swarmImpact.length;
-    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasRicochet && !hasWebSpit && !hasSwarm) return;
+    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasArcaneWandSwing && !hasRicochet && !hasWebSpit && !hasSwarm) return;
     ctx.save();
+
+    // Animate the actual item glyph. The projectile remains separate and
+    // does not draw a second wand.
+    for (const swing of _arcaneWandSwingFx) {
+      const t = 1 - swing.ttl / swing.max;
+      const raise = Math.min(1, t / 0.55);
+      const flick = Math.max(0, Math.min(1, (t - 0.55) / 0.25));
+      const alpha = Math.min(1, t * 8) * Math.min(1, (1 - t) * 4);
+      const glyphAngle = swing.angle + 0.82 * (1 - raise) + flick * 0.52;
+      ctx.save();
+      ctx.translate(swing.x, swing.y);
+      ctx.rotate(glyphAngle);
+      ctx.globalAlpha = 0.92 * Math.max(0.45, alpha);
+      ctx.font = '0.56px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#c8a6ff';
+      ctx.shadowColor = '#7650c8';
+      ctx.shadowBlur = 0.10;
+      ctx.fillText('/', 0, 0);
+      ctx.restore();
+    }
 
     // Draw flying arrows
     for (const a of _arrowFx) {
@@ -1504,7 +1533,13 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         delay: isArcaneWand ? 0.18 : 0,
       });
       if (isArcaneWand) {
-        startRangedGlyphSwing(attacker, Math.atan2(end.y - apos.y, end.x - apos.x));
+        _arcaneWandSwingFx.push({
+          x: apos.x,
+          y: apos.y,
+          angle: Math.atan2(end.y - apos.y, end.x - apos.x),
+          ttl: 0.42,
+          max: 0.42,
+        });
       }
       if (!hit && impact?.kind === 'ground' && projectile) projectile.leaveLodged = true;
       startShake(

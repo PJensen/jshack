@@ -12,15 +12,6 @@ const BADGE_BG_RADIUS = 0.14;    // dark disc behind glyph for readability
 const DUAL_X_NUDGE = 0.10;       // horizontal nudge for tightly-packed dual badges
 const SHIELD_Y_OFFSET = -0.32;   // upward from tile center (top-left)
 
-// The ranged item glyph is also the wand's visible item. Keep its motion here
-// so the glyph itself swings; projectile VFX must not invent a second wand.
-const _rangedGlyphSwings = new Map();
-
-export function startRangedGlyphSwing(entityId, angle = 0) {
-  const id = Number(entityId || 0) | 0;
-  if (id > 0) _rangedGlyphSwings.set(id, { startedAt: performance.now() / 1000, angle });
-}
-
 /**
  * Draw equipment corner badges on an entity glyph.
  *
@@ -50,8 +41,8 @@ export function drawEquipmentBadges(ctx, wx, wy, badges, fxTime, entityId = 0) {
 
   // Ranged/zap badge — bottom left
   if (badges.rangedGlyph) {
-    _drawRangedGlyph(ctx, wx - BADGE_X_OFFSET, wy + BADGE_Y_OFFSET,
-      badges.rangedGlyph, badges.rangedColor || '#88bbdd', pulse, entityId);
+    _drawBadge(ctx, wx - BADGE_X_OFFSET, wy + BADGE_Y_OFFSET,
+      badges.rangedGlyph, badges.rangedColor || '#88bbdd', pulse);
   }
 
   // Shield badge — top left
@@ -59,44 +50,6 @@ export function drawEquipmentBadges(ctx, wx, wy, badges, fxTime, entityId = 0) {
     _drawBadge(ctx, wx - BADGE_X_OFFSET, wy + SHIELD_Y_OFFSET,
       badges.shieldGlyph, badges.shieldColor || '#88bbdd', pulse);
   }
-}
-
-function _drawRangedGlyph(ctx, bx, by, glyph, color, pulse, entityId) {
-  const motion = _rangedGlyphSwings.get(Number(entityId || 0) | 0);
-  if (!motion) {
-    _drawBadge(ctx, bx, by, glyph, color, pulse);
-    return;
-  }
-
-  const elapsed = performance.now() / 1000 - motion.startedAt;
-  const t = elapsed / 0.30;
-  if (t >= 1) {
-    _rangedGlyphSwings.delete(Number(entityId || 0) | 0);
-    _drawBadge(ctx, bx, by, glyph, color, pulse);
-    return;
-  }
-
-  const raise = Math.min(1, t / 0.55);
-  const flick = Math.max(0, Math.min(1, (t - 0.55) / 0.25));
-  const rotation = motion.angle + 0.82 * (1 - raise) + flick * 0.52;
-  const fade = Math.min(1, t * 8) * Math.min(1, (1 - t) * 4);
-  const id = Number(entityId || 0) | 0;
-
-  ctx.save();
-  ctx.globalAlpha = 0.55 * pulse;
-  ctx.fillStyle = 'rgba(0,0,0,0.7)';
-  ctx.beginPath();
-  ctx.arc(bx, by, BADGE_BG_RADIUS, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.translate(bx, by);
-  ctx.rotate(rotation);
-  ctx.globalAlpha = BADGE_ALPHA * pulse * Math.max(0.45, fade);
-  ctx.font = `${BADGE_SCALE}px sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = color;
-  ctx.fillText(glyph, 0, 0);
-  ctx.restore();
 }
 
 /**
