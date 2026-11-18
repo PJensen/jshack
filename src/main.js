@@ -3828,76 +3828,6 @@ function drawCausticTagAura(ctx, e, fxTime, scale = 1) {
 }
 
 /**
- * Draw a small cached potion glow.
- * The disabled-kind set lives in worldView so enabling/disabling stays trivial.
- * @param {CanvasRenderingContext2D} ctx
- * @param {{ id:number, kind:string, pos:{x:number,y:number} }} e
- * @param {number} fxTime
- */
-// --- Potion shimmer tuning ---
-const POTION_SHIMMER_SPEED = 2.6;   // pulse frequency (lower = lazier glow)
-const POTION_SHIMMER_DEPTH = 0.18;  // how much alpha swings (0 = static, 1 = full throb)
-const POTION_AURA_CACHE_LIMIT = 32;
-const _potionAuraCache = new Map();
-
-function getPotionAuraSprite(fgHex) {
-  const cached = _potionAuraCache.get(fgHex);
-  if (cached) return cached;
-  if (typeof document === 'undefined') return null;
-
-  const size = 64;
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const glow = canvas.getContext('2d');
-  if (!glow) return null;
-  const center = size * 0.5;
-  const gradient = glow.createRadialGradient(center, center, 0, center, center, center * 0.92);
-  gradient.addColorStop(0, `${fgHex}b8`);
-  gradient.addColorStop(0.42, `${fgHex}55`);
-  gradient.addColorStop(1, `${fgHex}00`);
-  glow.fillStyle = gradient;
-  glow.beginPath();
-  glow.arc(center, center, center * 0.92, 0, Math.PI * 2);
-  glow.fill();
-
-  if (_potionAuraCache.size >= POTION_AURA_CACHE_LIMIT) _potionAuraCache.clear();
-  _potionAuraCache.set(fgHex, canvas);
-  return canvas;
-}
-
-function drawPotionGlyphAura(ctx, e, fxTime, scale = 1) {
-  const cx = e.pos.x;
-  const cy = e.pos.y;
-  const look = palette[e.kind] || palette.potion || palette.default;
-  const fgHex = look?.fg || "#8fd7ff";
-
-  const pulse = 0.5 + 0.5 * Math.sin(fxTime * POTION_SHIMMER_SPEED + e.id * 0.83);
-  const baseA = 0.22 + POTION_SHIMMER_DEPTH * pulse;
-
-  ctx.save();
-  ctx.globalCompositeOperation = 'lighter';
-
-  const r = (0.36 + 0.04 * pulse) * scale;
-  const sprite = getPotionAuraSprite(fgHex);
-  ctx.globalAlpha = Math.min(1, baseA * 1.8);
-  if (sprite) {
-    ctx.drawImage(sprite, cx - r, cy - r, r * 2, r * 2);
-  } else {
-    // Non-browser/test fallback: retain the same simple circular geometry.
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-    grad.addColorStop(0, `${fgHex}88`);
-    grad.addColorStop(1, `${fgHex}00`);
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  ctx.restore();
-}
-
-/**
  * Fallback unknown potion identities to the generic potion glyph instead of the
  * default bullet. This keeps all potions rendering as "!" even when a new ID
  * has not received a dedicated palette row yet.
@@ -5224,9 +5154,6 @@ function render(worldView) {
       if (_renderTagSet.has('rare_glowing')) {
         drawRareGlowAura(bctx, itemRender, _fxTime, finalItemScale);
       }
-      if (_renderTagSet.has('potion_glow')) {
-        drawPotionGlyphAura(bctx, itemRender, _fxTime, finalItemScale);
-      }
       if (PERF.quality !== 'low' && _renderTagSet.has('rare')) {
         drawRareStar(bctx, itemRender, _fxTime, finalItemScale);
       }
@@ -5405,9 +5332,6 @@ function render(worldView) {
     }
     if (_renderTagSet.has('rare_glowing')) {
       drawRareGlowAura(bctx, renderEntity, _fxTime);
-    }
-    if (_renderTagSet.has('potion_glow')) {
-      drawPotionGlyphAura(bctx, renderEntity, _fxTime);
     }
     if (PERF.quality !== 'low' && _renderTagSet.has('rare')) {
       drawRareStar(bctx, renderEntity, _fxTime);
