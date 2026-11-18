@@ -3828,7 +3828,7 @@ function drawCausticTagAura(ctx, e, fxTime, scale = 1) {
 }
 
 /**
- * Draw a potion-shaped glow keyed off the "!" silhouette.
+ * Draw a small cached potion glow.
  * The disabled-kind set lives in worldView so enabling/disabling stays trivial.
  * @param {CanvasRenderingContext2D} ctx
  * @param {{ id:number, kind:string, pos:{x:number,y:number} }} e
@@ -3837,6 +3837,34 @@ function drawCausticTagAura(ctx, e, fxTime, scale = 1) {
 // --- Potion shimmer tuning ---
 const POTION_SHIMMER_SPEED = 2.6;   // pulse frequency (lower = lazier glow)
 const POTION_SHIMMER_DEPTH = 0.18;  // how much alpha swings (0 = static, 1 = full throb)
+const POTION_AURA_CACHE_LIMIT = 32;
+const _potionAuraCache = new Map();
+
+function getPotionAuraSprite(fgHex) {
+  const cached = _potionAuraCache.get(fgHex);
+  if (cached) return cached;
+  if (typeof document === 'undefined') return null;
+
+  const size = 64;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const glow = canvas.getContext('2d');
+  if (!glow) return null;
+  const center = size * 0.5;
+  const gradient = glow.createRadialGradient(center, center, 0, center, center, center * 0.92);
+  gradient.addColorStop(0, `${fgHex}b8`);
+  gradient.addColorStop(0.42, `${fgHex}55`);
+  gradient.addColorStop(1, `${fgHex}00`);
+  glow.fillStyle = gradient;
+  glow.beginPath();
+  glow.arc(center, center, center * 0.92, 0, Math.PI * 2);
+  glow.fill();
+
+  if (_potionAuraCache.size >= POTION_AURA_CACHE_LIMIT) _potionAuraCache.clear();
+  _potionAuraCache.set(fgHex, canvas);
+  return canvas;
+}
 
 function drawPotionGlyphAura(ctx, e, fxTime, scale = 1) {
   const cx = e.pos.x;
@@ -3850,25 +3878,21 @@ function drawPotionGlyphAura(ctx, e, fxTime, scale = 1) {
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
 
-  const r = (0.42 + 0.06 * pulse) * scale;
-  const squeeze = 0.43; // sides 40% narrower than top/bottom — hugs the "!"
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-  grad.addColorStop(0,   `${fgHex}${Math.round(baseA * 255).toString(16).padStart(2,'0')}`);
-  grad.addColorStop(0.6, `${fgHex}${Math.round(baseA * 0.35 * 255).toString(16).padStart(2,'0')}`);
-  grad.addColorStop(1,   `${fgHex}00`);
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  const steps = 16; // more steps = smoother glow outline but more CPU
-  for (let i = 0; i <= steps; i++) {
-    const a = (i / steps) * Math.PI * 2;
-    const s = Math.sin(a);
-    const rr = r * ((1 - squeeze) + squeeze * s * s);
-    const px = cx + rr * Math.cos(a);
-    const py = cy + rr * Math.sin(a);
-    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  const r = (0.36 + 0.04 * pulse) * scale;
+  const sprite = getPotionAuraSprite(fgHex);
+  ctx.globalAlpha = Math.min(1, baseA * 1.8);
+  if (sprite) {
+    ctx.drawImage(sprite, cx - r, cy - r, r * 2, r * 2);
+  } else {
+    // Non-browser/test fallback: retain the same simple circular geometry.
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    grad.addColorStop(0, `${fgHex}88`);
+    grad.addColorStop(1, `${fgHex}00`);
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
   }
-  ctx.closePath();
-  ctx.fill();
 
   ctx.restore();
 }
