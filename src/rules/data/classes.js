@@ -251,6 +251,7 @@ export const CLASS_DEFS = {
     },
     equipment: {
       weapon: 'staff_oak',
+      ranged: 'wand_arcane',
       armor: null,
       offhand: null,
       gloves: 'scribe_gloves',
@@ -261,7 +262,6 @@ export const CLASS_DEFS = {
       { itemId: 'hearthstone', count: 1 },
       { itemId: 'potion_health', count: 2 },
       { itemId: 'potion_mana', count: 3 },
-      { itemId: 'wand_arcane', count: 1 },
       { itemId: 'lockpick', count: 5 },
       { itemId: 'scroll_identify', count: 4 },
     ],
