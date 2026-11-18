@@ -489,7 +489,9 @@ export function collectLightSources(view, opts = {}) {
       // Potion glow — bioluminescent shimmer
       if (tags.includes('potion_glow')) {
         const col = paletteGlow(kind) || paletteGlow('potion') || [120, 220, 200];
-        emitPatterned(out, 'biolum', t, e.id, ex, ey, 2.5, col, 3);
+        // Potions are small items: keep their light tightly concentrated
+        // inside one tile instead of washing out the surrounding floor.
+        emitPatterned(out, 'biolum', t, e.id, ex, ey, 0.75, col, 2);
       }
       // Gold glow — gentle pulse
       if (tags.includes('gold_glow')) {
