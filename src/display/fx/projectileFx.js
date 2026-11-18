@@ -62,6 +62,9 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   const _arcaneMissileFx = [];
   /** @type {RadialFx[]} */
   const _arcaneMissileImpact = [];
+  // Display-only release sweep for arcane wands. This never participates in
+  // projectile lifetime or input locking; it is only the hand/swing cue.
+  const _arcaneWandSwingFx = [];
 
   // --- Ricochet Theology projectile state ---
   /** @type {ArrowFx[]} */
@@ -133,10 +136,15 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function tick(dt) {
+    for (let i = _arcaneWandSwingFx.length - 1; i >= 0; i--) {
+      _arcaneWandSwingFx[i].ttl -= dt;
+      if (_arcaneWandSwingFx[i].ttl <= 0) _arcaneWandSwingFx.splice(i, 1);
+    }
+
     // Arrows
     for (let i = _arrowFx.length - 1; i >= 0; i--) {
       const a = _arrowFx[i];
-      if (fx?.pool && a.progress < 1 && (a.style === "venom" || a.style === "storm" || a.style === "frost" || a.style === "arcane_wand")) {
+      if (fx?.pool && a.t >= a.delay && a.progress < 1 && (a.style === "venom" || a.style === "storm" || a.style === "frost" || a.style === "arcane_wand")) {
         const hx = a.from.x + (a.to.x - a.from.x) * a.progress;
         const hy = a.from.y + (a.to.y - a.from.y) * a.progress;
         const rate = a.style === "storm" ? 42 : (a.style === "arcane_wand" ? 24 : 28);
@@ -783,6 +791,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     arcaneAmp = 0.32,
     arcanePhase = 0,
     arcaneCycles = 1.35,
+    delay = 0,
   }) {
     if (!from || !to) return null;
     const dx = to.x - from.x;
@@ -797,6 +806,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       dy: dy / len,
       len,
       style,
+      delay,
     });
     entry.arcaneLane = arcaneLane;
     entry.arcaneAmp = arcaneAmp;
@@ -841,11 +851,48 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     const hasFireball = _fireballFx.length || _fireballImpact.length;
     const hasFrostbolt = _frostboltFx.length || _frostboltImpact.length;
     const hasArcaneMissile = _arcaneMissileFx.length || _arcaneMissileImpact.length;
+    const hasArcaneWandSwing = _arcaneWandSwingFx.length;
     const hasRicochet = _ricochetFx.length || _ricochetImpact.length;
     const hasWebSpit = _webSpitFx.length || _webSpitImpact.length;
     const hasSwarm = _swarmFx.length || _swarmImpact.length;
-    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasRicochet && !hasWebSpit && !hasSwarm) return;
+    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasArcaneWandSwing && !hasRicochet && !hasWebSpit && !hasSwarm) return;
     ctx.save();
+
+    // Wand swing → wrist flick → release. The shaft is a display-only cue at
+    // the launch origin; the projectile remains governed by ArrowFx timing.
+    for (const swing of _arcaneWandSwingFx) {
+      const t = 1 - swing.ttl / swing.max;
+      const fade = Math.min(1, t * 7) * Math.min(1, (1 - t) * 4);
+      const raise = Math.min(1, t / 0.55);
+      const flick = Math.max(0, Math.min(1, (t - 0.55) / 0.25));
+      const fadeOut = Math.max(0, (t - 0.78) / 0.22);
+      const wandAngle = swing.angle + (0.82 * (1 - raise)) + (flick * 0.52);
+      const handleX = swing.x - Math.cos(wandAngle) * 0.16;
+      const handleY = swing.y - Math.sin(wandAngle) * 0.16;
+      const tipX = swing.x + Math.cos(wandAngle) * 0.44;
+      const tipY = swing.y + Math.sin(wandAngle) * 0.44;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.globalAlpha = Math.max(0, 1 - fadeOut) * fade;
+      ctx.strokeStyle = 'rgba(207,145,255,0.74)';
+      ctx.lineWidth = 0.085;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
+      ctx.strokeStyle = 'rgba(247,232,255,0.92)';
+      ctx.lineWidth = 0.028;
+      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
+      ctx.fillStyle = 'rgba(231,190,255,0.95)';
+      ctx.beginPath(); ctx.arc(tipX, tipY, 0.105 + flick * 0.04, 0, Math.PI * 2); ctx.fill();
+      if (flick > 0) {
+        const radius = 0.18 + flick * 0.15;
+        const start = swing.angle - 0.78 + flick * 0.18;
+        const end = start + 0.92;
+        ctx.strokeStyle = `rgba(246,218,255,${(0.72 * flick * (1 - fadeOut)).toFixed(3)})`;
+        ctx.lineWidth = 0.045;
+        ctx.beginPath(); ctx.arc(swing.x, swing.y, radius, start, end); ctx.stroke();
+      }
+      ctx.restore();
+    }
 
     // Draw flying arrows
     for (const a of _arrowFx) {
@@ -856,6 +903,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
       const isStorm = a.style === 'storm';
       const isFrost = a.style === 'frost';
       const isArcaneWand = a.style === 'arcane_wand';
+      if (isArcaneWand && a.t < a.delay) continue;
       // Current head position (lerp from→to)
       const hx = a.from.x + (a.to.x - a.from.x) * progress;
       const hy = a.from.y + (a.to.y - a.from.y) * progress;
@@ -1484,14 +1532,30 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         : ((missTo && Number.isFinite(missTo.x) && Number.isFinite(missTo.y))
           ? { x: Number(missTo.x), y: Number(missTo.y) }
           : computeMissEndpoint(apos, dpos, missSeedFromIds(attacker, target, 0x52a9)));
+      const shotDx = end.x - apos.x;
+      const shotDy = end.y - apos.y;
+      const shotLen = Math.hypot(shotDx, shotDy) || 1;
+      const visualFrom = isArcaneWand
+        ? { x: apos.x + (shotDx / shotLen) * 0.44, y: apos.y + (shotDy / shotLen) * 0.44 }
+        : apos;
       const projectile = spawnTransientProjectile({
-        from: apos,
+        from: visualFrom,
         to: end,
         style: s,
         speed,
         minDuration: 0.06,
         maxDuration: isArcaneWand ? 0.8 : 0.4,
+        delay: isArcaneWand ? 0.18 : 0,
       });
+      if (isArcaneWand) {
+        _arcaneWandSwingFx.push({
+          x: apos.x,
+          y: apos.y,
+          angle: Math.atan2(end.y - apos.y, end.x - apos.x),
+          ttl: 0.30,
+          max: 0.30,
+        });
+      }
       if (!hit && impact?.kind === 'ground' && projectile) projectile.leaveLodged = true;
       startShake(
         cam,
@@ -1913,6 +1977,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     for (let i = 0; i < _arrowFx.length; i++) {
       const a = _arrowFx[i];
       if (a.style !== 'arcane_wand') continue;
+      if (a.t < a.delay) continue;
       const u = a.progress;
       out.push({
         x: a.from.x + (a.to.x - a.from.x) * u,

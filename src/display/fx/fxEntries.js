@@ -124,7 +124,7 @@ export class ScreenBoltFx extends FxEntry {
 // Arrow in flight — forward progress (t → duration), NOT ttl decay.
 // ---------------------------------------------------------------------------
 export class ArrowFx {
-  constructor({ from, to, duration, dx, dy, len, style }) {
+  constructor({ from, to, duration, dx, dy, len, style, delay = 0 }) {
     this.from = from;
     this.to = to;
     this.t = 0;
@@ -133,10 +133,11 @@ export class ArrowFx {
     this.dy = dy;
     this.len = len;
     this.style = style;
+    this.delay = Math.max(0, Number(delay) || 0);
   }
   tick(dt) { this.t += dt; }
-  get arrived() { return this.t >= this.duration; }
-  get progress() { return Math.min(1, this.t / this.duration); }
+  get arrived() { return this.t >= this.delay + this.duration; }
+  get progress() { return Math.max(0, Math.min(1, (this.t - this.delay) / this.duration)); }
 }
 
 // ---------------------------------------------------------------------------

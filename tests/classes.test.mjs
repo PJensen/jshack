@@ -62,6 +62,13 @@ Deno.test("cleric starts with holy_strike and smite as class spells", () => {
   assertEquals(cleric.startingSpells.length, 2, "cleric should start with exactly 2 spells");
 });
 
+Deno.test("mage starts with an arcane wand", () => {
+  const mage = getClass('mage');
+  const wand = mage.inventoryItems.find((entry) => entry.itemId === 'wand_arcane');
+  assert(wand, 'mage should include wand_arcane in starter inventory');
+  assertEquals(wand.count, 1);
+});
+
 Deno.test("valkyrie is fate-oriented and death-aware", () => {
   const valkyrie = getClass('valkyrie');
   assert(valkyrie, 'valkyrie should be a class');
