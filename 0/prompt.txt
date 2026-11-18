@@ -1,0 +1,1 @@
+tutorial mode no longer works when selected
