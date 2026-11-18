@@ -10,6 +10,7 @@ import { setInputLock } from "../input/inputLock.js";
 import { computeMissEndpoint, missSeedFromIds } from "./projectileMiss.js";
 import { ArcaneBarrageCast, MagicMissileCast } from "../../events/ArcaneProjectileCast.js";
 import { FearSpellCast } from "../../events/FearSpellCast.js";
+import { startRangedGlyphSwing } from "./equipBadges.js";
 
 // Lazy audio imports — must not break projectile VFX if audio fails to load
 let _playTracked = null;
@@ -62,9 +63,6 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   const _arcaneMissileFx = [];
   /** @type {RadialFx[]} */
   const _arcaneMissileImpact = [];
-  // Display-only release sweep for arcane wands. This never participates in
-  // projectile lifetime or input locking; it is only the hand/swing cue.
-  const _arcaneWandSwingFx = [];
 
   // --- Ricochet Theology projectile state ---
   /** @type {ArrowFx[]} */
@@ -136,11 +134,6 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
   }
 
   function tick(dt) {
-    for (let i = _arcaneWandSwingFx.length - 1; i >= 0; i--) {
-      _arcaneWandSwingFx[i].ttl -= dt;
-      if (_arcaneWandSwingFx[i].ttl <= 0) _arcaneWandSwingFx.splice(i, 1);
-    }
-
     // Arrows
     for (let i = _arrowFx.length - 1; i >= 0; i--) {
       const a = _arrowFx[i];
@@ -851,48 +844,11 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
     const hasFireball = _fireballFx.length || _fireballImpact.length;
     const hasFrostbolt = _frostboltFx.length || _frostboltImpact.length;
     const hasArcaneMissile = _arcaneMissileFx.length || _arcaneMissileImpact.length;
-    const hasArcaneWandSwing = _arcaneWandSwingFx.length;
     const hasRicochet = _ricochetFx.length || _ricochetImpact.length;
     const hasWebSpit = _webSpitFx.length || _webSpitImpact.length;
     const hasSwarm = _swarmFx.length || _swarmImpact.length;
-    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasArcaneWandSwing && !hasRicochet && !hasWebSpit && !hasSwarm) return;
+    if (!hasArrows && !hasSbolt && !hasFireball && !hasFrostbolt && !hasArcaneMissile && !hasRicochet && !hasWebSpit && !hasSwarm) return;
     ctx.save();
-
-    // Wand swing → wrist flick → release. The shaft is a display-only cue at
-    // the launch origin; the projectile remains governed by ArrowFx timing.
-    for (const swing of _arcaneWandSwingFx) {
-      const t = 1 - swing.ttl / swing.max;
-      const fade = Math.min(1, t * 7) * Math.min(1, (1 - t) * 4);
-      const raise = Math.min(1, t / 0.55);
-      const flick = Math.max(0, Math.min(1, (t - 0.55) / 0.25));
-      const fadeOut = Math.max(0, (t - 0.78) / 0.22);
-      const wandAngle = swing.angle + (0.82 * (1 - raise)) + (flick * 0.52);
-      const handleX = swing.x - Math.cos(wandAngle) * 0.16;
-      const handleY = swing.y - Math.sin(wandAngle) * 0.16;
-      const tipX = swing.x + Math.cos(wandAngle) * 0.44;
-      const tipY = swing.y + Math.sin(wandAngle) * 0.44;
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = Math.max(0, 1 - fadeOut) * fade;
-      ctx.strokeStyle = 'rgba(207,145,255,0.74)';
-      ctx.lineWidth = 0.085;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
-      ctx.strokeStyle = 'rgba(247,232,255,0.92)';
-      ctx.lineWidth = 0.028;
-      ctx.beginPath(); ctx.moveTo(handleX, handleY); ctx.lineTo(tipX, tipY); ctx.stroke();
-      ctx.fillStyle = 'rgba(231,190,255,0.95)';
-      ctx.beginPath(); ctx.arc(tipX, tipY, 0.105 + flick * 0.04, 0, Math.PI * 2); ctx.fill();
-      if (flick > 0) {
-        const radius = 0.18 + flick * 0.15;
-        const start = swing.angle - 0.78 + flick * 0.18;
-        const end = start + 0.92;
-        ctx.strokeStyle = `rgba(246,218,255,${(0.72 * flick * (1 - fadeOut)).toFixed(3)})`;
-        ctx.lineWidth = 0.045;
-        ctx.beginPath(); ctx.arc(swing.x, swing.y, radius, start, end); ctx.stroke();
-      }
-      ctx.restore();
-    }
 
     // Draw flying arrows
     for (const a of _arrowFx) {
@@ -1548,13 +1504,7 @@ export function createProjectileFxController({ world, cam, fx, getPosition }) {
         delay: isArcaneWand ? 0.18 : 0,
       });
       if (isArcaneWand) {
-        _arcaneWandSwingFx.push({
-          x: apos.x,
-          y: apos.y,
-          angle: Math.atan2(end.y - apos.y, end.x - apos.x),
-          ttl: 0.30,
-          max: 0.30,
-        });
+        startRangedGlyphSwing(attacker, Math.atan2(end.y - apos.y, end.x - apos.x));
       }
       if (!hit && impact?.kind === 'ground' && projectile) projectile.leaveLodged = true;
       startShake(
