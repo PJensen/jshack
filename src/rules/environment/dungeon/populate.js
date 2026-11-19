@@ -1,7 +1,7 @@
 // rules/environment/dungeon/populate.js
 // Generate spawn points for a chunk based on rooms and depth.
 
-import { createRng } from '../../../lib/ecs-js/rng.js';
+import { createRng, seedFromString } from '../../../lib/ecs-js/rng.js';
 import { createFrom } from '../../../lib/ecs-js/archetype.js';
 import { Position } from '../../components/Position.js';
 import { NamedIdentity } from '../../components/NamedIdentity.js';
@@ -2598,6 +2598,12 @@ export function materializeSpawn(world, spawn) {
       return id;
     }
     case 'catalog_item': {
+      const lootTable = spawn.params?.lootTable;
+      if (lootTable) {
+        const seed = seedFromString(`${world.seed}:catalog_item:${spawn.x}:${spawn.y}:${lootTable}`);
+        const [drop] = resolveLootTable(lootTable, createRng(seed), 1);
+        return drop ? materializeDrop(world, drop, spawn) : null;
+      }
       let id = null;
       try {
         id = buildCatalogItem(world, spawn.params.itemId, { count: 1 });

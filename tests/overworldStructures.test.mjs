@@ -1,8 +1,13 @@
 import "./helpers/installContentMonsters.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
+import { World } from "../src/lib/ecs-js/index.js";
 
 import { BUILDING_DEFS, LANDMARK_DEFS } from "../src/rules/data/buildings/buildingRegistry.js";
+import { ItemInfo } from "../src/rules/components/ItemInfo.js";
+import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
+import { Position } from "../src/rules/components/Position.js";
 import { generateOverworldChunks } from "../src/rules/environment/dungeon/overworld.js";
+import { materializeSpawn } from "../src/rules/environment/dungeon/populate.js";
 import {
   CHUNK_SIZE,
   TILE_COBBLESTONE,
@@ -316,6 +321,37 @@ Deno.test("abandoned camp guards an epic-or-legendary chest with bandits", async
   assertEquals(monsterIds, ["bandit", "bandit", "bandit_archer", "bandit_captain"]);
   assertEquals(campChest?.params?.lootTableChoices, ["chest:epic", "chest:legendary"]);
   assert(campFire, "abandoned camp should include a cooking fire");
+});
+
+Deno.test("the fountain supplies include one seeded spellbook", async () => {
+  const { chunks } = await generateOverworldChunks(SEED);
+  const [fountain] = spawnsOfKind(chunks, "fountain");
+  assert(fountain);
+  const items = spawnsOfKind(chunks, "catalog_item");
+  const books = items.filter((spawn) => spawn.params?.lootTable === "sub:spellbooks");
+  assertEquals(books.length, 1);
+  const [book] = books;
+  assertEquals(Math.abs(book.x - fountain.x) + Math.abs(book.y - fountain.y), 1);
+  assertEquals(getWorldTile(chunks, book.x, book.y), TILE_COBBLESTONE);
+  for (const id of ["stone_flint", "fuel_firewood"]) {
+    assert(items.some((spawn) => spawn.params?.itemId === id && spawn.x === book.x && spawn.y === book.y));
+  }
+
+  function rollBook(seed) {
+    const world = new World({ seed });
+    const id = materializeSpawn(world, book);
+    assert(id);
+    const info = world.get(id, ItemInfo);
+    assertEquals(info?.type, "learn");
+    assertEquals(info?.count, 1);
+    assertEquals(world.get(id, Position), { x: book.x, y: book.y });
+    assertEquals([...world.query(ItemInfo)].length, 1);
+    return world.get(id, NamedIdentity)?.identity;
+  }
+
+  assertEquals(rollBook(SEED), rollBook(SEED));
+  const rolls = Array.from({ length: 8 }, (_, index) => rollBook(SEED + index));
+  assert(new Set(rolls).size > 1);
 });
 
 Deno.test("church entrance and bell anchor north of the fountain", async () => {
