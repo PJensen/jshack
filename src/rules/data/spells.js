@@ -48,6 +48,7 @@
  * @property {SpellEffectDef[]} [effects]
  * @property {SpellActiveEffectDef} [activeEffect]
  * @property {string[]} [schools]           // spell schools, e.g. ['destruction'], ['destruction','trickery']
+ * @property {'martial'} [scaling]          // damage and crit profile; omitted uses standard spell scaling
  * @property {boolean}  [clearMindedCasting] // true = resolves normally even when caster is confused
  * @property {number}   [cooldown]           // turns before the spell can be cast again (0 or omitted = no cooldown)
  * @property {{ flatThreat?: number, threatMult?: number, threatKind?: string, targetField?: string, targetsField?: string, requiresField?: string }} [threat]
@@ -454,7 +455,7 @@ export const SPELL_DEFS = {
     id: 'goblin_dirty_trick',
     name: 'Dirty Trick',
     symbol: '\u2731', // ✱
-    schools: ['martial'],
+    scaling: 'martial',
     manaCost: 0,
     minIntelligence: 0,
     range: 1,
@@ -702,7 +703,7 @@ export const SPELL_DEFS = {
     id: 'shield_bash',
     name: 'Shield Bash',
     symbol: '\u25C8', // ◈
-    schools: ['martial'],
+    scaling: 'martial',
     manaCost: 0,
     minIntelligence: 0,
     range: 1,
@@ -751,7 +752,8 @@ export const SPELL_DEFS = {
     id: 'death_volley',
     name: 'Death Volley',
     symbol: '\u27B3', // ➳
-    schools: ['martial', 'undead'],
+    schools: ['undead'],
+    scaling: 'martial',
     manaCost: 0,
     minIntelligence: 0,
     range: 10,
@@ -1161,7 +1163,8 @@ export const SPELL_DEFS = {
     id: 'cleave',
     name: 'Cleave',
     symbol: '\u{1FA93}',    // 🪓
-    schools: ['destruction', 'martial'],
+    schools: ['destruction'],
+    scaling: 'martial',
     manaCost: 0,
     costResource: 'stamina',
     staminaCost: 4,
@@ -1179,7 +1182,7 @@ export const SPELL_DEFS = {
     id: 'rend',
     name: 'Rend',
     symbol: '\u2694',    // ⚔
-    schools: ['martial'],
+    scaling: 'martial',
     manaCost: 0,
     costResource: 'stamina',
     staminaCost: 6,
@@ -1198,7 +1201,7 @@ export const SPELL_DEFS = {
     id: 'charge',
     name: 'Charge',
     symbol: '\u21E2',    // ⇢
-    schools: ['martial'],
+    scaling: 'martial',
     manaCost: 0,
     costResource: 'stamina',
     staminaCost: 10,
@@ -1341,6 +1344,7 @@ export const SPELL_DEFS = {
     name: 'Savage Strike',
     symbol: '\u{1F9AC}',     // 🦬
     schools: ['physical'],
+    scaling: 'martial',
     manaCost: 0,
     cooldown: 4,
     minIntelligence: 0,
@@ -1349,7 +1353,7 @@ export const SPELL_DEFS = {
     targeting: 'auto',
     description: 'A brutal, efficient blow. Costs nothing — fuels everything.',
     effects: [
-      { kind: 'damage', element: 'physical', amount: '4 base, STR-scaled' },
+      { kind: 'damage', element: 'physical', amount: '4 base, Strength + mainhand-scaled' },
       { kind: 'utility', note: 'Restores 8% max stamina on hit (4-turn cooldown)' },
     ],
   },
@@ -1375,6 +1379,7 @@ export const SPELL_DEFS = {
     name: 'Cheap Shot',
     symbol: '\u{1F44A}',     // 👊
     schools: ['trickery', 'physical'],
+    scaling: 'martial',
     manaCost: 0,
     cooldown: 4,
     minIntelligence: 0,
@@ -1383,7 +1388,7 @@ export const SPELL_DEFS = {
     targeting: 'auto',
     description: 'A dirty hit. No finesse, just momentum and mana.',
     effects: [
-      { kind: 'damage', element: 'physical', amount: '3 base' },
+      { kind: 'damage', element: 'physical', amount: '3 base, Strength + mainhand-scaled' },
       { kind: 'utility', note: 'Restores 7% max mana on hit (4-turn cooldown)' },
     ],
   },
@@ -1499,6 +1504,7 @@ export const SPELL_DEFS = {
     name: 'Holy Strike',
     symbol: '\u2600',         // ☀️
     schools: ['holy', 'physical'],
+    scaling: 'martial',
     manaCost: 0,
     cooldown: 4,
     minIntelligence: 0,
@@ -1507,7 +1513,7 @@ export const SPELL_DEFS = {
     targeting: 'auto',
     description: 'Channel Seraphine\'s light through your weapon. Each blow renews your faith.',
     effects: [
-      { kind: 'damage', element: 'holy', amount: '3 base, INT-scaled' },
+      { kind: 'damage', element: 'holy', amount: '3 base, Strength + mainhand-scaled' },
       { kind: 'utility', note: 'Restores 6% max mana on hit (4-turn cooldown)' },
     ],
   },

@@ -3,6 +3,9 @@ import { Equipment } from "../components/Equipment.js";
 import { Faction } from "../components/Faction.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { Position } from "../components/Position.js";
+import { Vitality } from "../components/Vitality.js";
+import { applyHealing } from "./applyHealing.js";
+import { effectiveMaxHp } from "./passiveBonuses.js";
 import { combatSeed, hashString32, mulberry32, rollDice } from "./rng.js";
 import { rollBaggedCrit } from "./critRandomizer.js";
 import { evaluateEquippedAffixProcs } from "./affixTopology.js";
@@ -34,9 +37,7 @@ export function getSpellIntelligenceBonus(world, casterId) {
 }
 
 /**
- * Martial abilities use the same baseline model as spell INT scaling, but
- * draw from Strength. Schools are the declaration point for this rule so
- * individual martial spells do not need bespoke scaling fields.
+ * The martial scaling profile uses the standard damage bonus curve with Strength.
  *
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {number} casterId
@@ -45,10 +46,6 @@ export function getSpellIntelligenceBonus(world, casterId) {
 export function getMartialStrengthBonus(world, casterId) {
   const resolved = resolveCanonicalStats(world, casterId);
   return Math.max(0, Number(resolved?.strength || 0) - 10);
-}
-
-function isMartialSpell(spell = {}) {
-  return Array.isArray(spell?.schools) && spell.schools.includes("martial");
 }
 
 /**
@@ -172,16 +169,17 @@ export function scaleSpellDamage(world, casterId, baseAmount) {
 }
 
 /**
- * Snapshot spell-damage parameters at cast time so timed effects keep their
+ * Snapshot spell combat parameters at cast time so timed effects keep their
  * original behavior even if the caster changes gear or later dies.
  *
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {number} casterId
- * @param {{ id?:string, cause?:string }} [spell]
+ * @param {{ id?:string, cause?:string, scaling?:'martial' }} [spell]
  * @param {{ cause?:string, type?:string, spellId?:string }} [overrides]
  */
 export function createSpellDamageContext(world, casterId, spell = {}, overrides = {}) {
-  const snap = resolveCombatSnapshot(world, casterId, { mode: "ranged" });
+  const critChannel = spell?.scaling === "martial" ? "physical" : "spell";
+  const snap = resolveCombatSnapshot(world, casterId, { mode: "ranged", critChannel });
   const intelligenceBonus = getSpellIntelligenceBonus(world, casterId);
   const spellId = String(overrides?.spellId || spell?.id || "");
   return {
@@ -190,7 +188,7 @@ export function createSpellDamageContext(world, casterId, spell = {}, overrides 
     cause: String(overrides?.cause || spell?.cause || (spellId ? `spell:${spellId}` : "spell")),
     type: String(overrides?.type || "physical").toLowerCase(),
     intelligenceBonus,
-    critChancePct: Math.max(0, 5 + Math.floor(intelligenceBonus / 2) + (snap?.luck || 0) + ((snap?.critChance || 0) * 100)),
+    critChancePct: Math.max(0, 5 + (snap?.luck || 0) + ((snap?.critChance || 0) * 100)),
     critMult: Math.max(1, 2 + Number(snap?.critMult || 0)),
   };
 }
@@ -224,6 +222,27 @@ export function rollSpellCriticalFromContext(world, targetId, context = {}, salt
     scratch: {},
   });
   return rollBaggedCrit(world, sourceId, "spell", (critPct + (Number(procResult.bonusCritChance || 0) * 100)) / 100, rng);
+}
+
+/**
+ * Apply a spell heal using the caster's crit snapshot and the normal healing pipeline.
+ * @param {import("../../lib/ecs-js/index.js").World} world
+ * @param {number} targetId
+ * @param {number} amount
+ * @param {ReturnType<typeof createSpellDamageContext>} context
+ * @param {number} [salt=0]
+ */
+export function applySpellHealing(world, targetId, amount, context, salt = 0) {
+  const vit = world.get(targetId, Vitality);
+  const critical = amount > 0 && vit?.hp > 0 && vit.hp < effectiveMaxHp(world, targetId, vit)
+    && rollSpellCriticalFromContext(world, targetId, context, salt);
+  return applyHealing(world, {
+    target: targetId,
+    source: context.sourceId,
+    cause: context.cause,
+    amount: critical ? Math.floor(amount * context.critMult) : amount,
+    critical,
+  });
 }
 
 /**
@@ -281,7 +300,7 @@ export function buildSpellDamageSpecFromContext(world, targetId, context, option
  * @param {number} casterId
  * @param {number} targetId
  * @param {{
- *   spell?: { id?:string, cause?:string },
+ *   spell?: { id?:string, cause?:string, scaling?:'martial', powerScale?:number },
  *   baseAmount:number,
  *   type?:string,
  *   cause?:string,
@@ -301,7 +320,7 @@ export function buildSpellDamageSpec(world, casterId, targetId, options) {
   const missed = !rollSpellHit(world, casterId, targetId, options?.spell || {}, Number(options?.salt || 0));
   const powerScaleRaw = Number(options?.spell?.powerScale ?? 1);
   const powerScale = Number.isFinite(powerScaleRaw) ? Math.max(0, powerScaleRaw) : 1;
-  const martial = isMartialSpell(options?.spell || {});
+  const martial = options?.spell?.scaling === "martial";
   const scalingBonus = martial
     ? getMartialStrengthBonus(world, casterId)
     : context.intelligenceBonus;

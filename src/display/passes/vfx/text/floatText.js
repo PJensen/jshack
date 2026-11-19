@@ -141,7 +141,7 @@ export class FloatText {
   }
   /** @param {number} x @param {number} y @param {number} amount @param {FTOptions} [opts] */
   addHeal(x,y,amount, opts={}){
-    const text = '+' + Math.max(0, Math.floor(Math.abs(amount)||0));
+    const text = '+' + Math.max(0, Math.floor(Math.abs(amount)||0)) + (opts.crit ? '!' : '');
     // proportional to damage — no longer oversized
     const o = /** @type {FTOptions} */({ flavor:'heal', color: ((opts && opts.color) || '#7BFF7B'), scaleStart: 0.78, scaleEnd: 0.65 });
     return this.add(x,y,text, /** @type {FTOptions} */({ ...opts, ...o }));

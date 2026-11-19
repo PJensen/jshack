@@ -61,7 +61,7 @@ function pushModifier(modifiers, stat, source, value, reason) {
  *
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {number} entityId
- * @param {{ mode?: 'melee' | 'ranged' | string }} [context]
+ * @param {{ mode?: 'melee' | 'ranged' | string, targetId?:number, critChannel?:'physical'|'spell' }} [context]
  */
 export function resolveCombatSnapshot(world, entityId, context = {}) {
   const id = Number(entityId || 0) | 0;
@@ -83,8 +83,9 @@ export function resolveCombatSnapshot(world, entityId, context = {}) {
   const piercePenetration = Number(resolvedStats?.piercePenetration || 0);
   const evade = Number(resolvedStats?.evade || 0);
   const luck = Number(resolvedStats?.luck || 0) + statusStrength(world, id, "lucky");
-  const critChance = Number(resolvedStats?.critChancePhysical || 0);
-  const critMult = Number(resolvedStats?.critMultPhysical || 0);
+  const spellCrit = context.critChannel === "spell";
+  const critChance = Number((spellCrit ? resolvedStats?.critChanceSpell : resolvedStats?.critChancePhysical) || 0);
+  const critMult = Number((spellCrit ? resolvedStats?.critMultSpell : resolvedStats?.critMultPhysical) || 0);
 
   let hunger = 0;
   for (let i = 0; i < HUNGER_COMBAT_LEVELS.length; i++) {

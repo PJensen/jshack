@@ -18,7 +18,7 @@ import { dealDamage } from '../utils/dealDamage.js';
 import { compactDotEffects } from '../utils/effectSemantics.js';
 import { getPassiveBonuses } from '../utils/passiveBonuses.js';
 import { applyHealing } from '../utils/applyHealing.js';
-import { buildSpellDamageSpecFromContext } from '../utils/spellDamage.js';
+import { applySpellHealing, buildSpellDamageSpecFromContext } from '../utils/spellDamage.js';
 import { computeEnvelopeValue } from '../utils/blind.js';
 import { chebyshev } from '../utils/distance.js';
 import { hasSpellLineOfSight } from '../utils/spellTargeting.js';
@@ -387,12 +387,12 @@ export function effectSystem(world, dt = 1) {
             }
 
             if (e.meta && Number(e.meta.tickHeal || 0) > 0) {
-                applyHealing(world, {
-                    target: id,
-                    amount: Number(e.meta.tickHeal || 0) * stacks,
-                    source: id,
-                    cause: `${key}:recovery`,
-                });
+                const amount = Number(e.meta.tickHeal) * stacks;
+                if (e.meta.spellHealing) {
+                    applySpellHealing(world, id, amount, e.meta.spellHealing);
+                } else {
+                    applyHealing(world, { target: id, amount, source: id, cause: `${key}:recovery` });
+                }
             }
 
             if (def || e.meta?.operation) {
@@ -401,6 +401,10 @@ export function effectSystem(world, dt = 1) {
                     : [e.meta.operation];
                 for (let oi = 0; oi < operations.length; oi++) {
                     const operation = String(operations[oi] || 'none');
+                    if (operation === 'heal' && e.meta?.spellHealing) {
+                        applySpellHealing(world, id, potency * stacks, e.meta.spellHealing, oi);
+                        continue;
+                    }
                     const handledBySpellDamage = (operation === 'damage') && applySpellEffectDamage(world, id, e);
                     if (!handledBySpellDamage) {
                         applyEffectOperation(world, id, vit, operation, potency, stacks, key, Number(e.sourceId || id) | 0);

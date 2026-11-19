@@ -24,7 +24,6 @@ import { buildBlocksVisionMap, blockedCallback } from "../utils/vision.js";
 import { hasLOS } from "../../shared/math/gridLOS.js";
 import { bresenhamLine } from "../../shared/math/bresenham.js";
 import { dealDamage } from "../utils/dealDamage.js";
-import { applyHealing } from "../utils/applyHealing.js";
 import { findNearestValidTileAround } from "../utils/queries.js";
 import { combatSeed, hashString32, mulberry32, rollDice, pct } from "../utils/rng.js";
 import { rollBaggedCrit } from "../utils/critRandomizer.js";
@@ -34,7 +33,7 @@ import { upsertTimedEffect } from "../utils/effectSemantics.js";
 import { applyStatusEffect, ensureActiveEffects } from "../utils/effects.js";
 import { areFactionsAllied, areFactionsHostile } from "../utils/factionHostility.js";
 import { chebyshev, chebyshevScalar } from "../utils/distance.js";
-import { buildSpellDamageSpec, createSpellDamageContext, emitSpellMiss, getSpellHitChancePct, getSpellIntelligenceBonus, rollSpellHit, scaleSpellDamage } from "../utils/spellDamage.js";
+import { applySpellHealing, buildSpellDamageSpec, createSpellDamageContext, emitSpellMiss, getSpellHitChancePct, getSpellIntelligenceBonus, rollSpellHit, scaleSpellDamage } from "../utils/spellDamage.js";
 import { hasSpellLineOfSight } from "../utils/spellTargeting.js";
 import { computeMissEndpoint } from "../utils/projectileKinematics.js";
 import { isVisible as isTileVisible } from "../environment/dungeon/exploredMap.js";
@@ -1327,12 +1326,10 @@ REGISTRY['heal'] = function healScript(world, actor, spell, intent) {
     return;
   }
 
-  const actualHeal = applyHealing(world, {
-    target: targetId,
-    amount,
-    source: actor,
+  const actualHeal = applySpellHealing(world, targetId, amount, createSpellDamageContext(world, actor, spell, {
     cause: 'spell:heal',
-  }).amount;
+    type: 'healing',
+  })).amount;
   world.emit('spell:heal', { actor, targetId, at: targetPos, amount: actualHeal });
 };
 
@@ -1363,6 +1360,7 @@ function applyRenewalEffect(world, actor, target, spell, amount, turns) {
     startedAtTurn: world.step,
     sourceId: actor,
     spellId: spell?.id || 'renewal',
+    meta: { spellHealing: createSpellDamageContext(world, actor, spell, { cause: 'renewal', type: 'healing' }) },
   });
 }
 
@@ -1395,12 +1393,10 @@ REGISTRY['sacred_restoration'] = function sacredRestorationScript(world, actor, 
   const brain = /** @type any */ (world.get(actor, Brain));
   const intBonus = brain?.intelligence ? Math.max(0, Math.floor((brain.intelligence - 10) / 2)) : 0;
   const amount = 42 + intBonus * 3;
-  const healed = applyHealing(world, {
-    target: resolved.target,
-    amount,
-    source: actor,
+  const healed = applySpellHealing(world, resolved.target, amount, createSpellDamageContext(world, actor, spell, {
     cause: 'spell:sacred_restoration',
-  }).amount;
+    type: 'healing',
+  })).amount;
   world.emit('spell:sacred_restoration', { actor, targetId: resolved.target, at: resolved.pos, amount: healed });
 };
 
@@ -1410,12 +1406,13 @@ REGISTRY['lifebloom'] = function lifebloomScript(world, actor, spell, _intent) {
   const actorFaction = String(world.get(actor, Faction)?.key || '');
   const radius = Math.max(1, Number(spell?.radius || 3) | 0);
   const amount = 5 + Math.max(0, Math.floor((Number(world.get(actor, Brain)?.intelligence || 10) - 10) / 3));
+  const healing = createSpellDamageContext(world, actor, spell, { cause: 'spell:lifebloom', type: 'healing' });
   const affected = [];
   for (const [id, pos, fac, vit] of world.query(Position, Faction, Vitality)) {
     if (!pos || !fac || !vit || (vit.hp | 0) <= 0) continue;
     if (String(fac.key || '') !== actorFaction) continue;
     if (chebyshev(apos, pos) > radius) continue;
-    const healed = applyHealing(world, { target: id, amount, source: actor, cause: 'spell:lifebloom' }).amount;
+    const healed = applySpellHealing(world, id, amount, healing).amount;
     if (healed > 0) affected.push({ id, amount: healed });
   }
   world.emit('spell:lifebloom', {
@@ -1449,12 +1446,10 @@ REGISTRY['flash_heal'] = function flashHealScript(world, actor, spell, intent) {
     Math.floor(maxHp * FLASH_HEAL_TUNING.healFraction) + intBonus,
   );
 
-  const actualHeal = applyHealing(world, {
-    target: actor,
-    amount,
-    source: actor,
+  const actualHeal = applySpellHealing(world, actor, amount, createSpellDamageContext(world, actor, spell, {
     cause: 'spell:flash_heal',
-  }).amount;
+    type: 'healing',
+  })).amount;
 
   /** @type {Array<{id:number, amount:number, at:{x:number,y:number}}>} */
   const splashHits = [];
@@ -3678,6 +3673,7 @@ REGISTRY['verdant_ward'] = function verdantWardScript(world, actor, spell, _inte
     sourceId: actor,
     meta: {
       tickHeal: Number(mechanics.tickHeal ?? 0),
+      spellHealing: createSpellDamageContext(world, actor, spell, { cause: 'verdant_ward:recovery', type: 'healing' }),
       visionStart: 0,
       visionTo: 0,
       visionEnd: 0,
@@ -4644,7 +4640,10 @@ REGISTRY['consecrate'] = function consecrateScript(world, actor, spell, _intent)
       potency: Number(active.potency ?? 1),
       stacks: Number(active.stacks ?? 1),
       sourceId: actor,
-      meta: { ...(active.mechanics || {}) },
+      meta: {
+        ...(active.mechanics || {}),
+        spellHealing: createSpellDamageContext(world, actor, spell, { cause: 'consecrate:recovery', type: 'healing' }),
+      },
     });
   }
 

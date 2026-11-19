@@ -2,6 +2,7 @@
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { BaseStats } from "../src/rules/components/BaseStats.js";
 import { Brain } from "../src/rules/components/Brain.js";
 import { CastSpellIntent } from "../src/rules/components/Intents/CastSpellIntent.js";
 import { Channeling } from "../src/rules/components/Channeling.js";
@@ -9,6 +10,7 @@ import { Faction } from "../src/rules/components/Faction.js";
 import { Mana } from "../src/rules/components/Mana.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
+import { getSpell } from "../src/rules/data/spells.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { castSpellSystem } from "../src/rules/systems/castSpellSystem.js";
@@ -23,7 +25,7 @@ function actor(world, x, y, hp = 10, maxHp = 30, faction = "ally") {
   return id;
 }
 
-Deno.test("renewal applies immediate healing and a timed heal-over-time effect", () => {
+Deno.test("renewal applies a timed heal-over-time effect", () => {
   const world = new World({ seed: 11 });
   const caster = actor(world, 0, 0, 30, 30);
   const target = actor(world, 2, 0, 5, 30);
@@ -39,6 +41,41 @@ Deno.test("renewal applies immediate healing and a timed heal-over-time effect",
   assert(world.get(target, Vitality).hp > before, "renewal should tick through effectSystem");
 });
 
+Deno.test("Renewal ticks can crit using the caster's snapshot", () => {
+  const world = new World({ seed: 11 });
+  const caster = actor(world, 0, 0, 30, 30);
+  const target = actor(world, 2, 0, 5, 30);
+  world.add(caster, BaseStats, { critChance: 0.95, critMultiplier: 2 });
+  const healed = [];
+  world.on("healed", (event) => healed.push(event));
+
+  runSpellScript(world, caster, { id: "renewal", script: "renewal", range: 6 }, { targetId: target });
+  world.remove(caster, BaseStats);
+  effectSystem(world);
+  effectSystem(world);
+
+  assertEquals(healed.map((event) => [event.source, event.amount, event.critical]), [
+    [caster, 5, true], [caster, 5, true],
+  ]);
+});
+
+Deno.test("direct and channeled spell heals can crit and still cap at max HP", () => {
+  const world = new World({ seed: 12 });
+  const caster = actor(world, 0, 0, 29, 30);
+  const ally = actor(world, 2, 0, 5, 30);
+  world.add(caster, BaseStats, { critChance: 0.95 });
+  const healed = [];
+  world.on("healed", (event) => healed.push(event));
+
+  runSpellScript(world, caster, { id: "flash_heal", script: "flash_heal" }, {});
+  runSpellScript(world, caster, { id: "lifebloom", script: "lifebloom", radius: 3 }, { _channelTick: true });
+
+  assertEquals(healed.map((event) => [event.cause, event.amount, event.critical]), [
+    ["spell:flash_heal", 1, true], ["spell:lifebloom", 10, true],
+  ]);
+  assertEquals(world.get(ally, Vitality).hp, 15);
+});
+
 Deno.test("lifebloom heals multiple nearby allies on each sustain tick", () => {
   const world = new World({ seed: 12 });
   const caster = actor(world, 0, 0, 20, 30);
@@ -49,6 +86,23 @@ Deno.test("lifebloom heals multiple nearby allies on each sustain tick", () => {
 
   assert(world.get(ally, Vitality).hp > 5);
   assertEquals(world.get(farAlly, Vitality).hp, 5);
+});
+
+Deno.test("spell recovery ticks can crit while ordinary regeneration keeps its fixed amount", () => {
+  const world = new World({ seed: 13 });
+  const caster = actor(world, 0, 0, 5, 30);
+  world.add(caster, BaseStats, { critChance: 0.95 });
+  const healed = [];
+  world.on("healed", (event) => healed.push(event));
+
+  runSpellScript(world, caster, getSpell("verdant_ward"), {});
+  runSpellScript(world, caster, getSpell("consecrate"), {});
+  world.get(caster, ActiveEffects).effects.push({ key: "regen", potency: 1, turnsLeft: 2, sourceId: caster });
+  effectSystem(world);
+
+  assertEquals(healed.map((event) => [event.cause, event.amount, !!event.critical]), [
+    ["verdant_ward:recovery", 2, true], ["consecrate:recovery", 4, true], ["regen", 1, false],
+  ]);
 });
 
 Deno.test("sacred restoration is a damage-interruptible cast", () => {

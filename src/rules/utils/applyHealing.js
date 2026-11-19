@@ -15,7 +15,7 @@ function finiteMultiplier(value, fallback) {
  * Resurrection and explicit HP initialization are not healing.
  *
  * @param {import("../../lib/ecs-js/index.js").World} world
- * @param {{target:number, amount:number, source?:number, cause?:string, bypassModifiers?:boolean, maxHp?:number}} spec
+ * @param {{target:number, amount:number, source?:number, cause?:string, bypassModifiers?:boolean, maxHp?:number, critical?:boolean}} spec
  */
 export function applyHealing(world, spec) {
   const target = Number(spec.target || 0) | 0;
@@ -59,6 +59,7 @@ export function applyHealing(world, spec) {
     hpBefore,
     hpAfter,
     maxHp,
+    ...(spec.critical ? { critical: true } : {}),
   };
   recordHealingApplied(world, { ...payload, step: world.step | 0 });
   world.emit("healed", payload);

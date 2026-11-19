@@ -1,5 +1,5 @@
 import "./helpers/installContentCatalog.mjs";
-import { assert } from "jsr:@std/assert";
+import { assert, assertEquals } from "jsr:@std/assert";
 import { SPELL_DEFS, getSpell, listSpells } from '../src/rules/data/spells.js';
 import { ITEM_CATALOG, getCatalogItem, listCatalogItems } from '../src/rules/data/itemCatalog.js';
 import { getAffix, listAffixEntries, listAffixes } from '../src/rules/data/affixes.js';
@@ -19,6 +19,14 @@ Deno.test("spell definitions are valid", () => {
   assert(getSpell('lightning') !== null, 'getSpell should find lightning');
   assert(getSpell('nonexistent') === null, 'getSpell should return null for missing');
   assert(listSpells().length === Object.keys(SPELL_DEFS).length, 'listSpells length should match');
+});
+
+Deno.test("martial scaling profiles are explicit in the spell catalog", () => {
+  const ids = listSpells().filter((spell) => spell.scaling === 'martial').map((spell) => spell.id).sort();
+  assertEquals(ids, [
+    'charge', 'cheap_shot', 'cleave', 'death_volley', 'goblin_dirty_trick',
+    'holy_strike', 'rend', 'savage_strike', 'shield_bash',
+  ]);
 });
 
 Deno.test("item catalog definitions are valid", () => {

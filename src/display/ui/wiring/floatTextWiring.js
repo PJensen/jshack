@@ -294,7 +294,7 @@ function installFloatTextListeners({ world, ftext, fx, getPosition, isVisibleAt,
     if (!(amount > 0) || !Number.isFinite(amount)) return;
     const pos = getPosition(Number(targetId || 0));
     if (pos && canShowAt(pos.x, pos.y)) {
-      ftext.addHeal(pos.x, pos.y, amount, { color: '#7BFF7B' });
+      ftext.addHeal(pos.x, pos.y, amount, event?.critical ? { color: '#7BFF7B', crit: true } : { color: '#7BFF7B' });
     }
   });
 

@@ -136,13 +136,15 @@ Deno.test("floatText healing contract supports legacy id and filters hidden or z
 
   world.emit("healed", { id: target, amount: 2 });
   world.emit("healed", { target, id: target + 1, amount: 4 });
+  world.emit("healed", { target, amount: 6, critical: true });
   world.emit("healed", { target, amount: 0 });
   world.emit("healed", { target, amount: -1 });
   world.emit("healed", { target: target + 1, amount: 5 });
 
-  assertEquals(calls.length, 2);
+  assertEquals(calls.length, 3);
   assertEquals(calls[0], [6, 7, 2, { color: "#7BFF7B" }]);
   assertEquals(calls[1], [6, 7, 4, { color: "#7BFF7B" }]);
+  assertEquals(calls[2], [6, 7, 6, { color: "#7BFF7B", crit: true }]);
 });
 
 Deno.test("floatText healing installation is idempotent and damage stays on damage path", () => {

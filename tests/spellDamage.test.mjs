@@ -128,6 +128,32 @@ Deno.test("martial spell damage uses Strength and the equipped mainhand", () => 
   assert(withoutWeapon.amount >= 7, "Strength above baseline should scale martial base damage");
 });
 
+Deno.test("martial crit uses Dexterity and spell crit uses Intelligence once", () => {
+  const world = new World({ seed: 0xC0FFEE });
+  const caster = makeCaster(world, { intelligence: 30 });
+  world.add(caster, BaseStats, { strength: 20, dexterity: 16, intelligence: 30 });
+
+  assertEquals(createSpellDamageContext(world, caster, getSpell("cleave")).critChancePct, 8);
+  assertEquals(createSpellDamageContext(world, caster, getSpell("smite")).critChancePct, 15);
+});
+
+Deno.test("Holy Strike uses martial damage scaling and still deals holy damage", () => {
+  loadFlatFloor();
+  const world = new World({ seed: 0xC0FFEE });
+  const caster = makeCaster(world, { intelligence: 30 });
+  world.add(caster, BaseStats, { strength: 20 });
+  const target = makeTarget(world);
+  const events = [];
+  world.on("damaged", (event) => events.push(event));
+
+  runSpellScript(world, caster, getSpell("holy_strike"), {});
+
+  assertEquals(events.length, 1);
+  assertEquals(events[0].target, target);
+  assertEquals(events[0].type, "holy");
+  assertEquals(events[0].rawAmount, events[0].critical ? 10 : 5);
+});
+
 Deno.test("hostile spell damage can miss when spellAvoid beats spellHit", () => {
   const world = new World({ seed: 0xC0FFEE });
   const caster = makeCaster(world, { intelligence: 10, spellHitDerived: 0 });
