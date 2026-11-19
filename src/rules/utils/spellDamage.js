@@ -1,7 +1,9 @@
 import { Brain } from "../components/Brain.js";
+import { Equipment } from "../components/Equipment.js";
 import { Faction } from "../components/Faction.js";
+import { ItemInfo } from "../components/ItemInfo.js";
 import { Position } from "../components/Position.js";
-import { combatSeed, hashString32, mulberry32 } from "./rng.js";
+import { combatSeed, hashString32, mulberry32, rollDice } from "./rng.js";
 import { rollBaggedCrit } from "./critRandomizer.js";
 import { evaluateEquippedAffixProcs } from "./affixTopology.js";
 import { createStatusEvent } from "../../shared/events/statusEvent.js";
@@ -29,6 +31,47 @@ export function getSpellIntelligenceBonus(world, casterId) {
     10,
   );
   return Math.max(0, spellPower - 10);
+}
+
+/**
+ * Martial abilities use the same baseline model as spell INT scaling, but
+ * draw from Strength. Schools are the declaration point for this rule so
+ * individual martial spells do not need bespoke scaling fields.
+ *
+ * @param {import("../../lib/ecs-js/index.js").World} world
+ * @param {number} casterId
+ * @returns {number}
+ */
+export function getMartialStrengthBonus(world, casterId) {
+  const resolved = resolveCanonicalStats(world, casterId);
+  return Math.max(0, Number(resolved?.strength || 0) - 10);
+}
+
+function isMartialSpell(spell = {}) {
+  return Array.isArray(spell?.schools) && spell.schools.includes("martial");
+}
+
+/**
+ * Roll the equipped mainhand contribution for a martial ability. This is
+ * deliberately separate from the normal melee attack path: the spell still
+ * owns its targeting and hit behavior, while the weapon supplies damage.
+ */
+function rollMartialMainhandDamage(world, casterId, targetId, spell = {}, salt = 0) {
+  const equipment = world.get(casterId, Equipment);
+  const weaponId = Number(equipment?.weapon || 0) | 0;
+  if (!(weaponId > 0)) return 0;
+  const weapon = world.get(weaponId, ItemInfo);
+  const dice = String(weapon?.damageDice || "").trim();
+  if (!dice) return 0;
+  const seed = combatSeed(
+    world.seed,
+    world.step,
+    casterId | 0,
+    targetId | 0,
+    hashString32(String(spell?.id || "martial")) ^ 0x4d415254 ^ (Number(salt) >>> 0),
+  );
+  const rolled = rollDice(dice, mulberry32(seed));
+  return Math.max(0, Number(rolled || 0) + Number(weapon?.damageBonus || 0));
 }
 
 function getSpellHitBonus(world, casterId) {
@@ -258,8 +301,16 @@ export function buildSpellDamageSpec(world, casterId, targetId, options) {
   const missed = !rollSpellHit(world, casterId, targetId, options?.spell || {}, Number(options?.salt || 0));
   const powerScaleRaw = Number(options?.spell?.powerScale ?? 1);
   const powerScale = Number.isFinite(powerScaleRaw) ? Math.max(0, powerScaleRaw) : 1;
-  const scaled = scaleSpellDamageFromBonus(Number(options?.baseAmount || 0), context.intelligenceBonus);
-  const scaledWithPower = scaled <= 0 ? 0 : Math.max(1, Math.round(scaled * powerScale));
+  const martial = isMartialSpell(options?.spell || {});
+  const scalingBonus = martial
+    ? getMartialStrengthBonus(world, casterId)
+    : context.intelligenceBonus;
+  const scaled = scaleSpellDamageFromBonus(Number(options?.baseAmount || 0), scalingBonus);
+  const weaponDamage = martial
+    ? rollMartialMainhandDamage(world, casterId, targetId, options?.spell || {}, Number(options?.salt || 0))
+    : 0;
+  const combined = scaled + weaponDamage;
+  const scaledWithPower = combined <= 0 ? 0 : Math.max(1, Math.round(combined * powerScale));
 
   // Auto-derive caster→target impactVector for spells unless caller overrides.
   let impactVector = options?.impactVector;

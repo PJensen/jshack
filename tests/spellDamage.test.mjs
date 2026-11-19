@@ -12,7 +12,8 @@ import { Status } from "../src/rules/components/Status.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
 import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { getSpell } from "../src/rules/data/spells.js";
-import { createSpellDamageContext, getSpellHitChancePct, scaleSpellDamage } from "../src/rules/utils/spellDamage.js";
+import { buildSpellDamageSpec, createSpellDamageContext, getSpellHitChancePct, scaleSpellDamage } from "../src/rules/utils/spellDamage.js";
+import { ItemInfo } from "../src/rules/components/ItemInfo.js";
 import { attach } from "../src/lib/ecs-js/index.js";
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { clearAll as clearTileMap, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
@@ -96,6 +97,35 @@ Deno.test("scaleSpellDamage consumes resolved spellPower from stat expressions",
   });
 
   assert(scaleSpellDamage(world, caster, 10) > 10, "resolved spellPower from expressions should scale spell damage");
+});
+
+Deno.test("martial spell damage uses Strength and the equipped mainhand", () => {
+  const world = new World({ seed: 0xC0FFEE });
+  const caster = makeCaster(world, { intelligence: 10 });
+  const target = makeTarget(world);
+  world.add(caster, BaseStats, { strength: 20 });
+
+  const withoutWeapon = buildSpellDamageSpec(world, caster, target, {
+    spell: getSpell("cleave"),
+    baseAmount: 5,
+  });
+
+  const weapon = world.create();
+  world.add(weapon, ItemInfo, {
+    type: "equip",
+    slot: "weapon",
+    damageDice: "1d6",
+    damageBonus: 2,
+  });
+  world.mutate(caster, Equipment, (equipment) => { equipment.weapon = weapon; });
+
+  const withWeapon = buildSpellDamageSpec(world, caster, target, {
+    spell: getSpell("cleave"),
+    baseAmount: 5,
+  });
+
+  assert(withWeapon.amount > withoutWeapon.amount, "mainhand damage should feed martial spell damage");
+  assert(withoutWeapon.amount >= 7, "Strength above baseline should scale martial base damage");
 });
 
 Deno.test("hostile spell damage can miss when spellAvoid beats spellHit", () => {

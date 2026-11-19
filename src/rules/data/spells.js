@@ -710,7 +710,7 @@ export const SPELL_DEFS = {
     targeting: 'enemy',
     description: 'A close-range slam that rattles and shoves the target backward.',
     effects: [
-      { kind: 'damage', element: 'physical', amount: 'Short-range impact damage' },
+      { kind: 'damage', element: 'physical', amount: 'Strength + mainhand-scaled impact damage' },
       { kind: 'status', status: 'stun', duration: '1 turn' },
       { kind: 'movement', mode: 'knockback', note: 'Pushes target 1 tile on contact' },
     ],
@@ -1172,7 +1172,7 @@ export const SPELL_DEFS = {
     radius: 1,
     description: 'A brutal horizontal sweep that carves through everything within arm\'s reach.',
     effects: [
-      { kind: 'damage', element: 'physical', amount: '5 base, INT-scaled; hits all adjacent hostiles' },
+      { kind: 'damage', element: 'physical', amount: '5 base, Strength + mainhand-scaled; hits all adjacent hostiles' },
     ],
   },
   rend: {
@@ -1190,7 +1190,7 @@ export const SPELL_DEFS = {
     targeting: 'enemy',
     description: 'Tear open a deep wound that keeps bleeding after the strike lands.',
     effects: [
-      { kind: 'damage', element: 'physical', amount: '4 base, weapon-scaled' },
+      { kind: 'damage', element: 'physical', amount: '4 base, Strength + mainhand-scaled' },
       { kind: 'status', status: 'bleed', duration: '4 turns' },
     ],
   },
@@ -1212,7 +1212,7 @@ export const SPELL_DEFS = {
     description: 'Lower your shoulder and thunder across the dungeon into a nearby foe.',
     effects: [
       { kind: 'movement', mode: 'dash', note: 'Rushes in a straight line toward a hostile target' },
-      { kind: 'damage', element: 'physical', amount: '6 base, weapon-scaled impact' },
+      { kind: 'damage', element: 'physical', amount: '6 base, Strength + mainhand-scaled impact' },
       { kind: 'status', status: 'stun', duration: '1 turn on hit' },
     ],
   },
