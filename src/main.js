@@ -5133,7 +5133,17 @@ function render(worldView) {
       const itemKind = resolveRenderableKind(glyphAtlas, itemRender);
       const paletteBase = (glyphAtlas.get(itemKind) || glyphAtlas.get('default') || {}).baseScale || 1;
       const finalItemScale = (e.itemScale || 1) * paletteBase;
-      drawKindScaled(glyphAtlas, bctx, itemKind, itemRender.pos.x, itemRender.pos.y, finalItemScale, e.rotation || 0);
+      const isPotionItem = itemKind === 'potion' || itemKind.startsWith('potion_')
+        || hasTag(itemRender, 'potion_glow');
+      if (isPotionItem) {
+        const pulse = 0.5 + 0.5 * Math.sin(_fxTime * 2.4 + (e.id | 0) * 0.83);
+        bctx.save();
+        bctx.filter = `brightness(${(0.92 + pulse * 0.28).toFixed(3)}) saturate(${(1.0 + pulse * 0.24).toFixed(3)})`;
+        drawKindScaled(glyphAtlas, bctx, itemKind, itemRender.pos.x, itemRender.pos.y, finalItemScale, e.rotation || 0);
+        bctx.restore();
+      } else {
+        drawKindScaled(glyphAtlas, bctx, itemKind, itemRender.pos.x, itemRender.pos.y, finalItemScale, e.rotation || 0);
+      }
       if (_rp) _rp.entitiesDrawn++;
       // Build tag set once — avoids 15+ O(n) .includes() scans per item
       _renderTagSet.clear();
