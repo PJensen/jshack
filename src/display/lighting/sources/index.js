@@ -492,8 +492,8 @@ export function collectLightSources(view, opts = {}) {
         // Potion glyphs render at their world position (including item visual
         // offsets), so keep the point light anchored to that same position.
         const visualOff = e.visualOff || null;
-        const potionX = e.pos.x + Number(visualOff?.dx || 0);
-        const potionY = e.pos.y + Number(visualOff?.dy || 0);
+        const potionX = e.pos.x + 0.5 + Number(visualOff?.dx || 0);
+        const potionY = e.pos.y + 0.5 + Number(visualOff?.dy || 0);
         // Potions are small items: keep their light tightly concentrated
         // inside one tile instead of washing out the surrounding floor.
         emitPatterned(out, 'biolum', t, e.id, potionX, potionY, 0.75, col, 2);
