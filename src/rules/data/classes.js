@@ -9,7 +9,7 @@ export const CLASS_DEFS = {
     description: 'A brute devoted to slaughter. Every kill is an offering.',
     deityId: 'molkhar',
     stats: {
-      maxHp: 33,
+      maxHp: 55,
       maxMana: 20,
       manaRegen: 0.05,
       maxStamina: 130,
@@ -46,7 +46,7 @@ export const CLASS_DEFS = {
     description: 'A guardian of nature. Communes with the wild, heals the wounded.',
     deityId: 'gaia',
     stats: {
-      maxHp: 23,
+      maxHp: 42,
       maxMana: 70,
       manaRegen: 0.15,
       maxStamina: 80,
@@ -83,7 +83,7 @@ export const CLASS_DEFS = {
     description: 'Quick, slippery, unreliable. Loki loves a good con.',
     deityId: 'loki',
     stats: {
-      maxHp: 20,
+      maxHp: 38,
       maxMana: 35,
       manaRegen: 0.12,
       maxStamina: 110,
@@ -128,7 +128,7 @@ export const CLASS_DEFS = {
     description: 'A scholar of ruins. Digs deep, identifies relics, and trusts in luck.',
     deityId: 'gaia',
     stats: {
-      maxHp: 22,
+      maxHp: 40,
       maxMana: 30,
       manaRegen: 0.08,
       maxStamina: 100,
@@ -165,7 +165,7 @@ export const CLASS_DEFS = {
     description: 'A dark conjurer bound to forces beyond the veil. Commands the dead and channels hellfire through a familiar.',
     deityId: 'molkhar',
     stats: {
-      maxHp: 22,
+      maxHp: 39,
       maxMana: 65,
       manaRegen: 0.14,
       maxStamina: 75,
@@ -202,7 +202,7 @@ export const CLASS_DEFS = {
     description: 'A gravebinder who turns fallen enemies into temporary allies. Every corpse is a choice.',
     deityId: 'molkhar',
     stats: {
-      maxHp: 21,
+      maxHp: 38,
       maxMana: 60,
       manaRegen: 0.14,
       maxStamina: 80,
@@ -240,7 +240,7 @@ export const CLASS_DEFS = {
     description: 'Pure elemental destruction. Glass cannon — lowest HP, highest mana.',
     deityId: 'loki',
     stats: {
-      maxHp: 18,
+      maxHp: 34,
       maxMana: 75,
       manaRegen: 0.16,
       maxStamina: 70,
@@ -278,7 +278,7 @@ export const CLASS_DEFS = {
     description: 'Swamp-born and thick-skinned. Poisons, entangles, and outlasts.',
     deityId: 'gaia',
     stats: {
-      maxHp: 28,
+      maxHp: 50,
       maxMana: 35,
       manaRegen: 0.08,
       maxStamina: 100,
@@ -316,7 +316,7 @@ export const CLASS_DEFS = {
     description: 'Wandering ascetic. Starts with almost nothing — rewards exploration and patience.',
     deityId: 'seraphine',
     stats: {
-      maxHp: 19,
+      maxHp: 36,
       maxMana: 45,
       manaRegen: 0.18,
       maxStamina: 90,
@@ -351,7 +351,7 @@ export const CLASS_DEFS = {
     description: 'Devoted to Seraphine. Shields the faithful, smites the wicked.',
     deityId: 'seraphine',
     stats: {
-      maxHp: 25,
+      maxHp: 46,
       maxMana: 55,
       manaRegen: 0.13,
       maxStamina: 90,
@@ -390,7 +390,7 @@ export const CLASS_DEFS = {
     description: 'Death-aware and fate-bound. Reads the shape of battle and draws strength from those who fall nearby.',
     deityId: 'seraphine',
     stats: {
-      maxHp: 27,
+      maxHp: 48,
       maxMana: 45,
       manaRegen: 0.11,
       maxStamina: 105,
