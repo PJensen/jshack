@@ -41,6 +41,7 @@ export default {
     { "dx": 1, "dy": 2, "kind": "flower_tulip" },
     { "dx": 2, "dy": -1, "kind": "flower_sunflower" },
     { "dx": 2, "dy": 1, "kind": "flower_sunflower" },
-    { "dx": 0, "dy": 0, "kind": "fountain" }
+    { "dx": 0, "dy": 0, "kind": "fountain" },
+    { "dx": 1, "dy": 0, "kind": "catalog_item", "params": { "itemId": "stone_flint" } }
   ]
 };

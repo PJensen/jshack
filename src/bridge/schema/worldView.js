@@ -1354,8 +1354,13 @@ export function buildWorldView(world) {
 			if (_questGiverIds.has(id) && !rec.tags.includes('quest_giver')) rec.tags.push('quest_giver');
 			if (_questTurnInGiverIds.has(id) && !rec.tags.includes('quest_turn_in')) rec.tags.push('quest_turn_in');
 			if (_questInProgressGiverIds.has(id) && !rec.tags.includes('quest_in_progress')) rec.tags.push('quest_in_progress');
-			if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
-			if (kind === 'epic_chest') rec.tags.push('epic_glowing');
+			// Chest glow communicates that the chest is still lootable. Ground
+			// chests remove Collider when emptied, so use that existing lifecycle
+			// signal instead of introducing a second looted-state component.
+			if (world.has(id, Collider)) {
+				if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
+				if (kind === 'epic_chest') rec.tags.push('epic_glowing');
+			}
 			if (harvestNode && String(harvestNode.kind || "") === "fishing_spot") {
 				rec.tags.push(harvestNode.ready === true ? "fishing_spot_ready" : "fishing_spot_depleted");
 				const pressure = Math.max(0, Number(harvestNode.fishingPressure || 0) | 0);
@@ -1490,8 +1495,12 @@ export function buildWorldView(world) {
 			if (_questGiverIds.has(id) && !rec.tags.includes('quest_giver')) rec.tags.push('quest_giver');
 			if (_questTurnInGiverIds.has(id) && !rec.tags.includes('quest_turn_in')) rec.tags.push('quest_turn_in');
 			if (_questInProgressGiverIds.has(id) && !rec.tags.includes('quest_in_progress')) rec.tags.push('quest_in_progress');
-			if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
-			if (kind === 'epic_chest') rec.tags.push('epic_glowing');
+			// See the primary entity projection above: collider presence is the
+			// canonical "still lootable" signal for chest glow.
+			if (world.has(id, Collider)) {
+				if (kind === 'legendary_chest') rec.tags.push('legendary_glowing');
+				if (kind === 'epic_chest') rec.tags.push('epic_glowing');
+			}
 			if (harvestNode2 && String(harvestNode2.kind || "") === "fishing_spot") {
 				rec.tags.push(harvestNode2.ready === true ? "fishing_spot_ready" : "fishing_spot_depleted");
 				const pressure = Math.max(0, Number(harvestNode2.fishingPressure || 0) | 0);
