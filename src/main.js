@@ -4005,8 +4005,11 @@ function drawEntityGlyph(atlas, ctx, entity, scale = 1, rotation = 0) {
   const shimmer = isPotion
     ? (0.5 + 0.5 * Math.sin(_fxTime * 2.4 + (entity.id | 0) * 0.83))
     : 0;
+  const hueShift = isPotion
+    ? Math.sin(_fxTime * 1.8 + (entity.id | 0) * 0.83) * 18
+    : 0;
   const shimmerFilter = isPotion
-    ? `brightness(${(0.82 + shimmer * 0.50).toFixed(3)}) saturate(${(1.0 + shimmer * 0.42).toFixed(3)})`
+    ? `brightness(${(0.78 + shimmer * 0.62).toFixed(3)}) saturate(${(1.0 + shimmer * 0.50).toFixed(3)}) hue-rotate(${hueShift.toFixed(2)}deg)`
     : '';
   const invisible = hasTag(entity, 'invisible');
   const shadowCloak = hasTag(entity, 'shadow_cloak');
@@ -5137,8 +5140,9 @@ function render(worldView) {
         || hasTag(itemRender, 'potion_glow');
       if (isPotionItem) {
         const pulse = 0.5 + 0.5 * Math.sin(_fxTime * 2.4 + (e.id | 0) * 0.83);
+        const hueShift = Math.sin(_fxTime * 1.8 + (e.id | 0) * 0.83) * 18;
         bctx.save();
-        bctx.filter = `brightness(${(0.82 + pulse * 0.50).toFixed(3)}) saturate(${(1.0 + pulse * 0.42).toFixed(3)})`;
+        bctx.filter = `brightness(${(0.78 + pulse * 0.62).toFixed(3)}) saturate(${(1.0 + pulse * 0.50).toFixed(3)}) hue-rotate(${hueShift.toFixed(2)}deg)`;
         drawKindScaled(glyphAtlas, bctx, itemKind, itemRender.pos.x, itemRender.pos.y, finalItemScale, e.rotation || 0);
         bctx.restore();
       } else {
