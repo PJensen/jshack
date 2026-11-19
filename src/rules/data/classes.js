@@ -34,8 +34,9 @@ export const CLASS_DEFS = {
       { itemId: 'scroll_identify', count: 4 },
     ],
     startingSpells: [
-      'savage_strike',   // 🦬 generator: free melee, +20 stamina
-      'cleave',          // 🪓 spender: AoE sweep, hits all adjacent hostiles
+      'charge',          // 🐂 close distance and strike hard
+      'rend',            // 🩸 sustained physical damage
+      'cleave',          // 🪓 sweep all adjacent hostiles
     ],
   },
 
