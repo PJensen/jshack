@@ -1,0 +1,49 @@
+mouse targeting no longer works for crtain spells, meteor, for example, see what's happenin here please
+
+---
+
+I highly doubt it had aything to do with camera zoom since it preceeded that work
+
+---
+
+yeah; jesus -- be careful please -- make sure what you just did is stil right considering the new finding
+
+---
+
+?????&#x20;
+
+we used to be able to use the mouse for tageting on PC --
+
+---
+
+not just METEOR
+
+---
+
+FYI: when traps are triggered, screen shake, slight zoom please, maybe give each trap a slightly different character, but do the basic thing (common thing) first. unless the specifics are obvious to you and particularly easy.
+
+FYI: mouse targteing should SHOW the intermediate locations! not just the final click
+
+---
+
+certain spell lighting is half tile off in 2-axis -- frost nova for example
+
+---
+
+also -- I feel like certain spells (meteor) should lerp to the impact site (x,y) and come back w/ while zooming in and out -- that would be amazing.
+
+---
+
+still, trying to make the game more addictive, I wonder what would happen if we added a fishing level? fishing zoom?
+
+---
+
+meteor zoom happens too fast, slow time down if you can
+
+---
+
+\*\* slow\*\*\* time down -- hear me?
+
+---
+
+why sretch the caera envelope? lol -- that makes no sense without slowing time itsef down
