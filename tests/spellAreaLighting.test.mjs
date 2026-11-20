@@ -24,3 +24,23 @@ Deno.test("spell area lights use tile centers", () => {
   const light = controller.getActiveLights()[0];
   assertEquals({ x: light.x, y: light.y }, { x: 5.5, y: 7.5 });
 });
+
+Deno.test("meteor impact requests slow motion after the camera approach", () => {
+  const world = new World({ seed: 1 });
+  const slowdowns = [];
+  const controller = createSpellAreaFxController({
+    world,
+    cam: { x: 0, y: 0, targetX: 0, targetY: 0, scale: 1, targetScale: 1 },
+    fx: { pool: { spawn() {} } },
+    PERF: { quality: "high" },
+    getFxTime: () => 0,
+    hitstopFx: { requestSlowdown: (...args) => slowdowns.push(args) },
+  });
+  controller.installListeners();
+
+  world.emit("spell:meteor", { origin: { x: 5, y: 7 }, radius: 2 });
+  controller.tick(0.35);
+  assertEquals(slowdowns.length, 0);
+  controller.tick(0.02);
+  assertEquals(slowdowns, [[0.72, 0.22]]);
+});

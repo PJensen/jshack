@@ -6131,7 +6131,6 @@ function frame(now) {
   flushPendingStairTransition();
 
   // Advance display-only systems (fx.step moved below — needs worldView for emitter origins)
-  // Camera / shake / zoom use real dt so they stay responsive during hitstop
   // Camera focus effects participate in cinematic slowdown; ordinary camera
   // follow remains real-time responsive during combat hitstop.
   const cameraDt = cam._cameraFocus ? displayDt : dtSec;
