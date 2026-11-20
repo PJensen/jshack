@@ -16,6 +16,7 @@ import { createMeleeSlashFxController } from "../fx/meleeSlashFx.js";
 import { createAggroFxController } from "../fx/aggroFxController.js";
 import { createDeathEssenceFxController } from "../fx/deathEssenceFxController.js";
 import { startShake } from "../camera/shake.js";
+import { startCameraFocus } from "../camera/controller.js";
 import { startZoomLerp } from "../camera/zoomPunch.js";
 import { installFloatTextWiring } from "../ui/wiring/floatTextWiring.js";
 import { createFountainPresentationExtension } from "../ui/wiring/fountainPresentationExtension.js";
@@ -186,6 +187,31 @@ export function setupDisplayRuntime({
     if (!isPlayer(victimId)) return;
     startShake(cam, 1.8, 0.11);
     startZoomLerp(cam, 0.028, 0.06, 0.04, 0.24);
+  });
+
+  // Fishing gets a quiet anticipation beat at the water, then a stronger
+  // reward beat when the line actually comes back. Keep the cast subtle so
+  // the long channel remains readable; scale the catch by what was landed.
+  world.on('fishing:cast', ({ actor, x, y }) => {
+    if (!isPlayer(actor) || !Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) return;
+    startCameraFocus(cam, Number(x), Number(y), { inDur: 0.24, holdDur: 0.08, outDur: 0.42 });
+    startZoomLerp(cam, 0.016, 0.24, 0.08, 0.42);
+  });
+
+  world.on('fishing:caught', ({ actor, x, y, caughtId, tableId }) => {
+    if (!isPlayer(actor) || !Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) return;
+    const caughtEntityId = Number(caughtId || 0) | 0;
+    if (!(caughtEntityId > 0)) return;
+    const info = getItemInfo(caughtEntityId);
+    const rarity = String(info?.rarityName || '').toLowerCase();
+    const rank = rarity === 'legendary' ? 5
+      : rarity === 'epic' ? 4
+      : rarity === 'rare' ? 3
+      : rarity === 'uncommon' ? 2 : 1;
+    const spotBonus = String(tableId || '') === 'fishing:spot' ? 0.006 : 0;
+    startCameraFocus(cam, Number(x), Number(y), { inDur: 0.12, holdDur: 0.12, outDur: 0.46 });
+    startZoomLerp(cam, 0.020 + rank * 0.006 + spotBonus, 0.12, 0.12, 0.46);
+    if (rank >= 4) startShake(cam, 0.55 + rank * 0.10, 0.08);
   });
 
   // Every crit gets the same readable reward beat, regardless of whether it
