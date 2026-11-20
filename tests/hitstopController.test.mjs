@@ -28,3 +28,10 @@ Deno.test("projectile hitstop waits for the delayed impact", () => {
   assertEquals(controller.scale(0.016), 0.016);
   assert(controller.scale(0.04) < 0.04);
 });
+
+Deno.test("cinematic slowdown advances display time below real time", () => {
+  const { controller } = harness();
+  controller.requestSlowdown(0.5, 0.22);
+  assert(Math.abs(controller.scale(0.1) - 0.022) < 1e-9);
+  assert(controller.isActive());
+});

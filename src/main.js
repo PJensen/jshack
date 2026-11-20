@@ -6132,10 +6132,13 @@ function frame(now) {
 
   // Advance display-only systems (fx.step moved below — needs worldView for emitter origins)
   // Camera / shake / zoom use real dt so they stay responsive during hitstop
-  updateCamera(cam, dtSec);
+  // Camera focus effects participate in cinematic slowdown; ordinary camera
+  // follow remains real-time responsive during combat hitstop.
+  const cameraDt = cam._cameraFocus ? displayDt : dtSec;
+  updateCamera(cam, cameraDt);
   updateShake(cam, dtSec);
   tickCriticalZooms(dtSec);
-  updateZoomPunch(cam, dtSec);
+  updateZoomPunch(cam, cameraDt);
   // Combat VFX use hitstop-scaled dt so swings, bumps, gore all freeze in unison
   tickDisplayEffects({ dtSec: displayDt, boltFx, spellAreaFx, projectileFx, throwFx, pickupFx, cloudFx, spiritWispFx, deathEssenceFx, meleeSlashFx, aggroFx, ftext, goreTick });
   delayedDeathFx.tick(displayDt);

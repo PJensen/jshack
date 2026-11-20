@@ -189,6 +189,12 @@ export function setupDisplayRuntime({
     startZoomLerp(cam, 0.028, 0.06, 0.04, 0.24);
   });
 
+  // Meteor gets real cinematic time dilation, not just a longer camera
+  // envelope. The impact freeze is replaced by a short slow-motion window.
+  world.on('spell:meteor', () => {
+    hitstopFx.requestSlowdown(0.72, 0.22);
+  });
+
   // Fishing gets a quiet anticipation beat at the water, then a stronger
   // reward beat when the line actually comes back. Keep the cast subtle so
   // the long channel remains readable; scale the catch by what was landed.

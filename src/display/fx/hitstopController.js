@@ -49,6 +49,9 @@ const MIN_PERF_SCALE = 0.4;
 export function createHitstopController() {
   let _remaining = 0;   // real-time seconds left in current hitstop
   let _duration = 0;     // total duration of current hitstop (for ease-out calc)
+  let _slowRemaining = 0;
+  let _slowDuration = 0;
+  let _slowScale = 0.24;
   let _fpsEMA = BASELINE_FPS; // smoothed FPS estimate for adaptive scaling
   /** @type {Array<{delay:number,duration:number}>} */
   const _pending = [];
@@ -77,6 +80,25 @@ export function createHitstopController() {
       return;
     }
     _pending.push({ delay, duration: dur });
+  }
+
+  /**
+   * Request cinematic slow motion. This intentionally replaces the tiny
+   * impact freeze so a major spell reads as slow time rather than a hiccup.
+   * @param {number} dur real-time duration
+   * @param {number} scale display-time scale during the slow section
+   */
+  function requestSlowdown(dur, scale = 0.24) {
+    if (!(dur > 0)) return;
+    const perfScale = Math.max(MIN_PERF_SCALE, Math.min(1, _fpsEMA / BASELINE_FPS));
+    const scaled = dur * perfScale;
+    _remaining = 0;
+    _duration = 0;
+    if (scaled > _slowRemaining) {
+      _slowRemaining = scaled;
+      _slowDuration = scaled;
+      _slowScale = Math.max(0.05, Math.min(1, Number(scale) || 0.24));
+    }
   }
 
   /**
@@ -124,34 +146,49 @@ export function createHitstopController() {
       }
     }
 
-    if (_remaining <= 0) return realDt;
+    if (_remaining > 0) {
+      _remaining -= realDt;
 
-    _remaining -= realDt;
+      if (_remaining <= 0) {
+        // Hitstop just ended this frame — blend partial
+        const overrun = -_remaining;
+        _remaining = 0;
+        _duration = 0;
+        // Return the portion of dt after hitstop ended at full speed.
+        return overrun;
+      }
 
-    if (_remaining <= 0) {
-      // Hitstop just ended this frame — blend partial
-      const overrun = -_remaining;
-      _remaining = 0;
-      _duration = 0;
-      // Return the portion of dt after hitstop ended, at full speed
+      // Active hitstop: apply time scale
+      const baseScale = MODE === 'freeze' ? FREEZE_SCALE : SLOW_SCALE;
+
+      // Ease-out: ramp scale back to 1.0 in the tail portion.
+      const elapsed = _duration - _remaining;
+      const easeStart = _duration * (1 - EASE_OUT_FRAC);
+      let s;
+      if (elapsed >= easeStart && _duration > 0) {
+        const t = (elapsed - easeStart) / (_duration * EASE_OUT_FRAC);
+        s = baseScale + (1 - baseScale) * (t * t);
+      } else {
+        s = baseScale;
+      }
+      return realDt * s;
+    }
+
+    if (_slowRemaining <= 0) return realDt;
+    _slowRemaining -= realDt;
+    if (_slowRemaining <= 0) {
+      const overrun = -_slowRemaining;
+      _slowRemaining = 0;
+      _slowDuration = 0;
       return overrun;
     }
 
-    // Active hitstop: apply time scale
-    const baseScale = MODE === 'freeze' ? FREEZE_SCALE : SLOW_SCALE;
-
-    // Ease-out: ramp scale back toward 1.0 in the tail portion
-    const elapsed = _duration - _remaining;
-    const easeStart = _duration * (1 - EASE_OUT_FRAC);
-    let s;
-    if (elapsed >= easeStart && _duration > 0) {
-      const t = (elapsed - easeStart) / (_duration * EASE_OUT_FRAC);
-      s = baseScale + (1 - baseScale) * (t * t); // quadratic ease-out
-    } else {
-      s = baseScale;
-    }
-
-    return realDt * s;
+    const elapsed = _slowDuration - _slowRemaining;
+    const easeStart = _slowDuration * (1 - EASE_OUT_FRAC);
+    if (elapsed < easeStart || _slowDuration <= 0) return realDt * _slowScale;
+    const t = (elapsed - easeStart) / (_slowDuration * EASE_OUT_FRAC);
+    const scale = _slowScale + (1 - _slowScale) * (t * t);
+    return realDt * scale;
   }
 
   /**
@@ -181,7 +218,7 @@ export function createHitstopController() {
   }
 
   /** True when hitstop is actively slowing time. */
-  function isActive() { return _remaining > 0; }
+  function isActive() { return _remaining > 0 || _slowRemaining > 0; }
 
-  return { request, durationForHit, scale, installListeners, isActive };
+  return { request, requestAfter, requestSlowdown, durationForHit, scale, installListeners, isActive };
 }

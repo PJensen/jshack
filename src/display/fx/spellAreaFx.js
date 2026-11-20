@@ -1759,11 +1759,11 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
         spawnMeteorProjectile(origin);
         _meteorFx.push(new RadialFx({ x: origin.x, y: origin.y, radius: radius || 2, ttl: 0.45 }));
         startCameraFocus(cam, Number(origin.x), Number(origin.y), {
-          inDur: 0.22,
-          holdDur: 0.10,
-          outDur: 0.52,
+          inDur: 0.36,
+          holdDur: 0.16,
+          outDur: 0.80,
         });
-        startZoomLerp(cam, 0.065, 0.22, 0.10, 0.52);
+        startZoomLerp(cam, 0.065, 0.36, 0.16, 0.80);
         startSlamShake(cam, 14, 0.55);
         // Fire particle burst
         const N = 30;
