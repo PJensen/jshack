@@ -411,7 +411,8 @@ export function createBoltFxController({ world, cam, fx, getPosition }) {
       if (from && to) {
         _boltFx.push(new LineFx({ from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, ttl: 0.14, chainIndex: Number(chainIndex || 0), style: wet ? 'wet_arc' : undefined }));
         _lightPulses.push(new PulseFx({ x: to.x, y: to.y, ttl: 0.12 }));
-        startShake(cam, 4, 0.18);
+        const lightningPrimary = String(spellId || '').toLowerCase() === 'lightning' && Number(chainIndex || 0) === 0;
+        startShake(cam, lightningPrimary ? 6 : 4, lightningPrimary ? 0.22 : 0.18);
       }
     });
     // Content DSL beam: real LineFx + PulseFx + shake (used by presentation system)

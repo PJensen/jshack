@@ -1082,6 +1082,20 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       ctx.strokeStyle = `rgba(210,245,255,${(0.20 * life).toFixed(3)})`;
       ctx.lineWidth = 0.05 + 0.08 * life;
       ctx.beginPath(); ctx.arc(rem.x, rem.y, rem.radius * (0.62 + (1 - life) * 0.2), 0, Math.PI * 2); ctx.stroke();
+
+      // The lingering field reads as frozen geometry, not just a fading blob.
+      const shardCount = 8;
+      for (let i = 0; i < shardCount; i++) {
+        const a = (Math.PI * 2 * i / shardCount) + rem.phase * 0.17;
+        const inner = rem.radius * 0.42;
+        const outer = rem.radius * (0.70 + 0.08 * Math.sin(rem.phase + i * 1.7));
+        ctx.strokeStyle = `rgba(185,240,255,${(0.16 * life).toFixed(3)})`;
+        ctx.lineWidth = 0.035 + 0.025 * life;
+        ctx.beginPath();
+        ctx.moveTo(rem.x + Math.cos(a) * inner, rem.y + Math.sin(a) * inner);
+        ctx.lineTo(rem.x + Math.cos(a) * outer, rem.y + Math.sin(a) * outer);
+        ctx.stroke();
+      }
     }
     for (const nova of _frostNovaFx) {
       const t = nova.progress;
@@ -1093,13 +1107,53 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       ctx.strokeStyle = `rgba(90,190,255,${(ringA * 0.72).toFixed(3)})`;
       ctx.lineWidth = Math.max(0.06, 0.16 * (1 - t * 0.55));
       ctx.beginPath(); ctx.arc(nova.x, nova.y, Math.max(0, ringR - 0.24), 0, Math.PI * 2); ctx.stroke();
+
+      // Angular ice teeth give the nova a crystalline edge as it expands.
+      if (ringR > 0.08) {
+        const teeth = 12;
+        for (let i = 0; i < teeth; i++) {
+          const a = (Math.PI * 2 * i / teeth) + nova.x * 0.13 + nova.y * 0.07;
+          const tooth = 0.12 + (1 - t) * 0.20;
+          const baseR = Math.max(0.05, ringR - 0.08);
+          const tipR = ringR + tooth;
+          const side = 0.055 + (1 - t) * 0.035;
+          ctx.fillStyle = `rgba(205,248,255,${(0.34 * ringA).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(nova.x + Math.cos(a) * tipR, nova.y + Math.sin(a) * tipR);
+          ctx.lineTo(nova.x + Math.cos(a - side) * baseR, nova.y + Math.sin(a - side) * baseR);
+          ctx.lineTo(nova.x + Math.cos(a + side) * baseR, nova.y + Math.sin(a + side) * baseR);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // Six-point frost star in the wake of the detonation.
+      if (t < 0.72) {
+        const starA = (1 - t / 0.72) * 0.30;
+        const starR = 0.35 + t * 0.42;
+        ctx.strokeStyle = `rgba(235,255,255,${starA.toFixed(3)})`;
+        ctx.lineWidth = 0.045 + (1 - t) * 0.035;
+        for (let i = 0; i < 6; i++) {
+          const a = Math.PI * 2 * i / 6 + Math.PI / 6;
+          ctx.beginPath();
+          ctx.moveTo(nova.x - Math.cos(a) * starR, nova.y - Math.sin(a) * starR);
+          ctx.lineTo(nova.x + Math.cos(a) * starR, nova.y + Math.sin(a) * starR);
+          ctx.stroke();
+        }
+      }
       if (t < 0.62) {
         ctx.fillStyle = `rgba(140,220,255,${(0.22 * (1 - t / 0.62)).toFixed(3)})`;
         ctx.beginPath(); ctx.arc(nova.x, nova.y, ringR * 0.72, 0, Math.PI * 2); ctx.fill();
       }
       if (t < 0.20) {
-        ctx.fillStyle = `rgba(255,255,255,${(0.72 * (1 - t / 0.20)).toFixed(3)})`;
-        ctx.beginPath(); ctx.arc(nova.x, nova.y, 0.50, 0, Math.PI * 2); ctx.fill();
+        const flash = 1 - t / 0.20;
+        const flashR = 0.24 + flash * 0.32;
+        const grad = ctx.createRadialGradient(nova.x, nova.y, 0, nova.x, nova.y, flashR);
+        grad.addColorStop(0, `rgba(255,255,255,${(0.86 * flash).toFixed(3)})`);
+        grad.addColorStop(0.45, `rgba(215,248,255,${(0.54 * flash).toFixed(3)})`);
+        grad.addColorStop(1, 'rgba(120,210,255,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(nova.x, nova.y, flashR, 0, Math.PI * 2); ctx.fill();
       }
     }
     ctx.restore();
@@ -1948,7 +2002,7 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
         max: PERF.quality === 'low' ? 0.75 : 1.25,
         phase: Math.random() * Math.PI * 2,
       });
-      startShake(cam, Math.min(8, 3 + Math.floor(waveRadius / 2)), Math.min(0.32, 0.14 + waveRadius * 0.012));
+      startShake(cam, Math.min(8, 4 + Math.floor(waveRadius / 2)), Math.min(0.34, 0.16 + waveRadius * 0.014));
 
       const shardCount = PERF.quality === 'low' ? 16 : 28;
       for (let i = 0; i < shardCount; i++) {
