@@ -3415,6 +3415,7 @@ const {
   aggroFx,
   recoilFx,
   hitstopFx,
+  tickCriticalZooms,
   deathEssenceFx,
   deathVfx,
   teleportFx,
@@ -6133,6 +6134,7 @@ function frame(now) {
   // Camera / shake / zoom use real dt so they stay responsive during hitstop
   updateCamera(cam, dtSec);
   updateShake(cam, dtSec);
+  tickCriticalZooms(dtSec);
   updateZoomPunch(cam, dtSec);
   // Combat VFX use hitstop-scaled dt so swings, bumps, gore all freeze in unison
   tickDisplayEffects({ dtSec: displayDt, boltFx, spellAreaFx, projectileFx, throwFx, pickupFx, cloudFx, spiritWispFx, deathEssenceFx, meleeSlashFx, aggroFx, ftext, goreTick });

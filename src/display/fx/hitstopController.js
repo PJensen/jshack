@@ -50,6 +50,8 @@ export function createHitstopController() {
   let _remaining = 0;   // real-time seconds left in current hitstop
   let _duration = 0;     // total duration of current hitstop (for ease-out calc)
   let _fpsEMA = BASELINE_FPS; // smoothed FPS estimate for adaptive scaling
+  /** @type {Array<{delay:number,duration:number}>} */
+  const _pending = [];
 
   /**
    * Request a hitstop. If one is already active, extends duration to whichever
@@ -68,6 +70,15 @@ export function createHitstopController() {
     }
   }
 
+  function requestAfter(delay, dur) {
+    if (dur <= 0) return;
+    if (!(delay > 0)) {
+      request(dur);
+      return;
+    }
+    _pending.push({ delay, duration: dur });
+  }
+
   /**
    * Compute hitstop duration from damage event properties.
    * @param {number} damage
@@ -76,7 +87,7 @@ export function createHitstopController() {
    * @returns {number} duration in seconds (0 = no hitstop)
    */
   function durationForHit(damage, critical, killed) {
-    if (damage < MIN_DAMAGE && !killed) return 0;
+    if (damage < MIN_DAMAGE && !critical && !killed) return 0;
 
     let dur = BASE_DURATION;
 
@@ -103,6 +114,16 @@ export function createHitstopController() {
       const instFps = 1 / realDt;
       _fpsEMA = _fpsEMA * 0.93 + instFps * 0.07;
     }
+
+    for (let i = _pending.length - 1; i >= 0; i--) {
+      const pending = _pending[i];
+      pending.delay -= realDt;
+      if (pending.delay <= 0) {
+        request(pending.duration);
+        _pending.splice(i, 1);
+      }
+    }
+
     if (_remaining <= 0) return realDt;
 
     _remaining -= realDt;
@@ -147,15 +168,10 @@ export function createHitstopController() {
     }
 
     // Upgrade the freeze when damage actually resolves (crits/big hits extend it)
-    world.on('damaged', ({ target, amount, critical, projectileDelay }) => {
-      // Skip deferred projectile hits — hitstop fires when projectile arrives,
-      // handled by the deferred tint/gore path (we catch it on the 'died' event
-      // or when the delayed damage visually resolves).
-      if (Number(projectileDelay) > 0) return;
-
+    world.on('damaged', ({ target, amount, critical, crit, projectileDelay }) => {
       const dmg = Number(amount) || 0;
-      const dur = durationForHit(dmg, !!critical, false);
-      if (dur > 0) request(dur);
+      const dur = durationForHit(dmg, !!(critical || crit), false);
+      requestAfter(Number(projectileDelay) || 0, dur);
     });
 
     world.on('died', ({ id }) => {

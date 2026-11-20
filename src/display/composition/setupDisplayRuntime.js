@@ -16,7 +16,7 @@ import { createMeleeSlashFxController } from "../fx/meleeSlashFx.js";
 import { createAggroFxController } from "../fx/aggroFxController.js";
 import { createDeathEssenceFxController } from "../fx/deathEssenceFxController.js";
 import { startShake } from "../camera/shake.js";
-import { startZoomPunch, startZoomLerp } from "../camera/zoomPunch.js";
+import { startZoomLerp } from "../camera/zoomPunch.js";
 import { installFloatTextWiring } from "../ui/wiring/floatTextWiring.js";
 import { createFountainPresentationExtension } from "../ui/wiring/fountainPresentationExtension.js";
 import { createFountainUiExtension } from "../ui/wiring/fountainUiExtension.js";
@@ -142,6 +142,26 @@ export function setupDisplayRuntime({
 
   const hitstopFx = createHitstopController();
   hitstopFx.installListeners({ world, isPlayer, bumpFx });
+  /** @type {Array<{delay:number,damage:number}>} */
+  const pendingCritZooms = [];
+
+  function startCriticalZoom(amount) {
+    const dmg = Math.max(0, Number(amount) || 0);
+    const peak = 0.035 + Math.min(0.02, Math.log1p(dmg / 4) * 0.012);
+    startZoomLerp(cam, peak, 0.07, 0.05, 0.30);
+  }
+
+  function tickCriticalZooms(dt) {
+    const delta = Math.max(0, Number(dt) || 0);
+    for (let i = pendingCritZooms.length - 1; i >= 0; i--) {
+      const pending = pendingCritZooms[i];
+      pending.delay -= delta;
+      if (pending.delay <= 0) {
+        startCriticalZoom(pending.damage);
+        pendingCritZooms.splice(i, 1);
+      }
+    }
+  }
 
   const deathVfx = createDeathVfxController();
   const teleportFx = createTeleportFxController({ world, cam, isPlayer });
@@ -158,8 +178,15 @@ export function setupDisplayRuntime({
     // Duration: 0.06s baseline, scales gently with damage
     const dur = 0.06 + Math.min(0.10, dmg * 0.004);
     startShake(cam, amp, dur);
-    // Crit zoom-punch: brief scale pulse that sells the weight of a big hit
-    if (critical) startZoomPunch(cam, 0.025, 0.14);
+  });
+
+  // Every crit gets the same readable reward beat, regardless of whether it
+  // came from a weapon, spell, projectile, proc, or monster attack.
+  world.on('damaged', ({ amount, critical, crit, projectileDelay }) => {
+    if (!(critical || crit)) return;
+    const delay = Number(projectileDelay) || 0;
+    if (delay > 0) pendingCritZooms.push({ delay, damage: amount });
+    else startCriticalZoom(amount);
   });
 
   // Chest openings get a tiny physical payoff. Scale it from the best item so
@@ -237,5 +264,5 @@ export function setupDisplayRuntime({
   const worldAmbientFx = createWorldAmbientController();
   const biomeAmbientFx = createBiomeAmbientController();
 
-  return { statusEmitterFx, statusPresentationDelayFx, boltFx, delayedDeathFx, projectileFx, spellAreaFx, cloudFx, surfaceAreaFx, spiritWispFx, sparksFx, bumpFx, meleeSlashFx, aggroFx, recoilFx, hitstopFx, deathEssenceFx, deathVfx, teleportFx, fountainAmbientFx, localEmitterAmbientFx, worldAmbientFx, biomeAmbientFx, ftext, goreTick };
+  return { statusEmitterFx, statusPresentationDelayFx, boltFx, delayedDeathFx, projectileFx, spellAreaFx, cloudFx, surfaceAreaFx, spiritWispFx, sparksFx, bumpFx, meleeSlashFx, aggroFx, recoilFx, hitstopFx, tickCriticalZooms, deathEssenceFx, deathVfx, teleportFx, fountainAmbientFx, localEmitterAmbientFx, worldAmbientFx, biomeAmbientFx, ftext, goreTick };
 }
