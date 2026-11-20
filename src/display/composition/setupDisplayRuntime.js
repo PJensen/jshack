@@ -180,6 +180,14 @@ export function setupDisplayRuntime({
     startShake(cam, amp, dur);
   });
 
+  // Trap triggers get the same immediate physical punctuation as a hit, but
+  // stay smaller so the dungeon still feels dangerous rather than cinematic.
+  world.on('trap:triggered', ({ victimId }) => {
+    if (!isPlayer(victimId)) return;
+    startShake(cam, 1.8, 0.11);
+    startZoomLerp(cam, 0.028, 0.06, 0.04, 0.24);
+  });
+
   // Every crit gets the same readable reward beat, regardless of whether it
   // came from a weapon, spell, projectile, proc, or monster attack.
   world.on('damaged', ({ amount, critical, projectileDelay }) => {

@@ -775,14 +775,17 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       handleTilePointer(rawTx, rawTy);
     }
 
-    canvas.addEventListener('pointermove', (ev) => {
-      if (!_ranged) return;
+    const updateTileCursor = (ev) => {
+      if (!_spell && !_throw && !_ranged) return;
       const pe = playerEntity();
       if (!pe) return;
       const [wx, wy] = clientToWorld(ev);
-      const clamped = clampTargetToRange(pe.pos.x, pe.pos.y, worldToTile(wx), worldToTile(wy), _ranged.range);
+      const pending = _ranged || _spell || _throw;
+      const clamped = clampTargetToRange(pe.pos.x, pe.pos.y, worldToTile(wx), worldToTile(wy), pending.range);
       _cursor = { x: clamped.x | 0, y: clamped.y | 0 };
-    }, { capture: true });
+    };
+    canvas.addEventListener('pointermove', updateTileCursor, { capture: true });
+    canvas.addEventListener('mousemove', updateTileCursor, { capture: true });
 
     canvas.addEventListener('pointerdown', (ev) => {
       if (!_enemy) return;
