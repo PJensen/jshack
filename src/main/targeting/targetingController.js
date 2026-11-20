@@ -746,6 +746,35 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
    * @param {(ev:PointerEvent) => [number,number]} clientToWorld  returns [wx, wy]
    */
   function installPointerHandlers(canvas, clientToWorld) {
+    let suppressNextClick = false;
+
+    function handleCanvasTargetEvent(ev) {
+      if (ev.type === 'click' && suppressNextClick) {
+        suppressNextClick = false;
+        return;
+      }
+      if (_enemy) {
+        const [wx, wy] = clientToWorld(ev);
+        const tapX = worldToTile(wx);
+        const tapY = worldToTile(wy);
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+        if (ev.type === 'pointerdown') suppressNextClick = true;
+        handleEnemyPointer(tapX, tapY);
+        return;
+      }
+      if (!_spell && !_throw?.itemId && !_ranged) return;
+      const [wx, wy] = clientToWorld(ev);
+      const rawTx = worldToTile(wx);
+      const rawTy = worldToTile(wy);
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+      if (ev.type === 'pointerdown') suppressNextClick = true;
+      handleTilePointer(rawTx, rawTy);
+    }
+
     canvas.addEventListener('pointermove', (ev) => {
       if (!_ranged) return;
       const pe = playerEntity();
@@ -763,18 +792,19 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
       ev.preventDefault();
       ev.stopPropagation();
       if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
+      suppressNextClick = true;
       handleEnemyPointer(tapX, tapY);
     }, { capture: true });
 
     canvas.addEventListener('pointerdown', (ev) => {
-      if (!_spell && !_throw?.itemId && !_ranged) return;
-      const [wx, wy] = clientToWorld(ev);
-      const rawTx = worldToTile(wx);
-      const rawTy = worldToTile(wy);
-      ev.preventDefault();
-      ev.stopPropagation();
-      if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation();
-      handleTilePointer(rawTx, rawTy);
+      handleCanvasTargetEvent(ev);
+    }, { capture: true });
+
+    // Desktop browsers normally deliver pointerdown, but click remains the
+    // compatibility path for mouse activation and older embedded WebViews.
+    // A handled pointerdown suppresses its follow-up click to avoid double casts.
+    canvas.addEventListener('click', (ev) => {
+      handleCanvasTargetEvent(ev);
     }, { capture: true });
 
     canvas.addEventListener('pointerdown', (ev) => {
