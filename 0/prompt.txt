@@ -1,0 +1,13 @@
+FUCK LEGACY PAYLOADS -- lets move things forward if at all possible.
+
+---
+
+I would also augment the zoom depth depending on
+
+a) the size of the crit
+b) the type of chest
+
+---
+
+a legendary chest is  much bigger detail than a basic chest
+a big crit is better than a small crit -- a crit is still awesome!
