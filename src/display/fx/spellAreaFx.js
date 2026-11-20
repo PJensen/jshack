@@ -3641,6 +3641,10 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   /** Return active light sources for the lighting engine. */
   function getActiveLights() {
     const out = [];
+    // Rules positions identify tile cells, while the lighting engine samples
+    // point sources in tile-center space. Keep transient spell lights aligned
+    // with authored/entity lights on both axes.
+    const lightCenter = (x, y) => ({ x: Number(x) + 0.5, y: Number(y) + 0.5 });
     const fxTime = Number(getFxTime?.() || 0);
     const step = currentStep();
     const activeReliefKey = (typeof getActiveReliefKey === "function")
@@ -3680,20 +3684,24 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     }
     for (let i = 0; i < _meteorFx.length; i++) {
       const m = _meteorFx[i];
-      out.push({ x: m.x, y: m.y, radius: (m.radius || 2) * 3 * m.alpha, color: [255, 140, 40] });
+      const p = lightCenter(m.x, m.y);
+      out.push({ x: p.x, y: p.y, radius: (m.radius || 2) * 3 * m.alpha, color: [255, 140, 40] });
     }
     for (let i = 0; i < _blastwaveFx.length; i++) {
       const b = _blastwaveFx[i];
-      out.push({ x: b.x, y: b.y, radius: (b.radius || 2) * 2 * b.alpha, color: [255, 200, 100] });
+      const p = lightCenter(b.x, b.y);
+      out.push({ x: p.x, y: p.y, radius: (b.radius || 2) * 2 * b.alpha, color: [255, 200, 100] });
     }
     for (let i = 0; i < _frostNovaFx.length; i++) {
       const f = _frostNovaFx[i];
-      out.push({ x: f.x, y: f.y, radius: (f.radius || 2) * 2.2 * f.alpha, color: [135, 215, 255] });
+      const p = lightCenter(f.x, f.y);
+      out.push({ x: p.x, y: p.y, radius: (f.radius || 2) * 2.2 * f.alpha, color: [135, 215, 255] });
     }
     for (let i = 0; i < _frostNovaRemnants.length; i++) {
       const rem = _frostNovaRemnants[i];
       const life = rem.max > 0 ? Math.max(0, Math.min(1, rem.ttl / rem.max)) : 0;
-      out.push({ x: rem.x, y: rem.y, radius: rem.radius * 1.7 * life, color: [100, 190, 255] });
+      const p = lightCenter(rem.x, rem.y);
+      out.push({ x: p.x, y: p.y, radius: rem.radius * 1.7 * life, color: [100, 190, 255] });
     }
     for (let i = 0; i < _voidHoleFx.length; i++) {
       const v = _voidHoleFx[i];
@@ -3710,31 +3718,38 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     }
     for (let i = 0; i < _flashHealFx.length; i++) {
       const f = _flashHealFx[i];
-      out.push({ x: f.x, y: f.y, radius: 4 * f.alpha, color: [255, 240, 180] });
+      const p = lightCenter(f.x, f.y);
+      out.push({ x: p.x, y: p.y, radius: 4 * f.alpha, color: [255, 240, 180] });
     }
     for (let i = 0; i < _smiteFx.length; i++) {
       const s = _smiteFx[i];
-      out.push({ x: s.x, y: s.y, radius: 5 * s.alpha, color: [255, 240, 180] });
+      const p = lightCenter(s.x, s.y);
+      out.push({ x: p.x, y: p.y, radius: 5 * s.alpha, color: [255, 240, 180] });
     }
     for (let i = 0; i < _searchPulseFx.length; i++) {
       const s = _searchPulseFx[i];
-      out.push({ x: s.x, y: s.y, radius: 6 * s.alpha, color: [180, 220, 255] });
+      const p = lightCenter(s.x, s.y);
+      out.push({ x: p.x, y: p.y, radius: 6 * s.alpha, color: [180, 220, 255] });
     }
     for (let i = 0; i < _warCryFx.length; i++) {
       const w = _warCryFx[i];
-      out.push({ x: w.x, y: w.y, radius: 4 * w.alpha, color: [255, 80, 30] });
+      const p = lightCenter(w.x, w.y);
+      out.push({ x: p.x, y: p.y, radius: 4 * w.alpha, color: [255, 80, 30] });
     }
     for (let i = 0; i < _divineShieldFx.length; i++) {
       const d = _divineShieldFx[i];
-      out.push({ x: d.x, y: d.y, radius: 4 * d.alpha, color: [255, 230, 120] });
+      const p = lightCenter(d.x, d.y);
+      out.push({ x: p.x, y: p.y, radius: 4 * d.alpha, color: [255, 230, 120] });
     }
     for (let i = 0; i < _consecrateFx.length; i++) {
       const c = _consecrateFx[i];
-      out.push({ x: c.x, y: c.y, radius: (c.radius || 2) * 2.5 * c.alpha, color: [255, 210, 60] });
+      const p = lightCenter(c.x, c.y);
+      out.push({ x: p.x, y: p.y, radius: (c.radius || 2) * 2.5 * c.alpha, color: [255, 210, 60] });
     }
     for (const [, ch] of _drainLifeChannels) {
       if (ch.from && ch.to) {
-        out.push({ x: ch.to.x, y: ch.to.y, radius: 3, color: [255, 50, 50] });
+        const p = lightCenter(ch.to.x, ch.to.y);
+        out.push({ x: p.x, y: p.y, radius: 3, color: [255, 50, 50] });
       }
     }
     return out;
