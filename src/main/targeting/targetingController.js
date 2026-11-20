@@ -14,6 +14,7 @@ import { Vitality } from "../../rules/components/Vitality.js";
 import { TargetLock } from "../../rules/components/TargetLock.js";
 import { isVisible as isTileVisible } from "../../rules/environment/dungeon/exploredMap.js";
 import { resolveProjectileImpact } from "../../rules/utils/projectileImpact.js";
+import { hasSpellLineOfSight } from "../../rules/utils/spellTargeting.js";
 
 /**
  * Scan for visible enemies in range of a player position.
@@ -410,6 +411,18 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
     return true;
   }
 
+  function hasTargetLineOfSight(pe, x, y, range) {
+    const blocked = buildBlocksVisionMap(world);
+    return hasSpellLineOfSight(world, {
+      sourceId: pe.id,
+      sourcePos: pe.pos,
+      targetPos: { x, y },
+      range,
+      isBlocked: blockedCallback(blocked),
+      allowFlyingOccupantAtTarget: true,
+    });
+  }
+
   function _handleTileKeys(ev) {
     if (_ranged) {
       if (ev.key === 'Tab') {
@@ -498,9 +511,7 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
           return true;
         }
         if (pending.requiresLOS) {
-          const blocked = buildBlocksVisionMap(world);
-          const isBlocked = blockedCallback(blocked);
-          if (!hasLOS(px, py, finalTx, finalTy, isBlocked)) {
+          if (!hasTargetLineOfSight(pe, finalTx, finalTy, pending.range)) {
             log(`${pending.spellName} target must be in line of sight.`);
             return true;
           }
@@ -653,9 +664,7 @@ export function createTargetingController({ world, messageLog, playerEntity, dis
         return true;
       }
       if (pending.requiresLOS) {
-        const blocked = buildBlocksVisionMap(world);
-        const isBlocked = blockedCallback(blocked);
-        if (!hasLOS(px, py, tx, ty, isBlocked)) {
+        if (!hasTargetLineOfSight(pe, tx, ty, pending.range)) {
           log(`${pending.spellName} target must be in line of sight.`);
           return true;
         }
