@@ -92,13 +92,14 @@ export function setupDisplayRuntime({
 
   const projectileFx = createProjectileFxController({ world, cam, fx, getPosition });
   projectileFx.installListeners();
+  const hitstopFx = createHitstopController();
 
   const ftext = new FloatText();
   try {
     /** @type any */ (window).float_text = (x, y, text, opts) => ftext.add(x, y, text, opts || {});
   } catch (e) { console.debug("[setupDisplayRuntime] float_text global setup failed:", e); }
 
-  const spellAreaFx = createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, getPosition, ftext, sculptFloor, sculptFloorBrush, getActiveReliefKey });
+  const spellAreaFx = createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, getPosition, ftext, sculptFloor, sculptFloorBrush, getActiveReliefKey, hitstopFx });
   spellAreaFx.installListeners();
 
   const cloudFx = createCloudFxController({ world, cam, fx, getFxTime, getPosition });
@@ -141,7 +142,6 @@ export function setupDisplayRuntime({
   const recoilFx = createRecoilFxController();
   recoilFx.installListeners({ world, getPosition, isPlayer });
 
-  const hitstopFx = createHitstopController();
   hitstopFx.installListeners({ world, isPlayer, bumpFx });
   /** @type {Array<{delay:number,damage:number}>} */
   const pendingCritZooms = [];
@@ -187,12 +187,6 @@ export function setupDisplayRuntime({
     if (!isPlayer(victimId)) return;
     startShake(cam, 1.8, 0.11);
     startZoomLerp(cam, 0.028, 0.06, 0.04, 0.24);
-  });
-
-  // Meteor gets real cinematic time dilation, not just a longer camera
-  // envelope. The impact freeze is replaced by a short slow-motion window.
-  world.on('spell:meteor', () => {
-    hitstopFx.requestSlowdown(0.72, 0.22);
   });
 
   // Fishing gets a quiet anticipation beat at the water, then a stronger

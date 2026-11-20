@@ -101,6 +101,13 @@ export function createHitstopController() {
     }
   }
 
+  function clear() {
+    _remaining = 0;
+    _duration = 0;
+    _slowRemaining = 0;
+    _slowDuration = 0;
+  }
+
   /**
    * Compute hitstop duration from damage event properties.
    * @param {number} damage
@@ -220,5 +227,5 @@ export function createHitstopController() {
   /** True when hitstop is actively slowing time. */
   function isActive() { return _remaining > 0 || _slowRemaining > 0; }
 
-  return { request, requestAfter, requestSlowdown, durationForHit, scale, installListeners, isActive };
+  return { request, requestAfter, requestSlowdown, clear, durationForHit, scale, installListeners, isActive };
 }

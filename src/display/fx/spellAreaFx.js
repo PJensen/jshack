@@ -15,9 +15,9 @@ import { RendCast } from "../../events/RendCast.js";
 import { ChargeCast } from "../../events/ChargeCast.js";
 
 /**
- * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)) }} deps
+ * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)), hitstopFx?: { requestSlowdown?: (duration:number, scale:number)=>void } }} deps
  */
-export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, getPosition, ftext, sculptFloor, sculptFloorBrush, getActiveReliefKey }) {
+export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, getPosition, ftext, sculptFloor, sculptFloorBrush, getActiveReliefKey, hitstopFx }) {
   // --- Blink state ---
   /** @type {BlinkFx[]} */
   const _blinkFx = [];
@@ -54,6 +54,8 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   const _impactWarmTiles = new Map();
   /** @type {Array<{ x:number, y:number, vx:number, vy:number, ay:number, ttl:number, max:number, radius:number, phase:number }>} */
   const _impactFlameLights = [];
+  /** @type {Array<{ delay:number, origin:{x:number,y:number}, radius:number, reliefKey:string|number|null }>} */
+  const _pendingMeteorImpacts = [];
   const MAX_IMPACT_WARM_TILES = 560;
 
   function hash2i(xi, yi, seed = 0) {
@@ -387,6 +389,50 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     } catch (e) { console.debug('[spellAreaFx] emit meteor projectile:spawn failed:', e); }
   }
 
+  function triggerMeteorImpactFx({ origin, radius, reliefKey }) {
+    carveMeteorCrater(origin, radius || 2, reliefKey);
+    const r = Math.max(1.2, Number(radius || 2));
+    stampWarmSpot(origin, 0.90, 1.20, 26, [255, 132, 52], reliefKey);
+    stampWarmSpot(origin, r * 0.96, 0.70, 19, [242, 112, 38], reliefKey);
+    for (let k = 0; k < 7; k++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 0.16 + Math.random() * 0.30;
+      const life = 0.28 + Math.random() * 0.36;
+      _impactFlameLights.push({
+        x: Number(origin.x) + 0.5 + (Math.random() - 0.5) * 0.25,
+        y: Number(origin.y) + 0.5 + (Math.random() - 0.5) * 0.25,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - (0.14 + Math.random() * 0.20),
+        ay: 0.72,
+        ttl: life,
+        max: life,
+        radius: 0.26 + Math.random() * 0.16,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    _meteorFx.push(new RadialFx({ x: origin.x, y: origin.y, radius: radius || 2, ttl: 0.45 }));
+    hitstopFx?.requestSlowdown?.(0.72, 0.22);
+    startSlamShake(cam, 14, 0.55);
+    const N = 30;
+    for (let i = 0; i < N; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const spd = 1.0 + Math.random() * 2.5;
+      const life = 0.3 + Math.random() * 0.4;
+      fx.pool.spawn(new Particle({
+        x: origin.x + (Math.random() - 0.5) * 0.4,
+        y: origin.y + (Math.random() - 0.5) * 0.4,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        ay: 0.8,
+        life,
+        size0: 0.25 + Math.random() * 0.15,
+        size1: 0.04,
+        r: 255, g: 140 + Math.random() * 80 | 0, b: 30,
+        a0: 0.95,
+      }));
+    }
+  }
+
   function stormImpactRadius(radius) {
     const base = Math.max(0.42, Number(radius || 1) * 0.48);
     return Math.min(0.72, base);
@@ -474,6 +520,13 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   // --- Tick ---
   /** @param {number} dt */
   function tick(dt) {
+    for (let i = _pendingMeteorImpacts.length - 1; i >= 0; i--) {
+      const pending = _pendingMeteorImpacts[i];
+      pending.delay -= dt;
+      if (pending.delay > 0) continue;
+      _pendingMeteorImpacts.splice(i, 1);
+      triggerMeteorImpactFx(pending);
+    }
     for (let i = _blinkFx.length - 1; i >= 0; i--) {
       _blinkFx[i].tick(dt);
       if (_blinkFx[i].expired) _blinkFx.splice(i, 1);
@@ -1733,58 +1786,26 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
       startShake(cam, randomized ? 4 : 3, randomized ? 0.14 : 0.12);
     });
 
-    world.on('spell:meteor', ({ actor, from, origin, radius, depth }) => {
-      if (origin && Number.isFinite(origin.x)) {
-        const reliefKey = depth ?? (typeof getActiveReliefKey === "function" ? getActiveReliefKey() : null);
-        carveMeteorCrater(origin, radius || 2, reliefKey);
-        const r = Math.max(1.2, Number(radius || 2));
-        stampWarmSpot(origin, 0.90, 1.20, 26, [255, 132, 52], reliefKey);
-        stampWarmSpot(origin, r * 0.96, 0.70, 19, [242, 112, 38], reliefKey);
-        for (let k = 0; k < 7; k++) {
-          const ang = Math.random() * Math.PI * 2;
-          const spd = 0.16 + Math.random() * 0.30;
-          const life = 0.28 + Math.random() * 0.36;
-          _impactFlameLights.push({
-            x: Number(origin.x) + 0.5 + (Math.random() - 0.5) * 0.25,
-            y: Number(origin.y) + 0.5 + (Math.random() - 0.5) * 0.25,
-            vx: Math.cos(ang) * spd,
-            vy: Math.sin(ang) * spd - (0.14 + Math.random() * 0.20),
-            ay: 0.72,
-            ttl: life,
-            max: life,
-            radius: 0.26 + Math.random() * 0.16,
-            phase: Math.random() * Math.PI * 2,
-          });
-        }
-        spawnMeteorProjectile(origin);
-        _meteorFx.push(new RadialFx({ x: origin.x, y: origin.y, radius: radius || 2, ttl: 0.45 }));
-        startCameraFocus(cam, Number(origin.x), Number(origin.y), {
-          inDur: 0.36,
-          holdDur: 0.16,
-          outDur: 0.80,
-        });
-        startZoomLerp(cam, 0.065, 0.36, 0.16, 0.80);
-        startSlamShake(cam, 14, 0.55);
-        // Fire particle burst
-        const N = 30;
-        for (let i = 0; i < N; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const spd = 1.0 + Math.random() * 2.5;
-          const life = 0.3 + Math.random() * 0.4;
-          fx.pool.spawn(new Particle({
-            x: origin.x + (Math.random() - 0.5) * 0.4,
-            y: origin.y + (Math.random() - 0.5) * 0.4,
-            vx: Math.cos(angle) * spd,
-            vy: Math.sin(angle) * spd,
-            ay: 0.8,
-            life,
-            size0: 0.25 + Math.random() * 0.15,
-            size1: 0.04,
-            r: 255, g: 140 + Math.random() * 80 | 0, b: 30,
-            a0: 0.95,
-          }));
-        }
-      }
+    world.on('spell:meteor', ({ origin, radius, depth }) => {
+      if (!origin || !Number.isFinite(origin.x) || !Number.isFinite(origin.y)) return;
+      const reliefKey = depth ?? (typeof getActiveReliefKey === "function" ? getActiveReliefKey() : null);
+
+      // Telegraph first: the camera has time to arrive at the target at full
+      // speed before the impact asks the display clock to slow down.
+      hitstopFx?.clear?.();
+      spawnMeteorProjectile(origin);
+      startCameraFocus(cam, Number(origin.x), Number(origin.y), {
+        inDur: 0.36,
+        holdDur: 0.16,
+        outDur: 0.80,
+      });
+      startZoomLerp(cam, 0.065, 0.36, 0.16, 0.80);
+      _pendingMeteorImpacts.push({
+        delay: 0.36,
+        origin: { x: Number(origin.x), y: Number(origin.y) },
+        radius: Number(radius || 2),
+        reliefKey,
+      });
     });
 
     world.on('spell:blizzard', ({ impacts }) => {
