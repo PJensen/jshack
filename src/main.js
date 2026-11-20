@@ -2373,7 +2373,7 @@ const _resolvedTrapTooltipSuppress = new Set();
 
 // Ground loot is a first-class discovery surface: it exposes rarity, details,
 // and equipped-stat deltas before pickup, so gear drops can earn a decision.
-const DEBUG_DISABLE_LEGACY_FLOOR_PICKUP_TOOLTIP = false;
+const DEBUG_DISABLE_LEGACY_FLOOR_PICKUP_TOOLTIP = true;
 
 // When player moves, show a mobile-friendly ground item tooltip for non-currency items on the tile
 world.on('moved', ({ id, to }) => {
