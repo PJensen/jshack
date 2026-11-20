@@ -179,7 +179,7 @@ export function setupDisplayRuntime({
       if (rank > bestRank) bestRank = rank;
     }
     startShake(cam, 1.15 + bestRank * 0.42, 0.08 + bestRank * 0.012);
-    startZoomLerp(cam, 0.010 + bestRank * 0.0025, 0.16, 0.07, 0.32 + bestRank * 0.035);
+    startZoomLerp(cam, 0.025 + bestRank * 0.006, 0.16, 0.07, 0.32 + bestRank * 0.035);
   });
 
   // The reward should land when the item reaches the player, not only when it
@@ -192,7 +192,7 @@ export function setupDisplayRuntime({
     const rank = rarity === 'legendary' ? 5
       : rarity === 'epic' ? 4 : rarity === 'rare' ? 3 : 1;
     if (rank < 3) return;
-    startZoomLerp(cam, 0.008 + rank * 0.0018, 0.12, 0.04, 0.24 + rank * 0.025);
+    startZoomLerp(cam, 0.018 + rank * 0.0025, 0.12, 0.04, 0.24 + rank * 0.025);
     if (rank >= 4) startShake(cam, 0.45 + rank * 0.08, 0.055);
   });
 

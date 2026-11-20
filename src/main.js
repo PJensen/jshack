@@ -5040,9 +5040,12 @@ function render(worldView) {
   _rpStage("camera");
   bctx.save();
   const _zpOff = getZoomPunchScale(cam);
-  if (_zpOff) cam.scale += _zpOff;
+  // Zoom feedback is stored as a fraction of the current tile scale, not
+  // literal pixels. A +0.02 envelope should read as a 2% reward zoom on both
+  // mobile and desktop camera scales.
+  if (_zpOff) cam.scale += cam.scale * _zpOff;
   applyCamera(bctx, cam, back);
-  if (_zpOff) cam.scale -= _zpOff;
+  if (_zpOff) cam.scale /= (1 + _zpOff);
 
   // Compute view bounds in world units for culling
   const viewHalfW = W * 0.5 / (cam.scale || 1);
