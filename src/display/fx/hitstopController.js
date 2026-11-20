@@ -168,9 +168,9 @@ export function createHitstopController() {
     }
 
     // Upgrade the freeze when damage actually resolves (crits/big hits extend it)
-    world.on('damaged', ({ target, amount, critical, crit, projectileDelay }) => {
+    world.on('damaged', ({ target, amount, critical, projectileDelay }) => {
       const dmg = Number(amount) || 0;
-      const dur = durationForHit(dmg, !!(critical || crit), false);
+      const dur = durationForHit(dmg, !!critical, false);
       requestAfter(Number(projectileDelay) || 0, dur);
     });
 

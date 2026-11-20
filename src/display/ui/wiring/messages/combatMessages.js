@@ -511,11 +511,11 @@ export function installCombatMessages(ctx) {
     return ` ${impactTxt} ${woundTxt}`;
   }
 
-  world.on('damaged', ({ target, amount, critical, crit, source, offhand, cause, type, impactProfile, at, hpAfter, maxHp }) => {
+  world.on('damaged', ({ target, amount, critical, source, offhand, cause, type, impactProfile, at, hpAfter, maxHp }) => {
     if (!_playerCanSee([target, source], at)) return;
 
     const defName = nameOfEntity(target);
-    const isCrit = !!(critical || crit);
+    const isCrit = !!critical;
     const targetBleeding = _hasBleedingStatus(target);
     const handTxt = offhand ? ' (off-hand)' : '';
     const critTxt = isCrit ? ' — CRIT!' : '';

@@ -176,7 +176,7 @@ export function createDeathEssenceFxController({
     const dmg = Math.max(0, Number(ev?.amount || 0));
     const force = Math.max(0, Math.min(3, dmg / 12));
     const cause = String(ev?.cause || "");
-    const critical = !!ev?.critical || !!ev?.crit;
+    const critical = !!ev?.critical;
 
     pendingImpulseByEntity.set(targetId, {
       dx,

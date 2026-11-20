@@ -147,7 +147,7 @@ export function setupDisplayRuntime({
 
   function startCriticalZoom(amount) {
     const dmg = Math.max(0, Number(amount) || 0);
-    const peak = 0.035 + Math.min(0.02, Math.log1p(dmg / 4) * 0.012);
+    const peak = 0.035 + Math.min(0.035, Math.log1p(dmg / 3) * 0.018);
     startZoomLerp(cam, peak, 0.07, 0.05, 0.30);
   }
 
@@ -182,8 +182,8 @@ export function setupDisplayRuntime({
 
   // Every crit gets the same readable reward beat, regardless of whether it
   // came from a weapon, spell, projectile, proc, or monster attack.
-  world.on('damaged', ({ amount, critical, crit, projectileDelay }) => {
-    if (!(critical || crit)) return;
+  world.on('damaged', ({ amount, critical, projectileDelay }) => {
+    if (!critical) return;
     const delay = Number(projectileDelay) || 0;
     if (delay > 0) pendingCritZooms.push({ delay, damage: amount });
     else startCriticalZoom(amount);
@@ -192,7 +192,7 @@ export function setupDisplayRuntime({
   // Chest openings get a tiny physical payoff. Scale it from the best item so
   // a legendary reveal lands harder without turning ordinary loot into combat
   // noise. This is display-only camera feedback; the rules event is unchanged.
-  world.on('chest:burst', ({ actor, drops }) => {
+  world.on('chest:burst', ({ actor, targetId, drops }) => {
     if (!isPlayer(actor)) return;
     const burstDrops = Array.isArray(drops) ? drops : [];
     let bestRank = 1;
@@ -206,7 +206,12 @@ export function setupDisplayRuntime({
       if (rank > bestRank) bestRank = rank;
     }
     startShake(cam, 1.15 + bestRank * 0.42, 0.08 + bestRank * 0.012);
-    startZoomLerp(cam, 0.025 + bestRank * 0.006, 0.16, 0.07, 0.32 + bestRank * 0.035);
+    const chestIdentity = String(getEntityIdentity(targetId) || '').toLowerCase();
+    const chestBonus = chestIdentity === 'legendary_chest' ? 0.065
+      : chestIdentity === 'epic_chest' ? 0.035
+      : chestIdentity === 'magic_chest' ? 0.015
+      : chestIdentity.endsWith('_chest') ? 0.004 : 0;
+    startZoomLerp(cam, 0.025 + bestRank * 0.006 + chestBonus, 0.16, 0.07, 0.32 + bestRank * 0.035);
   });
 
   // The reward should land when the item reaches the player, not only when it
