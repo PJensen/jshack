@@ -1,0 +1,1 @@
+wrong, camera should move first, time slows, VFX clock itelf slows, hit, speed back up, camera back
