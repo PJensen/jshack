@@ -2,6 +2,8 @@
 // Blink, meteor, blastwave spell VFX (world-space; display-only).
 
 import { startShake, startSlamShake } from "../camera/shake.js";
+import { startCameraFocus } from "../camera/controller.js";
+import { startZoomLerp } from "../camera/zoomPunch.js";
 import { pathPolyline, jitterLine } from "./fxGeom.js";
 import { Particle } from "../passes/vfx/particles/particlePool.js";
 import { RadialFx, BlinkFx, PhaseStrikeFx, SearchPulseFx, ArcSweepFx, SmokeFx } from "./fxEntries.js";
@@ -1756,6 +1758,12 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
         }
         spawnMeteorProjectile(origin);
         _meteorFx.push(new RadialFx({ x: origin.x, y: origin.y, radius: radius || 2, ttl: 0.45 }));
+        startCameraFocus(cam, Number(origin.x), Number(origin.y), {
+          inDur: 0.22,
+          holdDur: 0.10,
+          outDur: 0.52,
+        });
+        startZoomLerp(cam, 0.065, 0.22, 0.10, 0.52);
         startSlamShake(cam, 14, 0.55);
         // Fire particle burst
         const N = 30;

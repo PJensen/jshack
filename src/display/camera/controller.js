@@ -15,10 +15,65 @@ export function createCamera() {
   };
 }
 
+function smoothStep(t) {
+  const u = Math.max(0, Math.min(1, t));
+  return u * u * (3 - 2 * u);
+}
+
+/**
+ * Temporarily focus the camera on a world-space impact, then return to the
+ * camera's previous follow target. Presentation-only; gameplay coordinates
+ * and targeting are unaffected.
+ */
+export function startCameraFocus(cam, x, y, opts = {}) {
+  const targetX = Number(x);
+  const targetY = Number(y);
+  if (!Number.isFinite(targetX) || !Number.isFinite(targetY)) return;
+  cam._cameraFocus = {
+    fromX: Number(cam.x) || 0,
+    fromY: Number(cam.y) || 0,
+    targetX,
+    targetY,
+    returnX: Number.isFinite(Number(cam.targetX)) ? Number(cam.targetX) : Number(cam.x) || 0,
+    returnY: Number.isFinite(Number(cam.targetY)) ? Number(cam.targetY) : Number(cam.y) || 0,
+    inDur: Math.max(0.001, Number(opts.inDur) || 0.24),
+    holdDur: Math.max(0, Number(opts.holdDur) || 0.08),
+    outDur: Math.max(0.001, Number(opts.outDur) || 0.50),
+    time: 0,
+  };
+  cam._detached = true;
+}
+
 export function updateCamera(cam, dt) {
   const t = Math.min(1, cam.lerpSpeed * dt);
-  cam.x += (cam.targetX - cam.x) * t;
-  cam.y += (cam.targetY - cam.y) * t;
+  const focus = cam._cameraFocus;
+  if (focus) {
+    focus.time += Math.max(0, Number(dt) || 0);
+    const holdEnd = focus.inDur + focus.holdDur;
+    const outEnd = holdEnd + focus.outDur;
+    if (focus.time < focus.inDur) {
+      const k = smoothStep(focus.time / focus.inDur);
+      cam.x = focus.fromX + (focus.targetX - focus.fromX) * k;
+      cam.y = focus.fromY + (focus.targetY - focus.fromY) * k;
+    } else if (focus.time < holdEnd) {
+      cam.x = focus.targetX;
+      cam.y = focus.targetY;
+    } else if (focus.time < outEnd) {
+      const k = smoothStep((focus.time - holdEnd) / focus.outDur);
+      cam.x = focus.targetX + (focus.returnX - focus.targetX) * k;
+      cam.y = focus.targetY + (focus.returnY - focus.targetY) * k;
+    } else {
+      cam.x = focus.returnX;
+      cam.y = focus.returnY;
+      cam.targetX = focus.returnX;
+      cam.targetY = focus.returnY;
+      cam._cameraFocus = null;
+      cam._detached = false;
+    }
+  } else {
+    cam.x += (cam.targetX - cam.x) * t;
+    cam.y += (cam.targetY - cam.y) * t;
+  }
   cam.scale += (cam.targetScale - cam.scale) * t;
 }
 
