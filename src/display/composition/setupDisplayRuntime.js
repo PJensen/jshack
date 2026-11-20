@@ -16,7 +16,7 @@ import { createMeleeSlashFxController } from "../fx/meleeSlashFx.js";
 import { createAggroFxController } from "../fx/aggroFxController.js";
 import { createDeathEssenceFxController } from "../fx/deathEssenceFxController.js";
 import { startShake } from "../camera/shake.js";
-import { startZoomPunch } from "../camera/zoomPunch.js";
+import { startZoomPunch, startZoomLerp } from "../camera/zoomPunch.js";
 import { installFloatTextWiring } from "../ui/wiring/floatTextWiring.js";
 import { createFountainPresentationExtension } from "../ui/wiring/fountainPresentationExtension.js";
 import { createFountainUiExtension } from "../ui/wiring/fountainUiExtension.js";
@@ -160,6 +160,40 @@ export function setupDisplayRuntime({
     startShake(cam, amp, dur);
     // Crit zoom-punch: brief scale pulse that sells the weight of a big hit
     if (critical) startZoomPunch(cam, 0.025, 0.14);
+  });
+
+  // Chest openings get a tiny physical payoff. Scale it from the best item so
+  // a legendary reveal lands harder without turning ordinary loot into combat
+  // noise. This is display-only camera feedback; the rules event is unchanged.
+  world.on('chest:burst', ({ actor, drops }) => {
+    if (!isPlayer(actor)) return;
+    const burstDrops = Array.isArray(drops) ? drops : [];
+    let bestRank = 1;
+    for (let i = 0; i < burstDrops.length; i++) {
+      const info = getItemInfo(Number(burstDrops[i]?.itemId || 0) | 0);
+      const rarity = String(info?.rarityName || 'common').toLowerCase();
+      const rank = rarity === 'legendary' ? 5
+        : rarity === 'epic' ? 4
+        : rarity === 'rare' ? 3
+        : rarity === 'uncommon' ? 2 : 1;
+      if (rank > bestRank) bestRank = rank;
+    }
+    startShake(cam, 1.15 + bestRank * 0.42, 0.08 + bestRank * 0.012);
+    startZoomLerp(cam, 0.010 + bestRank * 0.0025, 0.16, 0.07, 0.32 + bestRank * 0.035);
+  });
+
+  // The reward should land when the item reaches the player, not only when it
+  // is first spotted. Rare+ pickups get a tiny ownership pulse; ordinary
+  // pickups keep the existing loot-suck animation and audio unchanged.
+  world.on('item:pickup', ({ actor, itemId }) => {
+    if (!isPlayer(actor)) return;
+    const info = getItemInfo(Number(itemId || 0) | 0);
+    const rarity = String(info?.rarityName || 'common').toLowerCase();
+    const rank = rarity === 'legendary' ? 5
+      : rarity === 'epic' ? 4 : rarity === 'rare' ? 3 : 1;
+    if (rank < 3) return;
+    startZoomLerp(cam, 0.008 + rank * 0.0018, 0.12, 0.04, 0.24 + rank * 0.025);
+    if (rank >= 4) startShake(cam, 0.45 + rank * 0.08, 0.055);
   });
 
   const { goreTick } = installFloatTextWiring({ world, ftext, fx, getPosition, isVisibleAt, isPet, isPlayer, getFxTime });

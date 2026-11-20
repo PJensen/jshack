@@ -64,14 +64,14 @@ export function createDeathLootArcFx({ world, getItemInfo, getFxTime, isWalkable
    */
   function schedule(itemId, origin, at, delayOffset, impulse) {
     const id = Number(itemId || 0) | 0;
-    if (!(id > 0)) return;
+    if (!(id > 0)) return 0;
     const fxTime = getFxTime();
     const fx = fxTime + (Number(delayOffset) || 0);
     const fromX = Number(origin?.x);
     const fromY = Number(origin?.y);
     let toX = Number(at?.x);
     let toY = Number(at?.y);
-    if (![fromX, fromY, toX, toY].every(Number.isFinite)) return;
+    if (![fromX, fromY, toX, toY].every(Number.isFinite)) return 0;
 
     const j1 = seededUnit(id ^ (world.step | 0));
     const j2 = seededUnit((id * 0x9e3779b9) ^ (world.step | 0));
@@ -170,7 +170,7 @@ export function createDeathLootArcFx({ world, getItemInfo, getFxTime, isWalkable
     const fdx = toX - fromX;
     const fdy = toY - fromY;
     const dist = Math.sqrt(fdx * fdx + fdy * fdy);
-    if (dist > 5) return;
+    if (dist > 5) return 0;
 
     // ── Arc timing ──────────────────────────────────────────────────
     let durBase = 0.30, durDist = 0.12, durForce = 0.05;
@@ -202,6 +202,7 @@ export function createDeathLootArcFx({ world, getItemInfo, getFxTime, isWalkable
     const duration = (durBase + dist * durDist + j1 * 0.08 + force * durForce) * wHang;
     const peak = (pkBase + dist * pkDist + j2 * 0.12 + force * pkForce) * wLift;
     arcs.set(id, { fromX, fromY, toX, toY, start: fx, duration, peak });
+    return Math.max(0, Number(delayOffset) || 0) + duration;
   }
 
   return { clear, removeItem, getPosition, schedule };

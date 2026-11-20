@@ -101,6 +101,31 @@ Deno.test("collectLightSources consumes authored light emitters", () => {
   assertEquals(lights.filter((light) => light.kind === "void" && light.x === 8.5).length, 1);
 });
 
+Deno.test("ground-item lights share the item glyph anchor", () => {
+  const lights = collectLightSources({
+    turn: 1,
+    player: null,
+    entities: [{
+      id: 21,
+      kind: "sword",
+      layer: 250,
+      pos: { x: 8, y: 3 },
+      tags: ["glowing"],
+    }, {
+      id: 22,
+      kind: "goblin",
+      layer: 300,
+      pos: { x: 8, y: 3 },
+      tags: ["glowing"],
+    }],
+  }, { fxTime: 1, dt: 0.016 });
+
+  const itemLight = lights[0];
+  const actorLight = lights[1];
+  assertEquals([itemLight?.x, itemLight?.y], [8, 3]);
+  assertEquals([actorLight?.x, actorLight?.y], [8.5, 3.5]);
+});
+
 Deno.test("portal temporal patterns are available for authored portal lighting", () => {
   assert(getPatternNames().includes("portal"));
   assert(getPatternNames().includes("rift"));

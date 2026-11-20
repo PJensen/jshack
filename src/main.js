@@ -1967,6 +1967,58 @@ const deathLootArcFx = createDeathLootArcFx({
   getFxTime: () => _fxTime,
   isWalkable,
 });
+/** @type {Array<{x:number,y:number,age:number,maxAge:number,height:number,color:[number,number,number],seed:number}>} */
+const _chestRevealBeams = [];
+
+function tickChestRevealBeams(dt) {
+  for (let i = _chestRevealBeams.length - 1; i >= 0; i--) {
+    const beam = _chestRevealBeams[i];
+    beam.age += dt;
+    if (beam.age >= beam.maxAge) _chestRevealBeams.splice(i, 1);
+  }
+}
+
+function drawChestRevealBeams(ctx) {
+  if (PERF.quality === 'low') return;
+  for (let i = 0; i < _chestRevealBeams.length; i++) {
+    const beam = _chestRevealBeams[i];
+    const progress = Math.max(0, Math.min(1, beam.age / beam.maxAge));
+    const fadeIn = Math.min(1, progress / 0.12);
+    const fadeOut = Math.max(0, 1 - Math.max(0, progress - 0.56) / 0.44);
+    const pulse = 0.5 + 0.5 * Math.sin(_fxTime * 18 + beam.seed * 0.17);
+    const alpha = fadeIn * fadeOut;
+    const width = 0.055 + 0.018 * pulse;
+    const top = beam.y - beam.height * (0.82 + 0.08 * pulse);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const outer = ctx.createLinearGradient(beam.x, top, beam.x, beam.y + 0.08);
+    outer.addColorStop(0, `rgba(${beam.color[0]},${beam.color[1]},${beam.color[2]},0)`);
+    outer.addColorStop(0.22, `rgba(${beam.color[0]},${beam.color[1]},${beam.color[2]},${(0.18 * alpha).toFixed(3)})`);
+    outer.addColorStop(0.78, `rgba(${beam.color[0]},${beam.color[1]},${beam.color[2]},${(0.34 * alpha).toFixed(3)})`);
+    outer.addColorStop(1, `rgba(255,255,235,${(0.08 * alpha).toFixed(3)})`);
+    ctx.fillStyle = outer;
+    ctx.fillRect(beam.x - width, top, width * 2, beam.y - top + 0.08);
+
+    const core = ctx.createLinearGradient(beam.x, top, beam.x, beam.y + 0.05);
+    core.addColorStop(0, 'rgba(255,255,255,0)');
+    core.addColorStop(0.35, `rgba(255,255,255,${(0.42 * alpha).toFixed(3)})`);
+    core.addColorStop(1, `rgba(255,245,205,${(0.7 * alpha).toFixed(3)})`);
+    ctx.fillStyle = core;
+    ctx.fillRect(beam.x - 0.012, top, 0.024, beam.y - top + 0.05);
+
+    const halo = ctx.createRadialGradient(beam.x, beam.y, 0, beam.x, beam.y, 0.30 + pulse * 0.08);
+    halo.addColorStop(0, `rgba(255,255,235,${(0.62 * alpha).toFixed(3)})`);
+    halo.addColorStop(0.35, `rgba(${beam.color[0]},${beam.color[1]},${beam.color[2]},${(0.32 * alpha).toFixed(3)})`);
+    halo.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(beam.x, beam.y, 0.30 + pulse * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
 /** @type {Map<number, { startStep:number, turns:number, abilityName:string }>} */
 const _monsterAbilityWindups = new Map();
 world.on("damaged", ({ target, amount, projectileDelay }) => {
@@ -1991,13 +2043,14 @@ world.on("monster:ability:cast", ({ actor }) => {
 
 // (Death loot arc physics extracted to display/fx/deathLootArcFx.js)
 function scheduleDeathLootArc(itemId, origin, at, delayOffset, impulse) {
-  deathLootArcFx.schedule(itemId, origin, at, delayOffset, impulse);
+  return deathLootArcFx.schedule(itemId, origin, at, delayOffset, impulse);
 }
 function deathLootArcPos(itemId) {
   return deathLootArcFx.getPosition(itemId);
 }
 
-world.on("item:dropped", ({ itemId, actor, source, origin, at, targetId, impulse }) => {
+world.on("item:dropped", (event) => {
+  const { itemId, actor, source, origin, at, targetId, impulse } = event;
   const src = String(source || "");
   if (src === "death") {
     const actorId = Number(actor || 0) | 0;
@@ -2009,7 +2062,9 @@ world.on("item:dropped", ({ itemId, actor, source, origin, at, targetId, impulse
     const chestId = Number(targetId || 0) | 0;
     const chestPos = chestId > 0 ? world.get(chestId, Position) : null;
     const o = origin || (chestPos ? { x: chestPos.x | 0, y: chestPos.y | 0 } : null);
-    if (o) scheduleDeathLootArc(itemId, o, at, 0);
+    // Hold the contents at the chest for a beat before the reveal arc begins.
+    // This is display-only; the rules position remains the real landing tile.
+    if (o) event.presentationDelayMs = Math.round(scheduleDeathLootArc(itemId, o, at, 0.16, null) * 1000);
   }
 });
 
@@ -2045,6 +2100,7 @@ world.on("chest:burst", ({ actor, targetId, origin, drops }) => {
     const atY = Number(d?.at?.y || 0);
     const info = world.get(itemId, ItemInfo);
     const color = lootRarityColorHex(info);
+    const rarity = String(info?.rarityName || "common").toLowerCase();
     const rgb = color.startsWith("#")
       ? {
         r: Number.parseInt(color.slice(1, 3), 16) || 255,
@@ -2066,6 +2122,42 @@ world.on("chest:burst", ({ actor, targetId, origin, drops }) => {
       b: rgb.b,
       a0: 0.62,
     }));
+
+    const height = rarity === 'legendary' ? 1.95
+      : rarity === 'epic' ? 1.65
+      : rarity === 'rare' ? 1.38
+      : 1.02;
+    _chestRevealBeams.push({
+      x: atX,
+      y: atY,
+      age: -0.16 - i * 0.045,
+      maxAge: 1.05 + Math.min(0.3, height * 0.12),
+      height,
+      color: [rgb.r, rgb.g, rgb.b],
+      seed: itemId || i,
+    });
+    const sparkleCount = rarity === 'legendary' ? 10
+      : rarity === 'epic' ? 8
+      : rarity === 'rare' ? 6
+      : 4;
+    for (let s = 0; s < sparkleCount; s++) {
+      const angle = (Math.PI * 2 * s) / sparkleCount + (itemId % 11) * 0.13;
+      const speed = 0.10 + (s % 2) * 0.035;
+      fx.pool.spawn(new Particle({
+        x: atX,
+        y: atY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.05,
+        ay: 0.06,
+        life: 0.42 + (s % 3) * 0.06,
+        size0: rarity === 'legendary' ? 0.07 : 0.05,
+        size1: 0.012,
+        r: Math.min(255, rgb.r + 35),
+        g: Math.min(255, rgb.g + 35),
+        b: Math.min(255, rgb.b + 35),
+        a0: 0.82,
+      }));
+    }
   }
 
   const pe = playerEntity(world);
@@ -2279,9 +2371,9 @@ function hideTrapTooltip() {
 
 const _resolvedTrapTooltipSuppress = new Set();
 
-// Temporary debug kill-switch while validating modern loot affordances.
-// Keep this code-only (no URL/localStorage) to make rollback cheap.
-const DEBUG_DISABLE_LEGACY_FLOOR_PICKUP_TOOLTIP = true;
+// Ground loot is a first-class discovery surface: it exposes rarity, details,
+// and equipped-stat deltas before pickup, so gear drops can earn a decision.
+const DEBUG_DISABLE_LEGACY_FLOOR_PICKUP_TOOLTIP = false;
 
 // When player moves, show a mobile-friendly ground item tooltip for non-currency items on the tile
 world.on('moved', ({ id, to }) => {
@@ -2980,6 +3072,7 @@ fx.ctx = bctx;
 fx.worldToScreen = (/** @type {number} */ x, /** @type {number} */ y, /** @type {number} */ size, /** @type {{x:number,y:number,size:number}} */ out) => { out.x = x; out.y = y; out.size = size; };
 world.on('dungeon:transitioned', () => {
   fx.pool.count = 0;
+  _chestRevealBeams.length = 0;
   _roofParticleStamp.clear();
   _roofSmokeParticleStamp.clear();
   if (lightingEngine) lightingEngine.invalidateAll();
@@ -5203,11 +5296,14 @@ function render(worldView) {
       }
       const topItemId = stackMeta.get(`${e.pos.x},${e.pos.y}`) || 0;
       const playerPos = worldView?.player?.pos;
+      const labelRange = _renderTagSet.has('legendary_glowing') ? 8
+        : _renderTagSet.has('epic_glowing') ? 6
+        : _renderTagSet.has('rare_glowing') ? 5 : 3;
       if (
         (arcPos || topItemId === e.id)
         && playerPos
         && (!worldView?.isVisible || worldView.isVisible(e.pos.x, e.pos.y))
-        && chebyshevScalar(playerPos.x | 0, playerPos.y | 0, e.pos.x | 0, e.pos.y | 0) <= 3
+        && chebyshevScalar(playerPos.x | 0, playerPos.y | 0, e.pos.x | 0, e.pos.y | 0) <= labelRange
       ) {
         _groundLootLabels.push({
           id: e.id,
@@ -5824,6 +5920,10 @@ function render(worldView) {
     );
   }
 
+  // Item reveal shafts sit above the darkness pass so the reward remains
+  // legible even when the landing tile is at the edge of vision.
+  drawChestRevealBeams(bctx);
+
   _rpStage("post_lighting");
   if (_postLightingTiles.length > 0) {
     for (let i = 0; i < _postLightingTiles.length; i += 3) {
@@ -6039,6 +6139,7 @@ function frame(now) {
   bumpFx.tick(displayDt);
   recoilFx.tick(displayDt);
   tickHitTints(displayDt);
+  tickChestRevealBeams(displayDt);
   deathVfx.tick(dtSec);
   teleportFx.tick(dtSec);
   sceneRuntime.tick(dtSec);

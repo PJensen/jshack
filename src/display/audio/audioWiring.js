@@ -971,6 +971,24 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
 
   // ── Items (sound varies by item type) ─────────────────────
 
+  function chestDropSound(itemId) {
+    const cat = itemCategory(getItemInfo, itemId);
+    if (cat === "weapon") {
+      const material = String(getItemInfo(itemId)?.material || "").toLowerCase();
+      if (material === "bone") return "item:drop:bone";
+      const metallic = material === "iron" || material === "steel" || material === "silver"
+        || material === "gold" || material === "copper" || material === "bronze";
+      return metallic ? "item:drop:weapon:metal" : "item:drop:weapon";
+    }
+    if (cat === "armor" || cat === "potion") return `item:drop:${cat}`;
+    if (cat === "gem") {
+      const material = getItemInfo(itemId)?.material;
+      const id = material && material !== "gemstone" ? `item:drop:gem:${material}` : "item:drop:gem";
+      return resolve(id) ? id : "item:drop:gem";
+    }
+    return "item:drop:generic";
+  }
+
   world.on('item:pickup', ({ itemId, itemType, itemX, itemY }) => {
     const pos = (itemX != null && itemY != null) ? { x: itemX, y: itemY } : null;
     if (playCombatSoftHandling(itemId, pos)) return;
@@ -985,8 +1003,22 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
     sfxAt("magic:spirit-surge", pos, pp(), { priority: 1 }, zg());
   });
 
-  world.on('item:dropped', ({ itemId, at }) => {
+  world.on('item:dropped', ({ itemId, at, source, presentationDelayMs }) => {
     if (playCombatSoftHandling(itemId, at)) return;
+    if (source === "chest") {
+      const info = getItemInfo(itemId);
+      const rarity = String(info?.rarityName || "common").toLowerCase();
+      const rank = rarity === "legendary" ? 5 : rarity === "epic" ? 4 : rarity === "rare" ? 3 : 1;
+      sfxAtDelay(
+        chestDropSound(itemId),
+        at,
+        pp(),
+        { volume: rank >= 3 ? 1.08 : 0.92 },
+        zg(),
+        presentationDelayMs || 0,
+      );
+      return;
+    }
     const cat = itemCategory(getItemInfo, itemId);
     let dropId;
     if (cat === "weapon") {

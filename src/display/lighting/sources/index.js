@@ -371,8 +371,11 @@ export function collectLightSources(view, opts = {}) {
       // The player remembers the decoration is there, but it shouldn't illuminate.
       if (tags && (tags.includes('memory_fixed') || tags.includes('memory_recent')
                 || tags.includes('memory_esp') || tags.includes('memory_thermal'))) continue;
-      const ex = e.pos.x + 0.5, ey = e.pos.y + 0.5;
       const layer = Number.isFinite(e.layer) ? (e.layer | 0) : 300;
+      // Ground-item glyphs are centered on their raw world position; actors
+      // and room entities use the lighting grid's half-tile center convention.
+      const itemOffset = layer === 250 ? 0 : 0.5;
+      const ex = e.pos.x + itemOffset, ey = e.pos.y + itemOffset;
       const kind = (typeof e.kind === 'string') ? e.kind.toLowerCase() : '';
 
       if (explicitLightEntityIds.has(Number(e.id || 0) | 0)) {
@@ -492,8 +495,8 @@ export function collectLightSources(view, opts = {}) {
         // Potion glyphs render at their world position (including item visual
         // offsets), so keep the point light anchored to that same position.
         const visualOff = e.visualOff || null;
-        const potionX = e.pos.x + 0.5 + Number(visualOff?.dx || 0);
-        const potionY = e.pos.y + 0.5 + Number(visualOff?.dy || 0);
+        const potionX = e.pos.x + itemOffset + Number(visualOff?.dx || 0);
+        const potionY = e.pos.y + itemOffset + Number(visualOff?.dy || 0);
         // Potions are small items: keep their light tightly concentrated
         // inside one tile instead of washing out the surrounding floor.
         emitPatterned(out, 'biolum', t, e.id, potionX, potionY, 0.75, col, 2);
