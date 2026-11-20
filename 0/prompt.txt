@@ -1,0 +1,13 @@
+/goal lets burn some tokens improving a few things and making them addictive -- opening chest for example -- modern games have done so much to make those moments additctive, same thing for gear drops, they really pull you in in a visceral way, diablo has long verical shafts of light eminating from the drop, chests openings are full of sparkle -- think with me here -- what can we do to make this shit addictive?
+
+---
+
+I hate the float text -- that sucks, I would rather using the camera to lerp in a bit, and lerp back out.
+
+---
+
+also, your dropped item souunds are playing immediately instead of when the item arcs hit the ground -- sorry!
+
+---
+
+the item lights are a half tile off in two directios
