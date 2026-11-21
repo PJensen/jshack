@@ -1323,8 +1323,6 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
     // Play enter world transition (8s: 4s dramatic moment + 4s fade to world)
     play('./assets/audio/enter_world.mp3', { bus: 'ui', volume: 0.8, priority: 2 });
-    // Fade out soundscape quickly to let enter_world take over
-    stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 0.5 });
 
     const generationPanel = showGenerationPanel();
 
