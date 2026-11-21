@@ -43,7 +43,7 @@ export function buildCatalogItem(world, itemId, opts = {}) {
   const info = {
     type: def.type || (isEquip ? "equip" : "item"),
     slot: def.slot || "",
-    weight: Number(def.weight || 1),
+    weight: Number(def.weight ?? 0),
     value: Number(def.value || 0),
     description: def.description || def.desc || def.name || "",
     count,
