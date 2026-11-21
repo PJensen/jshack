@@ -97,13 +97,58 @@ function buildRoute(view) {
     }
     route.push(waypoints.splice(nearest, 1)[0]);
   }
-  return [...route, player];
+  route.push(player);
+
+  // Keep both endpoints fixed and undo crossings and long returns left by
+  // the nearest-neighbor pass.
+  for (let improved = true; improved;) {
+    improved = false;
+    for (let first = 1; first < route.length - 2; first++) {
+      for (let last = first + 1; last < route.length - 1; last++) {
+        const a = route[first - 1], b = route[first], c = route[last], d = route[last + 1];
+        const before = Math.sqrt(distanceSquared(a, b)) + Math.sqrt(distanceSquared(c, d));
+        const after = Math.sqrt(distanceSquared(a, c)) + Math.sqrt(distanceSquared(b, d));
+        if (after >= before - 0.001) continue;
+        route.splice(first, last - first + 1, ...route.slice(first, last + 1).reverse());
+        improved = true;
+      }
+    }
+  }
+  return route;
 }
 
-function interpolate(a, b, t) {
+function timeRoute(route, duration) {
+  const distances = route.slice(1).map((point, i) => Math.sqrt(distanceSquared(route[i], point)));
+  const totalDistance = distances.reduce((sum, length) => sum + length, 0);
+  // Short hops still get time for a label. Longer crossings get more time
+  // so the camera does not have to race to keep up with the next stop.
+  const legTimes = distances.map((length) => duration * (
+    0.6 / distances.length + 0.4 * (totalDistance ? length / totalDistance : 1 / distances.length)
+  ));
+  let arrival = 0;
+  return route.map((point, i) => {
+    if (i > 0) arrival += legTimes[i - 1];
+    let vx = 0, vy = 0;
+    const incoming = distances[i - 1], outgoing = distances[i];
+    if (incoming > 0 && outgoing > 0) {
+      const prev = route[i - 1], next = route[i + 1];
+      const speed = Math.min(incoming / legTimes[i - 1], outgoing / legTimes[i]) * 0.5;
+      vx = ((point.x - prev.x) / incoming + (next.x - point.x) / outgoing) * speed;
+      vy = ((point.y - prev.y) / incoming + (next.y - point.y) / outgoing) * speed;
+    }
+    return { ...point, time: i === distances.length ? duration : arrival, vx, vy };
+  });
+}
+
+function interpolate(a, b, elapsed) {
+  const seconds = b.time - a.time;
+  const t = clamp01((elapsed - a.time) / seconds);
+  const blend = smoothStep(t);
+  const outgoing = t * (1 - t) ** 2 * seconds;
+  const incoming = -t * t * (1 - t) * seconds;
   return {
-    x: a.x + (b.x - a.x) * t,
-    y: a.y + (b.y - a.y) * t,
+    x: a.x + (b.x - a.x) * blend + a.vx * outgoing + b.vx * incoming,
+    y: a.y + (b.y - a.y) * blend + a.vy * outgoing + b.vy * incoming,
   };
 }
 
@@ -116,6 +161,7 @@ export function createOpeningFlyover(opts = {}) {
   let duration = DEFAULT_DURATION;
   let route = null;
   let elapsed = 0;
+  let segment = 0;
   let active = false;
 
   function start(cam, view) {
@@ -123,7 +169,9 @@ export function createOpeningFlyover(opts = {}) {
     route = buildRoute(view);
     if (!route) return false;
     duration = Math.max(1, Number(opts.duration) || Math.max(DEFAULT_DURATION, (route.length - 1) * MIN_SECONDS_PER_LEG));
+    route = timeRoute(route, duration);
     elapsed = 0;
+    segment = 0;
     active = true;
     cam._detached = true;
     cam.x = route[0].x;
@@ -139,14 +187,17 @@ export function createOpeningFlyover(opts = {}) {
     if (!active && !start(cam, view)) return false;
     elapsed += Math.max(0, Number(dt) || 0);
     const progress = clamp01(elapsed / duration);
-    const segmentCount = route.length - 1;
-    const segmentProgress = progress * segmentCount;
-    const segmentIndex = Math.min(segmentCount - 1, Math.floor(segmentProgress));
-    const localProgress = segmentProgress - segmentIndex;
-    const position = interpolate(route[segmentIndex], route[segmentIndex + 1], smoothStep(localProgress));
+    while (segment < route.length - 2 && elapsed >= route[segment + 1].time) segment++;
+    const from = route[segment], to = route[segment + 1];
+    const position = interpolate(from, to, elapsed);
     cam.x = position.x;
     cam.y = position.y;
-    cam.scale = startScale + (endScale - startScale) * smoothStep(progress);
+    const legProgress = clamp01((elapsed - from.time) / (to.time - from.time));
+    const departure = from.title ? 1 - smoothStep(legProgress * 2) : 0;
+    const approach = to.title ? smoothStep(legProgress * 2 - 1) : 0;
+    const landing = segment === route.length - 2 ? smoothStep(legProgress * 2 - 0.5) : 0;
+    const surveyScale = startScale * (1 + 0.36 * Math.max(departure, approach));
+    cam.scale = surveyScale + (endScale - surveyScale) * landing;
     cam.targetX = cam.x;
     cam.targetY = cam.y;
     cam.targetScale = cam.scale;
@@ -163,18 +214,17 @@ export function createOpeningFlyover(opts = {}) {
     return false;
   }
 
-  function getTitleCard() {
+  function getMapLabel() {
     if (!active) return null;
-    const segmentSeconds = duration / (route.length - 1);
-    const index = Math.round(elapsed / segmentSeconds);
-    const title = route[index]?.title;
-    if (!title) return null;
-    const distance = Math.abs(elapsed - index * segmentSeconds);
-    const halfWindow = Math.min(0.9, segmentSeconds * 0.45);
-    if (distance >= halfWindow) return null;
-    return { title, alpha: smoothStep((halfWindow - distance) / (halfWindow * 0.45)) };
+    const a = route[segment], b = route[segment + 1];
+    const point = elapsed - a.time < b.time - elapsed ? a : b;
+    if (!point.title) return null;
+    const distance = Math.abs(elapsed - point.time);
+    const window = Math.min(0.9, (b.time - a.time) * 0.45);
+    if (distance >= window) return null;
+    return { title: point.title, x: point.x, y: point.y, alpha: smoothStep((window - distance) / (window * 0.45)) };
   }
 
-  return { start, update, getTitleCard, isActive: () => active };
+  return { start, update, getMapLabel, isActive: () => active };
 }
 

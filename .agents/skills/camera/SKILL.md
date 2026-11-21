@@ -42,7 +42,10 @@ The opening projects materialized entrances and quest givers in main and reads
 outdoor landmark anchors from the cached overworld plan. Use the entrance label
 for a site with a dungeon entrance so the tour titles it once. Check that
 anchors are on loaded tiles. Keep the route deterministic and budget time per
-leg so more stops do not squeeze the title cards.
+leg so more stops do not squeeze the labels. Route ordering keeps the opening
+corner and player fixed. Adjacent legs share waypoint velocities. Draw labels
+in CSS pixels using the live camera projection so they stay legible and pinned
+to the terrain through both pan and zoom.
 
 The flyover composites one cached landscape image per frame. When changing the
 world extent, keep the raster pixel budget independent of the number of tiles.

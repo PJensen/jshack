@@ -1,4 +1,4 @@
-import { applyCamera } from "./controller.js";
+import { applyCamera, worldToScreen } from "./controller.js";
 
 const TILE_PIXELS = 8;
 const MAX_LANDSCAPE_PIXELS = 1344;
@@ -43,13 +43,16 @@ export function drawOpeningLandscape(ctx, canvas, cam, landscape, alpha = 1) {
   ctx.restore();
 }
 
-export function drawOpeningTitleCard(ctx, width, height, card) {
-  if (!card) return;
-  const size = Math.max(18, Math.min(42, width * 0.055, height * 0.09));
-  const x = width * 0.5;
-  const y = height * 0.72;
+export function drawOpeningMapLabel(ctx, viewport, cam, label) {
+  if (!label) return;
+  const [x, y] = worldToScreen(cam, label.x, label.y, viewport);
+  const { width, height } = viewport;
+  const edge = Math.min(x, y - 30, width - x, height - y);
+  if (edge <= 0) return;
+  const size = Math.max(16, Math.min(27, width * 0.042));
+  const textY = y - 15 - size * 0.5;
   ctx.save();
-  ctx.globalAlpha = card.alpha;
+  ctx.globalAlpha = label.alpha * Math.min(1, edge / 20);
   ctx.font = `${size}px Georgia, serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -57,7 +60,9 @@ export function drawOpeningTitleCard(ctx, width, height, card) {
   ctx.lineWidth = Math.max(3, size * 0.12);
   ctx.strokeStyle = "#101017";
   ctx.fillStyle = "#fff2d5";
-  ctx.strokeText(card.title, x, y, width * 0.86);
-  ctx.fillText(card.title, x, y, width * 0.86);
+  ctx.strokeText(label.title, x, textY, width * 0.8);
+  ctx.fillText(label.title, x, textY, width * 0.8);
+  ctx.fillRect(x - 0.5, y - 12, 1, 10);
+  ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
   ctx.restore();
 }

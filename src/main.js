@@ -22,7 +22,7 @@ import { DEATH_MODES } from "./rules/components/RunState.js";
 // display/ camera + director utilities (pure display resources)
 import { createCamera, updateCamera, applyCamera, worldToScreen, clientToWorld as cameraClientToWorld } from "./display/camera/controller.js";
 import { createOpeningFlyover } from "./display/camera/openingFlyover.js";
-import { bakeOpeningLandscape, drawOpeningLandscape, drawOpeningTitleCard } from "./display/camera/openingLandscape.js";
+import { bakeOpeningLandscape, drawOpeningLandscape, drawOpeningMapLabel } from "./display/camera/openingLandscape.js";
 import { updateShake } from "./display/camera/shake.js";
 import { startZoomPunch, updateZoomPunch, getZoomPunchScale } from "./display/camera/zoomPunch.js";
 import { zoomTo } from "./display/camera/utils.js";
@@ -6191,7 +6191,7 @@ function frame(now) {
   _fpsEMA = _fpsEMA ? (_fpsEMA * 0.9 + instFps * 0.1) : instFps;
   if (openingView && openingFlyover.update(cam, openingView, dtSec)) {
     drawOpeningLandscape(ctx, canvas, cam, openingLandscape);
-    drawOpeningTitleCard(ctx, _canvasSetup.cssW, _canvasSetup.cssH, openingFlyover.getTitleCard());
+    drawOpeningMapLabel(ctx, { width: _canvasSetup.cssW, height: _canvasSetup.cssH }, cam, openingFlyover.getMapLabel());
     requestAnimationFrame(frame);
     return;
   }
