@@ -202,9 +202,9 @@ export const LOOT_TABLES = {
   "sub:generated_gear": {
     rolls: { min: 1, max: 1 },
     entries: [
-      { type: "generated", weight: 10, basePool: ["sword_plain", "dagger_quick", "bow_short"], rarity: 2, rarityName: "uncommon", affixChance: 0.65, affixCountMax: 1, resonances: ["thorn", "wild"], prefix: "Thornsworn", suffix: "of Thorns" },
-      { type: "generated", weight: 8, basePool: ["helm_iron", "helm_steel", "shield_iron"], rarity: 3, rarityName: "rare", affixChance: 0.7, affixCountMax: 1, resonances: ["ember", "ward"], prefix: "Emberforged", suffix: "of Embers" },
-      { type: "generated", weight: 5, basePool: ["ring_health", "ring_precision", "ring_arcana"], rarity: 3, rarityName: "rare", affixChance: 0.75, affixCountMax: 2, resonances: ["moon", "arcane"], prefix: "Moon-veiled", suffix: "of the Star Archive" },
+      { type: "generated", weight: 10, basePool: ["sword_plain", "dagger_quick", "bow_short"], rarity: 2, rarityName: "uncommon", affixChance: 0.65, affixCountMax: 1, statRolls: { attack: { min: 1, max: 2 }, critChance: { min: 0.02, max: 0.05, step: 0.01 } }, resonances: ["thorn", "wild"], prefix: "Thornsworn", suffix: "of Thorns" },
+      { type: "generated", weight: 8, basePool: ["helm_iron", "helm_steel", "shield_iron"], rarity: 3, rarityName: "rare", affixChance: 0.7, affixCountMax: 1, statRolls: { defense: { min: 1, max: 2 }, fireResist: { min: 0.05, max: 0.15, step: 0.05 } }, resonances: ["ember", "ward"], prefix: "Emberforged", suffix: "of Embers" },
+      { type: "generated", weight: 5, basePool: ["ring_health", "ring_precision", "ring_arcana"], rarity: 3, rarityName: "rare", affixChance: 0.75, affixCountMax: 2, statRolls: { luck: { min: 1, max: 2 }, maxMana: { min: 3, max: 8 } }, resonances: ["moon", "arcane"], prefix: "Moon-veiled", suffix: "of the Star Archive" },
     ],
   },
 

@@ -200,6 +200,7 @@ Deno.test("generated meta-loot preserves provenance, rolled affixes, and generat
   assertEquals(generated.params.generation.kind, "meta-loot");
   assert(generated.params.generation.resonances.length > 0);
   assert(generated.params.generatedName.includes(" of "));
+  assert(Object.keys(generated.params.bonuses || {}).length > 0, "generated loot should roll authored stat dimensions");
 
   const world = new World({ seed: 7 });
   const id = materializeDrop(world, generated, { x: 0, y: 0 });
@@ -208,4 +209,7 @@ Deno.test("generated meta-loot preserves provenance, rolled affixes, and generat
   assertEquals(world.get(id, ItemInfo).generation, generated.params.generation);
   assertEquals(world.get(id, ItemInfo).rarity, generated.params.generation.rarity);
   assertEquals(world.get(id, ItemInfo).rarityName, generated.params.generation.rarityName);
+  for (const [key, value] of Object.entries(generated.params.bonuses)) {
+    assertEquals(world.get(id, ItemInfo).bonuses[key], value);
+  }
 });

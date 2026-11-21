@@ -251,6 +251,8 @@ function resolveEquipEntry(entry, rng, opts, weaponRef, generated) {
     const resonances = Array.isArray(entry.resonances) ? entry.resonances.map(String).filter(Boolean) : [];
     const prefix = String(entry.prefix || "").trim();
     const suffix = String(entry.suffix || "").trim();
+    const rolledBonuses = rollGeneratedBonuses(entry.statRolls, rng);
+    if (Object.keys(rolledBonuses).length > 0) params.bonuses = rolledBonuses;
     params.generatedName = [prefix, def?.name || equipId, suffix].filter(Boolean).join(" ");
     params.generation = {
       kind: "meta-loot",
@@ -259,9 +261,29 @@ function resolveEquipEntry(entry, rng, opts, weaponRef, generated) {
       resonances,
       affixChance: Math.max(0, Math.min(1, Number(entry.affixChance || 0))),
       affixCountMax: Math.max(0, Number(entry.affixCountMax || 0) | 0),
+      rolledBonuses,
     };
   }
   return { kind: generated ? "generated" : "equip", params };
+}
+
+function rollGeneratedBonuses(statRolls, rng) {
+  if (!statRolls || typeof statRolls !== "object" || Array.isArray(statRolls)) return {};
+  const bonuses = {};
+  for (const [key, spec] of Object.entries(statRolls)) {
+    if (!spec || typeof spec !== "object") continue;
+    const min = Number(spec.min);
+    const max = Number(spec.max);
+    if (!Number.isFinite(min) || !Number.isFinite(max)) continue;
+    const low = Math.min(min, max);
+    const high = Math.max(min, max);
+    const step = Number(spec.step || (Number.isInteger(low) && Number.isInteger(high) ? 1 : 0));
+    const value = step > 0
+      ? low + rng.int(0, Math.floor((high - low) / step)) * step
+      : rng.float(low, high);
+    bonuses[key] = Number(value.toFixed(4));
+  }
+  return bonuses;
 }
 
 // ── Affix rolling ───────────────────────────────────────────────────
@@ -350,6 +372,7 @@ export function materializeDrop(world, drop, pos) {
       try {
         id = buildCatalogItem(world, drop.params.equipId, {
           affixes: drop.params.affixes || [],
+          bonuses: drop.params.bonuses || {},
           generatedName: drop.params.generatedName,
           generation: drop.params.generation,
         });

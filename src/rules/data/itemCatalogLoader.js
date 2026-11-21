@@ -25,7 +25,7 @@ function cloneWeaponVfxProfile(profile) {
  * Build an item entity from the unified item catalog.
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {string} itemId
- * @param {{ affixes?: string[], count?: number, generatedName?: string, generation?: object }} [opts]
+ * @param {{ affixes?: string[], bonuses?: object, count?: number, generatedName?: string, generation?: object }} [opts]
  */
 export function buildCatalogItem(world, itemId, opts = {}) {
   const def = getCatalogItem(itemId);
@@ -47,7 +47,7 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     value: Number(def.value || 0),
     description: def.description || def.desc || def.name || "",
     count,
-    bonuses: def.bonuses || {},
+    bonuses: { ...(def.bonuses || {}), ...(opts.bonuses || {}) },
     twoHanded: def.twoHanded || false,
     rarity: Number(opts.generation?.rarity || def.rarity || 1),
     rarityName: String(opts.generation?.rarityName || def.rarityName || "common"),

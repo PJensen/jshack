@@ -112,6 +112,7 @@ function decorateDrop(drop, index) {
     rarity: generation?.rarity || def.rarity,
     rarityName: generation?.rarityName || def.rarityName,
     affixes: drop?.params?.affixes || def.affixes,
+    bonuses: { ...(def.bonuses || {}), ...(drop?.params?.bonuses || {}) },
   } : null;
   return {
     index,
@@ -123,6 +124,7 @@ function decorateDrop(drop, index) {
     alignmentWords: words,
     suffixWords: suffixes,
     estimatedValue: info ? estimateItemValueFromInfo(info) : 0,
+    rolledBonuses: drop?.params?.bonuses || {},
   };
 }
 
