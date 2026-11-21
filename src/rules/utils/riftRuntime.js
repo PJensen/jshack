@@ -200,6 +200,7 @@ export function createRift(world, spec = {}) {
     portalId,
     inside: false,
     planeId: riftPlaneId(riftId),
+    templateId,
   });
 
   world.emit(new RiftOpened({

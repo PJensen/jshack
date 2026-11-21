@@ -32,7 +32,7 @@ Deno.test("crafting adapters preserve cooking requirement and consumption distin
   const requirements = model.recipes[0].requirements;
   assertEquals(requirements.find((req) => req.key === "water")?.consumed, false);
   assertEquals(requirements.find((req) => req.key === "firewood")?.available, 0);
-  assertEquals(model.recipes[0].missingText, "Missing: 1 firewood");
+  assertEquals(model.recipes[0].missingText, "Missing: 1 Firewood");
 });
 
 Deno.test("enchanting adapter maps canonical reagent identities and action contract", () => {

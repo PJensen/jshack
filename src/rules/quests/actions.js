@@ -4,7 +4,7 @@ import { QuestLog } from "../components/QuestLog.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { NamedIdentity } from "../components/NamedIdentity.js";
 import { createItemById } from "../utils/itemFactory.js";
-import { addToInventory } from "../utils/inventoryFacade.js";
+import { addToInventory, hasCapacityForItem } from "../utils/inventoryFacade.js";
 import { listQuestRewardBonusItems, listQuestRewardOptions } from "./rewardOptions.js";
 import { identify } from "../data/identification.js";
 
@@ -105,6 +105,14 @@ export function grantSelectedReward() {
     const granted = [];
     const itemsToGrant = [...option.items, ...listQuestRewardBonusItems(ctx.def, ctx.vars)];
     for (const item of itemsToGrant) {
+      const previewId = createItemById(ctx.world, item.itemId, { count: item.count });
+      if (!(previewId > 0) || !hasCapacityForItem(ctx.world, playerId, previewId)) {
+        if (previewId > 0) {
+          try { ctx.world.destroy(previewId); } catch {}
+        }
+        return false;
+      }
+      try { ctx.world.destroy(previewId); } catch {}
       const itemId = createItemById(ctx.world, item.itemId, { count: item.count });
       if (!(itemId > 0) || !addToInventory(ctx.world, playerId, itemId)) {
         if (itemId > 0) {

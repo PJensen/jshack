@@ -274,7 +274,7 @@ export function createTransitionController({ world, playerEntity, tombstoneRepo,
         }
       }
       const activeTemplateId = pending.planeId
-        ? ""
+        ? String(pending.templateId || currentState?.activeTemplateId || "")
         : String(pending.entrance?.templateId || currentState?.activeTemplateId || "");
       const activeTemplate = getUnderworldRegionTemplate(activeTemplateId);
       const templateFloors = Math.max(1, Number(activeTemplate?.floors ?? 0) | 0);
@@ -344,6 +344,7 @@ export function createTransitionController({ world, playerEntity, tombstoneRepo,
             inside: true,
             currentLevel: pending.riftLevel || newDepth,
             planeId: pending.planeId,
+            templateId: String(pending.templateId || state.templateId || ""),
           });
           world.emit(new RiftEntered({
             actor: playerEntity()?.id || 0,

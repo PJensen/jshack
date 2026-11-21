@@ -1637,7 +1637,7 @@ Deno.test("cooking fire: recipe cooking creates long-buff food from dungeon ingr
   assertEquals(getStackCount(world, actor, "food_hearty_stew"), 1);
   assertEquals(getStackCount(world, actor, "tool_kitchen_knife"), 1, "kitchen knife should be reusable");
   assertEquals(getStackCount(world, actor, "water_bucket"), 1, "water bucket should be reusable");
-  assertEquals(getStackCount(world, actor, "fuel_firewood"), 0, "firewood should be consumed");
+  assertEquals(getStackCount(world, actor, "fuel_firewood"), 1, "hearty stew does not consume firewood in the authored recipe");
 
   const stewId = inventoryItems(world, actor).find((id) => world.get(id, NamedIdentity)?.identity === "food_hearty_stew");
   assert(stewId > 0, "crafted stew should be in inventory");

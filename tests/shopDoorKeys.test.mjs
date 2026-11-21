@@ -317,8 +317,9 @@ Deno.test("overworld shopkeepers get keyed locked shop doors after generation", 
     assert(shopRoom, `expected ${role} shop room metadata`);
 
     let shopDoorId = 0;
-    for (const [id, pos] of world.query(Position, DoorState)) {
-      if (isDoorOnRoomPerimeter(pos, shopRoom)) {
+    const expectedLockId = world.get(keyIds[0], DoorKey)?.lockId;
+    for (const [id, lock] of world.query(DoorLock)) {
+      if (String(lock?.lockId || "") === String(expectedLockId || "")) {
         shopDoorId = id;
         break;
       }

@@ -438,8 +438,28 @@ export function reconcileShopDoorAccess(world) {
     if (!(actorId > 0)) continue;
     const job = world.get(actorId, TownfolkJob);
     if (!job) continue;
-    const doorId = findRoomDoor(world, room);
+    const authoredDoorId = findDoorEntityAt(world, Number(job.pubX) | 0, Number(job.pubY) | 0);
+    let keyedDoorId = 0;
+    if (job.role === "general_vendor") {
+      for (const itemId of inventoryItems(world, actorId)) {
+        const lockId = String(world.get(itemId, DoorKey)?.lockId || "");
+        const match = lockId.match(/:(-?\d+),(-?\d+)$/);
+        if (!match) continue;
+        keyedDoorId = findDoorEntityAt(world, Number(match[1]) | 0, Number(match[2]) | 0);
+        if (keyedDoorId > 0) break;
+      }
+    }
+    const doorId = job.role === "general_vendor"
+      ? (keyedDoorId || authoredDoorId || findRoomDoor(world, room))
+      : (findRoomDoor(world, room) || authoredDoorId);
     if (!(doorId > 0)) continue;
+    if (job.role === "general_vendor" && authoredDoorId === doorId) {
+      const doorPos = world.get(doorId, Position);
+      const lockId = shopDoorLockId(job.role, doorPos.x, doorPos.y);
+      for (const itemId of inventoryItems(world, actorId)) {
+        if (world.has(itemId, DoorKey)) world.set(itemId, DoorKey, { lockId });
+      }
+    }
     ensureShopDoorAccess(world, actorId, job.role, doorId);
   }
 }
@@ -1342,6 +1362,11 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
       spawns.push({ x: pos.x, y: pos.y, kind, params });
     };
 
+    // Authored objective books are required content, so place them before the
+    // larger ambient roster can consume every available room tile.
+    for (const bookId of authoredContent.books || []) {
+      addAt("book", { bookId });
+    }
     for (const entry of authoredContent.monsters || []) {
       const budget = authoredBudgetEntry(entry);
       if (!budget || budget.pool.length === 0) continue;
@@ -1377,9 +1402,6 @@ export function populateChunk(chunk, floorPlan, rng, tombstoneRepo = null, world
     }
     for (const chest of authoredContent.chests || []) {
       addAt("chest", { ...chest, depth: floorPlan.depth });
-    }
-    for (const bookId of authoredContent.books || []) {
-      addAt("book", { bookId });
     }
   }
 

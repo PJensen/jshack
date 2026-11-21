@@ -39,47 +39,49 @@ function setupRewardScenario(capacity) {
   world.emit("dialog:reported", { questId: FARMER_MILL_RUN_QUEST_ID, playerId: player, speakerId: farmer });
   assertEquals(world.get(questId, QuestState)?.node, "reward");
 
+  const eventTarget = new EventTarget();
   installInventoryDataProvider({
     world,
+    eventTarget,
     getActiveSpellId: () => null,
     isSimUiBlocked: () => false,
     getMessageLog: () => ({ getEntries: () => [] }),
     tombstoneRepo: { getAll: () => [] },
   });
-  return { world, player, questId };
+  return { world, player, questId, eventTarget };
 }
 
 Deno.test("quest reward completion emits once and repeated requests do not duplicate grants", () => {
-  const { world, player, questId } = setupRewardScenario(20);
+  const { world, player, questId, eventTarget } = setupRewardScenario(20);
   let completed = 0;
   const onCompleted = () => { completed += 1; };
-  addEventListener("ui:questRewardCompleted", onCompleted);
+  eventTarget.addEventListener("ui:questRewardCompleted", onCompleted);
 
-  const request = () => dispatchEvent(new CustomEvent("ui:requestQuestReward", {
+  const request = () => eventTarget.dispatchEvent(new CustomEvent("ui:requestQuestReward", {
     detail: { questId: FARMER_MILL_RUN_QUEST_ID, playerId: player, rewardId: "bow_mirror" },
   }));
   request();
   request();
-  removeEventListener("ui:questRewardCompleted", onCompleted);
+  eventTarget.removeEventListener("ui:questRewardCompleted", onCompleted);
 
   assertEquals(world.get(questId, QuestState)?.status, "complete");
   assertEquals(completed, 1);
 });
 
 Deno.test("failed quest reward claim stays pending and reports an error", () => {
-  const { world, questId, player } = setupRewardScenario(0);
+  const { world, questId, player, eventTarget } = setupRewardScenario(0);
   let errors = 0;
   let completed = 0;
   const onError = () => { errors += 1; };
   const onCompleted = () => { completed += 1; };
-  addEventListener("ui:questRewardError", onError);
-  addEventListener("ui:questRewardCompleted", onCompleted);
+  eventTarget.addEventListener("ui:questRewardError", onError);
+  eventTarget.addEventListener("ui:questRewardCompleted", onCompleted);
 
-  dispatchEvent(new CustomEvent("ui:requestQuestReward", {
+  eventTarget.dispatchEvent(new CustomEvent("ui:requestQuestReward", {
     detail: { questId: FARMER_MILL_RUN_QUEST_ID, playerId: player, rewardId: "bow_mirror" },
   }));
-  removeEventListener("ui:questRewardError", onError);
-  removeEventListener("ui:questRewardCompleted", onCompleted);
+  eventTarget.removeEventListener("ui:questRewardError", onError);
+  eventTarget.removeEventListener("ui:questRewardCompleted", onCompleted);
 
   assertEquals(world.get(questId, QuestState)?.node, "reward");
   assertEquals(errors, 1);

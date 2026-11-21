@@ -46,7 +46,7 @@ fi
   --approve-for-me \
   "Work on JSHack's failing tests using exactly: deno test --allow-read --allow-write --no-check
 
-The default bias is to repair the tests, fixtures, or test setup because fast-moving features can create natural test drift. Diagnose the actual failure and prefer correcting stale, brittle, or incorrect test code over changing application code. Before changing a test, inspect recent commits, blame, and the relevant implementation history to establish that a recent behavior change plausibly introduced the drift; do not assume a failing test is stale without evidence. However, production code may and should be fixed when the failing test, recent history, and surrounding evidence establish a genuine implementation defect; do not leave a real product bug in place merely to preserve the current code. For every production change, explain the supporting fact pattern and why a test-only change would be wrong. Do not hack around failures: never weaken, delete, skip, quarantine, or rewrite assertions merely to make tests pass; never reduce coverage; never introduce nondeterminism; never regress the game code. Only change an assertion when the documented/current intended behavior and recent repository history prove the expectation is stale or incorrect, and preserve or strengthen the invariant being tested.
+The default bias is to repair the tests, fixtures, or test setup because fast-moving features can create natural test drift. Treat all game code under src/ as protected: do not change it merely to make a test pass. Diagnose the actual failure and prefer correcting stale, brittle, or incorrect test code over changing application code. Before changing a test, inspect recent commits, blame, and the relevant implementation history to establish that a recent behavior change plausibly introduced the drift; do not assume a failing test is stale without evidence. A production change is permitted only when the failing test, recent history, and surrounding evidence establish a genuine implementation defect, and only when you add or strengthen a focused regression test for that defect. For every production change, explain the exact failing behavior, the evidence that the implementation is wrong, and why a test-only change would be incorrect. If that evidence is not conclusive, leave production code unchanged and report the failure. Do not hack around failures: never weaken, delete, skip, quarantine, or rewrite assertions merely to make tests pass; never reduce coverage; never introduce nondeterminism; never regress the game code. Only change an assertion when the documented/current intended behavior and recent repository history prove the expectation is stale or incorrect, and preserve or strengthen the invariant being tested.
 
 Before editing, inspect the working tree and preserve all unrelated user changes. Do not reset, checkout, clean, or discard changes. Do not commit or push changes; the outer launcher owns publication. Run the exact test command before and after the fix, plus focused guardrails for touched behavior. If the failure cannot be fixed safely, leave the code unchanged and explain the evidence. Finish with a concise report of the failing tests, root cause, files changed, verification commands, and any remaining failures."
 
@@ -59,7 +59,17 @@ git diff --check
 printf '%s\n' "running verification: $test_command"
 deno test --allow-read --allow-write --no-check
 
+changed_files="$(git diff --name-only)"
+if grep -q '^src/' <<<"$changed_files" && ! grep -q '^tests/' <<<"$changed_files"; then
+  printf '%s\n' "production code changed without a regression test; refusing to publish" >&2
+  exit 1
+fi
+
 git add -A
-git commit -m "test: repair nightly test drift"
+commit_message="test: repair nightly test drift"
+if grep -q '^src/' <<<"$changed_files"; then
+  commit_message="fix: repair nightly test drift"
+fi
+git commit -m "$commit_message"
 git push "$remote" "$base_branch"
 git pull --ff-only "$remote" "$base_branch"

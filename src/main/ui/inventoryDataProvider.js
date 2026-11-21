@@ -142,17 +142,17 @@ function questJournalCompletionText(state, vars) {
  * }} deps
  * @returns {{ buildGroundPickupDetailAt: (actorId: number, x: number, y: number) => object|null }}
  */
-export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo }) {
+export function installInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo, eventTarget = _uiEventTarget }) {
   if (_providers.has(world)) return _providers.get(world);
   let provider;
   world.install(defineExtension("jshack:main:inventoryDataProvider", () => {
-    provider = createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo });
+    provider = createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo, eventTarget });
   }, { key: _installed }));
   _providers.set(world, provider);
   return provider;
 }
 
-function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo }) {
+function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, getMessageLog, tombstoneRepo, eventTarget = _uiEventTarget }) {
 
   function findScrollOfIdentify(playerId) {
     for (const id of inventoryItems(world, playerId)) {
@@ -1072,11 +1072,16 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
     _uiEventTarget.dispatchEvent(new CustomEvent('ui:questJournalData', { detail: { quests } }));
   });
 
-  addEventListener('ui:requestQuestReward', (ev) => {
+  eventTarget.addEventListener('ui:requestQuestReward', (ev) => {
     const questId = String(ev?.detail?.questId || '').trim();
     const rewardId = String(ev?.detail?.rewardId || '').trim();
     const playerId = Number(playerEntity(world)?.id || 0) | 0;
     if (!questId || !rewardId || !(playerId > 0)) return;
+    const rewardWasPending = Array.from(world.query(QuestDefRef, QuestState, QuestBindings))
+      .some(([, def, state, bindings]) => String(def?.id || '') === questId
+        && Number(bindings?.player || 0) === playerId
+        && String(state?.node || '') === 'reward'
+        && String(state?.status || '') === 'active');
     world.emit('quest:reward_selected', { questId, playerId, rewardId });
     const rewardStillPending = Array.from(world.query(QuestDefRef, QuestState, QuestBindings))
       .some(([, def, state, bindings]) => String(def?.id || '') === questId
@@ -1084,15 +1089,15 @@ function createInventoryDataProvider({ world, getActiveSpellId, isSimUiBlocked, 
         && String(state?.node || '') === 'reward'
         && String(state?.status || '') === 'active');
     if (rewardStillPending) {
-      _uiEventTarget.dispatchEvent(new CustomEvent('ui:questRewardError', {
+      eventTarget.dispatchEvent(new CustomEvent('ui:questRewardError', {
         detail: { questId, message: 'Make room in your inventory before claiming this reward.' },
       }));
-    } else {
-      _uiEventTarget.dispatchEvent(new CustomEvent('ui:questRewardCompleted', {
+    } else if (rewardWasPending) {
+      eventTarget.dispatchEvent(new CustomEvent('ui:questRewardCompleted', {
         detail: { questId, rewardId },
       }));
     }
-    _uiEventTarget.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
+    eventTarget.dispatchEvent(new CustomEvent('ui:requestQuestJournalData'));
   });
 
   world.on('quest:advanced', (payload) => {
