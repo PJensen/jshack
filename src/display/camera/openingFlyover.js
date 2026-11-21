@@ -55,13 +55,25 @@ function selectWaypoints(view, player) {
         bestIndex = i;
       }
     }
-    const point = remaining.splice(bestIndex, 1)[0];
-    if (selected.length === 0 || Math.sqrt(bestScore) >= MIN_WAYPOINT_SEPARATION) selected.push(point);
+    if (selected.length > 0 && bestScore < MIN_WAYPOINT_SEPARATION ** 2) break;
+    selected.push(remaining.splice(bestIndex, 1)[0]);
   }
   return selected;
 }
 
-function findFarCorner(player, points) {
+function findFarCorner(player, points, worldBounds) {
+  if (worldBounds) {
+    const inset = 12;
+    const corners = [
+      { x: worldBounds.minX + inset, y: worldBounds.minY + inset },
+      { x: worldBounds.minX + inset, y: worldBounds.maxY - inset },
+      { x: worldBounds.maxX - inset, y: worldBounds.minY + inset },
+      { x: worldBounds.maxX - inset, y: worldBounds.maxY - inset },
+    ];
+    return corners.reduce((best, point) => (
+      distanceSquared(point, player) > distanceSquared(best, player) ? point : best
+    ));
+  }
   const all = [player, ...points];
   const bounds = all.reduce((result, point) => ({
     minX: Math.min(result.minX, point.x),
@@ -85,7 +97,7 @@ function buildRoute(view) {
   const player = validPosition(view?.player?.pos) ? asPosition(view.player.pos) : null;
   if (!player) return null;
   const waypoints = selectWaypoints(view, player);
-  return [findFarCorner(player, waypoints), ...waypoints, player];
+  return [findFarCorner(player, waypoints, view.bounds), ...waypoints, player];
 }
 
 function interpolate(a, b, t) {

@@ -22,6 +22,7 @@ import { DEATH_MODES } from "./rules/components/RunState.js";
 // display/ camera + director utilities (pure display resources)
 import { createCamera, updateCamera, applyCamera, worldToScreen, clientToWorld as cameraClientToWorld } from "./display/camera/controller.js";
 import { createOpeningFlyover } from "./display/camera/openingFlyover.js";
+import { bakeOpeningLandscape, drawOpeningLandscape } from "./display/camera/openingLandscape.js";
 import { updateShake } from "./display/camera/shake.js";
 import { startZoomPunch, updateZoomPunch, getZoomPunchScale } from "./display/camera/zoomPunch.js";
 import { zoomTo } from "./display/camera/utils.js";
@@ -110,6 +111,9 @@ import { ItemInfo } from "./rules/components/ItemInfo.js";
 import { ItemCooldown } from "./rules/components/ItemCooldown.js";
 import { NamedIdentity } from "./rules/components/NamedIdentity.js";
 import { Position } from "./rules/components/Position.js";
+import { DungeonEntrance } from "./rules/components/DungeonEntrance.js";
+import { QuestBindings } from "./rules/components/QuestBindings.js";
+import { QuestState } from "./rules/components/QuestState.js";
 import { Player } from "./rules/components/Player.js";
 import { Trap } from "./rules/components/Trap.js";
 import { buildWorldView } from "./bridge/schema/worldView.js";
@@ -162,7 +166,7 @@ import { getCatalogItem as _getCatalogItem } from "./rules/data/itemCatalog.js";
 import { ScriptState } from "./rules/components/ScriptState.js";
 import { evaluateSound, thresholdForTier } from "./rules/utils/sound.js";
 import { updateFOV, isVisible as isTileVisible, isExplored as isTileExplored, setFovDisabled } from "./rules/environment/dungeon/exploredMap.js";
-import { getTile, isWalkable, isOpaque, isFlyable, isRoofed, forEachLoadedTile } from "./rules/environment/dungeon/tileMap.js";
+import { getTile, isWalkable, isOpaque, isFlyable, isRoofed, forEachLoadedTile, forEachTileInRect } from "./rules/environment/dungeon/tileMap.js";
 import { mulberry32 } from "./lib/ecs-js/rng.js";
 import { getClass } from "./rules/data/classes.js";
 import { buildClassDisplayData } from "./main/classDisplayData.js";
@@ -841,9 +845,10 @@ function setActiveSpell(id) {
 
 // ---- Dungeon initialization -------------------------------------------------
 import { initDungeon, generateFloorPlan } from "./rules/environment/dungeon/index.js";
-import { prewarmOverworldChunks } from "./rules/environment/dungeon/overworld.js";
+import { OVERWORLD_EXTENT, prewarmOverworldChunks } from "./rules/environment/dungeon/overworld.js";
 import { transitionToDepth, clearFloorCache } from "./rules/environment/dungeon/transition.js";
 import {
+  CHUNK_SIZE,
   TILE_FLOOR,
   TILE_WALL,
   TILE_DOOR,
@@ -1064,7 +1069,7 @@ if (_pendingSavegame) {
 // _finalizeNewGame: called after character creation confirms (new game)
 // or immediately (savegame loaded). Creates the player, applies class loadout,
 // initializes deity, then starts the simulation and render loop.
-async function _finalizeNewGame(classData) {
+async function _finalizeNewGame(classData, fromCreator = false) {
   // Fade in game world (4s, matches enter_world.mp3 dramatic moment)
   canvas.style.opacity = '0';
   canvas.style.transition = 'opacity 4s ease-out';
@@ -1220,30 +1225,16 @@ async function _finalizeNewGame(classData) {
   // and other derived state are fully resolved before the first frame renders.
   stepSim(1);
 
-  if (!_savegameLoaded && classData && !runtimeConfig.spellReelMode) {
-    openingFlyoverEnabled = true;
+  if (fromCreator && _initialDepth === 0) {
     setInputLock("opening-flyover", true);
-    setFovDisabled(true);
+    await prepareOpeningFlyover(pe);
   }
 
   if (runtimeConfig.spellReelMode) {
     startSpellReel({ world });
   }
 
-  // Show tile key overlay on very first run so new players learn the glyphs.
-  if (!_savegameLoaded) {
-    try {
-      const seen = typeof localStorage !== "undefined" && localStorage.getItem(FIRST_RUN_TILE_KEY_KEY) === "1";
-      if (!seen) {
-        if (typeof localStorage !== "undefined") localStorage.setItem(FIRST_RUN_TILE_KEY_KEY, "1");
-        window.setTimeout(() => {
-          try {
-            window.dispatchEvent(new CustomEvent("ui:showTileKeyTooltip"));
-          } catch (e) { console.debug('[main] dispatch ui:showTileKeyTooltip:', e); }
-        }, 400);
-      }
-    } catch (e) { console.debug('[main] tile key:', e); }
-  }
+  if (!_savegameLoaded && !openingLandscape) scheduleFirstRunTileKey();
 
   bootAdvance("Starting render loop");
   requestAnimationFrame((now) => {
@@ -1255,6 +1246,17 @@ async function _finalizeNewGame(classData) {
 
   const debugConsole = initDebugConsole({ world, messageLog });
   registerBuiltinCommands(debugConsole, { world, messageLog, lightingEngine });
+}
+
+function scheduleFirstRunTileKey() {
+  try {
+    const seen = typeof localStorage !== "undefined" && localStorage.getItem(FIRST_RUN_TILE_KEY_KEY) === "1";
+    if (seen) return;
+    if (typeof localStorage !== "undefined") localStorage.setItem(FIRST_RUN_TILE_KEY_KEY, "1");
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("ui:showTileKeyTooltip"));
+    }, 400);
+  } catch (e) { console.debug('[main] tile key:', e); }
 }
 
 function findNearestTraversalTarget(world, x, y) {
@@ -2896,17 +2898,53 @@ addEventListener('ui:requestDrop', (ev) => {
 
 // ---- Display camera (resource) ---------------------------------------------
 const cam = createCamera(); // { x,y, scale, target*, shake* }
-let openingFlyoverEnabled = false;
-let openingFlyoverStarted = false;
+let openingLandscape = null;
+let openingView = null;
+let openingBlendRemaining = 0;
+const OPENING_BLEND_SECONDS = 0.35;
 const openingFlyover = createOpeningFlyover({
   startScale: CAMERA_START_SCALE * 0.38,
   endScale: CAMERA_START_SCALE,
   onComplete: () => {
-    openingFlyoverEnabled = false;
-    setInputLock("opening-flyover", false);
-    setFovDisabled(runtimeConfig.disableFov === true);
+    openingView = null;
+    openingBlendRemaining = OPENING_BLEND_SECONDS;
   },
 });
+
+async function prepareOpeningFlyover(player) {
+  const bounds = {
+    minX: OVERWORLD_EXTENT.minCX * CHUNK_SIZE,
+    minY: OVERWORLD_EXTENT.minCY * CHUNK_SIZE,
+    maxX: (OVERWORLD_EXTENT.maxCX + 1) * CHUNK_SIZE - 1,
+    maxY: (OVERWORLD_EXTENT.maxCY + 1) * CHUNK_SIZE - 1,
+  };
+  const entities = [];
+  for (const [id, , pos] of world.query(DungeonEntrance, Position)) {
+    entities.push({ id, pos, tags: ["dungeon_entrance"] });
+  }
+  for (const [, state, bind] of world.query(QuestState, QuestBindings)) {
+    if (state.status !== "active") continue;
+    const pos = world.get(bind.giver, Position);
+    if (pos) entities.push({ id: bind.giver, pos, tags: ["quest_giver"] });
+  }
+  const landscape = await bakeOpeningLandscape(document.createElement("canvas"), bounds,
+    (context, x0, y0, x1, y1) => {
+      forEachTileInRect(x0, y0, x1, y1, (x, y, tile) => {
+        const roof = (tile === TILE_FLOOR || tile === TILE_WALL || tile === TILE_DOOR || tile === TILE_STAIR_DOWN) && isRoofed(x, y);
+        const kind = roof ? "roof_thatch_lit" : _tileKindMap[tile];
+        if (kind) drawKind(glyphAtlas, context, kind, x, y);
+      });
+    },
+    () => new Promise((resolve) => requestAnimationFrame(resolve)),
+  );
+  const view = { player, entities, bounds };
+  if (landscape && openingFlyover.start(cam, view)) {
+    openingLandscape = landscape;
+    openingView = view;
+  } else {
+    setInputLock("opening-flyover", false);
+  }
+}
 const sceneRuntime = createSceneRuntime({
   world,
   getPlayerEntity: () => playerEntity(world),
@@ -6138,6 +6176,11 @@ function frame(now) {
   // Update FX FPS (exponential moving average for stability)
   const instFps = dtSec > 0 ? (1 / dtSec) : 0;
   _fpsEMA = _fpsEMA ? (_fpsEMA * 0.9 + instFps * 0.1) : instFps;
+  if (openingView && openingFlyover.update(cam, openingView, dtSec)) {
+    drawOpeningLandscape(ctx, canvas, cam, openingLandscape);
+    requestAnimationFrame(frame);
+    return;
+  }
   // Hitstop: scale display dt (gore, bumps, particles all slow in unison)
   const displayDt = hitstopFx.scale(dtSec);
   _fxTime += displayDt;
@@ -6185,12 +6228,7 @@ function frame(now) {
   // Render
   const rawView = getCachedView();
   const view = statusPresentationDelayFx.filterWorldView(rawView, _fxTime);
-  if (openingFlyoverEnabled && !openingFlyoverStarted && view.player) {
-    openingFlyoverStarted = openingFlyover.start(cam, view);
-  }
-  if (openingFlyoverEnabled && openingFlyoverStarted && openingFlyover.isActive()) {
-    openingFlyover.update(cam, view, dtSec);
-  } else if (view.player && !cam._detached) {
+  if (view.player && !cam._detached) {
     followEntity(cam, view.player.pos, dtSec, 6.0);
   }
 
@@ -6216,6 +6254,16 @@ function frame(now) {
   applyHallucinationSway({ cam, view, fxTime: _fxTime });
 
   render(view);
+
+  if (openingLandscape) {
+    drawOpeningLandscape(ctx, canvas, cam, openingLandscape, openingBlendRemaining / OPENING_BLEND_SECONDS);
+    openingBlendRemaining = Math.max(0, openingBlendRemaining - dtSec);
+    if (openingBlendRemaining === 0) {
+      openingLandscape = null;
+      setInputLock("opening-flyover", false);
+      scheduleFirstRunTileKey();
+    }
+  }
 
   requestAnimationFrame(frame);
 }
@@ -6248,7 +6296,7 @@ if (_savegameLoaded) {
     classes: classDisplayData,
     defaultSeed: _bootSeed,
     tutorialTipCount: GUIDANCE_TIPS.length,
-    onConfirm: (result) => _finalizeNewGame(result),
+    onConfirm: (result) => _finalizeNewGame(result, true),
   });
 }
 
