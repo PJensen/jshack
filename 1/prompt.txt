@@ -1,0 +1,13 @@
+what are the fishing loot tables
+
+---
+
+examine all loot tables please, I think we lack coverage, make a tool and skill to establish coverage
+
+---
+
+you have my approval
+
+---
+
+what are you saying -- we need to be moving skills and tools to .agents folder?
