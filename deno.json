@@ -21,6 +21,8 @@
     "audit:systems": "deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --format summary",
     "audit:item-rarity": "deno run --allow-read .agents/skills/agent-tools/scripts/item-rarity-audit.mjs",
     "audit:item-strength": "deno run --allow-read .agents/skills/agent-tools/scripts/item-strength-audit.mjs",
+    "audit:item-value": "deno run --allow-read .agents/skills/agent-tools/scripts/item-value-audit.mjs",
+    "loot:generate": "deno run --allow-read .agents/skills/agent-tools/scripts/loot-generator.mjs",
     "audit:proc-gear": "deno run --allow-read .agents/skills/agent-tools/scripts/proc-gear-audit.mjs",
     "audit:health": "deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs",
     "audit:quests": "deno run --allow-read .agents/skills/agent-tools/scripts/quest-content-audit.mjs",

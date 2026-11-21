@@ -28,6 +28,17 @@ import {
   scoreItem,
 } from "../.agents/skills/agent-tools/scripts/item-strength-audit.mjs";
 import {
+  auditItemValues,
+  filterItems as filterValueItems,
+  formatReport as formatValueReport,
+} from "../.agents/skills/agent-tools/scripts/item-value-audit.mjs";
+import {
+  alignmentWordsFor,
+  formatReport as formatLootReport,
+  generateLootPreview,
+  suffixWordsFor,
+} from "../.agents/skills/agent-tools/scripts/loot-generator.mjs";
+import {
   classifyNondeterminism,
   classifySystemCall,
   formatHealthReport,
@@ -232,6 +243,41 @@ Deno.test("item-strength audit is deterministic and explains its score", () => {
   assert(cursed.contributions.some((entry) => entry.points < 0));
   assertEquals(cursed.score, 0);
   assertEquals(filterStrengthItems(auditStrength([item]), { slot: "weapon", rarity: "uncommon", outliers: false }).length, 1);
+});
+
+Deno.test("item-value audit separates authored price, model value, loot, and affix opportunity", () => {
+  const items = [
+    { id: "plain", name: "Plain", catalogKind: "equipment", type: "equip", slot: "weapon", rarity: 1, rarityName: "common", value: 20 },
+    { id: "rolled", name: "Rolled", catalogKind: "equipment", type: "equip", slot: "weapon", rarity: 2, rarityName: "uncommon", value: 100, bonuses: { attack: 2 } },
+  ];
+  const tables = {
+    "sub:test": {
+      entries: [
+        { type: "equip", weight: 10, pool: ["plain"], affixChance: 0, affixCountMax: 0 },
+        { type: "equip", weight: 5, pool: ["rolled"], affixChance: 0.5, affixCountMax: 1 },
+      ],
+    },
+  };
+  const first = auditItemValues(items, tables);
+  assertEquals(first, auditItemValues(items, tables));
+  const rolled = first.find((item) => item.id === "rolled");
+  assertEquals(rolled.lootTables, ["sub:test"]);
+  assertEquals(rolled.affixOpportunity, 0.5);
+  assert(rolled.modelValue > 0);
+  assert(rolled.issues.includes("randomized-affix-opportunity"));
+  assertEquals(filterValueItems(first, { kind: "equipment", issues: true }).length, 2);
+  assert(formatValueReport(first, "csv").startsWith("id,name,catalogKind,type,slot,rarity"));
+});
+
+Deno.test("loot generator is seeded, uses canonical drops, and exposes alignment language", () => {
+  const first = generateLootPreview("sub:equip_common", "alignment-seed", 2);
+  const second = generateLootPreview("sub:equip_common", "alignment-seed", 2);
+  assertEquals(first, second);
+  assert(first.drops.length > 0);
+  assert(first.drops.every((drop) => typeof drop.suggestedName === "string"));
+  assert(alignmentWordsFor({ id: "sun_vessel", name: "Sun Vessel", tags: ["holy"] }).includes("dawn-forged"));
+  assert(suffixWordsFor({ id: "sun_vessel", name: "Sun Vessel", tags: ["holy"] }).includes("of Dawn"));
+  assert(formatLootReport(first, "json").includes('"numericSeed"'));
 });
 
 Deno.test("agent-health formatting and path normalization are import-safe", () => {

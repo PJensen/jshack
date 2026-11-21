@@ -22,6 +22,8 @@ Choose the route before searching broadly:
 | Inventory item rarity slots and find legacy/mismatched labels | `item-rarity-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/item-rarity-audit.mjs --gear-only --format csv` |
 | Find proc-package gear missing authored Equip mechanics | `proc-gear-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/proc-gear-audit.mjs --unconverted` |
 | Compare same-slot gear and flag obvious strength outliers | `item-strength-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/item-strength-audit.mjs --outliers --format csv` |
+| Assess authored value against the appraisal model, strength, loot exposure, and affix opportunity | `item-value-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/item-value-audit.mjs --issues --format csv` |
+| Preview seeded loot with rolled affixes and provisional alignment language | `loot-generator` | `deno run --allow-read .agents/skills/agent-tools/scripts/loot-generator.mjs --table chest:common --seed demo --format json` |
 | Understand event producers and consumers | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format summary --top 40` |
 | Validate a quest-backed dungeon | `quest-content-audit` | `deno task audit:quests` |
 | Inspect one event contract | `event-bus-explorer` | `deno run --allow-read .agents/skills/agent-tools/scripts/event-bus-explorer.mjs --format csv --event EVENT` |
