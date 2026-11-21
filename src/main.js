@@ -21,6 +21,7 @@ import { DEATH_MODES } from "./rules/components/RunState.js";
 
 // display/ camera + director utilities (pure display resources)
 import { createCamera, updateCamera, applyCamera, worldToScreen, clientToWorld as cameraClientToWorld } from "./display/camera/controller.js";
+import { createOpeningFlyover } from "./display/camera/openingFlyover.js";
 import { updateShake } from "./display/camera/shake.js";
 import { startZoomPunch, updateZoomPunch, getZoomPunchScale } from "./display/camera/zoomPunch.js";
 import { zoomTo } from "./display/camera/utils.js";
@@ -1218,6 +1219,12 @@ async function _finalizeNewGame(classData) {
   // Initial world tick — runs all systems once so status effects, equipment stats,
   // and other derived state are fully resolved before the first frame renders.
   stepSim(1);
+
+  if (!_savegameLoaded && classData && !runtimeConfig.spellReelMode) {
+    openingFlyoverEnabled = true;
+    setInputLock("opening-flyover", true);
+    setFovDisabled(true);
+  }
 
   if (runtimeConfig.spellReelMode) {
     startSpellReel({ world });
@@ -2889,6 +2896,17 @@ addEventListener('ui:requestDrop', (ev) => {
 
 // ---- Display camera (resource) ---------------------------------------------
 const cam = createCamera(); // { x,y, scale, target*, shake* }
+let openingFlyoverEnabled = false;
+let openingFlyoverStarted = false;
+const openingFlyover = createOpeningFlyover({
+  startScale: CAMERA_START_SCALE * 0.38,
+  endScale: CAMERA_START_SCALE,
+  onComplete: () => {
+    openingFlyoverEnabled = false;
+    setInputLock("opening-flyover", false);
+    setFovDisabled(runtimeConfig.disableFov === true);
+  },
+});
 const sceneRuntime = createSceneRuntime({
   world,
   getPlayerEntity: () => playerEntity(world),
@@ -6167,7 +6185,12 @@ function frame(now) {
   // Render
   const rawView = getCachedView();
   const view = statusPresentationDelayFx.filterWorldView(rawView, _fxTime);
-  if (view.player && !cam._detached) {
+  if (openingFlyoverEnabled && !openingFlyoverStarted && view.player) {
+    openingFlyoverStarted = openingFlyover.start(cam, view);
+  }
+  if (openingFlyoverEnabled && openingFlyoverStarted && openingFlyover.isActive()) {
+    openingFlyover.update(cam, view, dtSec);
+  } else if (view.player && !cam._detached) {
     followEntity(cam, view.player.pos, dtSec, 6.0);
   }
 
