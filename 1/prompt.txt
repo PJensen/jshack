@@ -1,0 +1,1 @@
+keep the music playing when someone clicks "Begin" or "Enter" from character creator, once they land in world, it's acceptable to fade the music.
