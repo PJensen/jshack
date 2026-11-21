@@ -138,6 +138,7 @@ defineItem('dagger_quick', {
   value: 24,
   description: 'A slim steel blade, light enough to strike in a blink.',
   weight: 0.5,
+  value: 70,
 });
 
 defineItem('axe_heavy', {
@@ -504,6 +505,7 @@ defineItem('venomfang_dagger', {
   staminaCost: 5,
   weight: 0.5,
   description: 'A razor-sharp blade with a hollow groove along its length that drips with acid.',
+  value: 85,
 });
 
 defineItem('nightfang_dagger', {
@@ -519,6 +521,7 @@ defineItem('nightfang_dagger', {
   weight: 0.6,
   description: 'A blackened blade that weeps venom from its edge.',
   affixes: ['venomous1'],
+  value: 125,
 });
 
 defineItem('voidmind_athame', {
@@ -533,6 +536,7 @@ defineItem('voidmind_athame', {
   staminaCost: 5,
   weight: 0.5,
   description: 'A ritual blade etched with spiralling glyphs that drink in ambient mana. Casters prize it above any sword.',
+  value: 300,
 });
 
 defineItem('caustic_stiletto', {
@@ -547,6 +551,7 @@ defineItem('caustic_stiletto', {
   staminaCost: 4,
   affixes: ['caustic1'],
   weight: 0.666,
+  value: 110,
 });
 
 defineItem('stormtouched_mace', {
@@ -561,6 +566,7 @@ defineItem('stormtouched_mace', {
   staminaCost: 8,
   affixes: ['capacitive1', 'stunning1'],
   weight: 2.5,
+  value: 115,
 });
 
 defineItem('warhammer_of_fury', {
@@ -574,6 +580,7 @@ defineItem('warhammer_of_fury', {
   damageType: 'blunt',
   staminaCost: 7,
   affixes: ['fierce', 'stunning1'],
+  value: 135,
   weight: 5.0,
 });
 
@@ -591,6 +598,7 @@ defineItem('sparking_knife', {
   staminaCost: 5,
   description: 'A tarnished blade that crackles faintly when swung.',
   affixes: ['chainLightning1'],
+  value: 95,
   weight: 0.5,
 });
 
@@ -607,6 +615,7 @@ defineItem('smoldering_club', {
   staminaCost: 9,
   description: 'The charred head still glows with fading embers.',
   affixes: ['firestorm1'],
+  value: 90,
   weight: 2.5,
 });
 
@@ -622,6 +631,7 @@ defineItem('chipped_fang', {
   staminaCost: 5,
   description: 'A sharpened tooth pried from something large. It draws blood easily.',
   affixes: ['hemorrhage1'],
+  value: 72,
   weight: 0.3,
 });
 
@@ -637,6 +647,7 @@ defineItem('leech_blade', {
   staminaCost: 8,
   description: 'Dark stains run the length of the fuller. The grip feels oddly warm.',
   affixes: ['soulDrain1'],
+  value: 105,
   weight: 1.2,
 });
 
@@ -654,6 +665,7 @@ defineItem('ember_knife', {
   staminaCost: 5,
   description: 'The blade radiates a faint heat. Even unsheathed it casts a dim orange glow.',
   affixes: ['flaming'],
+  value: 85,
   weight: 0.5,
 });
 
@@ -669,6 +681,7 @@ defineItem('flametongue', {
   staminaCost: 8,
   description: 'Tongues of fire lick along the edge on every swing. They never go out.',
   affixes: ['flaming'],
+  value: 180,
   weight: 1.3,
 });
 
@@ -684,6 +697,7 @@ defineItem('ashen_reaver', {
   staminaCost: 11,
   description: 'Forged in a volcanic rift. The blade smoulders with a deep red glow that nothing can extinguish.',
   affixes: ['flaming'],
+  value: 360,
   weight: 2.5,
 });
 
@@ -702,6 +716,7 @@ defineItem('pyreheart_mace', {
   staminaCost: 10,
   description: 'The head glows cherry-red, leaving scorch marks on everything it strikes.',
   affixes: ['firestorm1', 'stunning1'],
+  value: 320,
   weight: 3.5,
 });
 
@@ -717,6 +732,7 @@ defineItem('glacial_edge', {
   staminaCost: 8,
   description: 'A blade of pale blue steel that numbs flesh and opens veins.',
   affixes: ['frostbite1', 'hemorrhage1'],
+  value: 340,
   weight: 1.2,
 });
 
@@ -732,6 +748,7 @@ defineItem('witchfire_sword', {
   staminaCost: 9,
   description: 'Green flame licks along the edge, draining warmth from the air.',
   affixes: ['firestorm1', 'soulDrain1'],
+  value: 380,
   weight: 2.0,
 });
 
@@ -749,6 +766,7 @@ defineItem('howling_maul', {
   staminaCost: 12,
   description: 'The wind screams through holes bored in the hammerhead.',
   affixes: ['hemorrhage1', 'berserk1', 'stunning1'],
+  value: 460,
   weight: 5.5,
 });
 
@@ -766,6 +784,7 @@ defineItem('stormcaller_blade', {
   staminaCost: 9,
   description: 'Arcs of lightning dance along the blade. Thunder rumbles with each swing.',
   affixes: ['chainLightning1', 'capacitive1'],
+  value: 680,
   weight: 1.8,
 });
 
@@ -782,6 +801,7 @@ defineItem('soulreaver_axe', {
   staminaCost: 14,
   description: 'A blackened axe that drinks deeply from the wounded.',
   affixes: ['soulDrain1', 'executioner1'],
+  value: 720,
   weight: 4.5,
 });
 
@@ -799,6 +819,7 @@ defineItem('blade_of_echoes', {
   staminaCost: 8,
   description: 'Each strike reverberates. The blade remembers the last wound it dealt and echoes it back on the next swing.',
   procPackages: ['echoStrike'],
+  value: 380,
   weight: 1.3,
 });
 
@@ -814,6 +835,7 @@ defineItem('tolling_blade', {
   staminaCost: 10,
   description: 'Three ticks. Then judgment. It counts each wound in shadow, and on the third toll, the reckoning arrives.',
   procPackages: ['doomClock'],
+  value: 440,
   weight: 2.0,
 });
 
@@ -829,6 +851,7 @@ defineItem('debtbringer', {
   staminaCost: 9,
   description: 'Obscene power up front, a debt accrued in silence. The reckoning comes later — and it comes for everything.',
   procPackages: ['soulMortgage'],
+  value: 400,
   weight: 1.5,
 });
 
@@ -845,6 +868,7 @@ defineItem('cataclysm_axe', {
   staminaCost: 14,
   description: 'Crit kills split outward: a hazard spawns, a wave breaks, marks spread. The massacre cascades.',
   procPackages: ['cataclysmChain'],
+  value: 850,
   weight: 5.0,
 });
 
@@ -860,6 +884,7 @@ defineItem('jesters_stiletto', {
   staminaCost: 6,
   description: 'A slender blade for ridiculous situations. Spectacular misses bewilder everyone present — you included.',
   procPackages: ['foolsErrand'],
+  value: 210,
   weight: 0.4,
 });
 
@@ -875,6 +900,7 @@ defineItem('plague_fang', {
   staminaCost: 8,
   description: 'A hollow assassin\'s blade packed with virulent compounds. Three hits and the clock detonates in shadow, poison, and disease.',
   procPackages: ['venomClock'],
+  value: 430,
   weight: 0.6,
 });
 
@@ -890,6 +916,7 @@ defineItem('hollow_greatsword', {
   staminaCost: 12,
   description: 'Etched with tidal runes that grow brighter as the wielder bleeds. The closer to death, the more ruinous each swing.',
   procPackages: ['hollowTide'],
+  value: 470,
   weight: 4.0,
 });
 
@@ -905,6 +932,7 @@ defineItem('deathascendant_blade', {
   staminaCost: 11,
   description: 'Each kill detonates in invulnerability, berserk fury, and restored stamina. Death itself is the fuel.',
   procPackages: ['deathAscendant'],
+  value: 820,
   weight: 1.8,
 });
 
@@ -921,6 +949,7 @@ defineItem('thundergod_maul', {
   staminaCost: 14,
   description: 'Crits arc 3 electric damage and shock through every hostile nearby. A single critical blow speaks for the heavens.',
   procPackages: ['thunderGod'],
+  value: 760,
   weight: 6.0,
 });
 
@@ -936,6 +965,7 @@ defineItem('blood_covenant_sword', {
   staminaCost: 10,
   description: 'Each swing costs 8% of your maximum HP in exchange for a burst of fire. The blade drinks first. Always.',
   procPackages: ['bloodCovenant'],
+  value: 700,
   weight: 2.0,
 });
 
@@ -951,6 +981,7 @@ defineItem('hunters_edge', {
   staminaCost: 8,
   description: 'Each consecutive hit stacks a predator\'s mark. Five stacks and your prey is simply prey.',
   procPackages: ['predatorMark'],
+  value: 420,
   weight: 1.2,
 });
 
@@ -967,6 +998,7 @@ defineItem('soul_ascendant_scythe', {
   staminaCost: 13,
   description: 'Kills heal 8 HP and leave the wielder wrapped in regen and stoneskin. Each soul consumed leaves you fuller and harder.',
   procPackages: ['soulAscendant'],
+  value: 800,
   weight: 4.0,
 });
 
@@ -982,6 +1014,7 @@ defineItem('hungering_cleaver', {
   staminaCost: 10,
   description: 'Each kill stacks the hunger. It never fully fades, and each swing hits harder for it. The hunger can never be sated.',
   procPackages: ['eternalHunger'],
+  value: 450,
   weight: 2.2,
 });
 
@@ -999,6 +1032,7 @@ defineItem('eclipse_maul', {
   staminaCost: 13,
   description: 'Alternates between sun and moon on every hit, scattering fire and frost through adjacent enemies. Light and dark answer in turn.',
   procPackages: ['eclipseHammer'],
+  value: 780,
   weight: 5.5,
 });
 
@@ -1016,6 +1050,7 @@ defineItem('resonant_quarterstaff', {
   weight: 1.0,
   description: 'A staff topped with a resonance crystal that pulses once per hit, storing the blow\'s force. The next swing releases that stored impact as spectral damage alongside the strike.',
   procPackages: ['kineticBattery'],
+  value: 360,
 });
 
 defineItem('venom_kris', {
@@ -1032,6 +1067,7 @@ defineItem('venom_kris', {
   weight: 0.77,
   description: 'A wavy-bladed dagger designed for rapid repeated stabs. Three consecutive hits on the same target trigger detonation: shadow burst, virulent poison for 4 turns, disease for 3.',
   procPackages: ['venomLedger'],
+  value: 390,
 });
 
 defineItem('never_sated_warclub', {
@@ -1049,6 +1085,7 @@ defineItem('never_sated_warclub', {
   weight: 3.75,
   description: 'A crude bludgeon that grows more dangerous with every kill. Each kill stacks the hunger (max 10, fading over 12 turns). While hungry, each hit deals floor(stacks÷2) extra flat damage.',
   procPackages: ['hungerSurge'],
+  value: 440,
 });
 
 defineItem('blood_covenant_rapier', {
@@ -1065,6 +1102,7 @@ defineItem('blood_covenant_rapier', {
   weight: 3.0,
   description: 'A slender blade in a blackened guard. Each thrust costs 8% of your max HP (never fatal) and adds +5 fire damage to that swing. It demands blood before every blow. The rapier decides the price.',
   procPackages: ['ritualOverdraw'],
+  value: 650,
 });
 
 defineItem('cataclysm_warspear', {
@@ -1082,4 +1120,5 @@ defineItem('cataclysm_warspear', {
   weight: 1.0,
   description: 'Critical kills don\'t end the fight — they extend it. A hazard erupts on the corpse, a shockwave marks all adjacent hostiles, and marked foes detonate on the next hit.',
   procPackages: ['executionRipple'],
+  value: 820,
 });
