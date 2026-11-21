@@ -22,7 +22,7 @@ import { DEATH_MODES } from "./rules/components/RunState.js";
 // display/ camera + director utilities (pure display resources)
 import { createCamera, updateCamera, applyCamera, worldToScreen, clientToWorld as cameraClientToWorld } from "./display/camera/controller.js";
 import { createOpeningFlyover } from "./display/camera/openingFlyover.js";
-import { bakeOpeningLandscape, drawOpeningLandscape } from "./display/camera/openingLandscape.js";
+import { bakeOpeningLandscape, drawOpeningLandscape, drawOpeningTitleCard } from "./display/camera/openingLandscape.js";
 import { updateShake } from "./display/camera/shake.js";
 import { startZoomPunch, updateZoomPunch, getZoomPunchScale } from "./display/camera/zoomPunch.js";
 import { zoomTo } from "./display/camera/utils.js";
@@ -849,6 +849,7 @@ import { OVERWORLD_EXTENT, prewarmOverworldChunks } from "./rules/environment/du
 import { transitionToDepth, clearFloorCache } from "./rules/environment/dungeon/transition.js";
 import {
   CHUNK_SIZE,
+  TILE_VOID,
   TILE_FLOOR,
   TILE_WALL,
   TILE_DOOR,
@@ -2922,13 +2923,16 @@ async function prepareOpeningFlyover(player) {
     maxY: (OVERWORLD_EXTENT.maxCY + 1) * CHUNK_SIZE - 1,
   };
   const entities = [];
-  for (const [id, , pos] of world.query(DungeonEntrance, Position)) {
-    entities.push({ id, pos, tags: ["dungeon_entrance"] });
+  for (const [id, entrance, pos] of world.query(DungeonEntrance, Position)) {
+    if (getTile(pos.x, pos.y) === TILE_VOID) continue;
+    entities.push({ id, pos, title: entrance.label, tags: ["dungeon_entrance"] });
   }
   for (const [, state, bind] of world.query(QuestState, QuestBindings)) {
     if (state.status !== "active") continue;
     const pos = world.get(bind.giver, Position);
-    if (pos) entities.push({ id: bind.giver, pos, tags: ["quest_giver"] });
+    if (!pos || getTile(pos.x, pos.y) === TILE_VOID) continue;
+    const title = world.get(bind.giver, NamedIdentity)?.name;
+    entities.push({ id: bind.giver, pos, title, tags: ["quest_giver"] });
   }
   const landscape = await bakeOpeningLandscape(document.createElement("canvas"), bounds,
     (context, x0, y0, x1, y1) => {
@@ -6181,6 +6185,7 @@ function frame(now) {
   _fpsEMA = _fpsEMA ? (_fpsEMA * 0.9 + instFps * 0.1) : instFps;
   if (openingView && openingFlyover.update(cam, openingView, dtSec)) {
     drawOpeningLandscape(ctx, canvas, cam, openingLandscape);
+    drawOpeningTitleCard(ctx, _canvasSetup.cssW, _canvasSetup.cssH, openingFlyover.getTitleCard());
     requestAnimationFrame(frame);
     return;
   }

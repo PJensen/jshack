@@ -40,7 +40,10 @@ function selectWaypoints(view, player) {
   });
   const pool = preferred.length > 0 ? preferred : fallback;
   const selected = [];
-  const remaining = pool.map((entity) => asPosition(entity.pos));
+  const remaining = pool.map((entity) => ({
+    ...asPosition(entity.pos),
+    title: String(entity.title || "").trim(),
+  }));
 
   while (selected.length < 3 && remaining.length > 0) {
     let bestIndex = 0;
@@ -162,6 +165,18 @@ export function createOpeningFlyover(opts = {}) {
     return false;
   }
 
-  return { start, update, isActive: () => active };
+  function getTitleCard() {
+    if (!active) return null;
+    const segmentSeconds = duration / (route.length - 1);
+    const index = Math.round(elapsed / segmentSeconds);
+    const title = route[index]?.title;
+    if (!title) return null;
+    const distance = Math.abs(elapsed - index * segmentSeconds);
+    const halfWindow = Math.min(0.9, segmentSeconds * 0.45);
+    if (distance >= halfWindow) return null;
+    return { title, alpha: smoothStep((halfWindow - distance) / (halfWindow * 0.45)) };
+  }
+
+  return { start, update, getTitleCard, isActive: () => active };
 }
 
