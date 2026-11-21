@@ -1,0 +1,12 @@
+previously I had stipulated that damage that was happening out of your sight didn't get float text,&#x20;
+
+I launched into hard mode as a warlock, walked int a room, cast agony on a bunch of mobs, turned my back and could not see any of my DOTS ticking --&#x20;
+
+can we fix this?&#x20;
+
+concretely?
+generically?
+
+---
+
+it's not a bug -- it's something I previously asked for --- but I didn't understand the implications  -- any way, please bring it back if you can.
