@@ -131,6 +131,7 @@ deno task audit:systems
 deno task audit:events
 deno task audit:damaged
 deno task audit:died
+deno task audit:loot
 ```
 
 ### Project Health

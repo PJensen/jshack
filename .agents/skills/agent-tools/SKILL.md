@@ -29,6 +29,7 @@ Choose the route before searching broadly:
 | Find unregistered or untested systems | `system-map` | `deno run --allow-read .agents/skills/agent-tools/scripts/system-map.mjs --unregistered` or `--missing-tests` |
 | Check architecture hazards | `agent-health` | `deno run --allow-read .agents/skills/agent-tools/scripts/agent-health.mjs` |
 | Inspect import-layer violations | `import-boundary-report` | `deno run --allow-read .agents/skills/agent-tools/scripts/import-boundary-report.mjs` |
+| Audit loot table coverage | `loot-coverage-audit` | `deno run --allow-read .agents/skills/agent-tools/scripts/loot-coverage-audit.mjs` |
 
 ## Evidence workflow
 
@@ -70,6 +71,9 @@ generic `NamedIdentity` reaching the bridge.
 - `mermaid` is for visualizing event relationships.
 - `--producer-only` and `--consumer-only` expose orphaned event wiring.
 - `--phase`, `--unregistered`, and `--missing-tests` focus the system map.
+- `loot-coverage-audit` supports `summary`, `csv`, and `json` output; use
+  `--fail-on-issues` for structural validation and inspect uncovered tables
+  separately because dynamic routes and nested sub-tables are intentional.
 
 ## Guardrails
 
@@ -79,6 +83,9 @@ generic `NamedIdentity` reaching the bridge.
 - Keep tool changes deterministic, import-safe, and usable with `--allow-read`.
 - `quest-content-audit` checks quest tracker/template parity, authored landmark
   entrances, and explicit monster IDs using the existing content fields.
+- `loot-coverage-audit` checks every `LOOT_TABLES` entry against the item
+  catalog, nested-table graph, known runtime references, dynamic tier routing,
+  and direct test references.
 - Extend existing tools when a question recurs; do not add a one-off grep script
   for a query they can already answer.
 - When a new recurring workflow is proven, update this skill with the route and

@@ -270,7 +270,7 @@ export function setupDisplayRuntime({
     world,
     ftext,
     getActiveSpellId,
-    setActiveSpell,
+    setActiveSpell,             //             
     getPlayerEntity,
     getPosition,
     getItemInfo,

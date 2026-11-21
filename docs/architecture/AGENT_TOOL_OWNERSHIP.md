@@ -10,6 +10,7 @@ copies remain at the old locations.
 | `agent-health.mjs` | `agent-tools/scripts/` moved | `guard:architecture`, `audit:health`, AGENTS | read-only scan; `deno task check` |
 | `agent-target.mjs` | `agent-tools/scripts/` moved | agent-tools, tests | read-only search; `tests/agentTools.test.mjs` |
 | `content-id-audit.mjs` | `agent-tools/scripts/` moved | agent-tools, AGENTS | read-only content trace; agent-tools tests |
+| `loot-coverage-audit.mjs` | `agent-tools/scripts/` | agent-tools, loot-coverage skill, `audit:loot` | read-only table/reference audit; loot coverage tests |
 | `event-bus-explorer.mjs` | `agent-tools/scripts/` moved | guard/audit tasks, docs, AGENTS | report output only with `--out`; guard:events |
 | `import-boundary-report.mjs` | `agent-tools/scripts/` moved | `guard:architecture`, agent-tools | read-only import scan; `deno task check` |
 | `system-map.mjs` | `agent-tools/scripts/` moved | guard/audit tasks, AGENTS | read-only scheduler scan; `guard:tools` |
