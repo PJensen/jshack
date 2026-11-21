@@ -1,0 +1,28 @@
+you can leave
+
+
+```javascript
+  function getTitleCard() {
+    if (!active) return null;
+    const segmentSeconds = duration / (route.length - 1);
+    const index = Math.round(elapsed / segmentSeconds);
+    const title = route[index]?.title;
+    if (!title) return null;
+    const distance = Math.abs(elapsed - index * segmentSeconds);
+    const halfWindow = Math.min(0.9, segmentSeconds * 0.45);
+    if (distance >= halfWindow) return null;
+    return { title, alpha: smoothStep((halfWindow - distance) / (halfWindow * 0.45)) };
+  }
+```
+
+
+
+hanging around if you want -- also -- if we;re going to visit a place, (a) I would get closer (b) a would linger for longer
+
+---
+
+yeah, keep names pinned , ignore the function I included -- we good.
+
+---
+
+but do bring the camera closer, and do, linger longer
