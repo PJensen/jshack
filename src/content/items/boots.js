@@ -8,6 +8,7 @@ defineItem('boots_of_vigor', {
   glyph: 'u', color: '#d0a56a', glow: '#9d7747', scale: 0.65,
   material: 'leather', rarity: 2,
   bonuses: { staminaRegen: 1.0 },
+  value: 62,
   weight: 0.8,
 });
 
@@ -16,6 +17,7 @@ defineItem('boots_leather', {
   glyph: 'u', color: '#b7864f', glow: '#7f5b36', scale: 0.65,
   material: 'leather', rarity: 1,
   bonuses: { maxStamina: 6, staminaRegen: 0.2 },
+  value: 32,
   weight: 1.3,
 });
 
@@ -25,6 +27,7 @@ defineItem('trail_boots', {
   material: 'leather', rarity: 1,
   bonuses: { defense: 1, maxStamina: 5, staminaRegen: 0.2 },
   description: 'Quiet soles built for long marches and quick retreats.',
+  value: 38,
   weight: 1.0,
 });
 
@@ -93,6 +96,7 @@ defineItem('sandals_hemp', {
   glyph: 'u', color: '#c6b28a', glow: '#8f7c57', scale: 0.65,
   material: 'cloth', rarity: 1,
   bonuses: { maxStamina: 3, staminaRegen: 0.15 },
+  value: 18,
   weight: 0.3,
 });
 
@@ -101,6 +105,7 @@ defineItem('shoes_cloth', {
   glyph: 'u', color: '#9ea7b9', glow: '#6c7485', scale: 0.65,
   material: 'cloth', rarity: 1,
   bonuses: { maxMana: 4, manaRegen: 0.1 },
+  value: 24,
   weight: 0.4,
 });
 
@@ -109,6 +114,7 @@ defineItem('boots_plate', {
   glyph: 'u', color: '#a3b0bf', glow: '#737f8f', scale: 0.65,
   material: 'steel', rarity: 2,
   bonuses: { defense: 2 },
+  value: 72,
   weight: 2.5,
 });
 
@@ -118,6 +124,7 @@ defineItem('boots_ironshod', {
   material: 'iron', rarity: 3,
   bonuses: { defense: 3, maxHp: 5 },
   description: 'Heavy boots with iron-capped toes. They make stealth impossible but survival likely.',
+  value: 135,
   weight: 2.8,
 });
 
@@ -127,6 +134,7 @@ defineItem('boots_strider', {
   material: 'leather', rarity: 3,
   bonuses: { defense: 1, dexterity: 2, maxStamina: 8, staminaRegen: 0.5, luck: 1 },
   description: 'Soft-soled boots favored by rangers and thieves for their sure grip.',
+  value: 210,
   weight: 1.0,
 });
 
@@ -137,6 +145,7 @@ defineItem('boots_sentinel', {
   bonuses: { defense: 3, maxHp: 10, bluntResist: 0.1, pierceResist: 0.1 },
   description: 'Steel-plated boots with articulated ankles, built for warriors who hold the line.',
   affixes: ['kineticWard1'],
+  value: 360,
   weight: 3.0,
 });
 
@@ -147,6 +156,7 @@ defineItem('boots_shadowstep', {
   bonuses: { defense: 2, attack: 1, critChance: 0.04, maxStamina: 10, staminaRegen: 0.4 },
   description: 'Each step bends light around the wearer, leaving only a blur.',
   affixes: ['lucky1'],
+  value: 390,
   weight: 1.0,
 });
 
@@ -157,6 +167,7 @@ defineItem('boots_conduit', {
   bonuses: { defense: 1, maxMana: 12, manaRegen: 0.4, spellHit: 1 },
   description: 'Silk slippers that draw ambient mana upward through the soles.',
   affixes: ['life1'],
+  value: 340,
   weight: 0.3,
 });
 
@@ -167,6 +178,7 @@ defineItem('boots_earthbound', {
   bonuses: { defense: 4, maxHp: 15, bluntResist: 0.15, pierceResist: 0.1 },
   description: 'Forged from ore pulled from the deepest vein, they root the wearer to the earth itself.',
   affixes: ['shieldWall1'],
+  value: 620,
   weight: 3.5,
 });
 
@@ -177,6 +189,7 @@ defineItem('boots_phantomstride', {
   bonuses: { defense: 2, attack: 2, critChance: 0.06, maxStamina: 15, staminaRegen: 0.5, luck: 2 },
   description: 'Worn by the last of the ghost rangers. Their footprints never touch the ground.',
   affixes: ['guard1'],
+  value: 700,
   weight: 1.0,
 });
 
@@ -187,6 +200,7 @@ defineItem('eclipse_sabatons', {
   bonuses: { defense: 2, fireResist: 0.1, poisonResist: 0.1 },
   description: 'One boot is sun-gold, one is moon-silver. Hits alternate between fire and frost through adjacent enemies. Light and dark answer in turn.',
   procPackages: ['eclipseHammer'],
+  value: 680,
   weight: 3.0,
 });
 
@@ -197,6 +211,7 @@ defineItem('thundergod_greaves', {
   bonuses: { defense: 2, critChance: 0.04 },
   description: 'Arcs of static discharge with every step. Crits send lightning through every hostile in radius 2.',
   procPackages: ['thunderGod'],
+  value: 420,
   weight: 2.8,
 });
 
@@ -208,6 +223,7 @@ defineItem('soul_mortgage_treads', {
   weight: 1.0,
   description: 'The soles are stitched with debt-runes that accrue with every step and every hit. Crit chance, crit multiplier, and base damage are all boosted beyond reason. The debt accrues in silence. Something is coming to collect.',
   procPackages: ['debtHarvest'],
+  value: 500,
 });
 
 defineItem('warboots_of_cataclysm', {
@@ -218,6 +234,7 @@ defineItem('warboots_of_cataclysm', {
   weight: 1.0,
   description: 'Critical kills cascade through these boots: a hazard erupts on the corpse, a shockwave marks all adjacent hostiles, and those marked will detonate on the next hit. Nothing dies quietly in these boots.',
   procPackages: ['cataclysmGuard'],
+  value: 750,
 });
 
 defineItem('hollow_tide_boots', {
@@ -228,6 +245,7 @@ defineItem('hollow_tide_boots', {
   weight: 1.2,
   description: 'Tidal runes circle the ankle straps. Below 75% HP, hits gain +1. Below 50%, +3. Below 25%, +6 and targets weaken. They were made for a fighter who never planned to be at full health.',
   procPackages: ['bloodsport'],
+  value: 460,
 });
 
 const BREADCRUMB_STEP_INTERVAL = 4;
