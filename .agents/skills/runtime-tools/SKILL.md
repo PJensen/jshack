@@ -49,6 +49,10 @@ valid `CastSpellIntent` remains canonical.
    warmup settings before and after the change; report averages and tail values.
    Alternate baseline and patched runs sequentially, outside concurrent test
    runs. Increase `--top` if an optimized system drops out of the report.
+   For lighting changes, a stub canvas can capture both `putImageData` buffers
+   for byte-for-byte comparison, including shelter changes and relief resets.
+   Time that probe separately from pixel capture, and use a browser trace for
+   browser compositing and frame-rate measurements.
 
 ## Contracts and constraints
 

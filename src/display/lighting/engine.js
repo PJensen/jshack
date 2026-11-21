@@ -218,6 +218,7 @@ export function createLightingEngine() {
   /** @type {Float32Array} */ let floorH = null;  // debug floor relief height (tile-ish units)
   /** @type {Float32Array} */ let floorGX = null; // relief gradient x
   /** @type {Float32Array} */ let floorGY = null; // relief gradient y
+  let hasFloorRelief = false;
   /** @type {Float32Array} */ let surfSdf   = null;  // distance from hull edge (sub-cell units)
   /** @type {Float32Array} */ let surfNormX = null;  // inward-facing surface normals (toward center)
   /** @type {Float32Array} */ let surfNormY = null;
@@ -651,7 +652,8 @@ export function createLightingEngine() {
     const hasMods = relief.tileMods.size > 0;
     const hasRadials = Array.isArray(relief.radialMods) && relief.radialMods.length > 0;
 
-    if (!hasNoise && !hasMods && !hasRadials) {
+    hasFloorRelief = hasNoise || hasMods || hasRadials;
+    if (!hasFloorRelief) {
       floorH.fill(0);
       floorGX.fill(0);
       floorGY.fill(0);
@@ -1303,6 +1305,8 @@ export function createLightingEngine() {
     _dirtyVision   = false;
     _dirtyLights   = false;
     const n = lmW * lmH;
+    const playerSheltered = opts?.playerSheltered === true;
+    const isShelterInterior = opts?.isShelterInterior || null;
     // Lava self-emission (inside basin only): this is the "light in the pit".
     // Kept fully contained to lavaMask cells so it reads as below-grade glow.
     for (let i = 0; i < n; i++) {
@@ -1332,7 +1336,6 @@ export function createLightingEngine() {
       {
         const opaqueCell = sdf[i] <= 0;
         const lightSum = lightR[i] + lightG[i] + lightB[i];
-        const _isShelterInteriorCell = shelterInteriorCell(i, opts?.isShelterInterior || null);
         const ambientLightSum = ambientLightSumForCell(i, ambient || null, isRoofed || null);
         const sight = Math.max(0, vision[i] * (1 - clamp01(voidField[i] * 0.16)));  // 0-1 vision mask
         // Vision lifts darkness to reveal what's there; light lifts further.
@@ -1343,7 +1346,7 @@ export function createLightingEngine() {
 
         // Generic floor relief shading (debug): digs/piles should be legible
         // as terrain, independent of surface tags.
-        if (!opaqueCell && !inLava && surfType[i] === 0) {
+        if (hasFloorRelief && !opaqueCell && !inLava && surfType[i] === 0) {
           const hRel = floorH[i];
           const gx = floorGX[i];
           const gy = floorGY[i];
@@ -1376,11 +1379,8 @@ export function createLightingEngine() {
           const rimD = lavaEdgeDist[i];
           if (rimD < 1.4) alpha = Math.min(255, Math.max(0, alpha + 28 * (1 - rimD / 1.4)));
         }
-        if (!opaqueCell) {
-          alpha = Math.max(alpha, resolveShelteredExteriorDarkening({
-            playerSheltered: opts?.playerSheltered === true,
-            shelterInterior: _isShelterInteriorCell,
-          }));
+        if (playerSheltered && !opaqueCell && !shelterInteriorCell(i, isShelterInterior)) {
+          alpha = Math.max(alpha, SHELTERED_EXTERIOR_BLACKOUT_ALPHA);
         }
         pixels[pi + 3] = alpha | 0;
       }
@@ -1444,7 +1444,7 @@ export function createLightingEngine() {
         let g = (lg * (180 + 75 * coolBias)) | 0;
         let b = (lb * (60 + 195 * coolBias)) | 0;
         let a = (brightness * 120) | 0;
-        if (!opaqueCell && surfType[i] === 0) {
+        if (hasFloorRelief && !opaqueCell && st === 0) {
           const hRel = floorH[i];
           const gx = floorGX[i];
           const gy = floorGY[i];

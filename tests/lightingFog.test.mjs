@@ -1,5 +1,6 @@
 import { assert, assertEquals } from "jsr:@std/assert";
 import {
+  createLightingEngine,
   resolveDarknessAlpha,
   resolveMaterialLightingResponse,
   resolveShelteredExteriorDarkening,
@@ -101,6 +102,47 @@ Deno.test("shelter nearly blacks out cells outside the current building", () => 
   assert(outside >= 180, "outside the current building should be near-black");
   assertEquals(inside, 0);
   assertEquals(unsheltered, 0);
+});
+
+Deno.test("lighting keeps shelter and floor relief changes local to the frames that need them", () => {
+  const previousDocument = globalThis.document;
+  const frames = [];
+  globalThis.document = {
+    createElement: () => ({
+      getContext: () => ({
+        createImageData: (w, h) => ({ data: new Uint8ClampedArray(w * h * 4) }),
+        putImageData: ({ data }) => frames.push(data.slice()),
+      }),
+    }),
+  };
+  try {
+    const engine = createLightingEngine();
+    const ctx = { save() {}, restore() {}, drawImage() {} };
+    let shelterLookups = 0;
+    function render(playerSheltered = false) {
+      frames.length = 0;
+      engine.render(ctx, [], () => false, -3, -3, 3, 3, null, 140, null, null, [], 0, 0, {
+        playerSheltered,
+        isShelterInterior: (x, y) => {
+          shelterLookups++;
+          return x === 0 && y === 0;
+        },
+      });
+      return frames.slice();
+    }
+    const flat = render();
+    assertEquals(shelterLookups, 0);
+    assert(render(true)[0].some((value, i) => value > flat[0][i]));
+    assert(shelterLookups > 0);
+
+    engine.setFloorNoise(0.4, 0.2);
+    assert(render()[1].some((value, i) => value !== flat[1][i]));
+    engine.clearFloorRelief();
+    assertEquals(render(), flat);
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+  }
 });
 
 Deno.test("material optical fields alter lighting response", () => {
