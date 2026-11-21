@@ -1,5 +1,6 @@
 export default {
   "name": "strange_grove",
+  "displayName": "Dark Grove",
   "keystone": { "x": 0, "y": 0 },
   "width": 11,
   "height": 11,

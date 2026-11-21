@@ -299,6 +299,8 @@ Deno.test("expanded overworld places every authored landmark outside the town co
     assert(LANDMARK_DEFS[id], `${id} should be backed by an authored landmark definition`);
     assert(LANDMARK_DEFS[id].tiles.length > 0, `${id} should have authored tiles`);
     assert(LANDMARK_DEFS[id].spawns.length > 0, `${id} should have authored spawns`);
+    assert(typeof LANDMARK_DEFS[id].displayName === "string" && LANDMARK_DEFS[id].displayName.trim(), `${id} should have an authored display name`);
+    assertEquals(sites.find((site) => site.id === id)?.displayName, LANDMARK_DEFS[id].displayName);
   }
 
   for (const spawn of landmarks) {

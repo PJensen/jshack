@@ -814,7 +814,7 @@ async function placeOverworldLandmarks(chunks, townCenter, bounds, worldSeed, ti
     if (!center) continue;
     stampBuilding(chunks, def, center.x, center.y);
     const hasEntrance = def.spawns.some((spawn) => spawn.params?.entranceTemplateId);
-    placed.push({ ...center, id: spec.id, hasEntrance });
+    placed.push({ ...center, id: spec.id, displayName: def.displayName || spec.id, hasEntrance });
     if (_tick) await _tick(`Raised ${spec.id.replaceAll("_", " ")}`);
   }
   return placed;

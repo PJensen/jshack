@@ -1,5 +1,6 @@
 export default {
   "name": "old_well",
+  "displayName": "Blackwater Well",
   "keystone": { "x": 0, "y": 0 },
   "width": 5,
   "height": 5,

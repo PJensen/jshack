@@ -2930,7 +2930,7 @@ async function prepareOpeningFlyover(player) {
   }
   for (const site of landmarks) {
     if (site.hasEntrance || getTile(site.x, site.y) === TILE_VOID) continue;
-    const title = site.id.split("_").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+    const title = site.displayName || site.id.split("_").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
     entities.push({ pos: site, title, tags: ["landmark"] });
   }
   for (const [, state, bind] of world.query(QuestState, QuestBindings)) {

@@ -1,5 +1,6 @@
 export default {
   "name": "bear_cave",
+  "displayName": "Bear Cave",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

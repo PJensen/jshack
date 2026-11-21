@@ -1,5 +1,6 @@
 export default {
   "name": "bat_cave",
+  "displayName": "Bat Cave",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

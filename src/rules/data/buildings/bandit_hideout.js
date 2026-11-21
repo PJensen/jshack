@@ -1,5 +1,6 @@
 export default {
   "name": "bandit_hideout",
+  "displayName": "Bandit Camp",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

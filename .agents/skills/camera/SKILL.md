@@ -40,7 +40,9 @@ landscape pass so gameplay FOV and exploration memory stay canonical. Use
 
 The opening projects materialized entrances and quest givers in main and reads
 outdoor landmark anchors from the cached overworld plan. Use the entrance label
-for a site with a dungeon entrance so the tour titles it once. Check that
+for a site with a dungeon entrance so the tour titles it once; ordinary landmark
+anchors should carry their authored `displayName` separately from the stable
+content ID. Check that
 anchors are on loaded tiles. Keep the route deterministic and budget time per
 leg so more stops do not squeeze the labels. Route ordering keeps the opening
 corner and player fixed. Named stops ease into a close-up and hold before

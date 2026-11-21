@@ -1,5 +1,6 @@
 export default {
   "name": "wayside_shrine",
+  "displayName": "Wayside Shrine",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

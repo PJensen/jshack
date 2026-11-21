@@ -1,5 +1,6 @@
 export default {
   "name": "wolf_den",
+  "displayName": "Wolf Den",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

@@ -1,5 +1,6 @@
 export default {
   "name": "forgotten_shrine",
+  "displayName": "Forgotten Shrine",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

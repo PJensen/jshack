@@ -1,5 +1,6 @@
 export default {
   "name": "collapsed_cellar",
+  "displayName": "The Buried Hearth",
   "keystone": { "x": 0, "y": 0 },
   "width": 7,
   "height": 7,

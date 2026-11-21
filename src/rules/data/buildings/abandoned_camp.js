@@ -1,5 +1,6 @@
 export default {
   "name": "abandoned_camp",
+  "displayName": "Burnt Camp",
   "keystone": { "x": 0, "y": 0 },
   "width": 9,
   "height": 9,

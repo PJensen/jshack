@@ -1,5 +1,6 @@
 export default {
   "name": "ruined_watchtower",
+  "displayName": "Broken Watchtower",
   "keystone": { "x": 0, "y": 0 },
   "roofed": false,
   "width": 5,
