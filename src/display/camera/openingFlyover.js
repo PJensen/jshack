@@ -3,6 +3,8 @@
 
 const DEFAULT_DURATION = 8.2;
 const MIN_SECONDS_PER_LEG = 1.5;
+const LANDMARK_HOLD_SECONDS = 1.1;
+const LANDMARK_ZOOM = 2;
 const NPC_STOP_SPACING = 8;
 
 function clamp01(value) {
@@ -117,32 +119,32 @@ function buildRoute(view) {
   return route;
 }
 
-function timeRoute(route, duration) {
+function timeRoute(route, duration, holdSeconds, namedStops) {
   const distances = route.slice(1).map((point, i) => Math.sqrt(distanceSquared(route[i], point)));
   const totalDistance = distances.reduce((sum, length) => sum + length, 0);
   // Short hops still get time for a label. Longer crossings get more time
   // so the camera does not have to race to keep up with the next stop.
-  const legTimes = distances.map((length) => duration * (
+  const travelSeconds = duration - holdSeconds * namedStops;
+  const legTimes = distances.map((length) => travelSeconds * (
     0.6 / distances.length + 0.4 * (totalDistance ? length / totalDistance : 1 / distances.length)
   ));
-  let arrival = 0;
+  let departure = 0;
   return route.map((point, i) => {
-    if (i > 0) arrival += legTimes[i - 1];
+    const time = i === distances.length ? duration : departure + (legTimes[i - 1] ?? 0);
+    departure = time + (point.title ? holdSeconds : 0);
     let vx = 0, vy = 0;
     const incoming = distances[i - 1], outgoing = distances[i];
-    if (incoming > 0 && outgoing > 0) {
+    if (!point.title && incoming > 0 && outgoing > 0) {
       const prev = route[i - 1], next = route[i + 1];
       const speed = Math.min(incoming / legTimes[i - 1], outgoing / legTimes[i]) * 0.5;
       vx = ((point.x - prev.x) / incoming + (next.x - point.x) / outgoing) * speed;
       vy = ((point.y - prev.y) / incoming + (next.y - point.y) / outgoing) * speed;
     }
-    return { ...point, time: i === distances.length ? duration : arrival, vx, vy };
+    return { ...point, time, departure, vx, vy };
   });
 }
 
-function interpolate(a, b, elapsed) {
-  const seconds = b.time - a.time;
-  const t = clamp01((elapsed - a.time) / seconds);
+function interpolate(a, b, t, seconds) {
   const blend = smoothStep(t);
   const outgoing = t * (1 - t) ** 2 * seconds;
   const incoming = -t * t * (1 - t) * seconds;
@@ -168,8 +170,11 @@ export function createOpeningFlyover(opts = {}) {
     if (active) return true;
     route = buildRoute(view);
     if (!route) return false;
-    duration = Math.max(1, Number(opts.duration) || Math.max(DEFAULT_DURATION, (route.length - 1) * MIN_SECONDS_PER_LEG));
-    route = timeRoute(route, duration);
+    const namedStops = route.filter((point) => point.title).length;
+    const travelSeconds = Math.max(DEFAULT_DURATION, (route.length - 1) * MIN_SECONDS_PER_LEG);
+    duration = Math.max(1, Number(opts.duration) || travelSeconds + namedStops * LANDMARK_HOLD_SECONDS);
+    const holdSeconds = Math.min(LANDMARK_HOLD_SECONDS, duration / (Math.max(1, namedStops) * 3));
+    route = timeRoute(route, duration, holdSeconds, namedStops);
     elapsed = 0;
     segment = 0;
     active = true;
@@ -189,14 +194,15 @@ export function createOpeningFlyover(opts = {}) {
     const progress = clamp01(elapsed / duration);
     while (segment < route.length - 2 && elapsed >= route[segment + 1].time) segment++;
     const from = route[segment], to = route[segment + 1];
-    const position = interpolate(from, to, elapsed);
+    const legSeconds = to.time - from.departure;
+    const legProgress = clamp01((elapsed - from.departure) / legSeconds);
+    const position = interpolate(from, to, legProgress, legSeconds);
     cam.x = position.x;
     cam.y = position.y;
-    const legProgress = clamp01((elapsed - from.time) / (to.time - from.time));
     const departure = from.title ? 1 - smoothStep(legProgress * 2) : 0;
     const approach = to.title ? smoothStep(legProgress * 2 - 1) : 0;
     const landing = segment === route.length - 2 ? smoothStep(legProgress * 2 - 0.5) : 0;
-    const surveyScale = startScale * (1 + 0.36 * Math.max(departure, approach));
+    const surveyScale = startScale * (1 + (LANDMARK_ZOOM - 1) * Math.max(departure, approach));
     cam.scale = surveyScale + (endScale - surveyScale) * landing;
     cam.targetX = cam.x;
     cam.targetY = cam.y;
@@ -217,10 +223,12 @@ export function createOpeningFlyover(opts = {}) {
   function getMapLabel() {
     if (!active) return null;
     const a = route[segment], b = route[segment + 1];
-    const point = elapsed - a.time < b.time - elapsed ? a : b;
+    const sinceDeparture = Math.max(0, elapsed - a.departure);
+    const untilArrival = b.time - elapsed;
+    const point = sinceDeparture < untilArrival ? a : b;
     if (!point.title) return null;
-    const distance = Math.abs(elapsed - point.time);
-    const window = Math.min(0.9, (b.time - a.time) * 0.45);
+    const distance = Math.min(sinceDeparture, untilArrival);
+    const window = Math.min(0.9, (b.time - a.departure) * 0.45);
     if (distance >= window) return null;
     return { title: point.title, x: point.x, y: point.y, alpha: smoothStep((window - distance) / (window * 0.45)) };
   }

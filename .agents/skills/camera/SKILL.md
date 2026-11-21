@@ -43,7 +43,8 @@ outdoor landmark anchors from the cached overworld plan. Use the entrance label
 for a site with a dungeon entrance so the tour titles it once. Check that
 anchors are on loaded tiles. Keep the route deterministic and budget time per
 leg so more stops do not squeeze the labels. Route ordering keeps the opening
-corner and player fixed. Adjacent legs share waypoint velocities. Draw labels
+corner and player fixed. Named stops ease into a close-up and hold before
+departure. Adjacent legs share waypoint velocities at unnamed stops. Draw labels
 in CSS pixels using the live camera projection so they stay legible and pinned
 to the terrain through both pan and zoom.
 

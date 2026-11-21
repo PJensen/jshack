@@ -1217,6 +1217,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       );
     } catch {}
   }
+  renderHard();
 
   confirmBtn.addEventListener('pointerenter', () => {
     confirmBtn.style.transform = 'translateY(-1px)';

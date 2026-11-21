@@ -63,7 +63,8 @@ Deno.test("opening labels stay pinned and the camera pulls back between stops", 
   }
   assertEquals([...seen], ["Bear Cave", "The Miller"]);
   assert(sawFade);
-  assert(firstPeak > surveyScale + 8, "zoom should pull back after the first stop");
+  assertEquals(firstPeak, 56, "the landmark should fill more of the viewport");
+  assert(surveyScale < 30, "zoom should pull back after the close-up");
   assertEquals(flyover.update(cam, view, 0.05), false);
   assertEquals(flyover.getMapLabel(), null);
   assertEquals(cam.scale, 70);
@@ -81,13 +82,13 @@ Deno.test("opening tour fits every landmark and lengthens to make room for title
   const flyover = createOpeningFlyover({ startScale: 28, endScale: 70 });
   assert(flyover.start(cam, view));
   const seen = new Set();
-  for (let i = 0; i < 135; i++) {
-    flyover.update(cam, view, 0.1);
+  for (let i = 0; i < 300; i++) {
+    if (!flyover.update(cam, view, 0.1)) break;
     const label = flyover.getMapLabel();
     if (label?.alpha === 1) seen.add(label.title);
   }
   assertEquals(seen.size, view.entities.length);
-  assertEquals(flyover.update(cam, view, 0.1), false);
+  assertEquals(flyover.isActive(), false);
 });
 
 Deno.test("opening route trims the nearest-neighbor detour with fixed endpoints", () => {
@@ -104,7 +105,7 @@ Deno.test("opening route trims the nearest-neighbor detour with fixed endpoints"
   flyover.start(cam, view);
   const start = [cam.x, cam.y];
   const visits = new Set();
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 200; i++) {
     if (!flyover.update(cam, view, 0.1)) break;
     const label = flyover.getMapLabel();
     if (label) visits.add(Number(label.title));
@@ -118,11 +119,11 @@ Deno.test("opening route trims the nearest-neighbor detour with fixed endpoints"
   assertEquals([cam.x, cam.y], [0, 0]);
 });
 
-Deno.test("camera velocity carries through a waypoint", () => {
+Deno.test("camera velocity carries through an unnamed waypoint", () => {
   const cam = {};
   const view = {
     player: { id: 1, pos: { x: 0, y: 0 } },
-    entities: [{ id: 2, pos: { x: 35, y: 0 }, title: "Bear Cave", tags: ["landmark"] }],
+    entities: [{ id: 2, pos: { x: 35, y: 0 }, tags: ["landmark"] }],
   };
   const flyover = createOpeningFlyover({ startScale: 28, endScale: 70, duration: 6 });
   flyover.start(cam, view);
@@ -138,5 +139,21 @@ Deno.test("camera velocity carries through a waypoint", () => {
   assert(Math.abs(at - 35) < 0.00001);
   assert(at - before < -dt && after - at < -dt, "camera should keep moving through arrival");
   assert(Math.abs((at - before) - (after - at)) < dt * 0.1);
+});
+
+Deno.test("named stops hold the close-up and pinned label for a full second", () => {
+  const cam = {};
+  const view = makeView();
+  const flyover = createOpeningFlyover({ startScale: 28, endScale: 70 });
+  flyover.start(cam, view);
+  let heldFrames = 0;
+  for (let i = 0; i < 300; i++) {
+    if (!flyover.update(cam, view, 0.05)) break;
+    if (cam.x !== 42 || cam.y !== 18 || cam.scale !== 56) continue;
+    assertEquals(flyover.getMapLabel(), { title: "Bear Cave", x: 42, y: 18, alpha: 1 });
+    heldFrames++;
+  }
+  assert(heldFrames >= 20, "the close-up should hold for at least one second");
+  assertEquals(cam.scale, 70);
 });
 

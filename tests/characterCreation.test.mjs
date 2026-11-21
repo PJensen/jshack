@@ -30,6 +30,8 @@ Deno.test("character creation defaults to hard mode and hides no-gore", async ()
   const source = await Deno.readTextFile("src/display/ui/charCreation.js");
 
   assertStringIncludes(source, "hardInput.checked = true;");
+  assertStringIncludes(source, "hardInput.addEventListener('change', renderHard);\n\n  confirmBtn.appendChild(confirmText);");
+  assertStringIncludes(source, "  }\n  renderHard();\n\n  confirmBtn.addEventListener('pointerenter'");
   assertStringIncludes(source, "display: 'none', alignItems: 'center', gap: '8px'");
   assertStringIncludes(source, "const disableGore = !!goreInput.checked;");
 });
