@@ -176,6 +176,7 @@ export const LOOT_TABLES = {
       { type: "equip", weight: 12, pool: ["armor_vanguard", "armor_nightstalker", "armor_arcanist"], affixChance: 0 },
       { type: "equip", weight: 12, pool: ["legguards_fortress", "leggings_prowler", "leggings_mystic", "lodbrok_serpent_bound_breeches"], affixChance: 0 },
       { type: "equip", weight: 12, pool: ["boots_sentinel", "boots_shadowstep", "boots_conduit"], affixChance: 0 },
+      { type: "equip", weight: 12, pool: ["patient_thunder"], affixChance: 0 },
     ],
   },
 
@@ -194,6 +195,7 @@ export const LOOT_TABLES = {
       { type: "equip", weight: 25, pool: ["legguards_colossus", "leggings_wraith"], affixChance: 0 },
       { type: "equip", weight: 25, pool: ["boots_earthbound", "boots_phantomstride"], affixChance: 0 },
       { type: "equip", weight: 25, pool: ["ring_ironwill", "ring_fateweaver", "ring_voidchannel"], affixChance: 0 },
+      { type: "equip", weight: 20, pool: ["dawnbreaker"], affixChance: 0 },
     ],
   },
 
@@ -304,6 +306,7 @@ export const LOOT_TABLES = {
       { type: "item",      weight: 3, itemId: "potion_acid" },
       { type: "item",      weight: 2, itemId: "potion_oil" },
       { type: "item",      weight: 2, itemId: "potion_echoing_focus" },
+      { type: "item",      weight: 2, itemId: "potion_radiance" },
     ],
   },
 
@@ -412,6 +415,7 @@ export const LOOT_TABLES = {
       { type: "item", weight: 30, itemId: "wand_heal" },
       { type: "item", weight: 25, itemId: "wand_frost" },
       { type: "item", weight: 15, itemId: "wand_stasis" },
+      { type: "item", weight: 20, itemId: "wand_arcane" },
     ],
   },
 
@@ -520,6 +524,7 @@ export const LOOT_TABLES = {
       { type: "item", weight: 14, itemId: "reagent_moonleaf" },
       { type: "item", weight: 14, itemId: "reagent_ember_root" },
       { type: "item", weight: 12, itemId: "reagent_thorn_pod" },
+      { type: "item", weight: 12, itemId: "reagent_venom_frond" },
       { type: "nothing", weight: 18 },
     ],
   },

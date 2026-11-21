@@ -85,9 +85,13 @@ Deno.test("loot coverage reports reverse catalog gaps and archetype-backed drops
   const report = await buildLootCoverageReport({ roots: ["src", "tests", "docs"] });
   assert(report.catalogGapCount > 0, "expected current catalog gaps to be visible");
   assert(report.catalogCoverage.equipment.missingIds.includes("fishing_rod"));
+  assert(!report.catalogCoverage.equipment.missingIds.includes("dawnbreaker"));
+  assert(!report.catalogCoverage.equipment.missingIds.includes("patient_thunder"));
   assert(report.catalogCoverage.magic.missingIds.includes("book_dead"));
+  assert(!report.catalogCoverage.magic.missingIds.includes("potion_radiance"));
+  assert(!report.catalogCoverage.magic.missingIds.includes("wand_arcane"));
   assert(!report.catalogCoverage.magic.missingIds.includes("food_wild_berries"));
-  assert(report.catalogCoverage.reagents.missingIds.includes("reagent_venom_frond"));
+  assert(!report.catalogCoverage.reagents.missingIds.includes("reagent_venom_frond"));
   const direct = auditCatalogCoverage(undefined, LOOT_TABLES, new Set(Object.keys(LOOT_TABLES)));
   assert(direct.equipment.covered >= 278);
 });
