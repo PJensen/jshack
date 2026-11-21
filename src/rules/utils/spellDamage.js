@@ -199,6 +199,7 @@ export function createSpellDamageContext(world, casterId, spell = {}, overrides 
  * @param {{
  *   sourceId?:number,
  *   spellId?:string,
+ *   visibility?:string,
  *   cause?:string,
  *   critChancePct?:number,
  *   critMult?:number,
@@ -268,6 +269,7 @@ export function applySpellHealing(world, targetId, amount, context, salt = 0) {
  *   missed?:boolean,
  *   hitChancePct?:number,
  *   spellId?:string,
+ *   visibility?:string,
  * }} [options]
  */
 export function buildSpellDamageSpecFromContext(world, targetId, context, options = {}) {
@@ -292,6 +294,7 @@ export function buildSpellDamageSpecFromContext(world, targetId, context, option
     bypassResist: !!options?.bypassResist,
     projectileDelay: options?.projectileDelay || 0,
     impactVector: options?.impactVector || undefined,
+    visibility: String(options?.visibility || 'visible'),
   };
 }
 

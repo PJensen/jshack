@@ -87,6 +87,8 @@ function applyEffectOperation(world, id, vit, operation, potency, stacks, key, s
             amount,
             type: effectKeyToType(key),
             cause: key || 'effect',
+            source: sourceId,
+            visibility: 'source-known',
         });
         return;
     }
@@ -142,6 +144,7 @@ function applySpellEffectDamage(world, id, effect) {
     }, {
         baseAmount: amount,
         salt: world.step ^ (Number(effect?.startedAtTurn || 0) << 8),
+        visibility: 'source-known',
     }));
     return true;
 }

@@ -275,6 +275,7 @@ Deno.test("agony DOT inherits spell crit rules on tick", () => {
 
   assert(events.length >= 1, "Agony tick should emit damage");
   assertEquals(events[0].cause, "spell:agony");
+  assertEquals(events[0].visibility, "source-known");
   assertEquals(events[0].critical, true);
   assert(events[0].amount >= 2, `crit Agony tick should exceed baseline damage, got ${events[0].amount}`);
 });

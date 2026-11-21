@@ -85,6 +85,60 @@ Deno.test("floatText wiring restores damage number emission with crit and delay"
   assertEquals(calls[0].opts?.color, "#ff6060");
 });
 
+Deno.test("floatText wiring shows known-source effect damage outside current FOV", () => {
+  const world = new World({ seed: 71 });
+  const target = world.create();
+  const player = world.create();
+  const calls = [];
+  const ftext = {
+    addStatus() {},
+    addHeal() {},
+    addDamage(...args) { calls.push(args); },
+  };
+
+  installFloatTextWiring({
+    world,
+    ftext,
+    fx: { pool: { spawn() {} } },
+    getPosition: (id) => id === target ? { x: 12, y: 4 } : null,
+    isVisibleAt: () => false,
+    isPet: () => false,
+    isPlayer: (id) => id === player,
+  });
+
+  world.emit('damaged', {
+    target,
+    source: player,
+    amount: 3,
+    type: 'shadow',
+    cause: 'spell:agony',
+    visibility: 'source-known',
+  });
+
+  assertEquals(calls.length, 1);
+  assertEquals(calls[0][0], 12.5);
+  assertEquals(calls[0][2], 3);
+});
+
+Deno.test("floatText wiring keeps unknown hidden damage suppressed", () => {
+  const world = new World({ seed: 72 });
+  const target = world.create();
+  const source = world.create();
+  const calls = [];
+  installFloatTextWiring({
+    world,
+    ftext: { addStatus() {}, addHeal() {}, addDamage(...args) { calls.push(args); } },
+    fx: { pool: { spawn() {} } },
+    getPosition: (id) => id === target ? { x: 12, y: 4 } : null,
+    isVisibleAt: () => false,
+    isPet: () => false,
+    isPlayer: () => false,
+  });
+
+  world.emit('damaged', { target, source, amount: 3, type: 'fire', cause: 'trap' });
+  assertEquals(calls.length, 0);
+});
+
 Deno.test("floatText wiring shows canonical healing at target with actual amount", () => {
   const world = new World({ seed: 10 });
   const target = world.create();

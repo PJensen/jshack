@@ -251,6 +251,7 @@ export function resolveResistance(world, targetId, rawAmount, type, armorPenetra
  * @property {number}  [source=0]          - Entity ID that caused damage (0 = environmental)
  * @property {string}  [type='physical']   - Damage type for resistance resolution
  * @property {string}  [cause]             - Human-readable cause for messages
+ * @property {string}  [visibility='visible'] - Display visibility contract; 'source-known' allows persistent effects from a known source to be shown outside current FOV
  * @property {{x:number,y:number}} [at]    - Override position for floating text
  * @property {boolean} [critical=false]    - Mark as critical hit
  * @property {boolean} [bypassInvuln=false]- Skip invulnerability check
@@ -415,6 +416,7 @@ export function dealDamage(world, spec) {
     weaponId: Number(spec.weaponId || 0) | 0,
     weaponFamily: eventWeaponFamily,
     cause,
+    visibility: String(spec.visibility || 'visible'),
     critical,
     at: spec.at || undefined,
     noTrigger: !!spec.noTrigger,

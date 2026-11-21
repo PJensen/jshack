@@ -867,11 +867,14 @@ export function installGoreWiring({ world, ftext, fx, getPosition, canShowAt, is
   const pendingGore = [];
   const now = () => Math.max(0, Number(getFxTime?.() || 0));
 
-  world.on('damaged', ({ target, source, amount, rawAmount, type, cause, critical, at, offhand, projectileDelay, impactVector, projectileKind, impactProfile, targetKind, goreType, sizeClass }) => {
+  world.on('damaged', ({ target, source, amount, rawAmount, type, cause, critical, at, offhand, projectileDelay, impactVector, projectileKind, impactProfile, targetKind, goreType, sizeClass, visibility }) => {
     const t = Number(target || 0) || 0;
     const pos = (at && typeof at.x === 'number' && typeof at.y === 'number') ? at : getPosition(t);
     const hitIsPlayer = typeof isPlayer === 'function' ? !!isPlayer(t) : false;
-    if (pos && canShowAt(pos.x, pos.y) && Number.isFinite(amount)) {
+    const sourceKnown = String(visibility || 'visible') === 'source-known'
+      && typeof isPlayer === 'function'
+      && !!isPlayer(Number(source || 0));
+    if (pos && (canShowAt(pos.x, pos.y) || sourceKnown) && Number.isFinite(amount)) {
       const isCrit = !!critical;
       const resisted = Number.isFinite(rawAmount) && rawAmount > amount;
       const col = hitIsPlayer
