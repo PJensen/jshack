@@ -1,5 +1,5 @@
 import "./helpers/installContentMonsters.mjs";
-import { assert } from "jsr:@std/assert";
+import { assert, assertEquals } from "jsr:@std/assert";
 import { generateOverworldChunks } from "../src/rules/environment/dungeon/overworld.js";
 
 const RESOURCE_KINDS = new Set([
