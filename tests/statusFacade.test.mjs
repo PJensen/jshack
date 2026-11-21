@@ -2,7 +2,9 @@ import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { attach } from "../src/lib/ecs-js/hierarchy.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { Beatitude } from "../src/rules/components/Beatitude.js";
 import { Duration } from "../src/rules/components/Duration.js";
+import { Equipment } from "../src/rules/components/Equipment.js";
 import { SleepState } from "../src/rules/components/SleepState.js";
 import { Status } from "../src/rules/components/Status.js";
 import { StatusEffectNode } from "../src/rules/components/StatusEffectNode.js";
@@ -42,11 +44,23 @@ Deno.test("status facade: SleepState projects canonical sleep status with aliase
   assertEquals(statusStrength(world, actor, "sleep"), 1);
   assertEquals(statusStrength(world, actor, "asleep"), 1);
   assertEquals(statusStrength(world, actor, "sleeping"), 1);
+  assertEquals(hasAnyStatus(world, actor, ["burning", "asleep"]), true);
 
   const snap = snapshotStatusState(world, actor);
   assert(snap, "snapshot should exist");
   assertEquals(snap.statuses.some((s) => s.type === "sleep"), false);
   assertEquals(snap.allStatuses.some((s) => s.type === "sleep"), true);
+});
+
+Deno.test("status facade: any-status checks include curses from equipped items", () => {
+  const world = new World({ seed: 6106 });
+  const actor = world.create();
+  const weapon = world.create();
+  world.add(actor, Equipment, { weapon });
+  world.add(weapon, Beatitude, { state: "cursed" });
+
+  assertEquals(hasAnyStatus(world, actor, ["burning", "confused"]), false);
+  assertEquals(hasAnyStatus(world, actor, ["burning", "cursed"]), true);
 });
 
 Deno.test("status facade: sleep aliases from legacy rows resolve to canonical sleep", () => {
@@ -143,6 +157,7 @@ Deno.test("status facade: derives statuses from topology status nodes", () => {
   assertEquals(hasEffect(world, actor, "hangover"), true);
   assertEquals(effectStrength(world, actor, "hangover"), 6);
   assertEquals(statusStrength(world, actor, "confused"), 6);
+  assertEquals(hasAnyStatus(world, actor, ["burning", "confused"]), true);
 });
 
 Deno.test("status facade: topology rows take precedence over duplicate legacy active effects", () => {

@@ -133,9 +133,11 @@ export function evaluateItemProcs(world, actorId, itemId, ctx, options = {}) {
   if (!(resolvedActorId > 0) || !(resolvedItemId > 0) || !world?.isAlive?.(resolvedItemId)) return out;
 
   ensureAffixTopology(world, resolvedItemId);
+  const procNodes = gatherItemProcNodes(world, resolvedItemId);
+  if (procNodes.length === 0) return out;
+
   const sourceStats = options.sourceStats || resolveDerivedStats(world, Number(ctx?.source || resolvedActorId) | 0);
   const targetStats = options.targetStats || {};
-  const procNodes = gatherItemProcNodes(world, resolvedItemId);
   for (let i = 0; i < procNodes.length; i++) {
     evaluateProcNode(world, procNodes[i], {
       ...ctx,

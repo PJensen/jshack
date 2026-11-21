@@ -1,3 +1,4 @@
+import { Parent } from "../../lib/ecs-js/hierarchy.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { Beatitude } from "../components/Beatitude.js";
 import { Duration } from "../components/Duration.js";
@@ -391,8 +392,20 @@ export function hasStatus(world, entityId, statusType) {
  */
 export function hasAnyStatus(world, entityId, statusTypes) {
   if (!Array.isArray(statusTypes) || statusTypes.length <= 0) return false;
-  for (let i = 0; i < statusTypes.length; i++) {
-    if (hasStatus(world, entityId, statusTypes[i])) return true;
+  const id = Number(entityId || 0) | 0;
+  if (!validEntity(world, id)) return false;
+
+  // Without legacy rows or descendants, only sleep and equipment can supply
+  // semantic statuses. Skip building a snapshot for all other keys.
+  const hasStatusRows = world.get(id, Status)?.statuses?.length > 0
+    || world.get(id, ActiveEffects)?.effects?.length > 0
+    || !!(world.get(id, Parent)?.first | 0);
+  let snapshot;
+  for (const statusType of statusTypes) {
+    const key = canonicalStatusType(statusType);
+    if (!key || (!hasStatusRows && key !== "sleep" && key !== "cursed")) continue;
+    snapshot ??= snapshotStatusState(world, id);
+    if (Number(snapshot?.statusStrengths.get(key) || 0) > 0) return true;
   }
   return false;
 }

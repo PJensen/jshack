@@ -47,6 +47,8 @@ valid `CastSpellIntent` remains canonical.
 4. Extend the smallest focused test or fixture when a behavior is proven.
 5. For performance work, compare the same seed, scenario, tick count, and
    warmup settings before and after the change; report averages and tail values.
+   Alternate baseline and patched runs sequentially, outside concurrent test
+   runs. Increase `--top` if an optimized system drops out of the report.
 
 ## Contracts and constraints
 
