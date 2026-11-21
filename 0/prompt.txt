@@ -1,0 +1,5 @@
+lets start plugging the uncovered gaps
+
+---
+
+if I were you I would mark an something as being a quest reward right on the item-def right?
