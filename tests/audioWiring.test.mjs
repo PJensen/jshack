@@ -2,6 +2,7 @@ import { assert } from "jsr:@std/assert";
 import { assertAlmostEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import {
+  AUDIO_ACTIVATION_ROUTES,
   CHANNELING_LOOP_OPTIONS,
   CHANNELING_LOOP_SOUND_ID,
   BONE_CHIME_SOUND_ID,
@@ -40,6 +41,7 @@ import {
   resolveStatusSoundId,
   isSfxDebugEnabled,
   isPlantHarvestKind,
+  installAudioWiring,
   reportSfxDebugInvocation,
   setSfxDebugEnabled,
   setSfxDebugLogger,
@@ -235,6 +237,52 @@ Deno.test("audio wiring plays electrocution for non-spell electric damage", () =
   assert(shouldPlayElectrocutionSound({ type: "electric", cause: "grid_bug" }));
   assert(shouldPlayElectrocutionSound({ type: "lightning", cause: "trap" }));
   assert(!shouldPlayElectrocutionSound({ type: "fire", cause: "spell" }));
+});
+
+Deno.test("activation audio plays once per cast or discharge and ignores hazard pulses", () => {
+  const world = new World({ seed: 1 });
+  const played = [];
+  const deps = {
+    oneShotRoutes: AUDIO_ACTIVATION_ROUTES,
+    playAt: (soundId) => played.push(soundId),
+  };
+  world.install(createAudioWiringExtension(deps));
+  world.install(createAudioWiringExtension(deps));
+
+  world.emit("spell:consecrate", { actor: 1 });
+  world.emit("trap:triggered", { trapId: 2, type: "shock" });
+  world.emit("shock_trap:sensory", { target: 1 });
+  for (let i = 0; i < 5; i++) world.emit("hazard:pulse", { cause: "spell:consecrate" });
+  world.emit("spell:consecrate", { actor: 1 });
+  world.emit("shock_trap:sensory", { target: 1 });
+
+  assert(played.join(",") === "spell:consecrate,status:electrocuted,spell:consecrate,status:electrocuted");
+});
+
+Deno.test("damage audio skips Consecrate pulses and shock-trap hits", () => {
+  const world = new World({ seed: 1 });
+  const at = { x: 1, y: 1 };
+  const played = [];
+  installAudioWiring({
+    world,
+    getPosition: () => at,
+    getPlayerPosition: () => at,
+    getIdentity: (id) => id === 2 ? "trap_shock" : "grid_bug",
+    isPlayer: () => false,
+    getDepth: () => 1,
+  });
+  setSfxDebugLogger(({ id }) => played.push(id));
+  setSfxDebugEnabled(true);
+  try {
+    world.emit("damaged", { target: 1, source: 2, type: "lightning", at });
+    world.emit("shock_trap:sensory", { target: 1, at });
+    world.emit("damaged", { target: 1, source: 3, type: "holy", cause: "spell:consecrate", at });
+    world.emit("damaged", { target: 1, source: 4, type: "electric", at });
+    assert(played.join(",") === "status:electrocuted,status:electrocuted");
+  } finally {
+    setSfxDebugEnabled(false);
+    setSfxDebugLogger(null);
+  }
 });
 
 Deno.test("audio wiring keeps housekeeping teleports silent", () => {

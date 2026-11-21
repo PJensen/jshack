@@ -1,6 +1,8 @@
 import { HazardArea } from "../components/HazardArea.js";
 import { PlasmaCloud } from "../components/PlasmaCloud.js";
 import { Position } from "../components/Position.js";
+import { Faction } from "../components/Faction.js";
+import { areFactionsHostile } from "../utils/factionHostility.js";
 import { Vitality } from "../components/Vitality.js";
 import { applyHealing } from "../utils/applyHealing.js";
 import { Flying } from "../components/Flying.js";
@@ -513,11 +515,18 @@ export function hazardSystem(world) {
     }
 
     if (tickDamage > 0) {
+      const hostileFaction = identity === "consecrate_ground"
+        ? hazard.meta?.sourceFaction || world.get(sourceId, Faction)?.key || "player"
+        : null;
       for (const [id, tpos, vit] of world.query(Position, Vitality)) {
         if (!tpos || !vit) continue;
         if (id === hazardId) continue;
         if ((vit.hp | 0) <= 0) continue;
         if (medium === "floor" && world.has(id, Flying)) continue;
+        if (hostileFaction) {
+          const targetFaction = world.get(id, Faction)?.key;
+          if (id === sourceId || !targetFaction || !areFactionsHostile(hostileFaction, targetFaction)) continue;
+        }
         // Quake hazards skip caster and their pet for damage.
         if (kind === "quake" && id === sourceId) continue;
         if (kind === "quake" && world.has(id, Pet) && world.has(sourceId, Player)) continue;

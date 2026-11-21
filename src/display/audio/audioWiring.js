@@ -544,6 +544,25 @@ export const TRAP_SOUND_BY_TYPE = Object.freeze({
   snake: "trap:snake",
   spike: "trap:spike",
 });
+export const AUDIO_ACTIVATION_ROUTES = [
+  ...SPELL_CAST_SOUND_EVENTS.map((event) => ({
+    event,
+    sound: event,
+    position: (payload) => payload?.at || payload?.origin || payload?.from || null,
+  })),
+  {
+    event: 'trap:triggered',
+    sound: ({ type }) => TRAP_SOUND_BY_TYPE[String(type || "").toLowerCase()],
+    position: ({ trapId }, ctx) => trapId != null ? ctx.getPosition(trapId) : null,
+    options: { priority: 1 },
+  },
+  {
+    event: 'shock_trap:sensory',
+    sound: 'status:electrocuted',
+    position: ({ target, at }, ctx) => at || ctx.getPosition(target),
+    options: { priority: 1 },
+  },
+];
 export const WEAPON_RACK_DROPPED_SOUND_ID = "rack:weapon:dropped";
 
 export function craftingMenuLoopKey(kind) {
@@ -670,6 +689,7 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   }
 
   world.install(createAudioWiringExtension({
+    oneShotRoutes: AUDIO_ACTIVATION_ROUTES,
     getPosition,
     getPlayerPosition: pp,
     getZoomGain: zg,
@@ -826,13 +846,13 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
       playWeaponImpact({ cause, critical, type, at: pos, target, source, weaponId, weaponFamily, amount, targetKind, sizeClass });
     }
     // Skip impact sounds for DOT ticks and direct spell casts (no separate impact phase)
-    const noImpactKeys = new Set(['agony', 'spell:agony', 'poison', 'bleed', 'burn', 'shock', 'swarm', 'frost', 'spell:smite']);
+    const noImpactKeys = new Set(['agony', 'spell:agony', 'poison', 'bleed', 'burn', 'shock', 'swarm', 'frost', 'spell:smite', 'spell:consecrate']);
     if (isSpellLikeDamageCause(cause) && !noImpactKeys.has(cause)) {
       const impactId = SPELL_IMPACT_MAP[type] || "spell:impact:physical";
       sfxAt(impactId, pos, pp(), null, zg());
     }
-    // Electrocution sound for any electric/lightning hit, including grid bugs.
-    if (shouldPlayElectrocutionSound({ type })) {
+    // Shock traps have their own activation cue.
+    if (shouldPlayElectrocutionSound({ type }) && getIdentity?.(source) !== 'trap_shock') {
       sfxAt("status:electrocuted", pos, pp(), { priority: 1 }, zg());
     }
   });
@@ -1253,13 +1273,6 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
     sfxAt("water:magic", pos, pp(), { priority: 1 }, zg());
   });
 
-  world.on('trap:triggered', ({ trapId, type }) => {
-    const soundId = TRAP_SOUND_BY_TYPE[String(type || "").toLowerCase()];
-    if (!soundId) return;
-    const pos = trapId != null ? getPosition(trapId) : null;
-    sfxAt(soundId, pos, pp(), { priority: 1 }, zg());
-  });
-
   world.on('entity:pushed', ({ target, to }) => {
     const pos = to || (target != null ? getPosition(target) : null);
     sfxAt(PUSH_STONE_SOUND_ID, pos, pp(), { priority: 1 }, zg());
@@ -1348,14 +1361,6 @@ function installAudioListeners({ world, isPlayer, getItemInfo, getPlayerPosition
   world.on('channeling:cancelled', ({ actor }) => {
     stopChannelingLoop(actor);
   });
-
-  for (const ev of SPELL_CAST_SOUND_EVENTS) {
-    world.on(ev, (payload) => {
-      // Spells carry origin info in various fields
-      const pos = payload?.at || payload?.origin || payload?.from || null;
-      sfxAt(ev, pos, pp(), null, zg());
-    });
-  }
 
   world.on(FrostNovaCast, (event) => {
     sfxAt("spell:frost_nova", event.origin, pp(), null, zg());

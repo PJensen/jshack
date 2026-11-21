@@ -4627,7 +4627,7 @@ REGISTRY['consecrate'] = function consecrateScript(world, actor, spell, _intent)
     sourceKind: 'consecrate',
     identity: 'consecrate_ground',
     name: 'Consecrated Ground',
-    meta: { casterOnly: true },
+    meta: { sourceFaction: world.get(actor, Faction)?.key || 'player' },
   });
 
   // Caster recovery is owned by the spell identity; the ground field remains

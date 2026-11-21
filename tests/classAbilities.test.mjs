@@ -24,6 +24,7 @@ import { clearAll, loadChunk } from "../src/rules/environment/dungeon/tileMap.js
 import { CHUNK_SIZE, TILE_FLOOR } from "../src/rules/environment/dungeon/constants.js";
 import { dealDamage } from "../src/rules/utils/dealDamage.js";
 import { effectSystem } from "../src/rules/systems/effectSystem.js";
+import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.js";
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
 import { RendCast } from "../src/events/RendCast.js";
@@ -424,6 +425,23 @@ Deno.test("consecrate spawns a holy hazard and grants caster regen", () => {
   const ae = world.get(caster, ActiveEffects);
   const recovery = ae.effects.find((e) => e?.key === 'consecrate');
   assertEquals(recovery?.meta?.tickHeal, 2);
+});
+
+Deno.test("consecrate pulses damage hostiles and spare the caster and allies", () => {
+  const world = makeWorld();
+  const caster = makeCaster(world, 5, 5);
+  const ally = makeCaster(world, 5, 6, 'pet');
+  const neutral = makeCaster(world, 6, 6, 'neutral');
+  const enemy = makeEnemy(world, 6, 5, 100);
+
+  runSpellScript(world, caster, SPELL_DEFS.consecrate, {});
+  hazardSystem(world);
+  const firstHp = world.get(enemy, Vitality).hp;
+  hazardSystem(world);
+
+  assert(firstHp < 100);
+  assert(world.get(enemy, Vitality).hp < firstHp);
+  for (const id of [caster, ally, neutral]) assertEquals(world.get(id, Vitality).hp, 30);
 });
 
 Deno.test("consecrate hazard has correct damage type", () => {

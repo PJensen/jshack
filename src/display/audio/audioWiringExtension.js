@@ -51,12 +51,15 @@ export function createAudioWiringExtension(deps) {
   };
 
   return defineExtension("jshack:display:audioWiring", (world) => {
-    const offInteraction = world.on("interaction", (payload) => {
-      const plan = resolveAudioRoutePlan(AUDIO_INTERACTION_ROUTES, "interaction", payload, ctx);
+    const routes = [...AUDIO_INTERACTION_ROUTES, ...(deps?.oneShotRoutes || [])];
+    const playSoundOnce = (event, payload) => {
+      const plan = resolveAudioRoutePlan(routes, event, payload, ctx);
       if (!plan || typeof ctx.playAt !== "function") return;
       ctx.playAt(plan.soundId, plan.position, ctx.getPlayerPosition(), plan.options, ctx.getZoomGain());
-    });
+    };
+    const unsubscribers = [...new Set(routes.map(({ event }) => event))]
+      .map((event) => world.on(event, (payload) => playSoundOnce(event, payload)));
 
-    return () => offInteraction();
+    return () => unsubscribers.forEach((off) => off());
   }, { key: AUDIO_WIRING_EXTENSION_KEY });
 }
