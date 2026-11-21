@@ -1,0 +1,1 @@
+here is a dumb one, when the game boots, it'll occasionally stall out on a file, like maybe when I switch cell towers, and I have to reload to get past boot -- can we make boot smarter about retrying, and at least timeout aware so people dont have to keep re-booting just to get a sold start under less than ideal network conditions?
