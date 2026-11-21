@@ -520,12 +520,21 @@
 			}
 
 			async function loadAppVersion() {
-				try {
-					const res = await fetch('./VERSION', { cache: 'no-store' });
-					if (!res.ok) throw new Error('VERSION fetch failed');
-					const text = (await res.text()).trim();
-					if (text) return text;
-				} catch {}
+				for (let attempt = 0; attempt < 3; attempt++) {
+					const controller = new AbortController();
+					const timer = setTimeout(() => controller.abort(), 4000);
+					try {
+						const res = await fetch(`./VERSION?bootAttempt=${attempt + 1}`, {
+							cache: 'no-store',
+							signal: controller.signal,
+						});
+						if (!res.ok) throw new Error('VERSION fetch failed');
+						const text = (await res.text()).trim();
+						if (text) return text;
+					} catch {}
+					finally { clearTimeout(timer); }
+					if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+				}
 				return new Date().getTime().toString(16);
 			}
 
@@ -536,7 +545,9 @@
 				]);
 			}
 
-			const SW_BOOT_RELOAD_KEY = 'jshack:sw-bootstrap-reload';
+			const BOOT_SCRIPT_ATTEMPTS = 3;
+			const BOOT_SCRIPT_TIMEOUT_MS = 15000;
+			const SERVICE_WORKER_TIMEOUT_MS = 2500;
 
 			function waitForServiceWorkerController(timeoutMs = 600) {
 				if (!('serviceWorker' in navigator)) return Promise.resolve(null);
@@ -587,8 +598,12 @@
 			async function prepareServiceWorker(version) {
 				if (!('serviceWorker' in navigator)) return false;
 				try {
-					const reg = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
-					const readyReg = await withTimeout(navigator.serviceWorker.ready, 1500);
+					const reg = await withTimeout(
+						navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }),
+						SERVICE_WORKER_TIMEOUT_MS,
+					);
+					if (!reg) return Boolean(navigator.serviceWorker.controller);
+					const readyReg = await withTimeout(navigator.serviceWorker.ready, SERVICE_WORKER_TIMEOUT_MS);
 					const firstWorker = navigator.serviceWorker.controller
 						|| (readyReg && readyReg.active)
 						|| reg.active
@@ -598,7 +613,8 @@
 
 					if (firstWorker) await postVersionToWorker(firstWorker, version);
 
-					const controller = navigator.serviceWorker.controller || await waitForServiceWorkerController(1500);
+					const controller = navigator.serviceWorker.controller
+						|| await waitForServiceWorkerController(SERVICE_WORKER_TIMEOUT_MS);
 					if (controller && controller !== firstWorker) {
 						await postVersionToWorker(controller, version);
 					}
@@ -607,33 +623,59 @@
 				return false;
 			}
 
+			function waitForBootScript(script, timeoutMs) {
+				return new Promise((resolve) => {
+					let settled = false;
+					const finish = (ok) => {
+						if (settled) return;
+						settled = true;
+						clearTimeout(timer);
+						resolve(ok);
+					};
+					const timer = setTimeout(() => finish(false), timeoutMs);
+					script.addEventListener('load', () => finish(true), { once: true });
+					script.addEventListener('error', () => finish(false), { once: true });
+				});
+			}
+
+			async function loadMainScript(version) {
+				for (let attempt = 1; attempt <= BOOT_SCRIPT_ATTEMPTS; attempt++) {
+					const script = document.createElement('script');
+					script.type = 'module';
+					script.src = `./src/main.js?v=${encodeURIComponent(version)}&bootAttempt=${attempt}`;
+					applyBootProgress({
+						label: attempt === 1 ? 'Starting game runtime...' : `Retrying game runtime (${attempt}/${BOOT_SCRIPT_ATTEMPTS})...`,
+						done: 0,
+						total: 1,
+					});
+					addBootFile(script.src, 'requested');
+					const scriptReady = waitForBootScript(script, BOOT_SCRIPT_TIMEOUT_MS);
+					document.body.appendChild(script);
+					if (await scriptReady) {
+						addBootFile(script.src, 'loaded');
+						return true;
+					}
+					addBootFile(script.src, 'error');
+					script.remove();
+				}
+				bootLabel.textContent = 'The connection is still waking up.';
+				bootFileLine.dataset.status = 'error';
+				bootFileLine.textContent = '[err] Boot timed out — tap to retry';
+				bootLoader.style.cursor = 'pointer';
+				bootLoader.onclick = () => {
+					bootLoader.onclick = null;
+					bootLoader.style.cursor = '';
+					loadMainScript(version);
+				};
+				return false;
+			}
+
 			async function bootApp() {
 				const version = await loadAppVersion();
 				window.VERSION = version;
 				const hasController = await prepareServiceWorker(version);
-				const reloadToken = `pending:${version}`;
-				if ('serviceWorker' in navigator && !hasController) {
-					try {
-						if (sessionStorage.getItem(SW_BOOT_RELOAD_KEY) !== reloadToken) {
-							sessionStorage.setItem(SW_BOOT_RELOAD_KEY, reloadToken);
-							location.reload();
-							return;
-						}
-					} catch {}
-				}
-				try {
-					if (sessionStorage.getItem(SW_BOOT_RELOAD_KEY) === reloadToken) {
-						sessionStorage.removeItem(SW_BOOT_RELOAD_KEY);
-					}
-				} catch {}
-				const script = document.createElement('script');
-				script.type = 'module';
-				script.src = `./src/main.js?v=${encodeURIComponent(version)}`;
-				applyBootProgress({ label: 'Starting game runtime...', done: 0, total: 1 });
-				addBootFile(script.src, 'requested');
-				script.addEventListener('load', () => addBootFile(script.src, 'loaded'), { once: true });
-				script.addEventListener('error', () => addBootFile(script.src, 'error'), { once: true });
-				document.body.appendChild(script);
+				if (!hasController) addBootFile('./sw.js', 'error');
+				await loadMainScript(version);
 			}
 
 			bootApp();

@@ -4,6 +4,9 @@
 
 const VERSION_META_CACHE = 'jshack-sw-meta';
 const VERSION_META_URL = 'https://jshack.local/__sw_version__';
+const MODULE_FETCH_ATTEMPTS = 3;
+const MODULE_FETCH_TIMEOUT_MS = 8000;
+const MODULE_FETCH_RETRY_DELAY_MS = 250;
 
 self.addEventListener('install', (event) => {
     // Activate immediately and keep install alive until the handoff finishes.
@@ -92,6 +95,37 @@ function getVersionParam(clientId) {
     return _versionStamp;
 }
 
+function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchModuleWithRetry(url, req) {
+    let lastError = null;
+    for (let attempt = 0; attempt < MODULE_FETCH_ATTEMPTS; attempt++) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), MODULE_FETCH_TIMEOUT_MS);
+        try {
+            const request = new Request(url.href, {
+                cache: 'no-store',
+                mode: req.mode,
+                credentials: req.credentials,
+                signal: controller.signal,
+            });
+            const response = await fetch(request);
+            if (response.ok) return response;
+            lastError = new Error(`module fetch failed: ${response.status}`);
+        } catch (error) {
+            lastError = error;
+        } finally {
+            clearTimeout(timeout);
+        }
+        if (attempt + 1 < MODULE_FETCH_ATTEMPTS) {
+            await wait(MODULE_FETCH_RETRY_DELAY_MS * (attempt + 1));
+        }
+    }
+    throw lastError || new Error('module fetch failed');
+}
+
 self.addEventListener('fetch', (event) => {
     const req = event.request;
     const url = new URL(req.url);
@@ -112,7 +146,6 @@ self.addEventListener('fetch', (event) => {
         if (!hasVersion) {
             url.searchParams.set('v', getVersionParam(event.clientId));
         }
-        const alt = new Request(url.href, { cache: 'no-store', mode: req.mode, credentials: req.credentials });
-        event.respondWith(fetch(alt).catch(() => fetch(req, { cache: 'no-store' })));
+        event.respondWith(fetchModuleWithRetry(url, req));
     }
 });
