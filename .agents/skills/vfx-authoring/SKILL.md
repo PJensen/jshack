@@ -41,6 +41,11 @@ for a larger environmental impression instead of making the local halo huge.
 
 ## Verification
 
+For turn-based ground hazards, project the live hazard through `WorldView` and
+derive the persistent decal, light, and particle emission from that projection.
+`tests/spellAreaLighting.test.mjs` covers
+Consecrate across idle frame time and all five hazard turns.
+
 Use the existing controller harness when possible:
 
 ```bash

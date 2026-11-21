@@ -435,12 +435,15 @@ Deno.test("consecrate pulses damage hostiles and spare the caster and allies", (
   const enemy = makeEnemy(world, 6, 5, 100);
 
   runSpellScript(world, caster, SPELL_DEFS.consecrate, {});
-  hazardSystem(world);
-  const firstHp = world.get(enemy, Vitality).hp;
+  for (let turn = 0; turn < 5; turn++) {
+    const hpBefore = world.get(enemy, Vitality).hp;
+    hazardSystem(world);
+    assert(world.get(enemy, Vitality).hp < hpBefore, `missing damage pulse ${turn + 1}`);
+  }
+  const finalHp = world.get(enemy, Vitality).hp;
   hazardSystem(world);
 
-  assert(firstHp < 100);
-  assert(world.get(enemy, Vitality).hp < firstHp);
+  assertEquals(world.get(enemy, Vitality).hp, finalHp);
   for (const id of [caster, ally, neutral]) assertEquals(world.get(id, Vitality).hp, 30);
 });
 

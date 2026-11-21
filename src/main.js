@@ -5258,6 +5258,7 @@ function render(worldView) {
   _groundLootLabels.length = 0;
   _monsterLabels.length = 0;
   flyingFx.syncWorldView(worldView);
+  spellAreaFx.syncWorldView(worldView);
   slideFx.syncWorldView(worldView.entities || []);
   delayedDeathFx.syncWorldView(worldView);
   const renderEntities = delayedDeathFx.getRenderableEntities(worldView.entities);

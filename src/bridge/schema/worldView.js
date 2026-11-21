@@ -91,12 +91,13 @@ import {
 /** @typedef {{ x:number, y:number, kind:string, alpha:number, burning?:boolean, smoking?:boolean }} RoofTileView */
 /** @typedef {{ id:number, profile:string, pos:{x:number,y:number}, interior:boolean }} AudioEmitterView */
 /** @typedef {{ id:number, pos:{x:number,y:number}, radius:number, shadowSoftness:number, temporalPattern:string, phaseSeed:number, intensity:number, intensityScale:number, colorShiftScale:number, voidStrength:number|null, baseColor:[number,number,number] }} LightEmitterView */
-/** @typedef {{ turn:number, seed:number, player: { id:number, targetId?:number, pos:{x:number,y:number} } | null, entities: EntityView[], solids: SolidView[], emissives: any[], audioEmitters: AudioEmitterView[], lightEmitters: LightEmitterView[], roofs: RoofTileView[], fisheries: any[], tileGrid: any, isVisible: ((x:number,y:number)=>boolean)|null, isExplored: ((x:number,y:number)=>boolean)|null, currentDepth?: number }} WorldView */
+/** @typedef {{ turn:number, seed:number, player: { id:number, targetId?:number, pos:{x:number,y:number} } | null, entities: EntityView[], solids: SolidView[], emissives: any[], audioEmitters: AudioEmitterView[], lightEmitters: LightEmitterView[], consecratedGround: {x:number,y:number,radius:number}[], roofs: RoofTileView[], fisheries: any[], tileGrid: any, isVisible: ((x:number,y:number)=>boolean)|null, isExplored: ((x:number,y:number)=>boolean)|null, currentDepth?: number }} WorldView */
 
 /** @typedef {{ id:number, text:string, profane:boolean, pos:{x:number,y:number} }} EngravingView */
 
 /** @type {WorldView} */
 const _view = { turn: 0, seed: 0, player: null, entities: [], solids: [], emissives: [], audioEmitters: [], lightEmitters: [], roofs: [], fisheries: [], engravings: [], tileGrid: null, isVisible: null, isExplored: null, isBlockedVision: null, weather: "clear", playerSheltered: false, nightAlpha: 0, dawnAlpha: 0, duskAlpha: 0, isOverworld: false, currentDepth: 0, turnInDay: 0, moonBrightness: 0, playerVisionRadius: 0, playerFacing: null, playerConeDegrees: 360, perceptionState: null };
+_view.consecratedGround = [];
 let _lastPerceptionWorld = null;
 /** @type {Map<number, EntityView>} */
 const _entityRecs = new Map();   // id -> { id, kind, pos:{x,y}, tags:[] }
@@ -1025,6 +1026,11 @@ export function buildWorldView(world) {
 	_view.emissives.length = 0;
 	_view.audioEmitters.length = 0;
 	_view.lightEmitters.length = 0;
+	_view.consecratedGround.length = 0;
+	for (const [, pos, hazard] of world.query(Position, HazardArea)) {
+		if (hazard.sourceKind !== "consecrate" || hazard.turnsLeft <= 0) continue;
+		_view.consecratedGround.push({ x: pos.x, y: pos.y, radius: hazard.radius });
+	}
 	_view.roofs.length = 0;
 	_view.fisheries.length = 0;
 	_view.engravings.length = 0;

@@ -13,6 +13,9 @@ import { FrostNovaCast } from "../../events/FrostNovaCast.js";
 import { ResurrectionCast } from "../../events/ResurrectionCast.js";
 import { RendCast } from "../../events/RendCast.js";
 import { ChargeCast } from "../../events/ChargeCast.js";
+import { defineExtension } from "../../lib/ecs-js/index.js";
+
+const SPELL_AREA_FX_KEY = Symbol.for("jshack:display:spellAreaFx");
 
 /**
  * @param {{ world: import('../../lib/ecs-js/index.js').World, cam: object, fx: { pool: { spawn(o:object):void } }, PERF: { quality: string }, getFxTime: () => number, getPosition?: (id:number) => ({x:number,y:number}|null), ftext?: { addDamage: Function, addStatus?: Function }, sculptFloor?: ((x:number,y:number,delta:number,reliefKey?: string|number)=>void), sculptFloorBrush?: ((x:number,y:number,delta:number,radius:number,opts?:object,reliefKey?:string|number)=>void), getActiveReliefKey?: (() => (string|number|null|undefined)), hitstopFx?: { requestSlowdown?: (duration:number, scale:number)=>void } }} deps
@@ -307,8 +310,29 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   const _warCryFx = [];
   /** @type {RadialFx[]} */
   const _divineShieldFx = [];
-  /** @type {RadialFx[]} */
-  const _consecrateFx = [];
+  let _consecrateFx = [];
+  let consecrateMoteClock = 0;
+  function syncWorldView(view) {
+    _consecrateFx = view?.consecratedGround ?? [];
+    if (!_consecrateFx.length) consecrateMoteClock = 0;
+  }
+
+  function spawnConsecrateMote(at, radius) {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.random() * radius;
+    fx.pool.spawn(new Particle({
+      x: at.x + Math.cos(angle) * dist,
+      y: at.y + Math.sin(angle) * dist,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: -(0.3 + Math.random() * 0.6),
+      ay: -0.02,
+      life: 0.5 + Math.random() * 0.6,
+      size0: 0.05 + Math.random() * 0.04,
+      size1: 0.01,
+      r: 255, g: 210 + ((Math.random() * 40) | 0), b: 50 + ((Math.random() * 60) | 0),
+      a0: 0.75,
+    }));
+  }
   /** @type {SmokeFx[]} */
   const _smokeBombFx = [];
 
@@ -520,6 +544,13 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
   // --- Tick ---
   /** @param {number} dt */
   function tick(dt) {
+    if (_consecrateFx.length) {
+      consecrateMoteClock -= dt;
+      if (consecrateMoteClock <= 0) {
+        consecrateMoteClock = PERF.quality === 'low' ? 0.24 : 0.12;
+        for (const field of _consecrateFx) spawnConsecrateMote(field, field.radius);
+      }
+    }
     for (let i = _pendingMeteorImpacts.length - 1; i >= 0; i--) {
       const pending = _pendingMeteorImpacts[i];
       pending.delay -= dt;
@@ -606,10 +637,6 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     for (let i = _divineShieldFx.length - 1; i >= 0; i--) {
       _divineShieldFx[i].tick(dt);
       if (_divineShieldFx[i].expired) _divineShieldFx.splice(i, 1);
-    }
-    for (let i = _consecrateFx.length - 1; i >= 0; i--) {
-      _consecrateFx[i].tick(dt);
-      if (_consecrateFx[i].expired) _consecrateFx.splice(i, 1);
     }
     for (let i = _smokeBombFx.length - 1; i >= 0; i--) {
       _smokeBombFx[i].tick(dt);
@@ -1639,23 +1666,21 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     const TAU = Math.PI * 2;
     const _fxTime = getFxTime();
     for (const eff of _consecrateFx) {
-      const t = eff.progress;
-      const alpha = eff.alpha;
       const R = eff.radius + 0.3;
       const pulse = 0.55 + 0.45 * Math.sin(_fxTime * 6 + eff.x * 0.4);
 
       // Ground glow disc (sustained, golden)
-      const discA = 0.18 * alpha * pulse;
+      const discA = 0.18 * pulse;
       ctx.fillStyle = `rgba(255,210,60,${discA.toFixed(3)})`;
       ctx.beginPath(); ctx.arc(eff.x, eff.y, R, 0, TAU); ctx.fill();
 
       // Ring border
-      ctx.strokeStyle = `rgba(255,220,80,${(0.4 * alpha).toFixed(3)})`;
-      ctx.lineWidth = Math.max(0.03, 0.08 * (1 - t * 0.3));
+      ctx.strokeStyle = 'rgba(255,220,80,0.4)';
+      ctx.lineWidth = 0.08;
       ctx.beginPath(); ctx.arc(eff.x, eff.y, R, 0, TAU); ctx.stroke();
 
       // Cross pattern on ground (holy symbol)
-      const crossA = 0.12 * alpha * pulse;
+      const crossA = 0.12 * pulse;
       ctx.strokeStyle = `rgba(255,240,180,${crossA.toFixed(3)})`;
       ctx.lineWidth = 0.06;
       ctx.beginPath();
@@ -1792,6 +1817,10 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
 
   // --- Listeners ---
   function installListeners() {
+    world.install(defineExtension("jshack:display:spellAreaFx", registerListeners, { key: SPELL_AREA_FX_KEY }));
+  }
+
+  function registerListeners() {
     world.on('spell:blink', ({ from, to, randomized }) => {
       if (!from || !to) return;
       if (!Number.isFinite(from.x) || !Number.isFinite(from.y)) return;
@@ -3568,25 +3597,11 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     world.on('spell:consecrate', ({ at, radius }) => {
       if (!at || !Number.isFinite(at.x) || !Number.isFinite(at.y)) return;
       const r = Math.max(1, Number(radius || 2));
-      _consecrateFx.push(new RadialFx({ x: at.x, y: at.y, radius: r, ttl: 1.2 }));
       // Burst of rising golden motes from the ground
       const scale = PERF.quality === 'low' ? 0.6 : 1.0;
       const count = Math.max(16, Math.round(32 * scale));
       for (let i = 0; i < count; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * r;
-        fx.pool.spawn(new Particle({
-          x: at.x + Math.cos(angle) * dist,
-          y: at.y + Math.sin(angle) * dist,
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: -(0.3 + Math.random() * 0.6),
-          ay: -0.02,
-          life: 0.5 + Math.random() * 0.6,
-          size0: 0.05 + Math.random() * 0.04,
-          size1: 0.01,
-          r: 255, g: 210 + ((Math.random() * 40) | 0), b: 50 + ((Math.random() * 60) | 0),
-          a0: 0.75,
-        }));
+        spawnConsecrateMote(at, r);
       }
       startShake(cam, 3, 0.10);
     });
@@ -3827,7 +3842,7 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     for (let i = 0; i < _consecrateFx.length; i++) {
       const c = _consecrateFx[i];
       const p = lightCenter(c.x, c.y);
-      out.push({ x: p.x, y: p.y, radius: (c.radius || 2) * 2.5 * c.alpha, color: [255, 210, 60] });
+      out.push({ x: p.x, y: p.y, radius: c.radius * 2.5, color: [255, 210, 60] });
     }
     for (const [, ch] of _drainLifeChannels) {
       if (ch.from && ch.to) {
@@ -3838,5 +3853,5 @@ export function createSpellAreaFxController({ world, cam, fx, PERF, getFxTime, g
     return out;
   }
 
-  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawLifebloom, drawRenewalLeaves, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners };
+  return { tick, drawBlink, drawMeteor, drawBlastwave, drawFrostNova, drawVoidHole, drawFlashHeal, drawLifebloom, drawRenewalLeaves, drawSmite, drawPhaseStrike, drawRampage, drawSearchPulse, drawDrainLife, drawEvocation, drawFishing, drawCleave, drawWarCry, drawDivineShield, drawConsecrate, drawSmokeBomb, getActiveLights, installListeners, syncWorldView };
 }
