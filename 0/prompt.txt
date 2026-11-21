@@ -1,0 +1,45 @@
+now, lets see if we can figure out how to set the value on other things, my ideal is that it would be based on grounded facts, I would use a simulation to establish at least relative value of somethiing, another strategy is to you use your reasoning aibiities to set the vaule for things by hand -- likely a blend of both.
+
+build a "missing value" scanning tool, use it, fill in any missing values.
+
+actually, I would do the same thing for weight, we should really ensure that weight exists for most physical items.
+
+---
+
+lets shut that DSL weight 1 off for a sec ;-)
+
+---
+
+not what I'm trying to do -- these estimates are great, but longer range, I want to start actually setting weighs and vlues -- by hand.
+
+---
+
+I would commit and push what we arlready have, then ccircle back into actual authoring.
+
+---
+
+RIGHT -- you plugged a hole -- I want the real thing.
+
+---
+
+why are we stuck in an interactive rebase -- I would ignore the incoming VERSION file
+
+---
+
+in fact, I would disable the auto version bumo commit hook
+
+---
+
+or push hook
+
+---
+
+excelent -- lets start atually authorign weighs and values
+
+---
+
+keep making good decisions about weights and values
+
+---
+
+and you're sure we're not being thown off by some default righy?
