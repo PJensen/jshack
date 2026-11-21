@@ -25,3 +25,11 @@ Deno.test("character creation keeps its soundscape through world entry", async (
   assertStringIncludes(main, "if (openingLandscape) openingSoundscapeFade = fadeCreatorSoundscape;");
   assertStringIncludes(main, 'setInputLock("opening-flyover", false);\n      openingSoundscapeFade?.();');
 });
+
+Deno.test("character creation defaults to hard mode and hides no-gore", async () => {
+  const source = await Deno.readTextFile("src/display/ui/charCreation.js");
+
+  assertStringIncludes(source, "hardInput.checked = true;");
+  assertStringIncludes(source, "display: 'none', alignItems: 'center', gap: '8px'");
+  assertStringIncludes(source, "const disableGore = !!goreInput.checked;");
+});

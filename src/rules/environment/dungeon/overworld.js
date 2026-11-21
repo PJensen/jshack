@@ -51,10 +51,10 @@ import {
 } from "./constants.js";
 
 export const OVERWORLD_EXTENT = Object.freeze({
-  minCX: -3,
-  maxCX: 3,
-  minCY: -3,
-  maxCY: 3,
+  minCX: -4,
+  maxCX: 4,
+  minCY: -4,
+  maxCY: 4,
 });
 
 function chunkKey(cx, cy) { return `${cx},${cy}`; }
@@ -800,7 +800,10 @@ async function placeOverworldLandmarks(chunks, townCenter, bounds, worldSeed, ti
 
   for (const spec of specs) {
     const candidates = collectLandmarkCandidates(chunks, townCenter, bounds, spec.biomes);
-    const center = pickSeparatedCandidate(candidates, rng, placed);
+    // Rare terrain can leave an authored site with no valid anchor on this
+    // seed. Open land is the fallback for its stamped footprint.
+    const center = pickSeparatedCandidate(candidates, rng, placed)
+      || pickSeparatedCandidate(collectLandmarkCandidates(chunks, townCenter, bounds, ["GRASSLAND"]), rng, placed);
     if (!center) continue;
     const def = LANDMARK_DEFS[spec.id];
     if (!def) continue;
@@ -808,6 +811,7 @@ async function placeOverworldLandmarks(chunks, townCenter, bounds, worldSeed, ti
     placed.push({ ...center, id: spec.id });
     if (_tick) await _tick(`Raised ${spec.id.replaceAll("_", " ")}`);
   }
+  return placed;
 }
 
 async function spawnOverworldCreatures(chunks, townCenter, bounds, worldSeed, tick = null) {
@@ -1167,7 +1171,7 @@ async function _generateOverworldChunks(worldSeed, onPlanProgress) {
         await _yieldFrame();
       }
     : null;
-  await placeOverworldLandmarks(chunks, townPlan?.center || { x: spawnX, y: spawnY }, { minX, maxX, minY, maxY }, worldSeed >>> 0, _landmarkTick);
+  const landmarks = await placeOverworldLandmarks(chunks, townPlan?.center || { x: spawnX, y: spawnY }, { minX, maxX, minY, maxY }, worldSeed >>> 0, _landmarkTick);
 
   _emit('Spawning creatures', 5, PLAN_TOTAL);
   if (_yield) await _yield();
@@ -1205,5 +1209,5 @@ async function _generateOverworldChunks(worldSeed, onPlanProgress) {
     });
   }
 
-  return { extent, chunks: outChunks, spawnX, spawnY, townPlan };
+  return { extent, chunks: outChunks, spawnX, spawnY, townPlan, landmarks };
 }
