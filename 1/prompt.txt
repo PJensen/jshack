@@ -1,0 +1,5 @@
+easy one -- default to hard mode -- hide the "no gore" option :-)
+
+---
+
+meaning: hide no gore (do not remoe entirely)
