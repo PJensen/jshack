@@ -16,5 +16,12 @@ Deno.test("character creation keeps its soundscape through world entry", async (
   const disposeSource = source.slice(disposeStart);
 
   assert(!confirmSource.includes("stopLoop('./assets/audio/soundscape.mp3'"));
-  assertStringIncludes(disposeSource, "stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 1.0 });");
+  assertStringIncludes(confirmSource, "}, fadeSoundscape);");
+  assertStringIncludes(confirmSource, "dispose({ fade: true, soundscapeHandedOff });");
+  assertStringIncludes(disposeSource, "if (!opts.soundscapeHandedOff) fadeSoundscape();");
+  assertStringIncludes(source, "stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 1.0 });");
+
+  const main = await Deno.readTextFile("src/main.js");
+  assertStringIncludes(main, "if (openingLandscape) openingSoundscapeFade = fadeCreatorSoundscape;");
+  assertStringIncludes(main, 'setInputLock("opening-flyover", false);\n      openingSoundscapeFade?.();');
 });

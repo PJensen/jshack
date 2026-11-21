@@ -1069,7 +1069,7 @@ if (_pendingSavegame) {
 // _finalizeNewGame: called after character creation confirms (new game)
 // or immediately (savegame loaded). Creates the player, applies class loadout,
 // initializes deity, then starts the simulation and render loop.
-async function _finalizeNewGame(classData, fromCreator = false) {
+async function _finalizeNewGame(classData, fadeCreatorSoundscape = null) {
   // Fade in game world (4s, matches enter_world.mp3 dramatic moment)
   canvas.style.opacity = '0';
   canvas.style.transition = 'opacity 4s ease-out';
@@ -1225,9 +1225,10 @@ async function _finalizeNewGame(classData, fromCreator = false) {
   // and other derived state are fully resolved before the first frame renders.
   stepSim(1);
 
-  if (fromCreator && _initialDepth === 0) {
+  if (fadeCreatorSoundscape && _initialDepth === 0) {
     setInputLock("opening-flyover", true);
     await prepareOpeningFlyover(pe);
+    if (openingLandscape) openingSoundscapeFade = fadeCreatorSoundscape;
   }
 
   if (runtimeConfig.spellReelMode) {
@@ -1246,6 +1247,7 @@ async function _finalizeNewGame(classData, fromCreator = false) {
 
   const debugConsole = initDebugConsole({ world, messageLog });
   registerBuiltinCommands(debugConsole, { world, messageLog, lightingEngine });
+  return openingSoundscapeFade !== null;
 }
 
 function scheduleFirstRunTileKey() {
@@ -2901,6 +2903,7 @@ const cam = createCamera(); // { x,y, scale, target*, shake* }
 let openingLandscape = null;
 let openingView = null;
 let openingBlendRemaining = 0;
+let openingSoundscapeFade = null;
 const OPENING_BLEND_SECONDS = 0.35;
 const openingFlyover = createOpeningFlyover({
   startScale: CAMERA_START_SCALE * 0.38,
@@ -6261,6 +6264,8 @@ function frame(now) {
     if (openingBlendRemaining === 0) {
       openingLandscape = null;
       setInputLock("opening-flyover", false);
+      openingSoundscapeFade?.();
+      openingSoundscapeFade = null;
       scheduleFirstRunTileKey();
     }
   }
@@ -6296,7 +6301,7 @@ if (_savegameLoaded) {
     classes: classDisplayData,
     defaultSeed: _bootSeed,
     tutorialTipCount: GUIDANCE_TIPS.length,
-    onConfirm: (result) => _finalizeNewGame(result, true),
+    onConfirm: _finalizeNewGame,
   });
 }
 

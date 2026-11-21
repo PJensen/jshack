@@ -12,7 +12,7 @@ import { CLASS_ICON_ATLAS, CLASS_NORMAL_MAP_URL } from './atlasIcons.js';
  * @param {{
  *   classes: Array<{ id: string, name: string, icon?: string, iconAtlas?: string, iconId?: string, description: string, deityName: string, deityAlignment: string }>,
  *   defaultSeed?: number,
- *   onConfirm: (result: { name: string, classId: string, seed: number, difficulty: string, onProgress?: (progress: any) => void }) => void,
+ *   onConfirm: (result: { name: string, classId: string, seed: number, difficulty: string, onProgress?: (progress: any) => void }, fadeSoundscape: () => void) => Promise<boolean>,
  * }} opts
  * @returns {{ dispose: () => void }}
  */
@@ -1329,8 +1329,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     nextPaint().then(() => {
       return new Promise((resolve) => setTimeout(resolve, generationPanel.readyDelayMs));
     }).then(async () => {
-      // onConfirm now returns a Promise (generation yields between chunks).
-      await onConfirm({
+      const soundscapeHandedOff = await onConfirm({
         name,
         classId: classes[classIndex].id,
         seed: seedVal,
@@ -1338,10 +1337,10 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         tutorial,
         disableGore,
         onProgress: generationPanel.progress,
-      });
+      }, fadeSoundscape);
       generationPanel.complete();
       generationPanel.dispose();
-      dispose({ fade: true });
+      dispose({ fade: true, soundscapeHandedOff });
     });
   }
 
@@ -1624,9 +1623,12 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     }
   }, { passive: true });
 
-  function dispose(opts = {}) {
-    // Stop character creation soundscape
+  function fadeSoundscape() {
     stopLoop('./assets/audio/soundscape.mp3', { fadeOut: 1.0 });
+  }
+
+  function dispose(opts = {}) {
+    if (!opts.soundscapeHandedOff) fadeSoundscape();
     if (bgRafId !== null) cancelAnimationFrame(bgRafId);
     if (classIconRafId !== null) cancelAnimationFrame(classIconRafId);
     if (spiritSwapAnim) { try { spiritSwapAnim.cancel(); } catch {} spiritSwapAnim = null; }
