@@ -749,6 +749,7 @@ let _messageMoreRef = null;
 const _sharedRulesDispatcher = makeRulesDispatcher(world, () => (playerEntity(world)?.id || 0), {
   onAction: (_turn, type) => {
     _messageMoreRef?.beginBatch();
+    hudFeeds.invalidateCombatHUD();
     if (type === "rules.setHostileTarget" || type === "rules.clearHostileTarget") {
       invalidateCachedView();
     }
@@ -2253,6 +2254,7 @@ const transitionCtrl = createTransitionController({
   onTransitioned: () => {
     _cachedView = null;
     _cachedStep = -1;
+    hudFeeds.invalidateCombatHUD();
     deathLootArcFx.clear();
   },
 });
@@ -6228,7 +6230,7 @@ function frame(now) {
 
   // Update vitals HUD if changed (lightweight per-frame check)
   hudFeeds.updateVitalsHUD();
-  hudFeeds.updateCombatHUD();
+  hudFeeds.updateCombatHUD(now);
   hudFeeds.updateDepthHUD();
   hudFeeds.updateTurnHUD();
   hudFeeds.updateGoldHUD();

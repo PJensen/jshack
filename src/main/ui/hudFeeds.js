@@ -41,6 +41,8 @@ import { buildEffectRows } from "./effectRows.js";
 import { getTile } from "../../rules/environment/dungeon/tileMap.js";
 import { isExplored } from "../../rules/environment/dungeon/exploredMap.js";
 
+const COMBAT_HUD_REFRESH_MS = 100;
+
 export function formatClockLabel12Hour(turn) {
   const safeTurn = Math.max(0, Number(turn || 0) | 0);
   const totalMinutes = (safeTurn % TURNS_PER_DAY) * 2;
@@ -74,6 +76,9 @@ export function createHudFeeds(world, deps) {
     coatingSig: "",
     posture: "",
   };
+  let lastCombatHudAt = -Infinity;
+  let lastCombatHudStep = -1;
+  let lastCombatHudPlayer = 0;
   let lastDepth = -1;
   let lastTurn = -1;
   let lastGold = -1;
@@ -91,6 +96,7 @@ export function createHudFeeds(world, deps) {
   let _prevKnownSpells = new Set();
 
   if (typeof window !== "undefined" && typeof window.addEventListener === "function") {
+    window.addEventListener("ui:requestInventoryData", invalidateCombatHUD);
     window.addEventListener("ui:setActiveQuest", (event) => {
       const requestedQuestId = String(event?.detail?.questId || "");
       if (requestedQuestId === activeQuestId) return;
@@ -455,11 +461,25 @@ export function createHudFeeds(world, deps) {
     }
   }
 
-  function updateCombatHUD() {
+  function invalidateCombatHUD() {
+    lastCombatHudAt = -Infinity;
+  }
+
+  /** @param {number} [now] Animation frame timestamp. Omit to refresh immediately. */
+  function updateCombatHUD(now) {
     const pe = playerEntity(world);
     if (!pe) return;
+    const step = world.step | 0;
+    if (typeof now === "number" && Number.isFinite(now)) {
+      // Turns and explicit invalidations refresh on the next frame. Keep a
+      // short fallback interval for same-turn writes without a UI event.
+      if (step === lastCombatHudStep && pe.id === lastCombatHudPlayer
+          && now - lastCombatHudAt < COMBAT_HUD_REFRESH_MS) return;
+      lastCombatHudAt = now;
+      lastCombatHudStep = step;
+      lastCombatHudPlayer = pe.id;
+    }
     const eq = /** @type any */ (world.get(pe.id, Equipment));
-    const passive = getPassiveBonuses(world, pe.id);
     const canonical = resolveCanonicalStats(world, pe.id);
     const wid = Number(eq?.weapon || 0);
     const rangedId = Number(eq?.ranged || 0);
@@ -761,6 +781,7 @@ export function createHudFeeds(world, deps) {
   return {
     updateVitalsHUD,
     updateCombatHUD,
+    invalidateCombatHUD,
     updateDepthHUD,
     updateTurnHUD,
     updateGoldHUD,

@@ -53,6 +53,10 @@ valid `CastSpellIntent` remains canonical.
    for byte-for-byte comparison, including shelter changes and relief resets.
    Time that probe separately from pixel capture, and use a browser trace for
    browser compositing and frame-rate measurements.
+   To isolate combat HUD CPU cost, use `createHudFeeds` with an `EventTarget`
+   as the window and pass simulated frame timestamps to `updateCombatHUD`.
+   Keep the rules turn fixed for idle measurements and test turn changes and
+   inventory refresh events separately.
 
 ## Contracts and constraints
 

@@ -29,8 +29,8 @@ import { InteractIntent } from "../components/Intents/InteractIntent.js";
 import { SearchIntent } from "../components/Intents/SearchIntent.js";
 import { SetPostureIntent } from "../components/Intents/SetPostureIntent.js";
 import { Channeling } from "../components/Channeling.js";
-import { hasCapability, statusStrength } from "../utils/statusFacade.js";
-import { sleepPreventsAction } from "../utils/sleep.js";
+import { snapshotStatusState } from "../utils/statusFacade.js";
+import { SLEEP_STATUS } from "../utils/sleep.js";
 
 /** All intent components that should be stripped when an actor cannot act. */
 const ALL_INTENTS = [
@@ -117,8 +117,9 @@ export function intentValidationSystem(world) {
       continue;
     }
 
+    const status = snapshotStatusState(world, id);
     // Sleeping actors cannot act until a wake event clears the sleep status.
-    if (sleepPreventsAction(world, id)) {
+    if ((status?.statusStrengths.get(SLEEP_STATUS) || 0) > 0) {
       const blocked = stripAllIntents(world, id);
       if (blocked) {
         try {
@@ -131,8 +132,8 @@ export function intentValidationSystem(world) {
     }
 
     // Stunned actors may only wait
-    const inStasis = statusStrength(world, id, "stasis") > 0;
-    const stunned = hasCapability(world, id, "action_locked") && !inStasis;
+    const inStasis = (status?.statusStrengths.get("stasis") || 0) > 0;
+    const stunned = (status?.capabilityStrengths.get("action_locked") || 0) > 0 && !inStasis;
     if (stunned) {
       const blocked = stripIntents(world, id, STUNNED_BLOCKED);
       if (blocked) {
@@ -161,7 +162,7 @@ export function intentValidationSystem(world) {
     }
 
     // Rooted actors can act but cannot move
-    const rooted = hasCapability(world, id, "immobilized") && !stunned;
+    const rooted = (status?.capabilityStrengths.get("immobilized") || 0) > 0 && !stunned;
     if (rooted) {
       const blocked = stripIntents(world, id, ROOTED_BLOCKED);
       if (blocked) {

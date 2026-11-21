@@ -84,6 +84,47 @@ Deno.test("hudFeeds combat payload reports equipment defense as persistent bar d
   }
 });
 
+Deno.test("combat HUD skips idle frames and refreshes for turns, inventory changes, and fallback polls", () => {
+  const restoreWindow = installTestWindow();
+  try {
+    const world = new World({ seed: 32 });
+    const player = world.create();
+    world.add(player, Player, {});
+    world.add(player, Position, { x: 0, y: 0 });
+    world.add(player, Equipment, {});
+    const armor = world.create();
+    world.add(armor, ItemInfo, { type: "equip", slot: "armor", bonuses: { defense: 2 } });
+    const hud = createHudFeeds(world, {
+      getPlayerMana: () => ({ mana: 0, maxMana: 0 }),
+      ensureActiveSpell: () => null,
+      updateActiveSpellLabel: () => {},
+    });
+    const armorClasses = [];
+    window.addEventListener("ui:updateCombatHUD", (event) => armorClasses.push(event.detail.armorClass));
+
+    hud.updateCombatHUD(0);
+    world.set(player, Equipment, { armor });
+    hud.updateCombatHUD(16);
+    assertEquals(armorClasses, [10]);
+    window.dispatchEvent(new CustomEvent("ui:requestInventoryData"));
+    hud.updateCombatHUD(32);
+    assertEquals(armorClasses, [10, 12]);
+
+    world.set(player, Equipment, { armor: 0 });
+    world.step++;
+    hud.updateCombatHUD(48);
+    assertEquals(armorClasses, [10, 12, 10]);
+
+    world.set(player, Equipment, { armor });
+    hud.updateCombatHUD(64);
+    assertEquals(armorClasses, [10, 12, 10]);
+    hud.updateCombatHUD(148);
+    assertEquals(armorClasses, [10, 12, 10, 12]);
+  } finally {
+    restoreWindow();
+  }
+});
+
 Deno.test("hudFeeds prepends equipped Sunsword action into the mobile dock and carries cooldown", () => {
   const restoreWindow = installTestWindow();
 
