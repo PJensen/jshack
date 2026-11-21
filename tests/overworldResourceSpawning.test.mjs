@@ -32,7 +32,7 @@ Deno.test("overworld generates biome resources in the hinterlands", async () => 
     const dy = (spawn.y | 0) - (ow.spawnY | 0);
     return dx * dx + dy * dy >= 45 * 45;
   });
-  assert(hinterlandResources.length > 0, "expected at least one resource outside the town exclusion");
+  assertEquals(hinterlandResources.length, resources.length, "all overworld resources should be outside the town exclusion");
 });
 
 Deno.test("overworld includes sand crab as coastal monster content", async () => {

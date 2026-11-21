@@ -771,6 +771,11 @@ function addBuildingResourceSpawns(chunks, building, buildingPlan, bounds) {
   const doorX = building.door.x;
   const doorY = building.door.y;
 
+  // Mine and herbalist nodes are overworld resources, not town fixtures. Keep
+  // the town footprint open; the overworld resource pass places their working
+  // stock in the hinterlands instead.
+  if (kind === "mine_camp" || kind === "herbalist_hut") return;
+
   const spawns = [];
   if (kind === "mine_camp") {
     spawns.push(["harvest_iron_ore", (t) => MOUNTAIN_TILES.has(t), 4]);
@@ -842,7 +847,7 @@ function addResourceSpawns(chunks, center, bounds) {
   for (const [kind, predicate] of kinds) {
     let placed = 0;
     const targetCount = kind === "fishing_spot" ? 6 : 3;
-    for (let r = 20; r <= 54 && placed < targetCount; r++) {
+    for (let r = 46; r <= 72 && placed < targetCount; r++) {
       for (let dx = -r; dx <= r && placed < targetCount; dx++) {
         for (let dy = -r; dy <= r && placed < targetCount; dy++) {
           if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;

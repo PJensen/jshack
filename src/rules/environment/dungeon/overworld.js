@@ -1014,6 +1014,34 @@ async function spawnOverworldResources(chunks, townCenter, bounds, worldSeed, ti
   }
 }
 
+function retargetTownResourceWorkers(chunks) {
+  const resourceKindsByRole = {
+    miner: new Set(["harvest_iron_ore", "harvest_coal_ore", "harvest_stone"]),
+    herbalist: new Set(["harvest_herbs", "harvest_moonleaf", "harvest_ember_root"]),
+  };
+  const spawns = [];
+  for (const chunk of chunks.values()) spawns.push(...(chunk.spawns || []));
+
+  for (const worker of spawns) {
+    const resourceKinds = resourceKindsByRole[worker.params?.townfolkId];
+    if (!resourceKinds) continue;
+    let nearest = null;
+    let nearestDistance = Infinity;
+    for (const resource of spawns) {
+      if (!resourceKinds.has(resource.kind)) continue;
+      const distance = Math.abs(resource.x - worker.x) + Math.abs(resource.y - worker.y);
+      if (distance < nearestDistance) {
+        nearest = resource;
+        nearestDistance = distance;
+      }
+    }
+    if (nearest) {
+      worker.params.workX = nearest.x;
+      worker.params.workY = nearest.y;
+    }
+  }
+}
+
 /**
  * @param {number} worldSeed
  * @returns {{ extent:{minCX:number,maxCX:number,minCY:number,maxCY:number}, chunks:Array<{chunkX:number,chunkY:number,depth:number,seed:number,tiles:Uint8Array,rooms:any[],doors:any[],spawns:any[]}>, spawnX:number, spawnY:number }}
@@ -1160,6 +1188,7 @@ async function _generateOverworldChunks(worldSeed, onPlanProgress) {
       }
     : null;
   await spawnOverworldResources(chunks, townPlan?.center || { x: spawnX, y: spawnY }, { minX, maxX, minY, maxY }, worldSeed >>> 0, _resourceTick);
+  retargetTownResourceWorkers(chunks);
 
   const outChunks = [];
   for (const rec of chunks.values()) {
