@@ -30,3 +30,14 @@ Deno.test("opening landscape bakes each strip once and composites one image per 
   assertEquals(draws, Array(2).fill([surface, -24.5, -12.5, 48, 25]));
   assertEquals(transforms[1], [40, 0, 0, 40, 800, 140]);
 });
+
+Deno.test("the expanded overworld keeps the aerial raster within its original pixel budget", async () => {
+  const surface = { getContext: () => ({ fillRect() {}, setTransform() {} }) };
+  const landscape = await bakeOpeningLandscape(surface,
+    { minX: -96, minY: -96, maxX: 119, maxY: 119 },
+    () => {},
+    () => {},
+  );
+  assertEquals([landscape.width, landscape.height], [216, 216]);
+  assertEquals([surface.width, surface.height], [1296, 1296]);
+});

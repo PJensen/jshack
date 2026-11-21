@@ -209,11 +209,11 @@ function countNear(chunks, x, y, radius, predicate) {
 
 function nearestScore(chunks, x, y, radius, predicate) {
   for (let r = 1; r <= radius; r++) {
-    for (let dx = -r; dx <= r; dx++) {
-      for (let dy = -r; dy <= r; dy++) {
-        if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
-        if (predicate(getWorldTile(chunks, x + dx, y + dy))) return radius - r + 1;
-      }
+    for (let offset = -r; offset < r; offset++) {
+      if (predicate(getWorldTile(chunks, x + offset, y - r))
+        || predicate(getWorldTile(chunks, x + r, y + offset))
+        || predicate(getWorldTile(chunks, x - offset, y + r))
+        || predicate(getWorldTile(chunks, x - r, y - offset))) return radius - r + 1;
     }
   }
   return 0;
@@ -328,13 +328,20 @@ function chooseTownCenter(chunks, bounds, seed) {
   const rng = mulberry(seed ^ 0x5E77);
   const targetX = Math.floor((bounds.minX + bounds.maxX) / 2);
   const targetY = Math.floor((bounds.minY + bounds.maxY) / 2);
+  // Survey the central region so expanding the wilderness does not pull
+  // the starting town toward a remote stretch of coastline.
+  const surveyRadius = 42;
+  const smithy = BUILDING_PLANS.find((plan) => plan.key === "smithy");
   let best = null;
-  for (let y = bounds.minY + 30; y <= bounds.maxY - 30; y += 2) {
-    for (let x = bounds.minX + 30; x <= bounds.maxX - 30; x += 2) {
+  for (let y = Math.max(bounds.minY + 30, targetY + 1 - surveyRadius); y <= Math.min(bounds.maxY - 30, targetY + 1 + surveyRadius); y += 2) {
+    for (let x = Math.max(bounds.minX + 30, targetX + 1 - surveyRadius); x <= Math.min(bounds.maxX - 30, targetX + 1 + surveyRadius); x += 2) {
       const tile = getWorldTile(chunks, x, y);
       if (!NATURAL_BUILDABLE.has(tile)) continue;
       const centerBias = 80 - Math.max(Math.abs(x - targetX), Math.abs(y - targetY)) * 0.45;
-      const score = waterfrontScore(chunks, x, y) + terrainScore(chunks, x, y) * 0.35 + centerBias + rng() * 0.01;
+      const workshopMountain = nearestScore(chunks, x + 10 + smithy.coreDx, y + smithy.coreDy, 36,
+        (tile) => MOUNTAIN_TILES.has(tile) && tile !== TILE_BADLANDS);
+      const score = waterfrontScore(chunks, x, y) + terrainScore(chunks, x, y) * 0.35
+        + workshopMountain * 18 + centerBias + rng() * 0.01;
       if (!best || score > best.score) best = { x, y, score };
     }
   }
@@ -568,7 +575,7 @@ function addDedicatedHomeCottages(chunks, bounds, buildings, occupied, protected
         coreDy: 5,
         wants: ["flat"],
         roles: [],
-        searchRadius: 14,
+        searchRadius: 24,
       },
       building.door || townCenter,
       occupied,

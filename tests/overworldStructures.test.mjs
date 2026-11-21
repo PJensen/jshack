@@ -286,15 +286,14 @@ Deno.test("overworld producers receive harvest nodes inside their work radius", 
   }
 });
 
-Deno.test("overworld places named curiosity landmarks outside the town core", async () => {
-  const { chunks, townPlan } = await generateOverworldChunks(SEED);
+Deno.test("expanded overworld places every authored landmark outside the town core", async () => {
+  const { chunks, townPlan, landmarks: sites } = await generateOverworldChunks(SEED);
   const landmarks = landmarkSpawns(chunks);
   const ids = new Set(landmarks.map((spawn) => spawn.landmark));
 
-  assert(ids.has("ruined_watchtower"), "overworld should place a ruined watchtower");
-  assert(ids.has("wayside_shrine"), "overworld should place a wayside shrine");
-  assert(ids.has("abandoned_camp"), "overworld should place an abandoned camp");
-  assert(ids.has("strange_grove"), "overworld should place a strange grove");
+  assertEquals(chunks.length, 81);
+  assertEquals([...ids].sort(), Object.keys(LANDMARK_DEFS).sort());
+  assertEquals(sites.map((site) => site.id).sort(), [...ids].sort());
 
   for (const id of ids) {
     assert(LANDMARK_DEFS[id], `${id} should be backed by an authored landmark definition`);

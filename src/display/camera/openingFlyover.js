@@ -2,7 +2,8 @@
 // Display-only opening flight from the overworld into the player.
 
 const DEFAULT_DURATION = 8.2;
-const MIN_WAYPOINT_SEPARATION = 18;
+const MIN_SECONDS_PER_LEG = 1.5;
+const NPC_STOP_SPACING = 8;
 
 function clamp01(value) {
   return Math.max(0, Math.min(1, Number(value) || 0));
@@ -32,7 +33,7 @@ function selectWaypoints(view, player) {
   const preferred = entities.filter((entity) => {
     if (!validPosition(entity?.pos) || Number(entity.id) === Number(view?.player?.id)) return false;
     const tags = Array.isArray(entity.tags) ? entity.tags : [];
-    return tags.includes("dungeon_entrance") || tags.includes("quest_giver");
+    return tags.includes("dungeon_entrance") || tags.includes("landmark") || tags.includes("quest_giver");
   });
   const fallback = entities.filter((entity) => {
     if (!validPosition(entity?.pos) || Number(entity.id) === Number(view?.player?.id)) return false;
@@ -40,26 +41,13 @@ function selectWaypoints(view, player) {
   });
   const pool = preferred.length > 0 ? preferred : fallback;
   const selected = [];
-  const remaining = pool.map((entity) => ({
-    ...asPosition(entity.pos),
-    title: String(entity.title || "").trim(),
-  }));
-
-  while (selected.length < 3 && remaining.length > 0) {
-    let bestIndex = 0;
-    let bestScore = -Infinity;
-    for (let i = 0; i < remaining.length; i++) {
-      const point = remaining[i];
-      const separation = selected.length === 0
-        ? distanceSquared(point, player)
-        : Math.min(...selected.map((chosen) => distanceSquared(point, chosen)));
-      if (separation > bestScore) {
-        bestScore = separation;
-        bestIndex = i;
-      }
+  for (const entity of pool) {
+    const point = { ...asPosition(entity.pos), title: String(entity.title || "").trim() };
+    if (entity.tags?.includes("quest_giver")) {
+      const overlaps = selected.some((chosen) => distanceSquared(point, chosen) < NPC_STOP_SPACING ** 2);
+      if (overlaps || distanceSquared(point, player) < NPC_STOP_SPACING ** 2) continue;
     }
-    if (selected.length > 0 && bestScore < MIN_WAYPOINT_SEPARATION ** 2) break;
-    selected.push(remaining.splice(bestIndex, 1)[0]);
+    selected.push(point);
   }
   return selected;
 }
@@ -100,7 +88,16 @@ function buildRoute(view) {
   const player = validPosition(view?.player?.pos) ? asPosition(view.player.pos) : null;
   if (!player) return null;
   const waypoints = selectWaypoints(view, player);
-  return [findFarCorner(player, waypoints, view.bounds), ...waypoints, player];
+  const route = [findFarCorner(player, waypoints, view.bounds)];
+  while (waypoints.length > 0) {
+    const from = route[route.length - 1];
+    let nearest = 0;
+    for (let i = 1; i < waypoints.length; i++) {
+      if (distanceSquared(from, waypoints[i]) < distanceSquared(from, waypoints[nearest])) nearest = i;
+    }
+    route.push(waypoints.splice(nearest, 1)[0]);
+  }
+  return [...route, player];
 }
 
 function interpolate(a, b, t) {
@@ -116,7 +113,7 @@ function interpolate(a, b, t) {
 export function createOpeningFlyover(opts = {}) {
   const startScale = Math.max(1, Number(opts.startScale) || 1);
   const endScale = Math.max(1, Number(opts.endScale) || startScale);
-  const duration = Math.max(1, Number(opts.duration) || DEFAULT_DURATION);
+  let duration = DEFAULT_DURATION;
   let route = null;
   let elapsed = 0;
   let active = false;
@@ -125,6 +122,7 @@ export function createOpeningFlyover(opts = {}) {
     if (active) return true;
     route = buildRoute(view);
     if (!route) return false;
+    duration = Math.max(1, Number(opts.duration) || Math.max(DEFAULT_DURATION, (route.length - 1) * MIN_SECONDS_PER_LEG));
     elapsed = 0;
     active = true;
     cam._detached = true;

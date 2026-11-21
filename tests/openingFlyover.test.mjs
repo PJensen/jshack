@@ -59,3 +59,25 @@ Deno.test("opening titles fade around the named waypoint and clear at landing", 
   assertEquals(flyover.getTitleCard(), null);
 });
 
+Deno.test("opening tour fits every landmark and lengthens to make room for titles", () => {
+  const cam = {};
+  const view = makeView();
+  view.entities = Array.from({ length: 8 }, (_, i) => ({
+    id: i + 2,
+    pos: { x: i * 4 - 20, y: 30 },
+    title: `Landmark ${i}`,
+    tags: ["landmark"],
+  }));
+  const flyover = createOpeningFlyover({ startScale: 28, endScale: 70 });
+  assert(flyover.start(cam, view));
+  const seen = new Set();
+  for (let i = 0; i < view.entities.length; i++) {
+    assert(flyover.update(cam, view, 1.5));
+    const card = flyover.getTitleCard();
+    assertEquals(card.alpha, 1);
+    seen.add(card.title);
+  }
+  assertEquals(seen.size, view.entities.length);
+  assertEquals(flyover.update(cam, view, 1.5), false);
+});
+

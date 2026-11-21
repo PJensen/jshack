@@ -845,7 +845,7 @@ function setActiveSpell(id) {
 
 // ---- Dungeon initialization -------------------------------------------------
 import { initDungeon, generateFloorPlan } from "./rules/environment/dungeon/index.js";
-import { OVERWORLD_EXTENT, prewarmOverworldChunks } from "./rules/environment/dungeon/overworld.js";
+import { prewarmOverworldChunks } from "./rules/environment/dungeon/overworld.js";
 import { transitionToDepth, clearFloorCache } from "./rules/environment/dungeon/transition.js";
 import {
   CHUNK_SIZE,
@@ -2916,16 +2916,22 @@ const openingFlyover = createOpeningFlyover({
 });
 
 async function prepareOpeningFlyover(player) {
+  const { extent, landmarks } = await prewarmOverworldChunks(world.seed);
   const bounds = {
-    minX: OVERWORLD_EXTENT.minCX * CHUNK_SIZE,
-    minY: OVERWORLD_EXTENT.minCY * CHUNK_SIZE,
-    maxX: (OVERWORLD_EXTENT.maxCX + 1) * CHUNK_SIZE - 1,
-    maxY: (OVERWORLD_EXTENT.maxCY + 1) * CHUNK_SIZE - 1,
+    minX: extent.minCX * CHUNK_SIZE,
+    minY: extent.minCY * CHUNK_SIZE,
+    maxX: (extent.maxCX + 1) * CHUNK_SIZE - 1,
+    maxY: (extent.maxCY + 1) * CHUNK_SIZE - 1,
   };
   const entities = [];
   for (const [id, entrance, pos] of world.query(DungeonEntrance, Position)) {
     if (getTile(pos.x, pos.y) === TILE_VOID) continue;
     entities.push({ id, pos, title: entrance.label, tags: ["dungeon_entrance"] });
+  }
+  for (const site of landmarks) {
+    if (site.hasEntrance || getTile(site.x, site.y) === TILE_VOID) continue;
+    const title = site.id.split("_").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+    entities.push({ pos: site, title, tags: ["landmark"] });
   }
   for (const [, state, bind] of world.query(QuestState, QuestBindings)) {
     if (state.status !== "active") continue;

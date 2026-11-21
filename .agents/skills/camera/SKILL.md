@@ -34,15 +34,19 @@ state when it completes.
 Opening flyovers belong in a small display-only director such as
 `src/display/camera/openingFlyover.js`. Start them only for the intended fresh
 run path; save-game restores and debug/spell-reel modes should not unexpectedly
-replay a new-game introduction. If the flyover reveals the whole world, use the
-existing `setFovDisabled()` boundary temporarily and restore the runtime
-configuration on completion. Use `setInputLock()` with a unique key while the
-player cannot act.
+replay a new-game introduction. Draw the unmasked terrain through the opening
+landscape pass so gameplay FOV and exploration memory stay canonical. Use
+`setInputLock()` with a unique key while the player cannot act.
 
-Waypoint selection should consume projected WorldView positions (for example
-`dungeon_entrance` and `quest_giver` tags), remain deterministic, and tolerate
-missing or sparse content with a player-only fallback. Do not add bespoke rules
-state just to drive presentation.
+The opening projects materialized entrances and quest givers in main and reads
+outdoor landmark anchors from the cached overworld plan. Use the entrance label
+for a site with a dungeon entrance so the tour titles it once. Check that
+anchors are on loaded tiles. Keep the route deterministic and budget time per
+leg so more stops do not squeeze the title cards.
+
+The flyover composites one cached landscape image per frame. When changing the
+world extent, keep the raster pixel budget independent of the number of tiles.
+Test landmark placement with `tests/overworldStructures.test.mjs`.
 
 ## Verification
 

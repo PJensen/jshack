@@ -362,7 +362,8 @@ function fillChunkTerrain(chunks, cx, cy, seed, perm, gradientDir, minX, maxX, m
   // Compute gradient bias: 0.3 elevation difference across world
   const worldWidth = maxX - minX;
   const worldHeight = maxY - minY;
-  const gradientScale = 0.3;
+  const gradientScale = 0.34;
+  const gradientSpan = 7 * CHUNK_SIZE - 1;
 
   for (let ly = 0; ly < CHUNK_SIZE; ly++) {
     for (let lx = 0; lx < CHUNK_SIZE; lx++) {
@@ -379,6 +380,9 @@ function fillChunkTerrain(chunks, cx, cy, seed, perm, gradientDir, minX, maxX, m
       else if (gradientDir === 'east') gradient = (maxX - wx) / worldWidth;
       else if (gradientDir === 'west') gradient = (wx - minX) / worldWidth;
 
+      // Keep the biome transition steep as the surrounding wilderness grows.
+      const worldSpan = gradientDir === 'north' || gradientDir === 'south' ? worldHeight : worldWidth;
+      gradient = Math.max(0, Math.min(1, 0.5 + (gradient - 0.5) * worldSpan / gradientSpan));
       elev = elev * 0.7 + gradient * gradientScale;
       elev = Math.max(0, Math.min(1, elev)); // clamp to [0,1]
 
@@ -760,7 +764,7 @@ function collectLandmarkCandidates(chunks, townCenter, bounds, biomeIds) {
   return result;
 }
 
-function pickSeparatedCandidate(candidates, rng, placed, minDistanceSq = 28 * 28) {
+function pickSeparatedCandidate(candidates, rng, placed, accepts) {
   if (!candidates.length) return null;
   const start = Math.floor(rng.next() * candidates.length);
   for (let i = 0; i < candidates.length; i++) {
@@ -769,12 +773,12 @@ function pickSeparatedCandidate(candidates, rng, placed, minDistanceSq = 28 * 28
     for (const other of placed) {
       const dx = candidate.x - other.x;
       const dy = candidate.y - other.y;
-      if (dx * dx + dy * dy < minDistanceSq) {
+      if (dx * dx + dy * dy < 28 * 28) {
         tooClose = true;
         break;
       }
     }
-    if (!tooClose) return candidate;
+    if (!tooClose && accepts(candidate)) return candidate;
   }
   return null;
 }
@@ -799,16 +803,18 @@ async function placeOverworldLandmarks(chunks, townCenter, bounds, worldSeed, ti
   ];
 
   for (const spec of specs) {
+    const def = LANDMARK_DEFS[spec.id];
+    if (!def) continue;
+    const unoccupied = ({ x, y }) => def.tiles.every(({ dx, dy }) => !hasSpawnAt(chunks, x + dx, y + dy));
     const candidates = collectLandmarkCandidates(chunks, townCenter, bounds, spec.biomes);
     // Rare terrain can leave an authored site with no valid anchor on this
     // seed. Open land is the fallback for its stamped footprint.
-    const center = pickSeparatedCandidate(candidates, rng, placed)
-      || pickSeparatedCandidate(collectLandmarkCandidates(chunks, townCenter, bounds, ["GRASSLAND"]), rng, placed);
+    const center = pickSeparatedCandidate(candidates, rng, placed, unoccupied)
+      || pickSeparatedCandidate(collectLandmarkCandidates(chunks, townCenter, bounds, ["GRASSLAND"]), rng, placed, unoccupied);
     if (!center) continue;
-    const def = LANDMARK_DEFS[spec.id];
-    if (!def) continue;
     stampBuilding(chunks, def, center.x, center.y);
-    placed.push({ ...center, id: spec.id });
+    const hasEntrance = def.spawns.some((spawn) => spawn.params?.entranceTemplateId);
+    placed.push({ ...center, id: spec.id, hasEntrance });
     if (_tick) await _tick(`Raised ${spec.id.replaceAll("_", " ")}`);
   }
   return placed;

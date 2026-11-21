@@ -1,6 +1,7 @@
 import { applyCamera } from "./controller.js";
 
 const TILE_PIXELS = 8;
+const MAX_LANDSCAPE_PIXELS = 1344;
 
 /**
  * Bake a static overview in strips so setup can yield between batches.
@@ -10,15 +11,16 @@ export async function bakeOpeningLandscape(surface, bounds, drawStrip, yieldFram
   const { minX, minY, maxX, maxY } = bounds;
   const width = maxX - minX + 1;
   const height = maxY - minY + 1;
-  surface.width = width * TILE_PIXELS;
-  surface.height = height * TILE_PIXELS;
+  const tilePixels = Math.max(1, Math.min(TILE_PIXELS, Math.floor(MAX_LANDSCAPE_PIXELS / Math.max(width, height))));
+  surface.width = width * tilePixels;
+  surface.height = height * tilePixels;
   const context = surface.getContext("2d", { alpha: false });
   if (!context) return null;
   context.fillStyle = "#0b0e16";
   context.fillRect(0, 0, surface.width, surface.height);
   context.setTransform(
-    TILE_PIXELS, 0, 0, TILE_PIXELS,
-    (0.5 - minX) * TILE_PIXELS, (0.5 - minY) * TILE_PIXELS,
+    tilePixels, 0, 0, tilePixels,
+    (0.5 - minX) * tilePixels, (0.5 - minY) * tilePixels,
   );
   const stripHeight = 12;
   for (let y = minY; y <= maxY; y += stripHeight) {
