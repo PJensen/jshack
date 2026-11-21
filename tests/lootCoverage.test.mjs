@@ -3,7 +3,7 @@ import { ITEM_CATALOG } from "../src/rules/data/itemCatalog.js";
 import { LOOT_TABLES } from "../src/rules/data/lootTables.js";
 import { createRng } from "../src/lib/ecs-js/rng.js";
 import { resolveLootTable } from "../src/rules/data/lootResolver.js";
-import { buildLootCoverageReport, validateLootTables } from "../.agents/skills/agent-tools/scripts/loot-coverage-audit.mjs";
+import { auditCatalogCoverage, buildLootCoverageReport, validateLootTables } from "../.agents/skills/agent-tools/scripts/loot-coverage-audit.mjs";
 
 function collectEquipPoolsFromLootTables() {
   const seen = new Set();
@@ -79,4 +79,15 @@ Deno.test("loot coverage report accounts for dynamic tier routing and nested tab
     report.rows.find((row) => row.tableId === "sub:fishing_epic_weapon")?.runtimeCoverage,
     "nested-or-dynamic",
   );
+});
+
+Deno.test("loot coverage reports reverse catalog gaps and archetype-backed drops", async () => {
+  const report = await buildLootCoverageReport({ roots: ["src", "tests", "docs"] });
+  assert(report.catalogGapCount > 0, "expected current catalog gaps to be visible");
+  assert(report.catalogCoverage.equipment.missingIds.includes("fishing_rod"));
+  assert(report.catalogCoverage.magic.missingIds.includes("book_dead"));
+  assert(!report.catalogCoverage.magic.missingIds.includes("food_wild_berries"));
+  assert(report.catalogCoverage.reagents.missingIds.includes("reagent_venom_frond"));
+  const direct = auditCatalogCoverage(undefined, LOOT_TABLES, new Set(Object.keys(LOOT_TABLES)));
+  assert(direct.equipment.covered >= 278);
 });

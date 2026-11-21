@@ -19,6 +19,14 @@ const ARCHETYPES = new Set([
   "IronRation", "WildBerries", "WildHerbs",
 ]);
 
+const ARCHETYPE_ITEM_ALIASES = new Map([
+  ["food_ration", "Ration"],
+  ["food_iron_ration", "IronRation"],
+  ["food_wild_berries", "WildBerries"],
+  ["food_wild_herbs", "WildHerbs"],
+  ["scroll_mapping", "ScrollOfMapping"],
+]);
+
 const DEFAULT_ROOTS = ["src", "tests", "docs"];
 
 export function parseArgs(argv) {
@@ -27,6 +35,7 @@ export function parseArgs(argv) {
     roots: DEFAULT_ROOTS,
     failOnIssues: false,
     failOnUncovered: false,
+    failOnCatalogGaps: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const arg = String(argv[i] || "");
@@ -35,6 +44,7 @@ export function parseArgs(argv) {
       opts.roots = String(argv[++i]).split(",").map((v) => v.trim()).filter(Boolean);
     } else if (arg === "--fail-on-issues") opts.failOnIssues = true;
     else if (arg === "--fail-on-uncovered") opts.failOnUncovered = true;
+    else if (arg === "--fail-on-catalog-gaps") opts.failOnCatalogGaps = true;
     else if (arg === "--help" || arg === "-h") opts.help = true;
   }
   return opts;
@@ -46,7 +56,8 @@ export function usage() {
   deno run --allow-read .agents/skills/agent-tools/scripts/loot-coverage-audit.mjs --format csv
 
 Audits every LOOT_TABLES entry for schema/reference problems and reports
-runtime reachability, dynamic routes, and test references.`;
+runtime reachability, dynamic routes, test references, and reverse catalog
+coverage.`;
 }
 
 function escapeRegExp(value) {
@@ -171,6 +182,59 @@ function buildReachableSet(roots, nestedRefs) {
   return reachable;
 }
 
+function collectReachableLootRefs(tables, reachableTables) {
+  const itemRefs = new Set();
+  const equipRefs = new Set();
+  const archetypeRefs = new Set();
+  for (const tableId of reachableTables) {
+    for (const entry of tables[tableId]?.entries || []) {
+      if (entry.type === "item" && entry.itemId) itemRefs.add(String(entry.itemId));
+      if (entry.type === "equip") for (const equipId of entry.pool || []) equipRefs.add(String(equipId));
+      if (entry.type === "archetype" && entry.archetype) archetypeRefs.add(String(entry.archetype));
+    }
+  }
+  return { itemRefs, equipRefs, archetypeRefs };
+}
+
+function coverageRow(ids, refs, archetypeRefs = new Set(), aliases = new Map()) {
+  const covered = [];
+  const missing = [];
+  const coveredByArchetype = [];
+  for (const id of ids.sort()) {
+    if (refs.has(id)) covered.push(id);
+    else if (aliases.has(id) && archetypeRefs.has(aliases.get(id))) {
+      covered.push(id);
+      coveredByArchetype.push(id);
+    } else missing.push(id);
+  }
+  return {
+    total: ids.length,
+    covered: covered.length,
+    missing: missing.length,
+    missingIds: missing,
+    coveredByArchetype,
+  };
+}
+
+export function auditCatalogCoverage(catalog = INSTALLED_ITEM_CATALOG, tables = LOOT_TABLES, reachableTables = new Set(Object.keys(tables))) {
+  const refs = collectReachableLootRefs(tables, reachableTables);
+  const equipmentIds = Object.keys(catalog).filter((id) => catalog[id]?.catalogKind === "equipment");
+  const magicIds = Object.keys(catalog).filter((id) => catalog[id]?.catalogKind === "magic");
+  const reagentIds = Object.keys(catalog).filter((id) => id.startsWith("reagent_"));
+  const equipment = coverageRow(equipmentIds, refs.equipRefs);
+  const magic = coverageRow(magicIds, refs.itemRefs, refs.archetypeRefs, ARCHETYPE_ITEM_ALIASES);
+  const reagents = coverageRow(reagentIds, refs.itemRefs);
+  return {
+    equipment,
+    magic,
+    reagents,
+    reachableTableCount: reachableTables.size,
+    itemReferenceCount: refs.itemRefs.size,
+    equipmentReferenceCount: refs.equipRefs.size,
+    archetypeReferenceCount: refs.archetypeRefs.size,
+  };
+}
+
 function dynamicRuntimeRoutes(textByFile, tableIds) {
   const routes = [];
   for (const [file, text] of textByFile) {
@@ -225,6 +289,8 @@ export async function buildLootCoverageReport({ tables = LOOT_TABLES, catalog = 
     row.runtimeCoverage = row.runtimeRefCount > 0 ? "direct" : reachable.has(row.tableId) ? "nested-or-dynamic" : "unreachable";
     row.testCoverage = row.testRefCount > 0 ? "referenced" : "unreferenced";
   }
+  const catalogCoverage = auditCatalogCoverage(catalog, tables, reachable);
+  const catalogGapCount = catalogCoverage.equipment.missing + catalogCoverage.magic.missing + catalogCoverage.reagents.missing;
   return {
     tableCount: rows.length,
     issueCount: validation.issues.length,
@@ -234,6 +300,8 @@ export async function buildLootCoverageReport({ tables = LOOT_TABLES, catalog = 
     rows,
     uncoveredRuntime: rows.filter((row) => row.runtimeCoverage === "unreachable").map((row) => row.tableId),
     unreferencedTests: rows.filter((row) => row.testCoverage === "unreferenced").map((row) => row.tableId),
+    catalogCoverage,
+    catalogGapCount,
   };
 }
 
@@ -252,12 +320,15 @@ export function formatSummary(report) {
   const untested = report.unreferencedTests.length ? report.unreferencedTests.join(", ") : "none";
   const issues = report.issueCount ? report.issues.map((issue) => `${issue.tableId}: ${issue.code} (${issue.detail})`).join("\n  ") : "none";
   const routes = report.dynamicRoutes.length ? report.dynamicRoutes.map((route) => `${route.pattern} -> ${route.tableIds.join(", ")} (${route.file})`).join("\n  ") : "none";
+  const catalog = Object.entries(report.catalogCoverage).filter(([, value]) => value && typeof value.total === "number").map(([kind, value]) => `${kind}: ${value.covered}/${value.total} covered; missing ${value.missing ? value.missingIds.join(", ") : "none"}`).join("\n  ");
   return [
     `loot tables: ${report.tableCount}`,
     `validation issues: ${report.issueCount}`,
     `runtime-unreachable: ${unreachable}`,
     `without direct test references: ${untested}`,
     `dynamic runtime routes:\n  ${routes}`,
+    `catalog coverage gaps: ${report.catalogGapCount}`,
+    `catalog coverage:\n  ${catalog}`,
     `issues:\n  ${issues}`,
   ].join("\n");
 }
@@ -273,7 +344,8 @@ export async function main() {
   else if (opts.format === "csv") console.log(formatCsv(report));
   else console.log(formatSummary(report));
   if (opts.failOnIssues && report.issueCount > 0) Deno.exit(1);
-  if (opts.failOnUncovered && (report.uncoveredRuntime.length > 0 || report.unreferencedTests.length > 0)) Deno.exit(1);
+  if (opts.failOnCatalogGaps && report.catalogGapCount > 0) Deno.exit(1);
+  if (opts.failOnUncovered && (report.uncoveredRuntime.length > 0 || report.unreferencedTests.length > 0 || report.catalogGapCount > 0)) Deno.exit(1);
 }
 
 if (import.meta.main) await main();

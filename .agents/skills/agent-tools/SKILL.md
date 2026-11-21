@@ -72,8 +72,10 @@ generic `NamedIdentity` reaching the bridge.
 - `--producer-only` and `--consumer-only` expose orphaned event wiring.
 - `--phase`, `--unregistered`, and `--missing-tests` focus the system map.
 - `loot-coverage-audit` supports `summary`, `csv`, and `json` output; use
-  `--fail-on-issues` for structural validation and inspect uncovered tables
-  separately because dynamic routes and nested sub-tables are intentional.
+  `--fail-on-issues` for structural validation and
+  `--fail-on-catalog-gaps` for reverse item/equipment/reagent completeness.
+  Inspect uncovered tables separately because dynamic routes and nested
+  sub-tables are intentional.
 
 ## Guardrails
 
@@ -85,7 +87,8 @@ generic `NamedIdentity` reaching the bridge.
   entrances, and explicit monster IDs using the existing content fields.
 - `loot-coverage-audit` checks every `LOOT_TABLES` entry against the item
   catalog, nested-table graph, known runtime references, dynamic tier routing,
-  and direct test references.
+  direct test references, and reverse coverage for catalog equipment, magic
+  items, and reagents.
 - Extend existing tools when a question recurs; do not add a one-off grep script
   for a query they can already answer.
 - When a new recurring workflow is proven, update this skill with the route and
