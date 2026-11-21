@@ -1,0 +1,5 @@
+for the  camera flight, I think we can smooth things out a bit, you are visiting things in kind of a wild order, you might also be able to put th eplace labels right on the map -- actually, that would be super cool, try it.
+
+---
+
+also, it's noto using a lot of zooming either -- it's worth a look at the zooming as a possible inclusion, lerp zoom in as we approach places, and lerp zoom out as we leave them.
