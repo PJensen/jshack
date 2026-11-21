@@ -3,10 +3,9 @@
   "checkpoint_id": "01M7Z8Q4F262G4C24WGW7TYVC8",
   "session_id": "01a1fe6d-efd5-7be0-8e16-604d0e08e5e8",
   "strategy": "manual-commit",
-  "created_at": "2026-11-21T14:38:44.655220363Z",
+  "created_at": "2026-11-21T14:38:47.151438964Z",
   "branch": "master",
   "checkpoints_count": 1,
-  "save_step_count": 1,
   "files_touched": [
     "deno.json",
     "docs/architecture/AGENT_TOOL_OWNERSHIP.md",
@@ -15,17 +14,9 @@
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "088bae5e54a2",
-  "checkpoint_transcript_start": 443,
-  "transcript_lines_at_start": 443,
-  "compact_transcript_start": 75,
-  "token_usage": {
-    "input_tokens": 74150,
-    "cache_creation_tokens": 0,
-    "cache_read_tokens": 1463552,
-    "output_tokens": 12428,
-    "api_call_count": 25,
-    "subagent_tokens_complete": true
-  },
+  "checkpoint_transcript_start": 612,
+  "transcript_lines_at_start": 612,
+  "compact_transcript_start": 103,
   "redaction": {
     "replacements": 0,
     "layers": {
