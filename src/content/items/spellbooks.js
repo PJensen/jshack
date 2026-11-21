@@ -68,7 +68,7 @@ _book('book_evocation',     'Spellbook of Evocation',     'rare',   'Teaches Evo
 // ── Flavor books ──────────────────────────────────────────────────────
 
 defineItem('book_dead', {
-  name: 'Book of the Dead', type: 'book', material: 'paper', rarity: 'legendary', weight: 1.2,
+  name: 'Book of the Dead', type: 'book', material: 'paper', rarity: 'legendary', value: 350, weight: 1.2,
   description: 'An ancient tome bound in pale leather. It records the fate of every hero who came before.',
   hooks: {
     on_use: (ctx, state) => { const actor = Number(state?.actor || ctx.actor || 0) | 0; ctx.io.emit('deathlog:open', { actor }); return { consumed: false }; },
@@ -76,37 +76,37 @@ defineItem('book_dead', {
 });
 
 defineItem('book_kitty', {
-  name: 'On the Care of Dungeon Cats', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'On the Care of Dungeon Cats', type: 'book', material: 'paper', rarity: 'common', value: 8, weight: 0.3,
   description: 'A slim volume with claw marks on the cover.',
   hooks: { on_use: createOpenFlavorBookHook('On the Care of Dungeon Cats', 'Your kitty will follow you, fetch items, and flee when injured. It will also drop things at your feet unprompted. Do not question why. This is simply what cats do.') },
 });
 
 defineItem('book_snakes', {
-  name: 'Snake Nest Husbandry', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'Snake Nest Husbandry', type: 'book', material: 'paper', rarity: 'common', value: 8, weight: 0.3,
   description: 'Smells faintly of venom.',
   hooks: { on_use: createOpenFlavorBookHook('Snake Nest Husbandry', 'The snake trap releases a cluster of serpents when triggered. Venomous fangs, 25% poison chance. They appear from nowhere. Do not ask where they were hiding.') },
 });
 
 defineItem('book_spikes', {
-  name: 'The Spike Trap Quarterly, Vol. III', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'The Spike Trap Quarterly, Vol. III', type: 'book', material: 'paper', rarity: 'common', value: 8, weight: 0.3,
   description: 'A trade publication for trap enthusiasts.',
   hooks: { on_use: createOpenFlavorBookHook('The Spike Trap Quarterly, Vol. III', 'This season\'s models deliver a clean 35% of max HP in damage. Reader question: \'Can adventurers see them?\' Editor\'s response: \'Not until it\'s too late.\'') },
 });
 
 defineItem('book_touchstone', {
-  name: 'Touchstone: A Gemcutter\'s Manual', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'Touchstone: A Gemcutter\'s Manual', type: 'book', material: 'paper', rarity: 'common', value: 12, weight: 0.3,
   description: 'Dog-eared and well-thumbed.',
   hooks: { on_use: createOpenFlavorBookHook('Touchstone: A Gemcutter\'s Manual', 'Rub the stone across the touchstone. A hard white streak means value. A dull scratch means you\'ve been carrying glass through fifteen floors of dungeon.') },
 });
 
 defineItem('book_corpses', {
-  name: 'On Eating Monster Corpses', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'On Eating Monster Corpses', type: 'book', material: 'paper', rarity: 'common', value: 8, weight: 0.3,
   description: 'Several pages are stained with something unidentifiable.',
   hooks: { on_use: createOpenFlavorBookHook('On Eating Monster Corpses', 'Rat corpse: disease. Snake corpse: poison. Spider corpse: also poison. Floating eye corpse: you forget who you are. There is a pattern here. Please notice it.') },
 });
 
 defineItem('book_gridbugs', {
-  name: 'A Field Guide to Grid Bugs', type: 'book', material: 'paper', rarity: 'common', weight: 0.3,
+  name: 'A Field Guide to Grid Bugs', type: 'book', material: 'paper', rarity: 'common', value: 10, weight: 0.3,
   description: 'Illustrated with tiny diagrams of cardinal directions.',
   hooks: { on_use: createOpenFlavorBookHook('A Field Guide to Grid Bugs', 'The grid bug moves only along cardinal axes. Nobody knows why. One theory suggests they are bound by an ancient curse. Another theory: they are just very stubborn.') },
 });

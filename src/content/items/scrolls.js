@@ -120,13 +120,13 @@ for (const def of ENCHANT_SCROLL_DEFS) {
 // ── Utility scrolls ───────────────────────────────────────────────────
 
 defineItem('scroll_blastwave', {
-  name: 'Scroll of Blast Wave', type: 'scroll', material: 'paper', rarity: 'magic', weight: 0.1,
+  name: 'Scroll of Blast Wave', type: 'scroll', material: 'paper', rarity: 'magic', value: 35, weight: 0.1,
   description: 'Casts Blast Wave without learning it.',
   hooks: { on_use: createCastSpellFromIdentityHook({ identityPrefix: 'scroll_', targetMode: 'self', consumeOnSuccess: true }) },
 });
 
 defineItem('scroll_homecoming', {
-  name: 'Scroll of Homecoming', type: 'scroll', material: 'paper', rarity: 'magic', weight: 0.1,
+  name: 'Scroll of Homecoming', type: 'scroll', material: 'paper', rarity: 'magic', value: 45, weight: 0.1,
   description: 'Returns you to the surface (dungeon level 0).',
   hooks: {
     on_use: createCastSpellFromIdentityHook({ identityPrefix: 'scroll_', targetMode: 'self', consumeOnSuccess: true }),
@@ -135,19 +135,19 @@ defineItem('scroll_homecoming', {
 });
 
 defineItem('scroll_heal', {
-  name: 'Scroll of Healing', type: 'scroll', material: 'paper', rarity: 'common', weight: 0.1,
+  name: 'Scroll of Healing', type: 'scroll', material: 'paper', rarity: 'common', value: 18, weight: 0.1,
   description: 'Casts a healing spell on yourself or an ally.',
   hooks: { on_use: createCastSpellFromIdentityHook({ identityPrefix: 'scroll_', targetMode: 'target', consumeOnSuccess: true }) },
 });
 
 defineItem('scroll_summon_skeleton', {
-  name: 'Scroll of Summon Skeleton', type: 'scroll', material: 'paper', rarity: 'magic', weight: 0.1,
+  name: 'Scroll of Summon Skeleton', type: 'scroll', material: 'paper', rarity: 'magic', value: 40, weight: 0.1,
   description: 'Rip a skeleton from the earth to fight at your side.',
   hooks: { on_use: createCastSpellFromIdentityHook({ identityPrefix: 'scroll_', targetMode: 'self', consumeOnSuccess: true }) },
 });
 
 defineItem('scroll_taming', {
-  name: 'Scroll of Taming', type: 'scroll', material: 'paper', rarity: 'rare', weight: 0.1,
+  name: 'Scroll of Taming', type: 'scroll', material: 'paper', rarity: 'rare', value: 90, weight: 0.1,
   description: 'Soft whispers curl from the parchment. A creature that hears them becomes your devoted ally.',
   hooks: {
     on_use: createReadableScrollHook((ctx, state) => { const actor = Number(state?.actor || ctx.actor || 0) | 0; ctx.io.emit('scroll:taming', { actor }); return { consumed: true }; }),
