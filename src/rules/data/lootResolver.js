@@ -104,26 +104,14 @@ export function resolveLootTable(tableId, rng, depth, nest = 0, opts) {
         break;
 
       case "equip": {
-        const basePool = Array.isArray(entry.pool) ? entry.pool : [];
-        const eligiblePool = basePool.filter((equipId) => {
-          const def = getCatalogItem(String(equipId || ""));
-          return passesDropRequirement(def, opts);
-        });
-        const pickPool = eligiblePool.length > 0 ? eligiblePool : basePool;
-        const equipId = rng.choice(pickPool);
-        if (!equipId) break;
-        
-        // Check weapon limit for chests (including when called from a nested table)
-        if (weaponRef) {
-          const def = getCatalogItem(equipId);
-          if (def && def.slot === "weapon") {
-            if (weaponRef.count >= 1) break; // Skip this weapon
-            weaponRef.count++;
-          }
-        }
-        
-        const affixes = rollAffixes(rng, equipId, entry.affixChance || 0, entry.affixCountMax || 1);
-        results.push({ kind: "equip", params: { equipId, affixes } });
+        const drop = resolveEquipEntry(entry, rng, opts, weaponRef, false);
+        if (drop) results.push(drop);
+        break;
+      }
+
+      case "generated": {
+        const drop = resolveEquipEntry(entry, rng, opts, weaponRef, true);
+        if (drop) results.push(drop);
         break;
       }
 
@@ -240,6 +228,42 @@ function weightedPick(entries, rng, opts) {
   return entries[entries.length - 1];
 }
 
+const RARITY_NUMBERS = Object.freeze({ common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5 });
+
+function resolveEquipEntry(entry, rng, opts, weaponRef, generated) {
+  const basePool = Array.isArray(entry[generated ? "basePool" : "pool"])
+    ? entry[generated ? "basePool" : "pool"] : [];
+  const eligiblePool = basePool.filter((equipId) => passesDropRequirement(getCatalogItem(String(equipId || "")), opts));
+  const equipId = rng.choice(eligiblePool.length > 0 ? eligiblePool : basePool);
+  if (!equipId) return null;
+
+  const def = getCatalogItem(equipId);
+  if (weaponRef && def?.slot === "weapon") {
+    if (weaponRef.count >= 1) return null;
+    weaponRef.count++;
+  }
+
+  const affixes = rollAffixes(rng, equipId, entry.affixChance || 0, entry.affixCountMax || 1);
+  const params = { equipId, affixes };
+  if (generated) {
+    const rarityName = String(entry.rarityName || (typeof entry.rarity === "string" ? entry.rarity : def?.rarityName || "common")).toLowerCase();
+    const rarity = Math.max(1, Number(entry.rarity || RARITY_NUMBERS[rarityName] || def?.rarity || 1) | 0);
+    const resonances = Array.isArray(entry.resonances) ? entry.resonances.map(String).filter(Boolean) : [];
+    const prefix = String(entry.prefix || "").trim();
+    const suffix = String(entry.suffix || "").trim();
+    params.generatedName = [prefix, def?.name || equipId, suffix].filter(Boolean).join(" ");
+    params.generation = {
+      kind: "meta-loot",
+      rarity,
+      rarityName,
+      resonances,
+      affixChance: Math.max(0, Math.min(1, Number(entry.affixChance || 0))),
+      affixCountMax: Math.max(0, Number(entry.affixCountMax || 0) | 0),
+    };
+  }
+  return { kind: generated ? "generated" : "equip", params };
+}
+
 // ── Affix rolling ───────────────────────────────────────────────────
 
 /**
@@ -316,6 +340,20 @@ export function materializeDrop(world, drop, pos) {
     case "equip": {
       let id = null;
       try { id = buildCatalogItem(world, drop.params.equipId, { affixes: drop.params.affixes || [] }); } catch { return null; }
+      if (!(id > 0)) return null;
+      world.add(id, Position, { x: pos.x, y: pos.y });
+      return id;
+    }
+
+    case "generated": {
+      let id = null;
+      try {
+        id = buildCatalogItem(world, drop.params.equipId, {
+          affixes: drop.params.affixes || [],
+          generatedName: drop.params.generatedName,
+          generation: drop.params.generation,
+        });
+      } catch { return null; }
       if (!(id > 0)) return null;
       world.add(id, Position, { x: pos.x, y: pos.y });
       return id;

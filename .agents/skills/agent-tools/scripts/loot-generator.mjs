@@ -75,6 +75,7 @@ function searchableText(def, drop) {
     def?.id, def?.name, def?.description,
     ...(Array.isArray(def?.tags) ? def.tags : []),
     ...(Array.isArray(drop?.params?.affixes) ? drop.params.affixes : []),
+    ...(Array.isArray(drop?.params?.generation?.resonances) ? drop.params.generation.resonances : []),
   ].filter(Boolean).join(" ").toLowerCase();
 }
 
@@ -102,16 +103,23 @@ function decorateDrop(drop, index) {
   const words = alignmentWordsFor(def, drop);
   const suffixes = suffixWordsFor(def, drop);
   const baseName = String(def?.name || drop?.params?.archetype || drop?.kind || "Unknown drop");
-  const prefix = words[0] || "unmarked";
-  const suffix = suffixes[0] || "";
-  const info = def ? { ...def, value: 0, affixes: drop?.params?.affixes || def.affixes } : null;
+  const prefix = drop?.params?.generatedName ? "" : (words[0] || "unmarked");
+  const suffix = drop?.params?.generatedName ? "" : (suffixes[0] || "");
+  const generation = drop?.params?.generation;
+  const info = def ? {
+    ...def,
+    value: 0,
+    rarity: generation?.rarity || def.rarity,
+    rarityName: generation?.rarityName || def.rarityName,
+    affixes: drop?.params?.affixes || def.affixes,
+  } : null;
   return {
     index,
     kind: String(drop?.kind || ""),
     params: drop?.params || {},
     itemId: id,
     name: baseName,
-    suggestedName: `${prefix} ${baseName}${suffix ? ` ${suffix}` : ""}`,
+    suggestedName: drop?.params?.generatedName || `${prefix} ${baseName}${suffix ? ` ${suffix}` : ""}`,
     alignmentWords: words,
     suffixWords: suffixes,
     estimatedValue: info ? estimateItemValueFromInfo(info) : 0,

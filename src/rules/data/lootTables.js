@@ -199,6 +199,15 @@ export const LOOT_TABLES = {
     ],
   },
 
+  "sub:generated_gear": {
+    rolls: { min: 1, max: 1 },
+    entries: [
+      { type: "generated", weight: 10, basePool: ["sword_plain", "dagger_quick", "bow_short"], rarity: 2, rarityName: "uncommon", affixChance: 0.65, affixCountMax: 1, resonances: ["thorn", "wild"], prefix: "Thornsworn", suffix: "of Thorns" },
+      { type: "generated", weight: 8, basePool: ["helm_iron", "helm_steel", "shield_iron"], rarity: 3, rarityName: "rare", affixChance: 0.7, affixCountMax: 1, resonances: ["ember", "ward"], prefix: "Emberforged", suffix: "of Embers" },
+      { type: "generated", weight: 5, basePool: ["ring_health", "ring_precision", "ring_arcana"], rarity: 3, rarityName: "rare", affixChance: 0.75, affixCountMax: 2, resonances: ["moon", "arcane"], prefix: "Moon-veiled", suffix: "of the Star Archive" },
+    ],
+  },
+
   "sub:fishing_epic_weapon": {
     rolls: { min: 1, max: 1 },
     entries: [
@@ -1142,6 +1151,7 @@ export const LOOT_TABLES = {
       { type: "table",     weight: 18, tableId: "sub:scrolls" },
       { type: "table",     weight: 18, tableId: "sub:spellbooks" },
       { type: "table",     weight: 12, tableId: "sub:wands" },
+      { type: "table",     weight: 5,  tableId: "sub:generated_gear" },
       { type: "archetype", weight: 10, archetype: "Ration" },
       { type: "gem",       weight: 3,  materials: ["gemstone", "glass"] },
     ],

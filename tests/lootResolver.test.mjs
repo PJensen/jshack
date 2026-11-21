@@ -1,8 +1,11 @@
 import "./helpers/installContentCatalog.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { createRng } from "../src/lib/ecs-js/rng.js";
-import { resolveLootTable } from "../src/rules/data/lootResolver.js";
+import { materializeDrop, resolveLootTable } from "../src/rules/data/lootResolver.js";
 import { getCatalogItem } from "../src/rules/data/itemCatalog.js";
+import { World } from "../src/lib/ecs-js/index.js";
+import { ItemInfo } from "../src/rules/components/ItemInfo.js";
+import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 
 Deno.test("known spells are suppressed from spellbook drops", () => {
   // Run many seeds — sub:spellbooks should never produce a known spell
@@ -185,4 +188,24 @@ Deno.test("gemstone loot pool produces varied real gems", () => {
   }
   assert(seen.size > 1, `expected varied gemstone identities, got ${Array.from(seen).join(", ") || "none"}`);
   assert(!seen.has("gem_dilithium") || seen.size > 2, "gemstone pool should not collapse to dilithium-only");
+});
+
+Deno.test("generated meta-loot preserves provenance, rolled affixes, and generated naming", () => {
+  let generated = null;
+  for (let seed = 1; seed <= 500 && !generated; seed++) {
+    const drops = resolveLootTable("sub:generated_gear", createRng(seed), 4);
+    generated = drops.find((drop) => drop.kind === "generated");
+  }
+  assert(generated, "generated meta-loot should resolve");
+  assertEquals(generated.params.generation.kind, "meta-loot");
+  assert(generated.params.generation.resonances.length > 0);
+  assert(generated.params.generatedName.includes(" of "));
+
+  const world = new World({ seed: 7 });
+  const id = materializeDrop(world, generated, { x: 0, y: 0 });
+  assert(id > 0);
+  assertEquals(world.get(id, NamedIdentity).name, generated.params.generatedName);
+  assertEquals(world.get(id, ItemInfo).generation, generated.params.generation);
+  assertEquals(world.get(id, ItemInfo).rarity, generated.params.generation.rarity);
+  assertEquals(world.get(id, ItemInfo).rarityName, generated.params.generation.rarityName);
 });

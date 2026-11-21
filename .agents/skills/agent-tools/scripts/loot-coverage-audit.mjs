@@ -9,7 +9,7 @@ const INSTALLED_ITEM_CATALOG = { ...ITEM_CATALOG };
 for (const [id, def] of allContentItems()) INSTALLED_ITEM_CATALOG[id] = def;
 
 const ENTRY_TYPES = new Set([
-  "nothing", "gold", "archetype", "equip", "item", "gem", "table",
+  "nothing", "gold", "archetype", "equip", "generated", "item", "gem", "table",
 ]);
 
 const ARCHETYPES = new Set([
@@ -125,11 +125,12 @@ export function validateLootTables(tables = LOOT_TABLES, catalog = INSTALLED_ITE
       if (type === "item" && !catalog[entry.itemId]) {
         addIssue(issues, tableId, "missing-item", `${label} references unknown item ${JSON.stringify(entry.itemId)}`);
       }
-      if (type === "equip") {
-        if (!Array.isArray(entry.pool) || entry.pool.length === 0) {
+      if (type === "equip" || type === "generated") {
+        const pool = type === "generated" ? entry.basePool : entry.pool;
+        if (!Array.isArray(pool) || pool.length === 0) {
           addIssue(issues, tableId, "empty-equip-pool", `${label} has no equipment pool`);
         } else {
-          for (const equipId of entry.pool) {
+          for (const equipId of pool) {
             if (!catalog[equipId]) addIssue(issues, tableId, "missing-equipment", `${label} references unknown catalog id ${JSON.stringify(equipId)}`);
             else if (catalog[equipId].catalogKind !== "equipment") addIssue(issues, tableId, "non-equipment-pool", `${label} references non-equipment ${JSON.stringify(equipId)}`);
           }
@@ -190,6 +191,7 @@ function collectReachableLootRefs(tables, reachableTables) {
     for (const entry of tables[tableId]?.entries || []) {
       if (entry.type === "item" && entry.itemId) itemRefs.add(String(entry.itemId));
       if (entry.type === "equip") for (const equipId of entry.pool || []) equipRefs.add(String(equipId));
+      if (entry.type === "generated") for (const equipId of entry.basePool || []) equipRefs.add(String(equipId));
       if (entry.type === "archetype" && entry.archetype) archetypeRefs.add(String(entry.archetype));
     }
   }

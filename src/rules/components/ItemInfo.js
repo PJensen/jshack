@@ -31,6 +31,7 @@ export const ItemInfo = defineComponent(
     tags: [], // behavioral flags: "conflict", "sunlight", "levitate", etc.
     ammoAffinities: {}, // ammo identity -> projectile modifiers from this gear
     lootBiases: {}, // loot/archetype id -> weight multiplier while equipped
+    generation: null, // generated-loot provenance and authored resonance metadata
   },
   {
     validate(rec) {

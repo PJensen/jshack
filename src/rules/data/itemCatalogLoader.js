@@ -25,7 +25,7 @@ function cloneWeaponVfxProfile(profile) {
  * Build an item entity from the unified item catalog.
  * @param {import("../../lib/ecs-js/index.js").World} world
  * @param {string} itemId
- * @param {{ affixes?: string[], count?: number }} [opts]
+ * @param {{ affixes?: string[], count?: number, generatedName?: string, generation?: object }} [opts]
  */
 export function buildCatalogItem(world, itemId, opts = {}) {
   const def = getCatalogItem(itemId);
@@ -38,7 +38,7 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     : (isEquip ? 1 : Math.max(1, Number(def.charges || 1) | 0));
 
   const id = world.create();
-  world.add(id, NamedIdentity, { name: def.name, identity: def.id });
+  world.add(id, NamedIdentity, { name: opts.generatedName || def.name, identity: def.id });
 
   const info = {
     type: def.type || (isEquip ? "equip" : "item"),
@@ -49,8 +49,8 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     count,
     bonuses: def.bonuses || {},
     twoHanded: def.twoHanded || false,
-    rarity: def.rarity || 1,
-    rarityName: def.rarityName || "common",
+    rarity: Number(opts.generation?.rarity || def.rarity || 1),
+    rarityName: String(opts.generation?.rarityName || def.rarityName || "common"),
     affixes: [...new Set([
       ...(Array.isArray(def.affixes) ? def.affixes : []),
       ...(Array.isArray(opts.affixes) ? opts.affixes : []),
@@ -73,6 +73,7 @@ export function buildCatalogItem(world, itemId, opts = {}) {
     tags: Array.isArray(def.tags) ? def.tags.slice() : [],
     ammoAffinities: def.ammoAffinities && typeof def.ammoAffinities === "object" ? structuredClone(def.ammoAffinities) : {},
     lootBiases: def.lootBiases && typeof def.lootBiases === "object" ? { ...def.lootBiases } : {},
+    generation: opts.generation && typeof opts.generation === "object" ? structuredClone(opts.generation) : null,
   };
   world.add(id, ItemInfo, info);
   if (def.chargePool) world.add(id, Charges, { ...def.chargePool });
