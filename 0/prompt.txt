@@ -1,0 +1,17 @@
+when the game begins, the camera should start in some faraway corner, zoomed out, and fly to the player, the fog of war is not enabled yet, we fly over mountains and forests, maybe we visit the various waypoints actually -- that would be amazing!
+
+then the camera drives towards the player, zooms in and settles, the for of war enables.
+
+what do yiou tihhnk?!
+
+---
+
+Love it, lets give it a shot and see what happens.
+
+---
+
+just FYI -- I think we should add a camera skill -- I put a lot of work into camera earlier in the year and you had to discover it -- lol
+
+---
+
+approved
