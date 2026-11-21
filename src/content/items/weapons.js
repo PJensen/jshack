@@ -18,6 +18,7 @@ defineItem('staff_oak', {
   damageType: 'blunt',
   staminaCost: 7,
   maxSockets: 1,
+  value: 28,
   description: 'A sturdy staff of ancient oak. Channels natural energies.',
   weight: 2.5,
 });
@@ -102,6 +103,7 @@ defineItem('longsword', {
   damageDice: '1d8',
   damageType: 'slash',
   staminaCost: 12,
+  value: 55,
   description: 'A long steel blade wielded with both hands.',
   weight: 2.8,
 });
@@ -117,6 +119,7 @@ defineItem('sword_plain', {
   damageType: 'slash',
   staminaCost: 8,
   maxSockets: 1,
+  value: 32,
   description: 'A trusty short blade. Quick to draw and easy to wield.',
   weight: 1.2,
 });
@@ -132,6 +135,7 @@ defineItem('dagger_quick', {
   damageType: 'pierce',
   staminaCost: 5,
   maxSockets: 1,
+  value: 24,
   description: 'A slim steel blade, light enough to strike in a blink.',
   weight: 0.5,
 });
@@ -147,6 +151,7 @@ defineItem('axe_heavy', {
   damageType: 'slash',
   staminaCost: 12,
   maxSockets: 1,
+  value: 52,
   description: 'A broad-headed axe that cleaves through armor and timber alike.',
   weight: 3.0,
 });
@@ -162,6 +167,7 @@ defineItem('iron_mace', {
   damageType: 'blunt',
   staminaCost: 11,
   maxSockets: 1,
+  value: 46,
   description: 'A heavy iron head on a wooden haft. Favored by the faithful.',
   weight: 3.2,
   affixes: ['stunning1'],
@@ -182,6 +188,7 @@ defineItem('morningstar', {
   damageType: 'blunt',
   staminaCost: 10,
   maxSockets: 1,
+  value: 58,
   description: 'A spiked iron mace built to crush through guards and punch through mail.',
   weight: 3.0,
 });
@@ -198,6 +205,7 @@ defineItem('iron_pickaxe', {
   damageType: 'pierce',
   combatFlavor: 'brutal',
   staminaCost: 20,
+  value: 40,
   weight: 4.0,
 });
 
@@ -211,6 +219,7 @@ defineItem('warhammer', {
   damageDice: '1d8',
   damageType: 'blunt',
   staminaCost: 10,
+  value: 70,
   weight: 3.4,
   affixes: ['stunning1'],
 });
@@ -228,6 +237,7 @@ defineItem('flail', {
   damageType: 'blunt',
   staminaCost: 9,
   weight: 3.2,
+  value: 72,
   maxSockets: 1,
   description: 'A chained iron head that swings unpredictably and lands with brutal force.',
   affixes: ['stunning1'],
@@ -246,6 +256,7 @@ defineItem('great_axe', {
   damageType: 'slash',
   staminaCost: 14,
   maxSockets: 1,
+  value: 78,
   description: 'A broad steel axe that rewards a full-bodied swing.',
   weight: 4.5,
 });
@@ -263,6 +274,7 @@ defineItem('glaive', {
   damageType: 'pierce',
   staminaCost: 13,
   maxSockets: 1,
+  value: 75,
   description: 'A long-shafted blade that keeps danger at the edge of reach.',
   weight: 3.5,
 });
@@ -280,6 +292,7 @@ defineItem('emberstaff', {
   damageType: 'blunt',
   staminaCost: 8,
   maxSockets: 1,
+  value: 85,
   description: 'A charred staff with a living ember in its crown. It warms the hand and the spellbook alike.',
   weight: 2.0,
 });
@@ -297,6 +310,7 @@ defineItem('moonroot_staff', {
   damageType: 'blunt',
   staminaCost: 9,
   maxSockets: 2,
+  value: 150,
   description: 'Pale roots curl around a moonstone core, drinking in the night and returning it as quiet power.',
   weight: 2.2,
 });
@@ -314,6 +328,7 @@ defineItem('frostbranch', {
   damageType: 'blunt',
   staminaCost: 8,
   maxSockets: 1,
+  value: 130,
   description: 'A branch preserved in blue ice. Its chill steadies the mind against hostile magic.',
   weight: 1.8,
 });
@@ -331,6 +346,7 @@ defineItem('stormglass_staff', {
   damageType: 'blunt',
   staminaCost: 9,
   maxSockets: 2,
+  value: 260,
   description: 'Lightning crawls through the glass veins of this staff, waiting for a worthy spell to call it down.',
   weight: 2.5,
 });
@@ -348,6 +364,7 @@ defineItem('sunken_crown_staff', {
   damageType: 'blunt',
   staminaCost: 11,
   maxSockets: 2,
+  value: 300,
   description: 'A drowned relic crowned with gold and coral. Its spells reach outward like ripples across dark water.',
   weight: 3.5,
 });
@@ -365,6 +382,7 @@ defineItem('bloodwood_staff', {
   damageType: 'blunt',
   staminaCost: 10,
   maxSockets: 2,
+  value: 280,
   description: 'Dark sap pulses beneath the grain. The staff offers immense power, but never for free.',
   weight: 2.8,
 });

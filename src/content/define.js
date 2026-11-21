@@ -218,7 +218,7 @@ export function defineItem(id, def) {
     material: def.material || null,
     rarity,
     rarityName,
-    weight: Number(def.weight ?? 1),
+    weight: Number(def.weight ?? 0),
     value: Number(def.value ?? 0),
     description: def.description || def.name,
     identified: def.identified ?? false,

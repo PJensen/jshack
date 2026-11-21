@@ -15,6 +15,7 @@ defineItem('bow_short', {
   damageDice: '1d6',
   range: 8,
   staminaCost: 6,
+  value: 30,
   weight: 1.5,
 });
 
@@ -29,6 +30,7 @@ defineItem('bow_recurve', {
   damageDice: '1d6',
   range: 8,
   staminaCost: 5,
+  value: 35,
   weight: 1.8,
   description: 'A field bow with a tight draw and efficient release.',
 });
@@ -61,6 +63,7 @@ defineItem('bow_mirror', {
   damageDice: '1d6',
   range: 8,
   staminaCost: 6,
+  value: 160,
   weight: 1.8,
   description: 'A polished bow that throws wall-side impacts into nearby hostiles.',
   procPackages: ['ricochetTheology'],
@@ -76,6 +79,7 @@ defineItem('bow_long', {
   bonuses: { attack: 2 },
   damageDice: '1d8',
   range: 10,
+  value: 65,
   weight: 2.0,
   staminaCost: 8,
 });
@@ -91,6 +95,7 @@ defineItem('bow_flaming', {
   damageDice: '1d8',
   range: 9,
   staminaCost: 7,
+  value: 110,
   weight: 1.9,
   description: 'Its string hums like a forge draft. Shots land hot enough to ignite flesh.',
   affixes: ['flaming'],
@@ -111,6 +116,7 @@ defineItem('bow_composite', {
   damageDice: '1d10',
   range: 10,
   staminaCost: 7,
+  value: 240,
   weight: 2.1,
 });
 
@@ -125,6 +131,7 @@ defineItem('bow_shadow', {
   damageDice: '1d10',
   range: 12,
   staminaCost: 6,
+  value: 400,
   weight: 2.1,
 });
 
@@ -139,6 +146,7 @@ defineItem('predator_stakebow', {
   damageDice: '1d6',
   range: 9,
   staminaCost: 7,
+  value: 280,
   weight: 3.0,
   description: 'Each arrow brands the quarry with a hunter\'s mark (stacks to 5, fades in 4 turns). Each mark past the first adds flat bonus damage to every subsequent hit on that target. Five marks and the prey is a kill waiting to happen.',
   procPackages: ['arrowInstinct'],
@@ -155,6 +163,7 @@ defineItem('doom_crossbow', {
   damageDice: '1d8',
   range: 10,
   staminaCost: 8,
+  value: 260,
   weight: 3.0,
   description: 'Each bolt carves a notch into the target\'s fate. Three hits ring the toll — shadow damage detonates and the target seizes for a turn.',
   procPackages: ['tollwarden'],

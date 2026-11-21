@@ -132,6 +132,7 @@ deno task audit:events
 deno task audit:damaged
 deno task audit:died
 deno task audit:loot
+deno task audit:item-economy
 ```
 
 ### Project Health

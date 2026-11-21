@@ -33,6 +33,11 @@ import {
   formatReport as formatValueReport,
 } from "../.agents/skills/agent-tools/scripts/item-value-audit.mjs";
 import {
+  auditItemEconomy,
+  filterItems as filterEconomyItems,
+  formatReport as formatEconomyReport,
+} from "../.agents/skills/agent-tools/scripts/item-economy-audit.mjs";
+import {
   alignmentWordsFor,
   formatReport as formatLootReport,
   generateLootPreview,
@@ -267,6 +272,16 @@ Deno.test("item-value audit separates authored price, model value, loot, and aff
   assert(rolled.issues.includes("randomized-affix-opportunity"));
   assertEquals(filterValueItems(first, { kind: "equipment", issues: true }).length, 2);
   assert(formatValueReport(first, "csv").startsWith("id,name,catalogKind,type,slot,rarity"));
+});
+
+Deno.test("item-economy audit finds missing authored fields without filling them", () => {
+  const items = auditItemEconomy([
+    { id: "priced", name: "Priced", catalogKind: "equipment", type: "equip", value: 40, weight: 2 },
+    { id: "unpriced", name: "Unpriced", catalogKind: "equipment", type: "equip", value: 0, weight: 2 },
+    { id: "unweighted", name: "Unweighted", catalogKind: "magic", type: "scroll", value: 5, weight: 0 },
+  ]);
+  assertEquals(filterEconomyItems(items, { issues: true }).map((item) => item.id), ["unpriced", "unweighted"]);
+  assert(formatEconomyReport(items, "csv").startsWith("id,name,catalogKind,type,slot,rarity,value,weight"));
 });
 
 Deno.test("loot generator is seeded, uses canonical drops, and exposes alignment language", () => {
