@@ -3,8 +3,28 @@ import { createLearnSpellFromIdentityHook, createOpenFlavorBookHook } from '../.
 
 const _learnHook = createLearnSpellFromIdentityHook({ identityPrefix: 'book_', consumeOnSuccess: true });
 
+const SPELLBOOK_VALUES = Object.freeze({
+  book_lightning: 125, book_meteor: 240, book_blastwave: 70, book_frost_nova: 115,
+  book_earthshatter: 85, book_blink: 70, book_frost: 55, book_fear: 110,
+  book_blizzard: 145, book_firestorm: 140, book_heal: 60, book_blind: 105,
+  book_verdant_ward: 115, book_harmony_ward: 120, book_shadow_veil: 125,
+  book_flash_heal: 115, book_renewal: 120, book_sacred_restoration: 230,
+  book_lifebloom: 220, book_smite: 65, book_summon_skeleton: 195,
+  book_resurrection: 280, book_shadow_bolt: 210, book_agony: 120,
+  book_rampage: 125, book_phase_strike: 135, book_scorch: 55,
+  book_homecoming: 65, book_hearthstone: 110, book_iron_flesh: 80,
+  book_bloodthirst: 135, book_cleave: 65, book_rend: 60, book_charge: 70,
+  book_war_cry: 70, book_barkskin: 75, book_thorn_burst: 80,
+  book_entangle: 105, book_quicken: 125, book_poison_blade: 65,
+  book_smoke_bomb: 115, book_mark_of_death: 130, book_drain_life: 135,
+  book_ignite_weapons: 75, book_fireball: 70, book_primal_roar: 120,
+  book_plague_swarm: 225, book_divine_shield: 130, book_purify: 100,
+  book_consecrate: 220, book_magic_missile: 55, book_arcane_barrage: 125,
+  book_void_hole: 250, book_arcane_bolt: 55, book_evocation: 110,
+});
+
 const _book = (id, name, rarity, desc) => defineItem(id, {
-  name, type: 'learn', material: 'paper', rarity, weight: 0.7,
+  name, type: 'learn', material: 'paper', rarity, value: SPELLBOOK_VALUES[id], weight: 0.7,
   description: desc,
   hooks: { on_use: _learnHook },
 });
