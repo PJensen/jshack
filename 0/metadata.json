@@ -1,0 +1,46 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M80BKSKF8Y0JFV15B3CMQM93",
+  "session_id": "01a200ac-eb0f-7aa2-9869-d4b7ecc255fa",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-22T00:48:34.058601355Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "VERSION",
+    "src/display/lighting/engine.js",
+    "tests/lightingFog.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.2-sol",
+  "turn_id": "35250b1591aa",
+  "checkpoint_transcript_start": 198,
+  "transcript_lines_at_start": 198,
+  "compact_transcript_start": 35,
+  "token_usage": {
+    "input_tokens": 28632,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2828544,
+    "output_tokens": 3892,
+    "api_call_count": 17,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 3
+  }
+}
