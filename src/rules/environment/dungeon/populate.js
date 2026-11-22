@@ -2132,23 +2132,6 @@ function applyDeadEndTheme(ctx) {
       if (chestPos) {
         reserved.add(`${chestPos.x},${chestPos.y}`);
         markSolid(chestPos.x, chestPos.y);
-        const ingredientChestDrops = [
-          'food_flour',
-          'food_wild_herbs',
-          'food_mushrooms',
-          'food_wild_berries',
-          'food_raw_fish',
-          'food_carrot',
-          'food_corn',
-          'reagent_ember_root',
-          'reagent_spider_leg',
-          'reagent_beast_claw',
-          'reagent_bone_dust',
-          'fishing_kelp',
-          'water_bucket',
-          'fuel_firewood',
-          'tool_kitchen_knife',
-        ];
         spawns.push({
           x: chestPos.x,
           y: chestPos.y,
@@ -2156,7 +2139,7 @@ function applyDeadEndTheme(ctx) {
           params: {
             depth: floorPlan.depth,
             lootTable: 'chest:basic',
-            fixedDrops: ingredientChestDrops,
+            fixedDrops: ['food_pilgrim_stew'],
           },
         });
       }
