@@ -1,5 +1,0 @@
-when bumping into a secret wall, instead of "needing" to do search, let people that bump into the wall three times discover the door with good messgaes.
-
-ignite weapons does not appear to be working, or, it should have a much higher chance to apply burning; and, it should show the usual flaming weapon "thing" -- like envenomed does.
-
-commit and bump and push when ready
