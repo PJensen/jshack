@@ -3,10 +3,9 @@
   "checkpoint_id": "01M8231JAZR4EWWC3V6QJAM4Z7",
   "session_id": "01a2042b-69e3-78b0-95d5-499f2cefb8bd",
   "strategy": "manual-commit",
-  "created_at": "2026-11-22T16:57:17.179263698Z",
+  "created_at": "2026-11-22T16:57:18.75746381Z",
   "branch": "master",
   "checkpoints_count": 1,
-  "save_step_count": 1,
   "files_touched": [
     "src/display/ui/mobileRadial.js",
     "src/display/ui/spellDock.js"
@@ -14,16 +13,15 @@
   "agent": "Codex",
   "model": "gpt-5.6-luna",
   "turn_id": "385ce95e2bb9",
-  "checkpoint_transcript_start": 93,
-  "transcript_lines_at_start": 93,
-  "compact_transcript_start": 15,
+  "checkpoint_transcript_start": 166,
+  "transcript_lines_at_start": 166,
+  "compact_transcript_start": 26,
   "token_usage": {
-    "input_tokens": 6505,
+    "input_tokens": 433,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 584448,
-    "output_tokens": 2205,
-    "api_call_count": 9,
-    "subagent_tokens_complete": true
+    "cache_read_tokens": 68224,
+    "output_tokens": 188,
+    "api_call_count": 1
   },
   "redaction": {
     "replacements": 2658,
