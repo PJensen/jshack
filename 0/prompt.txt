@@ -1,5 +1,0 @@
-I would tweak flyover to *try* to see as many places as the line allows, almost like a scatterplot "fit"
-
----
-
-approval to bump, commit and push when done
