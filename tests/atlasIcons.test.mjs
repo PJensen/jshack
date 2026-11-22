@@ -4,11 +4,13 @@ import {
   SPELL_ICON_ATLAS,
   STATUS_ICON_ATLAS,
   CORPSE_ICON_ATLAS,
+  CLASS_ICON_ATLAS,
   ICON_ATLASES,
   getIconAtlas,
   resolveIconReference,
   applyAtlasIcon,
 } from "../src/display/ui/atlasIcons.js";
+import classManifest from "../assets/icons/classes/manifest.js";
 
 function stubElement() {
   return {
@@ -40,6 +42,10 @@ Deno.test("icon atlases point at WebP sheets and preserve status fallbacks", () 
   assert(ITEM_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/items/sheet.webp"));
   assert(CORPSE_ICON_ATLAS.sheetUrl.endsWith("/assets/icons/corpses/sheet.webp"));
   assertEquals(ICON_ATLASES.corpses, CORPSE_ICON_ATLAS);
+});
+
+Deno.test("class atlas consumes the manifest-selected sheet", () => {
+  assertStringIncludes(CLASS_ICON_ATLAS.sheetUrl, `/assets/icons/classes/${classManifest.image}`);
 });
 
 Deno.test("item atlas uses explicit 32px cells and valid coordinates", async () => {

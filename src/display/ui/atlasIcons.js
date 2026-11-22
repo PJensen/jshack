@@ -11,7 +11,7 @@ const STATUS_SHEET_URL = new URL("../../../assets/icons/statuses/sheet.webp", im
 const CORPSE_SHEET_URL = new URL("../../../assets/icons/corpses/sheet.webp", import.meta.url).href;
 const UX_SHEET_URL = new URL("../../../assets/icons/ux/sheet.webp", import.meta.url);
 UX_SHEET_URL.searchParams.set("v", String(globalThis.VERSION || "dev"));
-const CLASS_SHEET_URL = new URL("../../../assets/icons/classes/sheet.webp", import.meta.url).href;
+const CLASS_SHEET_URL = new URL(`../../../assets/icons/classes/${classManifest.image}`, import.meta.url).href;
 
 function buildAtlas(manifest, sheetUrl) {
   const entries = new Map();

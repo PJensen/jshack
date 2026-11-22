@@ -2,7 +2,7 @@
 // Color atlas with alpha. The matching tangent-space normal atlas is normal.png.
 // Keys match CLASS_DEFS; coordinates are zero-based pixels.
 // import manifest, { sprites } from "./icons/classes/manifest.js";
-// Load icons/classes/sheet.webp, then draw the chosen sprite:
+// Load icons/classes/sheet.png, then draw the chosen sprite:
 // const s = sprites.warden;
 // ctx.imageSmoothingEnabled = false;
 // ctx.drawImage(image, s.x, s.y, s.width, s.height, x, y, size, size);

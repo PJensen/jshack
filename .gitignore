@@ -67,5 +67,3 @@ assets/icons/**
 !assets/icons/**/sheet.png
 !assets/icons/**/manifest.js
 !assets/icons/classes/normal.png
-!assets/icons/classes/shaman.png
-!assets/icons/classes/shaman-normal.png
