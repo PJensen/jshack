@@ -40,6 +40,12 @@ const UI = Object.freeze({
 
 function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
+const CLASS_LIGHT_AMBIENT = 0.2;
+const CLASS_LIGHT_DIFFUSE = 1.65;
+const CLASS_LIGHT_RADIUS = 66;
+const CLASS_LIGHT_SHADOW_FLOOR = 0.12;
+const CLASS_LIGHT_HIGHLIGHT_CEILING = 1.85;
+
 function loadImage(url) {
   return new Promise((resolve, reject) => {
     if (typeof Image !== 'function') {
@@ -896,11 +902,16 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         const dx = spiritX - x;
         const dy = spiritY - y;
         const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-        const diffuse = Math.max(0, (nx * dx / distance) + (ny * dy / distance) + nz * 0.65);
-        const falloff = Math.max(0, 1 - distance / 76);
-        const brightness = 0.38 + diffuse * falloff * 1.25;
-        image.data[outputIndex] = Math.min(255, state.pixels[sourceIndex] * brightness + 18 * falloff);
-        image.data[outputIndex + 1] = Math.min(255, state.pixels[sourceIndex + 1] * brightness + 8 * falloff);
+        const diffuse = (nx * dx / distance) + (ny * dy / distance) + nz * 0.45;
+        const falloff = Math.pow(Math.max(0, 1 - distance / CLASS_LIGHT_RADIUS), 1.35);
+        const lightResponse = diffuse * falloff;
+        const brightness = Math.max(
+          CLASS_LIGHT_SHADOW_FLOOR,
+          Math.min(CLASS_LIGHT_HIGHLIGHT_CEILING, CLASS_LIGHT_AMBIENT + lightResponse * CLASS_LIGHT_DIFFUSE),
+        );
+        const warmLift = Math.max(0, lightResponse);
+        image.data[outputIndex] = Math.min(255, state.pixels[sourceIndex] * brightness + 20 * warmLift);
+        image.data[outputIndex + 1] = Math.min(255, state.pixels[sourceIndex + 1] * brightness + 9 * warmLift);
         image.data[outputIndex + 2] = Math.min(255, state.pixels[sourceIndex + 2] * brightness);
         image.data[outputIndex + 3] = alpha;
       }

@@ -37,3 +37,7 @@ UV unwrap. For JSHack class emblems, verify with:
 ```bash
 deno test --allow-read tests/classes.test.mjs tests/classDisplayData.test.mjs tests/displayGlyphCoverage.test.mjs
 ```
+
+Use `amplify` when an existing normal atlas has valid structure but the
+consumer's light needs stronger relief. It scales the tangent X/Y response and
+preserves the atlas layout; it does not invent a UV map.

@@ -68,12 +68,35 @@ def normal(args):
     print(f"wrote {args.output} ({output.width}x{output.height}, RGB normal map)")
 
 
+def amplify(args):
+    image = Image.open(args.atlas).convert("RGB")
+    pixels = image.load()
+    for y in range(image.height):
+        for x in range(image.width):
+            r, g, b = pixels[x, y]
+            nx = (r - 128.0) / 127.5
+            ny = (g - 128.0) / 127.5
+            nz = (b - 127.5) / 127.5
+            nx *= args.strength
+            ny *= args.strength
+            length = math.sqrt(nx * nx + ny * ny + nz * nz) or 1.0
+            pixels[x, y] = (
+                round((nx / length * 0.5 + 0.5) * 255),
+                round((ny / length * 0.5 + 0.5) * 255),
+                round((nz / length * 0.5 + 0.5) * 255),
+            )
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    image.save(args.output, format="PNG", optimize=True)
+    print(f"wrote {args.output} ({image.width}x{image.height}, amplified RGB normal atlas)")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("inspect"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--cell-width", type=int, required=True); p.add_argument("--cell-height", type=int, required=True); p.add_argument("--alpha-threshold", type=int, default=8); p.set_defaults(run=inspect)
     p = sub.add_parser("insert"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--sprite", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--x", type=int, required=True); p.add_argument("--y", type=int, required=True); p.add_argument("--fit", type=int, default=0); p.set_defaults(run=insert)
     p = sub.add_parser("normal"); p.add_argument("--sprite", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--strength", type=float, default=3.5); p.set_defaults(run=normal)
+    p = sub.add_parser("amplify"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--strength", type=float, default=1.6); p.set_defaults(run=amplify)
     args = parser.parse_args(); args.run(args)
 
 
