@@ -1,5 +1,12 @@
 import { applyAtlasIcon, resolveIconReference } from './atlasIcons.js';
 
+function styleSpellIcon(element) {
+  Object.assign(element.style, {
+    borderRadius: '50%',
+    overflow: 'hidden',
+  });
+}
+
 export function createMobileSpellRadial(mobileLayoutMq) {
   const MICRO_UX_STYLE_ID = 'jshack-mobile-spell-radial-micro-ux';
   function ensureMicroUxStyles() {
@@ -257,7 +264,8 @@ export function createMobileSpellRadial(mobileLayoutMq) {
 
       const sym = document.createElement('span');
       const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
-      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 30);
+      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 34);
+      styleSpellIcon(sym);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
       item.appendChild(sym);
