@@ -119,16 +119,12 @@ function buildRoute(view) {
   const waypoints = selectWaypoints(view, player);
   const start = findFarCorner(player, waypoints, view.bounds);
   const featured = chooseFeaturedStops(waypoints, start, player);
-  // A single outward-to-home corridor gives the flight a readable sense of
-  // direction. Places still shape the curve, but are never revisited just to
-  // satisfy a stop-tour ordering.
-  const route = [start, ...waypoints.sort((a, b) => (
-    projectAlong(start, player, a) - projectAlong(start, player, b)
-  )), player];
-  for (const point of route) {
-    if (featured.has(point)) point.title = point.mapTitle;
-    else point.title = "";
-  }
+  // Keep the actual flight on one nearly straight A->B segment. Places are
+  // presentation influences only; forcing the camera through every landmark
+  // makes even eased legs read as a series of bounces.
+  const route = [start, player];
+  route.mapPoints = waypoints;
+  route.featured = featured;
   return route;
 }
 
@@ -184,11 +180,15 @@ export function createOpeningFlyover(opts = {}) {
     if (active) return true;
     route = buildRoute(view);
     if (!route) return false;
-    const namedStops = route.filter((point) => point.title).length;
+    const namedStops = 0;
     const travelSeconds = Math.max(DEFAULT_DURATION, 5.4 + namedStops * 0.55);
     duration = Math.max(1, Number(opts.duration) || travelSeconds + namedStops * LANDMARK_HOLD_SECONDS);
     const holdSeconds = Math.min(LANDMARK_HOLD_SECONDS, duration / (Math.max(1, namedStops) * 3));
+    const mapPoints = route.mapPoints;
+    const featured = route.featured;
     route = timeRoute(route, duration, holdSeconds, namedStops);
+    route.mapPoints = mapPoints;
+    route.featured = featured;
     elapsed = 0;
     segment = 0;
     active = true;
@@ -214,10 +214,12 @@ export function createOpeningFlyover(opts = {}) {
     const position = interpolate(from, to, legProgress, legSeconds);
     cam.x = position.x;
     cam.y = position.y;
-    const departure = from.title ? 1 - smoothStep(legProgress * 2) : 0;
-    const approach = to.title ? smoothStep(legProgress * 2 - 1) : 0;
+    const nearestFeatured = [...(route.featured || [])].reduce((best, point) => (
+      Math.min(best, Math.sqrt(distanceSquared(point, cam)))
+    ), Infinity);
+    const placeZoom = smoothStep(clamp01(1 - nearestFeatured / 42));
     const landing = segment === route.length - 2 ? smoothStep(legProgress * 2 - 0.5) : 0;
-    const surveyScale = startScale * (1 + (LANDMARK_ZOOM - 1) * Math.max(departure, approach));
+    const surveyScale = startScale * (1 + (LANDMARK_ZOOM - 1) * placeZoom);
     cam.scale = surveyScale + (endScale - surveyScale) * landing;
     cam.targetX = cam.x;
     cam.targetY = cam.y;
@@ -237,22 +239,24 @@ export function createOpeningFlyover(opts = {}) {
   }
 
   function getMapLabel() {
-    if (!active) return null;
-    const a = route[segment], b = route[segment + 1];
-    const sinceDeparture = Math.max(0, elapsed - a.departure);
-    const untilArrival = b.time - elapsed;
-    const point = sinceDeparture < untilArrival ? a : b;
-    if (!point.title) return null;
-    const distance = Math.min(sinceDeparture, untilArrival);
-    const window = Math.min(0.9, (b.time - a.departure) * 0.45);
-    if (distance >= window) return null;
-    return { title: point.title, x: point.x, y: point.y, alpha: smoothStep((window - distance) / (window * 0.45)) };
+    if (!active || !route?.featured?.size) return null;
+    let nearest = null;
+    let nearestDistance = Infinity;
+    for (const point of route.featured) {
+      const distance = Math.sqrt(distanceSquared(point, camera));
+      if (distance < nearestDistance) {
+        nearest = point;
+        nearestDistance = distance;
+      }
+    }
+    if (!nearest || nearestDistance >= 26) return null;
+    return { title: nearest.mapTitle, x: nearest.x, y: nearest.y, alpha: smoothStep(1 - nearestDistance / 26) };
   }
 
   function getMapLabels() {
     if (!active || !route || !camera) return [];
     const labels = [];
-    for (const point of route) {
+    for (const point of route.mapPoints || []) {
       if (!point.mapTitle) continue;
       const distance = Math.sqrt(distanceSquared(point, camera));
       const alpha = smoothStep(clamp01(1 - distance / 42));

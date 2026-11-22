@@ -38,43 +38,39 @@ Deno.test("opening flyover starts far away and reaches the player", () => {
   assertEquals(completed, true);
 });
 
-Deno.test("opening labels stay pinned and the camera pulls back between stops", () => {
+Deno.test("opening labels stay pinned while the camera follows the flight line", () => {
   const cam = {};
   const view = makeView();
   const flyover = createOpeningFlyover({ startScale: 28, endScale: 70, duration: 6 });
   flyover.start(cam, view);
   assertEquals(flyover.getMapLabel(), null);
   const seen = new Set();
-  let firstPeak = 0;
-  let surveyScale = Infinity;
   let sawFade = false;
   for (let i = 0; i < 120; i++) {
     flyover.update(cam, view, 0.05);
     const label = flyover.getMapLabel();
-    for (const mapLabel of flyover.getMapLabels()) {
+    const mapLabels = flyover.getMapLabels();
+    for (const mapLabel of mapLabels) {
       const waypoint = view.entities.find((entity) => entity.title === mapLabel.title);
       assertEquals({ x: mapLabel.x, y: mapLabel.y }, waypoint.pos);
+      seen.add(mapLabel.title);
+      sawFade ||= mapLabel.alpha > 0 && mapLabel.alpha < 1;
     }
     if (label) {
       seen.add(label.title);
       const waypoint = view.entities.find((entity) => entity.title === label.title);
       assertEquals({ x: label.x, y: label.y }, waypoint.pos);
       sawFade ||= label.alpha > 0 && label.alpha < 1;
-      if (label.title === "Bear Cave") firstPeak = Math.max(firstPeak, cam.scale);
-    } else if (seen.size === 1) {
-      surveyScale = Math.min(surveyScale, cam.scale);
     }
   }
   assertEquals([...seen], ["Bear Cave", "The Miller"]);
   assert(sawFade);
-  assertEquals(firstPeak, 56, "the landmark should fill more of the viewport");
-  assert(surveyScale < 30, "zoom should pull back after the close-up");
   assertEquals(flyover.update(cam, view, 0.05), false);
   assertEquals(flyover.getMapLabel(), null);
   assertEquals(cam.scale, 70);
 });
 
-Deno.test("opening tour uses a few title-card stops while the route stays readable", () => {
+Deno.test("opening tour keeps all place names available without making them stops", () => {
   const cam = {};
   const view = makeView();
   view.entities = Array.from({ length: 8 }, (_, i) => ({
@@ -88,14 +84,13 @@ Deno.test("opening tour uses a few title-card stops while the route stays readab
   const seen = new Set();
   for (let i = 0; i < 300; i++) {
     if (!flyover.update(cam, view, 0.1)) break;
-    const label = flyover.getMapLabel();
-    if (label?.alpha === 1) seen.add(label.title);
+    for (const label of flyover.getMapLabels()) seen.add(label.title);
   }
-  assertEquals(seen.size, 4, "only a few places should become whistlestops");
+  assert(seen.size > 0, "the straight flight should still reveal places");
   assertEquals(flyover.isActive(), false);
 });
 
-Deno.test("opening route follows one outer-corner-to-player corridor", () => {
+Deno.test("opening route stays on one outer-corner-to-player line", () => {
   const coordinates = [[27, 62], [-56, 20], [-71, 49], [26, 4], [5, -46]];
   const view = {
     bounds: { minX: -100, minY: -100, maxX: 100, maxY: 100 },
@@ -108,22 +103,19 @@ Deno.test("opening route follows one outer-corner-to-player corridor", () => {
   const cam = {};
   flyover.start(cam, view);
   const start = [cam.x, cam.y];
-  const visits = new Set();
+  const end = [0, 0];
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  let maxLineError = 0;
   for (let i = 0; i < 200; i++) {
     if (!flyover.update(cam, view, 0.1)) break;
-    const label = flyover.getMapLabel();
-    if (label) visits.add(Number(label.title));
+    maxLineError = Math.max(maxLineError, Math.abs((cam.x - start[0]) * dy - (cam.y - start[1]) * dx));
   }
-  const distance = (order) => {
-    const points = [start, ...order.map((i) => coordinates[i]), [0, 0]];
-    return points.slice(1).reduce((sum, [x, y], i) => sum + Math.hypot(x - points[i][0], y - points[i][1]), 0);
-  };
-  assertEquals(visits.size, 4, "the route should feature only a subset of places");
-  assert(distance([...visits]) < distance([4, 3, 0, 1, 2]));
+  assert(maxLineError < 0.000001, "places must not pull the camera into visible zigzags");
   assertEquals([cam.x, cam.y], [0, 0]);
 });
 
-Deno.test("camera velocity carries through an unnamed waypoint", () => {
+Deno.test("camera does not bounce when passing a nearby place", () => {
   const cam = {};
   const view = {
     player: { id: 1, pos: { x: 0, y: 0 } },
@@ -131,33 +123,32 @@ Deno.test("camera velocity carries through an unnamed waypoint", () => {
   };
   const flyover = createOpeningFlyover({ startScale: 28, endScale: 70, duration: 6 });
   flyover.start(cam, view);
-  const firstLeg = Math.hypot(cam.x - 35, cam.y);
-  const arrival = 6 * (0.3 + 0.4 * firstLeg / (firstLeg + 35));
-  const dt = 0.001;
-  flyover.update(cam, view, arrival - dt);
-  const before = cam.x;
-  flyover.update(cam, view, dt);
-  const at = cam.x;
-  flyover.update(cam, view, dt);
-  const after = cam.x;
-  assert(Math.abs(at - 35) < 0.00001);
-  assert(at - before < -dt && after - at < -dt, "camera should keep moving through arrival");
-  assert(Math.abs((at - before) - (after - at)) < dt * 0.1);
+  const positions = [];
+  for (let i = 0; i < 30; i++) {
+    flyover.update(cam, view, 0.1);
+    positions.push(cam.x);
+  }
+  const direction = Math.sign(positions.at(-1) - positions[0]);
+  for (let i = 1; i < positions.length; i++) {
+    assert(direction * (positions[i] - positions[i - 1]) >= -0.000001, "camera should not reverse over a place");
+  }
 });
 
-Deno.test("named stops hold the close-up and pinned label for a full second", () => {
+Deno.test("nearby place labels fade without stopping the flight", () => {
   const cam = {};
   const view = makeView();
   const flyover = createOpeningFlyover({ startScale: 28, endScale: 70 });
   flyover.start(cam, view);
-  let heldFrames = 0;
+  let sawLabel = false;
   for (let i = 0; i < 300; i++) {
     if (!flyover.update(cam, view, 0.05)) break;
-    if (cam.x !== 42 || cam.y !== 18 || cam.scale !== 56) continue;
-    assertEquals(flyover.getMapLabel(), { title: "Bear Cave", x: 42, y: 18, alpha: 1 });
-    heldFrames++;
+    for (const label of flyover.getMapLabels()) {
+      if (label.title !== "Bear Cave") continue;
+      assertEquals({ x: label.x, y: label.y }, { x: 42, y: 18 });
+      sawLabel = true;
+    }
   }
-  assert(heldFrames >= 20, "the close-up should hold for at least one second");
+  assert(sawLabel, "the flight should pass close enough to reveal the place");
   assertEquals(cam.scale, 70);
 });
 
