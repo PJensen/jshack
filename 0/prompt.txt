@@ -1,0 +1,23 @@
+I just realized rootbound_grotto is not appearing in game! why is that?!
+
+---
+
+thx,  consecration audio is playing on every single tick! I''ll try and find a better audio file too -- but fix the repeated playing of the same file for every tick please.
+
+---
+
+I think getting electrocuted is kind of the same with it's pulses -- no commit on this work, I'll have a bigger model review it.
+
+---
+
+450 ms -- that's not the point, I'm talking about the shock trap specifically -- undo the electrical change you made, and re-approach thinking about the trap please.
+
+---
+
+can't you form some kind of abstraction for playSoundOnce tied to traps and spells or hazzards? ohh and consecreate now damages me -- sad.
+
+yikes.
+
+---
+
+and electric traps?
