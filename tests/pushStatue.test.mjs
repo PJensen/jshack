@@ -237,7 +237,7 @@ Deno.test("pushStatue: entity without Pushable tag is not pushed", () => {
 
 Deno.test("pushStatue: push-entity is in expected position in resolver list", () => {
   const names = BUMP_RESOLVERS.map(r => r.name);
-  assertEquals(names, ["hostile-melee", "pet-swap", "npc-interact", "enemy-door-open", "object-interact", "push-entity", "tile-reaction"]);
+  assertEquals(names, ["hostile-melee", "pet-swap", "npc-interact", "enemy-door-open", "secret-door-bump", "object-interact", "push-entity", "tile-reaction"]);
 });
 
 // ── statue bridges lava ─────────────────────────────────────────────
