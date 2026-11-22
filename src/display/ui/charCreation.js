@@ -40,10 +40,11 @@ const UI = Object.freeze({
 
 function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
-const CLASS_LIGHT_AMBIENT = 0.2;
-const CLASS_LIGHT_DIFFUSE = 1.65;
-const CLASS_LIGHT_RADIUS = 66;
-const CLASS_LIGHT_SHADOW_FLOOR = 0.12;
+const CLASS_LIGHT_AMBIENT = 0.14;
+const CLASS_LIGHT_DIFFUSE = 2.05;
+const CLASS_LIGHT_RADIUS = 58;
+const CLASS_LIGHT_SHADOW_STRENGTH = 0.8;
+const CLASS_LIGHT_SHADOW_FLOOR = 0.04;
 const CLASS_LIGHT_HIGHLIGHT_CEILING = 1.85;
 const CLASS_ICON_CANVAS_SIZE = 176;
 const CLASS_ICON_ART_SIZE = 132;
@@ -913,9 +914,13 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         const diffuse = (nx * dx / distance) + (ny * dy / distance) + nz * 0.45;
         const falloff = Math.pow(Math.max(0, 1 - distance / CLASS_LIGHT_RADIUS), 1.35);
         const lightResponse = diffuse * falloff;
+        const shadow = Math.min(1, Math.max(0, -lightResponse) * CLASS_LIGHT_SHADOW_STRENGTH);
         const brightness = Math.max(
           CLASS_LIGHT_SHADOW_FLOOR,
-          Math.min(CLASS_LIGHT_HIGHLIGHT_CEILING, CLASS_LIGHT_AMBIENT + lightResponse * CLASS_LIGHT_DIFFUSE),
+          Math.min(
+            CLASS_LIGHT_HIGHLIGHT_CEILING,
+            CLASS_LIGHT_AMBIENT + Math.max(0, lightResponse) * CLASS_LIGHT_DIFFUSE - shadow,
+          ),
         );
         const warmLift = Math.max(0, lightResponse);
         image.data[outputIndex] = Math.min(255, state.pixels[sourceIndex] * brightness + 20 * warmLift);

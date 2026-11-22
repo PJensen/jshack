@@ -36,3 +36,11 @@ Deno.test("character creation hides hard mode and no-gore", async () => {
   assertStringIncludes(source, "display: 'none', alignItems: 'center', gap: '8px'");
   assertStringIncludes(source, "const disableGore = !!goreInput.checked;");
 });
+
+Deno.test("character creation uses dramatic shadow strength for class icons", async () => {
+  const source = await Deno.readTextFile("src/display/ui/charCreation.js");
+
+  assertStringIncludes(source, "const CLASS_LIGHT_SHADOW_STRENGTH = 0.8;");
+  assertStringIncludes(source, "const CLASS_LIGHT_SHADOW_FLOOR = 0.04;");
+  assertStringIncludes(source, "Math.max(0, -lightResponse) * CLASS_LIGHT_SHADOW_STRENGTH");
+});
