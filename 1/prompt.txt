@@ -1,0 +1,15 @@
+on the flyover, I would pin the place names to the map, and just flyover from some random outer order, and to the spawn location, being somewhat influenced by places as regards the path, but I would make it much more like a bezier path to the location, that way it's a cinematic flight instead of hopping all over the place.
+
+
+
+it is expected that you'll see some places, but we need not make every place a whistlestop,&#x20;
+
+
+
+this will have two effects
+
+
+
+1. shorten the flight time
+2. give a much more solid sense of place
+3. make it easier to understand relative position of things
