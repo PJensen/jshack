@@ -45,6 +45,10 @@ const CLASS_LIGHT_DIFFUSE = 1.65;
 const CLASS_LIGHT_RADIUS = 66;
 const CLASS_LIGHT_SHADOW_FLOOR = 0.12;
 const CLASS_LIGHT_HIGHLIGHT_CEILING = 1.85;
+const CLASS_ICON_CANVAS_SIZE = 176;
+const CLASS_ICON_ART_SIZE = 132;
+const CLASS_ICON_ART_OFFSET = 22;
+const CLASS_ICON_SOURCE_SCALE = 256 / CLASS_ICON_ART_SIZE;
 
 function loadImage(url) {
   return new Promise((resolve, reject) => {
@@ -73,12 +77,12 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   let classIconRafId = null;
   let spiritSwapAnim = null;
   let classIconPauseUntil = 0;
-  let spiritX = 42;
-  let spiritY = 42;
+  let spiritX = 66;
+  let spiritY = 66;
   let spiritVx = 0;
   let spiritVy = 0;
-  let spiritTargetX = 42;
-  let spiritTargetY = 42;
+  let spiritTargetX = 66;
+  let spiritTargetY = 66;
   let spiritLastNow = 0;
   let spiritReady = false;
   const classIconStates = [];
@@ -716,7 +720,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     // changing classes must never reset the spirit's chosen position.
     classIconStates.push({
       cls, element: icon, canvas: null, pixels: null, normals: null,
-      x: 42, y: 42, vx: 0, vy: 0, targetX: 42, targetY: 42, lastNow: 0,
+      x: 66, y: 66, vx: 0, vy: 0, targetX: 66, targetY: 66, lastNow: 0,
     });
 
     const name = document.createElement('div');
@@ -752,8 +756,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
   scrollViewport.appendChild(scrollTrack);
   const spiritOverlay = document.createElement('canvas');
-  spiritOverlay.width = 128;
-  spiritOverlay.height = 128;
+  spiritOverlay.width = CLASS_ICON_CANVAS_SIZE;
+  spiritOverlay.height = CLASS_ICON_CANVAS_SIZE;
   Object.assign(spiritOverlay.style, {
     position: 'absolute', top: '8px', left: '50%',
     width: '176px', height: '176px',
@@ -830,8 +834,8 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     source.height = 256;
     const sourceCtx = source.getContext('2d', { willReadFrequently: true });
     const output = document.createElement('canvas');
-    output.width = 128;
-    output.height = 128;
+    output.width = CLASS_ICON_CANVAS_SIZE;
+    output.height = CLASS_ICON_CANVAS_SIZE;
     const outputCtx = output.getContext('2d');
     if (!sourceCtx || !outputCtx) return;
 
@@ -850,22 +854,24 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       spiritReady = true;
     }
     state.element.replaceChildren(output);
-    Object.assign(output.style, { width: '176px', height: '176px', imageRendering: 'pixelated' });
+    Object.assign(output.style, { width: '176px', height: '176px', imageRendering: 'auto' });
   }
 
   function chooseSpiritTarget(pixels) {
     for (let attempt = 0; attempt < 24; attempt++) {
-      const x = 5 + Math.floor(Math.random() * 74);
-      const y = 5 + Math.floor(Math.random() * 74);
-      const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
+      const x = 5 + Math.floor(Math.random() * (CLASS_ICON_ART_SIZE - 10));
+      const y = 5 + Math.floor(Math.random() * (CLASS_ICON_ART_SIZE - 10));
+      const sourceX = Math.min(255, Math.floor(x * CLASS_ICON_SOURCE_SCALE));
+      const sourceY = Math.min(255, Math.floor(y * CLASS_ICON_SOURCE_SCALE));
+      const sourceIndex = (sourceY * 256 + sourceX) * 4;
       if (pixels?.[sourceIndex + 3] > 12) {
         spiritTargetX = x;
         spiritTargetY = y;
         return;
       }
     }
-    spiritTargetX = 42;
-    spiritTargetY = 42;
+    spiritTargetX = CLASS_ICON_ART_SIZE / 2;
+    spiritTargetY = CLASS_ICON_ART_SIZE / 2;
   }
 
   function updateSpiritLight(state, now) {
@@ -879,21 +885,23 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     spiritVy += (dy / distance) * dt * 20;
     spiritVx *= Math.pow(0.12, dt);
     spiritVy *= Math.pow(0.12, dt);
-    spiritX = Math.max(4, Math.min(80, spiritX + spiritVx * dt));
-    spiritY = Math.max(4, Math.min(80, spiritY + spiritVy * dt));
+    spiritX = Math.max(4, Math.min(CLASS_ICON_ART_SIZE - 4, spiritX + spiritVx * dt));
+    spiritY = Math.max(4, Math.min(CLASS_ICON_ART_SIZE - 4, spiritY + spiritVy * dt));
     if (distance < 7 || Math.random() < dt * 0.08) chooseSpiritTarget(state.pixels);
   }
 
   function renderClassIcon(state) {
     if (!state.canvas || !state.pixels || !state.normals) return;
-    const image = state.ctx.createImageData(84, 84);
-    const artOffset = 22;
+    const image = state.ctx.createImageData(CLASS_ICON_ART_SIZE, CLASS_ICON_ART_SIZE);
+    const artOffset = CLASS_ICON_ART_OFFSET;
     const lightX = artOffset + spiritX;
     const lightY = artOffset + spiritY;
-    for (let y = 0; y < 84; y++) {
-      for (let x = 0; x < 84; x++) {
-        const sourceIndex = ((y * 3) * 256 + (x * 3)) * 4;
-        const outputIndex = (y * 84 + x) * 4;
+    for (let y = 0; y < CLASS_ICON_ART_SIZE; y++) {
+      const sourceY = Math.min(255, Math.floor(y * CLASS_ICON_SOURCE_SCALE));
+      for (let x = 0; x < CLASS_ICON_ART_SIZE; x++) {
+        const sourceX = Math.min(255, Math.floor(x * CLASS_ICON_SOURCE_SCALE));
+        const sourceIndex = (sourceY * 256 + sourceX) * 4;
+        const outputIndex = (y * CLASS_ICON_ART_SIZE + x) * 4;
         const alpha = state.pixels[sourceIndex + 3];
         if (alpha === 0) continue;
         const nx = state.normals[sourceIndex] / 127.5 - 1;
@@ -916,7 +924,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
         image.data[outputIndex + 3] = alpha;
       }
     }
-    state.ctx.clearRect(0, 0, 128, 128);
+    state.ctx.clearRect(0, 0, CLASS_ICON_CANVAS_SIZE, CLASS_ICON_CANVAS_SIZE);
     state.ctx.putImageData(image, artOffset, artOffset);
 
     const progress = clamp01(entropyPool.length / ENTROPY_TARGET);
@@ -935,14 +943,14 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       state.ctx.lineWidth = isLit ? 2.5 : 1;
       state.ctx.lineCap = 'round';
       state.ctx.beginPath();
-      state.ctx.arc(64, 64, 53, arcStart, arcEnd);
+      state.ctx.arc(CLASS_ICON_CANVAS_SIZE / 2, CLASS_ICON_CANVAS_SIZE / 2, 73, arcStart, arcEnd);
       state.ctx.stroke();
     }
     if (spiritFlash > 0) {
       state.ctx.strokeStyle = `hsla(${runeHue}, 90%, 84%, ${spiritFlash * 0.7})`;
       state.ctx.lineWidth = 5;
       state.ctx.beginPath();
-      state.ctx.arc(64, 64, 53, runeRotation, runeRotation + Math.PI * 1.8);
+      state.ctx.arc(CLASS_ICON_CANVAS_SIZE / 2, CLASS_ICON_CANVAS_SIZE / 2, 73, runeRotation, runeRotation + Math.PI * 1.8);
       state.ctx.stroke();
     }
     state.ctx.restore();
@@ -950,9 +958,9 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
 
   function renderSpiritOverlay() {
     if (!spiritOverlayCtx) return;
-    spiritOverlayCtx.clearRect(0, 0, 128, 128);
-    const lightX = 22 + spiritX;
-    const lightY = 22 + spiritY;
+    spiritOverlayCtx.clearRect(0, 0, CLASS_ICON_CANVAS_SIZE, CLASS_ICON_CANVAS_SIZE);
+    const lightX = CLASS_ICON_ART_OFFSET + spiritX;
+    const lightY = CLASS_ICON_ART_OFFSET + spiritY;
     const flash = 1 + spiritFlash * 2.8;
     const glow = spiritOverlayCtx.createRadialGradient(lightX, lightY, 0, lightX, lightY, 16 + spiritFlash * 10);
     glow.addColorStop(0, `rgba(255, 238, 177, ${Math.min(1, 0.95 * flash)})`);
@@ -961,7 +969,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     glow.addColorStop(1, 'rgba(255, 103, 32, 0)');
     spiritOverlayCtx.globalCompositeOperation = 'lighter';
     spiritOverlayCtx.fillStyle = glow;
-    spiritOverlayCtx.fillRect(0, 0, 128, 128);
+    spiritOverlayCtx.fillRect(0, 0, CLASS_ICON_CANVAS_SIZE, CLASS_ICON_CANVAS_SIZE);
 
   }
 
