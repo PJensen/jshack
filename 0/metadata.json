@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M8231JAZR4EWWC3V6QJAM4Z7",
+  "session_id": "01a2042b-69e3-78b0-95d5-499f2cefb8bd",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-22T16:57:17.179263698Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "src/display/ui/mobileRadial.js",
+    "src/display/ui/spellDock.js"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "385ce95e2bb9",
+  "checkpoint_transcript_start": 93,
+  "transcript_lines_at_start": 93,
+  "compact_transcript_start": 15,
+  "token_usage": {
+    "input_tokens": 6505,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 584448,
+    "output_tokens": 2205,
+    "api_call_count": 9,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 2658,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 2658,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 2
+  }
+}

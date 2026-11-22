@@ -1,0 +1,7 @@
+huh? it's already a circle -- all I was saying is that the image behind it should be clipped by the circle, and the same width as the circle diameter 1:1 that way it's circlular -- for free.
+
+your version has a circular border
+
+---
+
+version bump, commit and push -- you have my approval
