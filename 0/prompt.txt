@@ -1,0 +1,1 @@
+disable hard mode as the default. lets hide it for now
