@@ -1,0 +1,47 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M82069VH55JRW7NWJQBZHYAQ",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".gitignore",
+    "VERSION",
+    "assets/icons/classes/manifest.js",
+    "assets/icons/classes/normal.png",
+    "assets/icons/classes/sheet.png",
+    "src/display/ui/atlasIcons.js",
+    "tests/atlasIcons.test.mjs"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 25141,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6010880,
+    "output_tokens": 7406,
+    "api_call_count": 28,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 125162,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 125162,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}

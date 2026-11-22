@@ -1,0 +1,48 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M82069VH55JRW7NWJQBZHYAQ",
+  "session_id": "01a203db-4a88-7a03-abfa-3d2adbb89ea9",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-22T16:07:39.469096108Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 2,
+  "files_touched": [
+    ".gitignore",
+    "VERSION",
+    "assets/icons/classes/manifest.js",
+    "assets/icons/classes/normal.png",
+    "assets/icons/classes/sheet.png",
+    "src/display/ui/atlasIcons.js",
+    "tests/atlasIcons.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "e9d846da9475",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 25141,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6010880,
+    "output_tokens": 7406,
+    "api_call_count": 28,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 125162,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 125162,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 5
+  }
+}

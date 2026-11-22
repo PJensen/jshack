@@ -1,0 +1,30 @@
+do you know about skills and component tools lol?
+
+---
+
+just tossing shit in docs isn't the way
+
+---
+
+1. fix the skill v ocs issue above
+2. make the UV map MUCH more reactive
+
+---
+
+why do I not see the code edits -- the skill tools should be here somewhere along with the SKILL.md with a scripts folder under it -- ALSO -- I meant to change the character sheet to make the light itself more reactive to the UV map. ANYWAY!
+
+YOUR CHANGES ABOVE DO NOTHING -- the thing operates on the sheet not individual icons.
+
+---
+
+1. ignore everything in that `classes` subtree that isn't sheet, normal or manifest -- that should already be the case.
+2. the shaman icon is too small next to it's larger counterparts
+3. I do not see the skill.md or `scripts` folder for the skill you supposedly made.
+
+---
+
+last note: I would not have two copies of the same skill floating around, I could cannonize the source controlled version, and harmonize towards one authorative copy that *is* source controlled.
+
+---
+
+version bump please when done
