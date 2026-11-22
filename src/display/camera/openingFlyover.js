@@ -6,6 +6,7 @@ const LANDMARK_HOLD_SECONDS = 1.1;
 const LANDMARK_ZOOM = 2;
 const NPC_STOP_SPACING = 8;
 const MAX_FEATURED_STOPS = 4;
+const PLACE_CORRIDOR_RADIUS = 52;
 
 function clamp01(value) {
   return Math.max(0, Math.min(1, Number(value) || 0));
@@ -20,6 +21,15 @@ function distanceSquared(a, b) {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
   return dx * dx + dy * dy;
+}
+
+function distanceToSegmentSquared(point, start, end) {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0) return distanceSquared(point, start);
+  const t = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+  return distanceSquared(point, { x: start.x + dx * t, y: start.y + dy * t });
 }
 
 function validPosition(pos) {
@@ -90,9 +100,16 @@ function findFarCorner(player, points, worldBounds) {
       { x: worldBounds.maxX - inset, y: worldBounds.minY + inset },
       { x: worldBounds.maxX - inset, y: worldBounds.maxY - inset },
     ];
-    return corners.reduce((best, point) => (
-      distanceSquared(point, player) > distanceSquared(best, player) ? point : best
-    ));
+    return corners.reduce((best, point) => {
+      const pointScore = points.reduce((score, place) => (
+        score + (distanceToSegmentSquared(place, point, player) <= PLACE_CORRIDOR_RADIUS ** 2 ? 1 : 0)
+      ), 0);
+      const bestScore = points.reduce((score, place) => (
+        score + (distanceToSegmentSquared(place, best, player) <= PLACE_CORRIDOR_RADIUS ** 2 ? 1 : 0)
+      ), 0);
+      if (pointScore !== bestScore) return pointScore > bestScore ? point : best;
+      return distanceSquared(point, player) > distanceSquared(best, player) ? point : best;
+    });
   }
   const all = [player, ...points];
   const bounds = all.reduce((result, point) => ({
@@ -108,9 +125,16 @@ function findFarCorner(player, points, worldBounds) {
     { x: bounds.maxX + pad, y: bounds.minY - pad },
     { x: bounds.maxX + pad, y: bounds.maxY + pad },
   ];
-  return corners.reduce((best, point) => (
-    distanceSquared(point, player) > distanceSquared(best, player) ? point : best
-  ));
+  return corners.reduce((best, point) => {
+    const pointScore = points.reduce((score, place) => (
+      score + (distanceToSegmentSquared(place, point, player) <= PLACE_CORRIDOR_RADIUS ** 2 ? 1 : 0)
+    ), 0);
+    const bestScore = points.reduce((score, place) => (
+      score + (distanceToSegmentSquared(place, best, player) <= PLACE_CORRIDOR_RADIUS ** 2 ? 1 : 0)
+    ), 0);
+    if (pointScore !== bestScore) return pointScore > bestScore ? point : best;
+    return distanceSquared(point, player) > distanceSquared(best, player) ? point : best;
+  });
 }
 
 function buildRoute(view) {
@@ -217,7 +241,7 @@ export function createOpeningFlyover(opts = {}) {
     const nearestFeatured = [...(route.featured || [])].reduce((best, point) => (
       Math.min(best, Math.sqrt(distanceSquared(point, cam)))
     ), Infinity);
-    const placeZoom = smoothStep(clamp01(1 - nearestFeatured / 42));
+    const placeZoom = smoothStep(clamp01(1 - nearestFeatured / PLACE_CORRIDOR_RADIUS));
     const landing = segment === route.length - 2 ? smoothStep(legProgress * 2 - 0.5) : 0;
     const surveyScale = startScale * (1 + (LANDMARK_ZOOM - 1) * placeZoom);
     cam.scale = surveyScale + (endScale - surveyScale) * landing;
@@ -249,8 +273,8 @@ export function createOpeningFlyover(opts = {}) {
         nearestDistance = distance;
       }
     }
-    if (!nearest || nearestDistance >= 26) return null;
-    return { title: nearest.mapTitle, x: nearest.x, y: nearest.y, alpha: smoothStep(1 - nearestDistance / 26) };
+    if (!nearest || nearestDistance >= PLACE_CORRIDOR_RADIUS) return null;
+    return { title: nearest.mapTitle, x: nearest.x, y: nearest.y, alpha: smoothStep(1 - nearestDistance / PLACE_CORRIDOR_RADIUS) };
   }
 
   function getMapLabels() {
@@ -259,7 +283,7 @@ export function createOpeningFlyover(opts = {}) {
     for (const point of route.mapPoints || []) {
       if (!point.mapTitle) continue;
       const distance = Math.sqrt(distanceSquared(point, camera));
-      const alpha = smoothStep(clamp01(1 - distance / 42));
+      const alpha = smoothStep(clamp01(1 - distance / PLACE_CORRIDOR_RADIUS));
       if (alpha > 0) labels.push({ title: point.mapTitle, x: point.x, y: point.y, alpha });
     }
     return labels;
