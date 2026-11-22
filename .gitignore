@@ -64,5 +64,8 @@ package.json
 assets/icons/**
 !assets/icons/**/
 !assets/icons/**/sheet.webp
+!assets/icons/**/sheet.png
 !assets/icons/**/manifest.js
 !assets/icons/classes/normal.png
+!assets/icons/classes/shaman.png
+!assets/icons/classes/shaman-normal.png
