@@ -1,0 +1,9 @@
+can you find any speedup on the character creation sequence, game start.
+
+---
+
+Any other engine or render improvements?
+
+---
+
+approved and approved -- if you think they're "safe"
