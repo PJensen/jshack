@@ -1,0 +1,5 @@
+Can you look for possible major perf imrpovement, somewhere, anywhere, rendering, engine, anywhere at all.
+
+---
+
+Can you have a look at the above performance improvements, see if you can implement one or two without breaking the game -- all tests currently passing :-)
