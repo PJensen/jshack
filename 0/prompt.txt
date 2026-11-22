@@ -1,0 +1,3 @@
+these spell icons
+
+are square, I would make it so the circle is filled with the spell icon, not simpley a square inside a circle -- feel me?
