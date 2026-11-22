@@ -5,10 +5,10 @@ import { DEITY_DEFS } from '../src/rules/data/deities.js';
 import { getCatalogItem } from '../src/rules/data/itemCatalog.js';
 import { getSpell } from "../src/rules/data/spells.js";
 
-Deno.test("CLASS_DEFS has exactly 11 classes", () => {
+Deno.test("CLASS_DEFS has exactly 12 classes", () => {
   const ids = listClassIds();
-  assertEquals(ids.length, 11);
-  for (const id of ['druid', 'warden', 'outlaw', 'cleric', 'archeologist', 'warlock', 'necromancer', 'mage', 'mireborn', 'pilgrim', 'valkyrie']) {
+  assertEquals(ids.length, 12);
+  for (const id of ['druid', 'shaman', 'warden', 'outlaw', 'cleric', 'archeologist', 'warlock', 'necromancer', 'mage', 'mireborn', 'pilgrim', 'valkyrie']) {
     assert(ids.includes(id), `missing class: ${id}`);
   }
 });
@@ -33,6 +33,20 @@ Deno.test("getClass returns null for unknown id", () => {
 
 Deno.test("druid maps to gaia", () => {
   assertEquals(getClass('druid').deityId, 'gaia');
+});
+
+Deno.test("shaman is a Gaia spirit-warrior with nature starter spells", () => {
+  const shaman = getClass('shaman');
+  assert(shaman, 'shaman should be a class');
+  assertEquals(shaman.deityId, 'gaia');
+  assertEquals(shaman.icon, '🪶');
+  assert(shaman.description.includes('spirit-warrior'));
+  assertEquals(shaman.equipment.weapon, 'staff_oak');
+  assertEquals(shaman.equipment.gloves, 'focus_wraps');
+  assert(shaman.startingSpells.includes('primal_roar'));
+  assert(shaman.startingSpells.includes('plague_swarm'));
+  assertEquals(shaman.startingSpells.length, 2);
+  assert(shaman.inventoryItems.some((entry) => entry.itemId === 'potion_anti_venom'));
 });
 
 Deno.test("warden maps to molkhar", () => {

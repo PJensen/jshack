@@ -77,6 +77,44 @@ export const CLASS_DEFS = {
     ],
   },
 
+  shaman: {
+    id: 'shaman',
+    name: 'Shaman',
+    icon: '🪶',
+    description: 'A spirit-warrior who calls on the wild to harden the body and unleash the swarm.',
+    deityId: 'gaia',
+    stats: {
+      maxHp: 44,
+      maxMana: 58,
+      manaRegen: 0.12,
+      maxStamina: 95,
+      staminaRegen: 2.85,
+      intelligence: 12,
+      dexterity: 12,
+      visionRange: 6,
+    },
+    equipment: {
+      weapon: 'staff_oak',
+      armor: 'leather_armor',
+      offhand: null,
+      gloves: 'focus_wraps',
+      belt: 'travelers_belt',
+      feet: 'sturdy_boots',
+    },
+    inventoryItems: [
+      { itemId: 'hearthstone', count: 1 },
+      { itemId: 'potion_health', count: 2 },
+      { itemId: 'potion_mana', count: 3 },
+      { itemId: 'potion_anti_venom', count: 1 },
+      { itemId: 'lockpick', count: 5 },
+      { itemId: 'scroll_identify', count: 4 },
+    ],
+    startingSpells: [
+      'primal_roar',    // 🦁 spirit-fueled battle fury and stagger pulse
+      'plague_swarm',   // 🐝 nature magic that jumps between hostile targets
+    ],
+  },
+
   outlaw: {
     id: 'outlaw',
     name: 'Outlaw',

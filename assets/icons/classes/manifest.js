@@ -32,6 +32,14 @@ const manifest = {
       "column": 1,
       "row": 0
     },
+    "shaman": {
+      "x": 256,
+      "y": 0,
+      "width": 256,
+      "height": 256,
+      "column": 1,
+      "row": 0
+    },
     "outlaw": {
       "x": 512,
       "y": 0,

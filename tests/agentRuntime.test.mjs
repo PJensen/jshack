@@ -56,6 +56,23 @@ Deno.test("necromancer runtime starts with its class loadout", async () => {
   assert(brain.learnedSpellIds.includes("resurrection"));
 });
 
+Deno.test("shaman runtime starts with its identity, devotion, and spirit spells", async () => {
+  const runtime = await createGameRuntime({ seed: 0x5A7A11, classId: "shaman", startDepth: 1 });
+  const player = runtime.getPlayer();
+  assertExists(player);
+
+  const brain = runtime.world.get(player.id, Brain);
+  const devotion = runtime.world.get(player.id, Devotion);
+  const identity = runtime.world.get(player.id, NamedIdentity);
+
+  assertEquals(identity.identity, "player_shaman");
+  assertEquals(runtime.view().entities.find((entity) => entity.id === player.id)?.kind, "player_shaman");
+  assert(devotion.pantheon, "shaman should participate in the pantheon devotion model");
+  assert(typeof devotion.deityId === "string" && devotion.deityId.length > 0);
+  assert(brain.learnedSpellIds.includes("primal_roar"));
+  assert(brain.learnedSpellIds.includes("plague_swarm"));
+});
+
 Deno.test("class loadout repairs an existing player's class identity", () => {
   const world = createConfiguredWorld(0xC0FFEE);
   const player = ensurePlayerSpawned(world, { x: 0, y: 0 });

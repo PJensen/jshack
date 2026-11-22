@@ -30,6 +30,7 @@ export const basePalette = {
   // Actors
   player:         { glyph: "@", fg: "#e8f7ff", glow: "#6cf" },
   player_druid:   { glyph: "@", fg: "#7ecc5a", glow: "#4a9030" },
+  player_shaman:  { glyph: "@", fg: "#d6b35a", glow: "#98752f" },
   player_warden:  { glyph: "@", fg: "#e85050", glow: "#a03030" },
   player_outlaw:  { glyph: "@", fg: "#d4a0ff", glow: "#9060cc" },
   player_cleric:  { glyph: "@", fg: "#ffe066", glow: "#cca830" },
