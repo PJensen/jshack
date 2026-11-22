@@ -1,7 +1,6 @@
 // JS Hack class emblems — icons/classes/manifest.js
 // Color atlas with alpha. No normal map is included.
 // Keys match CLASS_DEFS; coordinates are zero-based pixels.
-// Final cell (3, 2) is empty.
 // import manifest, { sprites } from "./icons/classes/manifest.js";
 // Load icons/classes/sheet.webp, then draw the chosen sprite:
 // const s = sprites.warden;
@@ -33,12 +32,12 @@ const manifest = {
       "row": 0
     },
     "shaman": {
-      "x": 256,
-      "y": 0,
+      "x": 768,
+      "y": 512,
       "width": 256,
       "height": 256,
-      "column": 1,
-      "row": 0
+      "column": 3,
+      "row": 2
     },
     "outlaw": {
       "x": 512,
