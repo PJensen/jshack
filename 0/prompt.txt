@@ -1,0 +1,17 @@
+/goal you have 10 minutes to make fishing even more awesome
+
+---
+
+stas it sorry
+
+---
+
+stash it
+
+---
+
+we suddenly show way old item pickup tooltips, it's not supposed to work this way -- like at all.
+
+---
+
+it came in sometime today
