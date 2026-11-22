@@ -1,0 +1,29 @@
+what are these changes about please
+
+---
+
+I dont remember asking or them specificaly -- curious what I was working on -- I cannot recall
+
+---
+
+ahhh -- 3PM auto unit test fixer -- can you confirm this shit doesn't break anything and that any changes to non-test code are legitimate fixes please
+
+---
+
+also -- I would update the auto-test fixer to automatically commit and push this stuff if at all possible.
+
+---
+
+right -- be SUPER careful when touching game code -- I would fix test, but really hesitate to touch core code -- in fact, make sure test-auto fixer is really aligned to that concept.
+
+---
+
+we good?
+
+---
+
+what is populate.js
+RiftState
+transitionWiring
+
+changes about -- actual fixes?

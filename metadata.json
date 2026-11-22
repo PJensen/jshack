@@ -3,7 +3,7 @@
   "checkpoint_id": "01M80AN87M6R8X2X32QJZ1Z1GD",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 5,
   "files_touched": [
     "VERSION",
     "src/main/ui/inventoryDataProvider.js",
@@ -27,14 +27,21 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 316200,
+    "input_tokens": 570539,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 27003520,
-    "output_tokens": 34964,
-    "api_call_count": 207,
+    "cache_read_tokens": 32747008,
+    "output_tokens": 46897,
+    "api_call_count": 272,
     "subagent_tokens_complete": true
   },
   "redaction": {
