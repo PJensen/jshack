@@ -705,7 +705,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
     const icon = document.createElement('div');
     Object.assign(icon.style, {
       display: 'flex', justifyContent: 'center', alignItems: 'center',
-      width: '100%', height: '128px',
+      width: '100%', height: '176px',
       fontSize: '48px', lineHeight: '1.1',
       marginBottom: '6px',
       filter: 'saturate(0.85) brightness(0.92)',
@@ -756,7 +756,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   spiritOverlay.height = 128;
   Object.assign(spiritOverlay.style, {
     position: 'absolute', top: '8px', left: '50%',
-    width: '128px', height: '128px',
+    width: '176px', height: '176px',
     transform: 'translateX(-50%)',
     pointerEvents: 'none', zIndex: '3',
   });
@@ -850,7 +850,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
       spiritReady = true;
     }
     state.element.replaceChildren(output);
-    Object.assign(output.style, { width: '128px', height: '128px', imageRendering: 'pixelated' });
+    Object.assign(output.style, { width: '176px', height: '176px', imageRendering: 'pixelated' });
   }
 
   function chooseSpiritTarget(pixels) {
