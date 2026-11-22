@@ -41,3 +41,7 @@ deno test --allow-read tests/classes.test.mjs tests/classDisplayData.test.mjs te
 Use `amplify` when an existing normal atlas has valid structure but the
 consumer's light needs stronger relief. It scales the tangent X/Y response and
 preserves the atlas layout; it does not invent a UV map.
+
+Use `replace` when a cell must be fully swapped: it clears the target cell,
+centers the replacement sprite, and uses flat-normal blue when replacing an
+RGB normal atlas so stale pixels cannot survive around the new sprite.

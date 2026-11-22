@@ -43,6 +43,26 @@ def insert(args):
     print(f"wrote {args.output} ({atlas.width}x{atlas.height}, RGBA PNG)")
 
 
+def replace(args):
+    source_mode = Image.open(args.atlas).mode
+    atlas, sprite = rgba(args.atlas), rgba(args.sprite)
+    if args.cell_x < 0 or args.cell_y < 0 or args.cell_x + args.cell_width > atlas.width or args.cell_y + args.cell_height > atlas.height:
+        raise SystemExit("replacement cell is outside the atlas")
+    if args.fit:
+        sprite.thumbnail((args.fit, args.fit), Image.Resampling.LANCZOS)
+    if sprite.width > args.cell_width or sprite.height > args.cell_height:
+        raise SystemExit("sprite does not fit inside the replacement cell")
+    clear_color = (128, 128, 255, 255) if source_mode == "RGB" else (0, 0, 0, 0)
+    atlas.paste(clear_color, (args.cell_x, args.cell_y, args.cell_x + args.cell_width, args.cell_y + args.cell_height))
+    x = args.cell_x + (args.cell_width - sprite.width) // 2
+    y = args.cell_y + (args.cell_height - sprite.height) // 2
+    atlas.alpha_composite(sprite, (x, y))
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    output = atlas.convert("RGB") if source_mode == "RGB" else atlas
+    output.save(args.output, format="PNG", optimize=True)
+    print(f"wrote {args.output} ({atlas.width}x{atlas.height}, replaced cell at {args.cell_x},{args.cell_y})")
+
+
 def normal(args):
     sprite = rgba(args.sprite)
     alpha = sprite.getchannel("A").filter(ImageFilter.GaussianBlur(1.25))
@@ -95,6 +115,7 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("inspect"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--cell-width", type=int, required=True); p.add_argument("--cell-height", type=int, required=True); p.add_argument("--alpha-threshold", type=int, default=8); p.set_defaults(run=inspect)
     p = sub.add_parser("insert"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--sprite", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--x", type=int, required=True); p.add_argument("--y", type=int, required=True); p.add_argument("--fit", type=int, default=0); p.set_defaults(run=insert)
+    p = sub.add_parser("replace"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--sprite", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--cell-x", type=int, required=True); p.add_argument("--cell-y", type=int, required=True); p.add_argument("--cell-width", type=int, required=True); p.add_argument("--cell-height", type=int, required=True); p.add_argument("--fit", type=int, default=0); p.set_defaults(run=replace)
     p = sub.add_parser("normal"); p.add_argument("--sprite", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--strength", type=float, default=3.5); p.set_defaults(run=normal)
     p = sub.add_parser("amplify"); p.add_argument("--atlas", type=Path, required=True); p.add_argument("--output", type=Path, required=True); p.add_argument("--strength", type=float, default=1.6); p.set_defaults(run=amplify)
     args = parser.parse_args(); args.run(args)
