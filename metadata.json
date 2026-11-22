@@ -3,8 +3,9 @@
   "checkpoint_id": "01M8210YHK2HR686HEVEKFTNVD",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 1,
+  "checkpoints_count": 2,
   "files_touched": [
+    "VERSION",
     "src/display/ui/charCreation.js"
   ],
   "sessions": [
@@ -14,14 +15,21 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 17990,
+    "input_tokens": 37406,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 806272,
-    "output_tokens": 3526,
-    "api_call_count": 16
+    "cache_read_tokens": 2146176,
+    "output_tokens": 8166,
+    "api_call_count": 32
   },
   "redaction": {
     "replacements": 201865,
