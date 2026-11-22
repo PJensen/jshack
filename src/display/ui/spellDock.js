@@ -184,7 +184,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
 
       const sym = document.createElement('span');
       const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
-      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 34);
+      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', ITEM_SIZE);
       styleSpellIcon(sym);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
@@ -257,7 +257,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
     if (!spell) return;
     s.spellId = spell.id;
     const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
-    applyAtlasIcon(s.glyphSpan, iconRef, spell.symbol || '\u2726', 34);
+    applyAtlasIcon(s.glyphSpan, iconRef, spell.symbol || '\u2726', 40);
     styleSpellIcon(s.glyphSpan);
     s.glyphSpan.style.opacity = '1';
     s.btn.style.opacity = '1';
@@ -441,7 +441,7 @@ export function createPinnedSpellDock(mobileLayoutMq) {
         const iconRef = entry.kind === 'item-use'
           ? resolveIconReference(entry)
           : resolveIconReference({ ...entry, iconAtlas: 'spells' });
-        applyAtlasIcon(s.glyphSpan, iconRef, entry.symbol || '\u2726', 28);
+        applyAtlasIcon(s.glyphSpan, iconRef, entry.symbol || '\u2726', 40);
         if (entry.kind !== 'item-use') styleSpellIcon(s.glyphSpan);
         s.glyphSpan.style.opacity = '1';
         const cost = Number(entry.cost || 0);

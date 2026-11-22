@@ -264,7 +264,7 @@ export function createMobileSpellRadial(mobileLayoutMq) {
 
       const sym = document.createElement('span');
       const iconRef = resolveIconReference({ ...spell, iconAtlas: 'spells' });
-      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 34);
+      applyAtlasIcon(sym, iconRef, spell.symbol || '\u2726', 44);
       styleSpellIcon(sym);
       sym.style.lineHeight = '1';
       sym.style.pointerEvents = 'none';
