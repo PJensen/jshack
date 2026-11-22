@@ -21,7 +21,7 @@ import { buildWorldView } from '../src/bridge/schema/worldView.js';
 import { buildPalette } from '../src/display/palette/index.js';
 import { clearAll as clearTileMap } from '../src/rules/environment/dungeon/tileMap.js';
 import { clearExplored } from '../src/rules/environment/dungeon/exploredMap.js';
-import { getCatalogItem } from '../src/rules/data/itemCatalog.js';
+import { getCatalogItem, listCatalogItems } from '../src/rules/data/itemCatalog.js';
 import { inventoryItems } from '../src/rules/utils/inventoryFacade.js';
 
 Deno.test("pickMonster returns valid params", () => {
@@ -967,7 +967,7 @@ Deno.test("obliiette dead-end rooms place flayed man and hanging chains decorati
   assertEquals(shopkeepers.length, 0, "obliiette should not place shopkeepers");
 });
 
-Deno.test("kitchen dead-end rooms place cooking fire, special meal chest, and pantry clutter", () => {
+Deno.test("kitchen dead-end rooms place a random cooked meal chest and pantry clutter", () => {
   const tiles = new Uint8Array(CHUNK_SIZE * CHUNK_SIZE);
   tiles.fill(TILE_WALL);
   for (let y = 10; y < 18; y++) for (let x = 10; x < 18; x++) tiles[y * CHUNK_SIZE + x] = TILE_FLOOR;
@@ -1004,11 +1004,15 @@ Deno.test("kitchen dead-end rooms place cooking fire, special meal chest, and pa
   const shopkeepers = spawns.filter((s) => inRoom(s) && s.kind === "shopkeeper");
   const chestDrops = new Set(chest?.params?.fixedDrops || []);
   const pantryIds = new Set(pantry.map((s) => String(s.params?.itemId || "")));
+  const cookedFoodIds = new Set(listCatalogItems()
+    .filter((item) => Array.isArray(item?.tags) && item.tags.includes("cooked_food"))
+    .map((item) => item.id));
 
   assert(fire, "kitchen should include a working cooking fire");
   assert(chest, "kitchen should include a chest");
   assert(pantry.length >= 2, "kitchen should include multiple pantry items");
-  assertEquals([...chestDrops], ["food_pilgrim_stew"], "kitchen chest should hold one special cooked meal");
+  assertEquals(chestDrops.size, 1, "kitchen chest should hold one cooked meal");
+  assert(cookedFoodIds.has([...chestDrops][0]), "kitchen chest meal should come from the authored cooked-food pool");
   assert(!pantryIds.has("food_ration"), "kitchen should stock ingredients instead of ready-made rations");
   assert(!pantryIds.has("food_iron_ration"), "kitchen should not stock preserved rations");
   for (const itemId of pantryIds) {

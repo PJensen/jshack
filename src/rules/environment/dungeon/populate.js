@@ -2132,6 +2132,9 @@ function applyDeadEndTheme(ctx) {
       if (chestPos) {
         reserved.add(`${chestPos.x},${chestPos.y}`);
         markSolid(chestPos.x, chestPos.y);
+        const cookedFoodIds = listCatalogItems()
+          .filter((item) => Array.isArray(item?.tags) && item.tags.includes('cooked_food'))
+          .map((item) => item.id);
         spawns.push({
           x: chestPos.x,
           y: chestPos.y,
@@ -2139,7 +2142,7 @@ function applyDeadEndTheme(ctx) {
           params: {
             depth: floorPlan.depth,
             lootTable: 'chest:basic',
-            fixedDrops: ['food_pilgrim_stew'],
+            fixedDrops: [rng.choice(cookedFoodIds)],
           },
         });
       }
