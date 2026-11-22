@@ -1,0 +1,16 @@
+do you know about skills and component tools lol?
+
+---
+
+just tossing shit in docs isn't the way
+
+---
+
+1. fix the skill v ocs issue above
+2. make the UV map MUCH more reactive
+
+---
+
+why do I not see the code edits -- the skill tools should be here somewhere along with the SKILL.md with a scripts folder under it -- ALSO -- I meant to change the character sheet to make the light itself more reactive to the UV map. ANYWAY!
+
+YOUR CHANGES ABOVE DO NOTHING -- the thing operates on the sheet not individual icons.
