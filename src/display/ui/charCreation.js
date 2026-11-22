@@ -1008,7 +1008,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   // ---- hard mode checkbox (rendered inside confirm button, created here) ----
   const hardInput = document.createElement('input');
   hardInput.type = 'checkbox';
-  hardInput.checked = true;
+  hardInput.checked = false;
   Object.assign(hardInput.style, { position: 'absolute', opacity: '0', pointerEvents: 'none' });
 
   // ---- tutorial toggle ----
@@ -1145,7 +1145,7 @@ export function showCharCreation({ classes, defaultSeed = 0xC0FFEE, onConfirm })
   const confirmText = document.createElement('span');
   const hardToggle = document.createElement('label');
   Object.assign(hardToggle.style, {
-    display: 'inline-flex', alignItems: 'center', gap: '5px',
+    display: 'none', alignItems: 'center', gap: '5px',
     cursor: 'pointer', userSelect: 'none',
     marginLeft: '6px',
     fontSize: '11px',
