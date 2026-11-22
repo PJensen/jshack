@@ -97,3 +97,14 @@ Deno.test("weapon visual affinity includes active weapon-buff effects", () => {
   assertEquals(affinity?.id, "fire");
   assertEquals(affinity?.swingStyle, "flame");
 });
+
+Deno.test("weapon visual affinity treats ignite_weapons like a flame weapon", () => {
+  const world = new World({ seed: 5 });
+  const actor = world.create();
+  const weapon = addWeapon(world, "plain_sword");
+  world.add(actor, ActiveEffects, { effects: [{ key: "ignite_weapons", turnsLeft: 3, potency: 1, stacks: 1 }] });
+
+  const affinity = resolveWeaponVisualAffinity(world, { actorId: actor, weaponId: weapon });
+  assertEquals(affinity?.id, "fire");
+  assertEquals(affinity?.swingStyle, "flame");
+});

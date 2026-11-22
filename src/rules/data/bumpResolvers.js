@@ -24,14 +24,16 @@ import { Pushable } from "../components/Pushable.js";
 import { Flying } from "../components/Flying.js";
 import { DoorState } from "../components/DoorState.js";
 import { Owner } from "../components/Owner.js";
+import { SecretDoor } from "../components/SecretDoor.js";
 import { CreatureType, CREATURE_TYPES } from "../components/CreatureType.js";
 import { areFactionsHostile } from "../utils/factionHostility.js";
 import { setDoorState } from "../utils/doorAccess.js";
 import { findTileReaction } from "./tileReactions.js";
 import { getTile, setTile, isLoaded, isWalkable } from "../environment/dungeon/tileMap.js";
-import { TILE_VOID } from "../environment/dungeon/constants.js";
+import { TILE_DOOR, TILE_VOID, TILE_WALL } from "../environment/dungeon/constants.js";
 import { STAMINA_REGEN_COOLDOWN } from "./regenConstants.js";
 import { hasActiveDialogSession } from "../dialogues/runtime.js";
+import { invalidateTileQueryCache } from "../utils/tileQueryCache.js";
 
 /**
  * @typedef {{
@@ -224,6 +226,52 @@ const objectInteract = {
   },
 };
 
+/** Hidden door discovery: three deliberate bumps reveal a secret wall door. */
+const secretDoorBump = {
+  name: "secret-door-bump",
+  test(world, actor, ctx) {
+    if (!world.has(actor, Player)) return false;
+    if (!isManhattan1(ctx.mdx, ctx.mdy)) return false;
+    const ids = ctx.tiles.byCell.get(`${ctx.nx},${ctx.ny}`);
+    if (!ids) return false;
+    for (let i = 0; i < ids.length; i++) {
+      const secret = world.get(ids[i], SecretDoor);
+      if (secret && !secret.revealed && getTile(ctx.nx, ctx.ny) === TILE_WALL) return true;
+    }
+    return false;
+  },
+  resolve(world, actor, ctx) {
+    const ids = ctx.tiles.byCell.get(`${ctx.nx},${ctx.ny}`) || [];
+    for (let i = 0; i < ids.length; i++) {
+      const doorId = ids[i];
+      const secret = world.get(doorId, SecretDoor);
+      if (!secret || secret.revealed) continue;
+      const bumpCount = Math.min(3, Math.max(0, Number(secret.bumpCount || 0) | 0) + 1);
+      if (bumpCount < 3) {
+        world.set(doorId, SecretDoor, { ...secret, bumpCount });
+        const text = bumpCount === 1
+          ? "*** the wall feels oddly hollow ***"
+          : "*** something answers from behind the wall ***";
+        world.emit("message", { text, type: "system" });
+        return;
+      }
+      if (getTile(ctx.nx, ctx.ny) !== TILE_WALL) return;
+      setTile(ctx.nx, ctx.ny, TILE_DOOR);
+      world.set(doorId, SecretDoor, { ...secret, bumpCount, revealed: true });
+      invalidateTileQueryCache(world);
+      world.emit("message", { text: "*** the hidden door is revealed! ***", type: "system" });
+      world.emit("search:revealed", {
+        actorId: actor,
+        entityId: doorId,
+        kind: "secret_door",
+        at: { x: ctx.nx, y: ctx.ny },
+        source: "bump",
+      });
+      return;
+    }
+  },
+};
+
 /** Push entity: player bumps a Pushable entity (e.g. statue) and shoves it one tile. */
 const pushEntity = {
   name: "push-entity",
@@ -326,6 +374,7 @@ export const BUMP_RESOLVERS = [
   petSwap,
   npcInteract,
   enemyDoorOpen,
+  secretDoorBump,
   objectInteract,
   pushEntity,
   tileReaction,

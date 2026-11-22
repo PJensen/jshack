@@ -1556,7 +1556,7 @@ export const SPELL_DEFS = {
       duration: 12,
       potency: 3,
       stacks: 1,
-      mechanics: { bonusFireDamage: 3, burnChance: 0.2 },
+      mechanics: { bonusFireDamage: 3, burnChance: 0.75 },
     },
     description: 'Wreathe your weapons in arcane flame. Each strike sears the target.',
     effects: [

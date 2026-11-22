@@ -16,6 +16,7 @@ import { Material } from "../src/rules/components/Material.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { Burned } from "../src/rules/components/Burned.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { SecretDoor } from "../src/rules/components/SecretDoor.js";
 import { DungeonState } from "../src/rules/components/DungeonState.js";
 import {
   movementSystem,
@@ -28,7 +29,7 @@ import { hazardSystem } from "../src/rules/systems/hazardSystem.js";
 import { applyStatusEffect } from "../src/rules/utils/effects.js";
 import { setFacingTurnCostEnabled } from "../src/rules/utils/facing.js";
 import { loadChunk, clearAll, getTile, setTile } from "../src/rules/environment/dungeon/tileMap.js";
-import { CHUNK_SIZE, TILE_FLOOR, TILE_WALL, TILE_TREE, TILE_GRASS } from "../src/rules/environment/dungeon/constants.js";
+import { CHUNK_SIZE, TILE_FLOOR, TILE_WALL, TILE_DOOR, TILE_TREE, TILE_GRASS } from "../src/rules/environment/dungeon/constants.js";
 
 function loadFloorChunk() {
   clearAll();
@@ -239,6 +240,34 @@ Deno.test("movementSystem: blocked by wall", () => {
     const pos = world.get(id, Position);
     assertEquals(pos.x, 5, "should not move into wall");
     assertEquals(world.has(id, MoveIntent), false, "intent consumed regardless");
+  } finally { clearAll(); }
+});
+
+Deno.test("movementSystem: three player bumps reveal a secret wall door", () => {
+  loadFloorChunk();
+  try {
+    setTile(6, 5, TILE_WALL);
+    const world = new World({ seed: 43 });
+    const id = world.create();
+    world.add(id, Player);
+    world.add(id, Position, { x: 5, y: 5 });
+    const door = world.create();
+    world.add(door, Position, { x: 6, y: 5 });
+    world.add(door, SecretDoor, { fromRoomId: "main", toRoomId: "leaf", revealed: false });
+    const messages = [];
+    world.on("message", (event) => messages.push(event.text));
+
+    for (let i = 0; i < 3; i++) {
+      world.add(id, MoveIntent, { dx: 1, dy: 0 });
+      movementSystem(world);
+    }
+
+    assertEquals(world.get(door, SecretDoor).bumpCount, 3);
+    assertEquals(world.get(door, SecretDoor).revealed, true);
+    assertEquals(getTile(6, 5), TILE_DOOR, "secret wall should become a door");
+    assert(messages.some((text) => text.includes("hollow")), "first bump should give a hollow-wall hint");
+    assert(messages.some((text) => text.includes("answers")), "second bump should give a response hint");
+    assert(messages.some((text) => text.includes("door") && text.includes("revealed")), "third bump should reveal the door");
   } finally { clearAll(); }
 });
 

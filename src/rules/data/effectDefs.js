@@ -525,7 +525,7 @@ export const EFFECT_DEFS = [
   // ── Buff / Rotation ability statuses ──────────────────────────────
   {
     id: "fire_weapon",
-    keys: ["fire_weapon"],
+    keys: ["fire_weapon", "ignite_weapons"],
     operation: "none",
     statuses: ["fire_weapon"],
     elementTint: "fire",

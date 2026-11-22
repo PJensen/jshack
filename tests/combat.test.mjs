@@ -240,6 +240,42 @@ Deno.test("combatSystem: melee swing outcome payloads carry visual affinity prof
   }
 });
 
+Deno.test("combatSystem: ignite weapons applies burning and emits the ignition proc", () => {
+  let burned = false;
+  let ignition = false;
+  for (let seed = 1; seed <= 128 && !burned; seed++) {
+    const world = new World({ seed });
+    const weapon = makeEquip(world, {
+      id: "plain_sword",
+      name: "Plain Sword",
+      slot: "weapon",
+      bonuses: { accuracy: 80, damagePower: 4 },
+      damageType: "slash",
+    });
+    const attacker = makeActor(world, "Attacker", { weapon }, 20);
+    const defender = makeActor(world, "Defender", {}, 30);
+    world.add(attacker, Position, { x: 1, y: 1 });
+    world.add(defender, Position, { x: 1, y: 2 });
+    world.add(attacker, ActiveEffects, {
+      effects: [{
+        key: "ignite_weapons",
+        turnsLeft: 12,
+        potency: 3,
+        stacks: 1,
+        meta: { bonusFireDamage: 3, burnChance: 0.75 },
+      }],
+    });
+    world.on("proc:ignited", () => { ignition = true; });
+    equipmentSystem(world);
+    world.add(attacker, AttackIntent, { targetId: defender });
+    combatSystem(world);
+    burned = (world.get(defender, ActiveEffects)?.effects || []).some((effect) => effect.key === "burning");
+  }
+
+  assert(burned, "ignite weapons should apply burning on a landed hit within the authored chance");
+  assert(ignition, "ignite weapons should emit the usual ignition proc event");
+});
+
 Deno.test("d20 combat with affix triggers: fierce, vamp, thorns", () => {
   const world = new World({ seed: 123 });
   installAffixTriggers(world);

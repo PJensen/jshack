@@ -560,20 +560,22 @@ function resolveHitRoll(world, {
             const _fwAe = world.get(source, ActiveEffects);
             const _hasFw = _fwAe && Array.isArray(_fwAe.effects) && _fwAe.effects.some(e => e && (e.key === 'fire_weapon' || e.key === 'ignite_weapons') && (e.turnsLeft | 0) > 0);
             if (result.amount > 0 && _hasFw) {
-                const fireDmg = 3;
+                const _fwEffect = _fwAe.effects.find(e => e && (e.key === 'fire_weapon' || e.key === 'ignite_weapons') && (e.turnsLeft | 0) > 0);
+                const fireDmg = Math.max(0, Number(_fwEffect?.meta?.bonusFireDamage ?? 3) | 0);
                 dealDamage(world, {
                     source, target, amount: fireDmg, type: 'fire',
-                    cause: 'proc:fire_weapon', at: spec.at,
+                    cause: 'proc:fire_weapon', at: dstPos,
                     bypassResist: false,
                 });
-                // 20% chance to apply burn
+                const burnChance = Math.max(0, Math.min(1, Number(_fwEffect?.meta?.burnChance ?? 0.75)));
                 const fwRng = mulberry32(combatSeed(world.seed, world.step, source, target, 0xF1AE));
-                if (fwRng() < 0.20) {
-                    const tae = world.get(target, ActiveEffects);
-                    if (tae && Array.isArray(tae.effects)) {
+                if (fwRng() < burnChance) {
+                    const tae = ensureActiveEffects(world, target);
+                    if (tae) {
                         upsertTimedEffect(tae.effects, {
-                            key: 'burn', turnsLeft: 3, potency: 1, stacks: 1, sourceId: source,
+                            key: 'burning', turnsLeft: 3, potency: 1, stacks: 1, sourceId: source,
                         });
+                        world.emit('proc:ignited', { actor: source, target });
                     }
                 }
             }

@@ -8,6 +8,7 @@ export const SecretDoor = defineComponent("SecretDoor", {
   fromRoomId: "",
   toRoomId: "",
   revealed: false,
+  bumpCount: 0,
   difficulty: 0,
   hintKind: "hollow",
 });
