@@ -1,5 +1,0 @@
-make character creator light harsher for harsher shadows and more emotional vibe please -- let this thing really cast shadows, like a .8 on the 0-1 scale.
-
----
-
-bump commit and push when ready
