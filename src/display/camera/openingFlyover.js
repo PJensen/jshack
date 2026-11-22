@@ -2,10 +2,10 @@
 // Display-only opening flight from the overworld into the player.
 
 const DEFAULT_DURATION = 8.2;
-const MIN_SECONDS_PER_LEG = 1.5;
 const LANDMARK_HOLD_SECONDS = 1.1;
 const LANDMARK_ZOOM = 2;
 const NPC_STOP_SPACING = 8;
+const MAX_FEATURED_STOPS = 4;
 
 function clamp01(value) {
   return Math.max(0, Math.min(1, Number(value) || 0));
@@ -44,7 +44,11 @@ function selectWaypoints(view, player) {
   const pool = preferred.length > 0 ? preferred : fallback;
   const selected = [];
   for (const entity of pool) {
-    const point = { ...asPosition(entity.pos), title: String(entity.title || "").trim() };
+    const point = {
+      ...asPosition(entity.pos),
+      title: String(entity.title || "").trim(),
+      mapTitle: String(entity.title || "").trim(),
+    };
     if (entity.tags?.includes("quest_giver")) {
       const overlaps = selected.some((chosen) => distanceSquared(point, chosen) < NPC_STOP_SPACING ** 2);
       if (overlaps || distanceSquared(point, player) < NPC_STOP_SPACING ** 2) continue;
@@ -52,6 +56,29 @@ function selectWaypoints(view, player) {
     selected.push(point);
   }
   return selected;
+}
+
+function projectAlong(start, end, point) {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= 0) return 0;
+  return ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared;
+}
+
+function chooseFeaturedStops(points, start, player) {
+  const candidates = points.filter((point) => point.mapTitle);
+  if (candidates.length <= MAX_FEATURED_STOPS) return new Set(candidates);
+  const ordered = [...candidates].sort((a, b) => (
+    projectAlong(start, player, a) - projectAlong(start, player, b)
+  ));
+  const selected = [];
+  for (let i = 0; i < MAX_FEATURED_STOPS; i++) {
+    const index = Math.round(i * (ordered.length - 1) / (MAX_FEATURED_STOPS - 1));
+    const point = ordered[index];
+    if (point && !selected.includes(point)) selected.push(point);
+  }
+  return new Set(selected);
 }
 
 function findFarCorner(player, points, worldBounds) {
@@ -90,31 +117,17 @@ function buildRoute(view) {
   const player = validPosition(view?.player?.pos) ? asPosition(view.player.pos) : null;
   if (!player) return null;
   const waypoints = selectWaypoints(view, player);
-  const route = [findFarCorner(player, waypoints, view.bounds)];
-  while (waypoints.length > 0) {
-    const from = route[route.length - 1];
-    let nearest = 0;
-    for (let i = 1; i < waypoints.length; i++) {
-      if (distanceSquared(from, waypoints[i]) < distanceSquared(from, waypoints[nearest])) nearest = i;
-    }
-    route.push(waypoints.splice(nearest, 1)[0]);
-  }
-  route.push(player);
-
-  // Keep both endpoints fixed and undo crossings and long returns left by
-  // the nearest-neighbor pass.
-  for (let improved = true; improved;) {
-    improved = false;
-    for (let first = 1; first < route.length - 2; first++) {
-      for (let last = first + 1; last < route.length - 1; last++) {
-        const a = route[first - 1], b = route[first], c = route[last], d = route[last + 1];
-        const before = Math.sqrt(distanceSquared(a, b)) + Math.sqrt(distanceSquared(c, d));
-        const after = Math.sqrt(distanceSquared(a, c)) + Math.sqrt(distanceSquared(b, d));
-        if (after >= before - 0.001) continue;
-        route.splice(first, last - first + 1, ...route.slice(first, last + 1).reverse());
-        improved = true;
-      }
-    }
+  const start = findFarCorner(player, waypoints, view.bounds);
+  const featured = chooseFeaturedStops(waypoints, start, player);
+  // A single outward-to-home corridor gives the flight a readable sense of
+  // direction. Places still shape the curve, but are never revisited just to
+  // satisfy a stop-tour ordering.
+  const route = [start, ...waypoints.sort((a, b) => (
+    projectAlong(start, player, a) - projectAlong(start, player, b)
+  )), player];
+  for (const point of route) {
+    if (featured.has(point)) point.title = point.mapTitle;
+    else point.title = "";
   }
   return route;
 }
@@ -165,19 +178,21 @@ export function createOpeningFlyover(opts = {}) {
   let elapsed = 0;
   let segment = 0;
   let active = false;
+  let camera = null;
 
   function start(cam, view) {
     if (active) return true;
     route = buildRoute(view);
     if (!route) return false;
     const namedStops = route.filter((point) => point.title).length;
-    const travelSeconds = Math.max(DEFAULT_DURATION, (route.length - 1) * MIN_SECONDS_PER_LEG);
+    const travelSeconds = Math.max(DEFAULT_DURATION, 5.4 + namedStops * 0.55);
     duration = Math.max(1, Number(opts.duration) || travelSeconds + namedStops * LANDMARK_HOLD_SECONDS);
     const holdSeconds = Math.min(LANDMARK_HOLD_SECONDS, duration / (Math.max(1, namedStops) * 3));
     route = timeRoute(route, duration, holdSeconds, namedStops);
     elapsed = 0;
     segment = 0;
     active = true;
+    camera = cam;
     cam._detached = true;
     cam.x = route[0].x;
     cam.y = route[0].y;
@@ -216,6 +231,7 @@ export function createOpeningFlyover(opts = {}) {
     cam._detached = false;
     active = false;
     route = null;
+    camera = null;
     if (typeof opts.onComplete === "function") opts.onComplete();
     return false;
   }
@@ -233,6 +249,18 @@ export function createOpeningFlyover(opts = {}) {
     return { title: point.title, x: point.x, y: point.y, alpha: smoothStep((window - distance) / (window * 0.45)) };
   }
 
-  return { start, update, getMapLabel, isActive: () => active };
+  function getMapLabels() {
+    if (!active || !route || !camera) return [];
+    const labels = [];
+    for (const point of route) {
+      if (!point.mapTitle) continue;
+      const distance = Math.sqrt(distanceSquared(point, camera));
+      const alpha = smoothStep(clamp01(1 - distance / 42));
+      if (alpha > 0) labels.push({ title: point.mapTitle, x: point.x, y: point.y, alpha });
+    }
+    return labels;
+  }
+
+  return { start, update, getMapLabel, getMapLabels, isActive: () => active };
 }
 

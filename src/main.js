@@ -6194,7 +6194,7 @@ function frame(now) {
   _fpsEMA = _fpsEMA ? (_fpsEMA * 0.9 + instFps * 0.1) : instFps;
   if (openingView && openingFlyover.update(cam, openingView, dtSec)) {
     drawOpeningLandscape(ctx, canvas, cam, openingLandscape);
-    drawOpeningMapLabel(ctx, { width: _canvasSetup.cssW, height: _canvasSetup.cssH }, cam, openingFlyover.getMapLabel());
+    drawOpeningMapLabel(ctx, { width: _canvasSetup.cssW, height: _canvasSetup.cssH }, cam, openingFlyover.getMapLabels());
     requestAnimationFrame(frame);
     return;
   }

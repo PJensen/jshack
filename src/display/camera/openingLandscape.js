@@ -43,26 +43,29 @@ export function drawOpeningLandscape(ctx, canvas, cam, landscape, alpha = 1) {
   ctx.restore();
 }
 
-export function drawOpeningMapLabel(ctx, viewport, cam, label) {
-  if (!label) return;
-  const [x, y] = worldToScreen(cam, label.x, label.y, viewport);
+export function drawOpeningMapLabel(ctx, viewport, cam, labels) {
+  const entries = Array.isArray(labels) ? labels : (labels ? [labels] : []);
+  if (entries.length === 0) return;
   const { width, height } = viewport;
-  const edge = Math.min(x, y - 30, width - x, height - y);
-  if (edge <= 0) return;
-  const size = Math.max(16, Math.min(27, width * 0.042));
-  const textY = y - 15 - size * 0.5;
   ctx.save();
-  ctx.globalAlpha = label.alpha * Math.min(1, edge / 20);
-  ctx.font = `${size}px Georgia, serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.lineJoin = "round";
-  ctx.lineWidth = Math.max(3, size * 0.12);
-  ctx.strokeStyle = "#101017";
-  ctx.fillStyle = "#fff2d5";
-  ctx.strokeText(label.title, x, textY, width * 0.8);
-  ctx.fillText(label.title, x, textY, width * 0.8);
-  ctx.fillRect(x - 0.5, y - 12, 1, 10);
-  ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+  for (const label of entries) {
+    const [x, y] = worldToScreen(cam, label.x, label.y, viewport);
+    const edge = Math.min(x, y - 30, width - x, height - y);
+    if (edge <= 0) continue;
+    const size = Math.max(16, Math.min(27, width * 0.042));
+    const textY = y - 15 - size * 0.5;
+    ctx.globalAlpha = label.alpha * Math.min(1, edge / 20);
+    ctx.font = `${size}px Georgia, serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Math.max(3, size * 0.12);
+    ctx.strokeStyle = "#101017";
+    ctx.fillStyle = "#fff2d5";
+    ctx.strokeText(label.title, x, textY, width * 0.8);
+    ctx.fillText(label.title, x, textY, width * 0.8);
+    ctx.fillRect(x - 0.5, y - 12, 1, 10);
+    ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
+  }
   ctx.restore();
 }

@@ -51,6 +51,10 @@ Deno.test("opening labels stay pinned and the camera pulls back between stops", 
   for (let i = 0; i < 120; i++) {
     flyover.update(cam, view, 0.05);
     const label = flyover.getMapLabel();
+    for (const mapLabel of flyover.getMapLabels()) {
+      const waypoint = view.entities.find((entity) => entity.title === mapLabel.title);
+      assertEquals({ x: mapLabel.x, y: mapLabel.y }, waypoint.pos);
+    }
     if (label) {
       seen.add(label.title);
       const waypoint = view.entities.find((entity) => entity.title === label.title);
@@ -70,7 +74,7 @@ Deno.test("opening labels stay pinned and the camera pulls back between stops", 
   assertEquals(cam.scale, 70);
 });
 
-Deno.test("opening tour fits every landmark and lengthens to make room for titles", () => {
+Deno.test("opening tour uses a few title-card stops while the route stays readable", () => {
   const cam = {};
   const view = makeView();
   view.entities = Array.from({ length: 8 }, (_, i) => ({
@@ -87,11 +91,11 @@ Deno.test("opening tour fits every landmark and lengthens to make room for title
     const label = flyover.getMapLabel();
     if (label?.alpha === 1) seen.add(label.title);
   }
-  assertEquals(seen.size, view.entities.length);
+  assertEquals(seen.size, 4, "only a few places should become whistlestops");
   assertEquals(flyover.isActive(), false);
 });
 
-Deno.test("opening route trims the nearest-neighbor detour with fixed endpoints", () => {
+Deno.test("opening route follows one outer-corner-to-player corridor", () => {
   const coordinates = [[27, 62], [-56, 20], [-71, 49], [26, 4], [5, -46]];
   const view = {
     bounds: { minX: -100, minY: -100, maxX: 100, maxY: 100 },
@@ -114,7 +118,7 @@ Deno.test("opening route trims the nearest-neighbor detour with fixed endpoints"
     const points = [start, ...order.map((i) => coordinates[i]), [0, 0]];
     return points.slice(1).reduce((sum, [x, y], i) => sum + Math.hypot(x - points[i][0], y - points[i][1]), 0);
   };
-  assertEquals(visits.size, coordinates.length);
+  assertEquals(visits.size, 4, "the route should feature only a subset of places");
   assert(distance([...visits]) < distance([4, 3, 0, 1, 2]));
   assertEquals([cam.x, cam.y], [0, 0]);
 });
