@@ -1,0 +1,110 @@
+electrical damage while standing in water is almost always lethal or near to letal
+
+---
+
+unless you're lucky or wearing insulated boots!
+
+---
+
+material: rubber -- I suppose is another option.
+
+---
+
+hey -- I was talking about LUCK
+
+/\*\*\
+&#x20;\* Electric damage tuning constants.\
+&#x20;\* Keep balance knobs in data so rules logic stays stable.\
+&#x20;\*/\
+export const ELECTRIC_DAMAGE_TUNING = Object.freeze({\
+&#x20; baseOhms: 1000,\
+&#x20; baseBodyConductivity: 0.2,\
+&#x20; resistMultiplierMin: 0.1,\
+&#x20; resistMultiplierMax: 2.5,\
+&#x20; conductivityScale: 1.8,\
+&#x20; conductivityMultiplierMin: 0.65,\
+&#x20; conductivityMultiplierMax: 2.0,\
+&#x20; waterDamageMinMaxHpFraction: 1.15,\
+&#x20; waterEscapeChancePct: 10,\
+&#x20; waterEscapeChanceMaxPct: 50,\
+&#x20; slotWeights: Object.freeze({\
+&#x20;   armor: 0.55,\
+&#x20;   offhand: 0.25,\
+&#x20;   weapon: 0.20,\
+&#x20;   legs: 0.15,\
+&#x20;   gloves: 0.10,\
+&#x20;   belt: 0.08,\
+&#x20;   feet: 0.10,\
+&#x20;   head: 0.08,\
+&#x20;   neck: 0.04,\
+&#x20;   ring1: 0.08,\
+&#x20;   ring2: 0.08,\
+&#x20;   ammo: 0.04,\
+&#x20; }),\
+});\
+
+
+NOT ABOUT WATER ESCAPE CHANCE BESPOLE THINGS
+
+---
+
+surely there is a better way than enumerating flat out water tiles, why not check is the actor is *wet* and derive that?!
+
+---
+
+you agree right?
+
+---
+
+why even do:
+
+
+```yaml
+
+  waterDamageMinMaxHpFraction: 1.4
+```
+
+
+
+why not think along the lines of pure conductivity? physical phenomina? we've got material details in spades here already.
+
+---
+
+(e.g) the affix is cool -- but  think we can do a lot better -- feel me?
+
+---
+
+also, wouldn't we want isActor wet somewhere other than inside tiles utils?! that strikes me as also odd and not available inside the canonical handlers.
+
+---
+
+like the scripting and action handlers and beyond
+
+---
+
+right -- unclear why you are so bad today; anyway, I digress.
+
+---
+
+wetness might be something you become
+
+---
+
+review it all please -- confrm tests pass please.
+
+---
+
+I would let shocks potentially kill you,&#x20;
+I would consider wetness a floating point value from [0,1]
+
+---
+
+being drenched, vs being damp
+
+---
+
+if comfortable, commit and push when ready
+
+---
+
+pleae fix.
