@@ -1,0 +1,11 @@
+settile --- water_trap?
+
+---
+
+watertrap does nothing at all, has no glyph, spreads no water.
+
+I only used `spawntrap water`
+
+---
+
+I would allow floods everywhere regardless -- unless you can stipulate a reason why overworld shold not allow flooding.
