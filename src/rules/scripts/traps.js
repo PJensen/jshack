@@ -23,6 +23,7 @@ import { getTile } from "../environment/dungeon/tileMap.js";
 import { TILE_WALL } from "../environment/dungeon/constants.js";
 import { startFlood } from "../systems/floodSystem.js";
 import { WaterTrapOpened } from "../../events/WaterTrapOpened.js";
+import { wetActor } from "../utils/actorWetness.js";
 
 const ARROW_TRAP_PROJECTILE_SPEED = 22;
 const ARROW_TRAP_PROJECTILE_MIN_DURATION = 0.06;
@@ -227,6 +228,7 @@ registerScript("trap_water", {
     const at = world.get(trapId, Position);
     if (!at) return;
     startFlood(world, trapId, ctx?.params || {});
+    wetActor(world, ctx?.targetId, 1);
     world.emit(new WaterTrapOpened({ trapId, at }));
   },
 });

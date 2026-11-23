@@ -21,6 +21,7 @@ import { applyEffectInstance, removeEffectInstance } from '../rules/utils/effect
 import { EffectInstance } from '../rules/components/EffectInstance.js';
 import { childrenWith } from '../rules/utils/topology.js';
 import { hasStatus, hasEffect } from '../rules/utils/statusFacade.js';
+import { actorWetness, isActorWet } from '../rules/utils/actorWetness.js';
 
 /**
  * Create a world-backed context suitable for ScriptCtx.
@@ -37,6 +38,8 @@ export function createWorldFacade(world, actor, itemId) {
 
   const query = {
     get(id, Comp) { return world.get(id, Comp) || null; },
+    isActorWet(id) { return isActorWet(world, id); },
+    actorWetness(id) { return actorWetness(world, id); },
     name(id) { return String(world.get(id, NamedIdentity)?.name || ''); },
     identity(id) { return String(world.get(id, NamedIdentity)?.identity || ''); },
   };

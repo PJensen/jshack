@@ -36,6 +36,8 @@ import { InventoryRoot } from "../../rules/components/InventoryRoot.js";
 import { Weight } from "../../rules/components/Weight.js";
 import { ItemCooldown } from "../../rules/components/ItemCooldown.js";
 import { ScriptState } from "../../rules/components/ScriptState.js";
+import { ActorWetness } from "../../rules/components/ActorWetness.js";
+import { FloodState } from "../../rules/components/FloodState.js";
 
 // Chest-relevant components are intentionally prioritized at the front.
 const CHEST_FIRST_COMPONENTS = Object.freeze([
@@ -82,6 +84,8 @@ const KNOWN_COMPONENTS = Object.freeze([
   Weight,
   ItemCooldown,
   ScriptState,
+  ActorWetness,
+  FloodState,
 ]);
 
 /**

@@ -19,6 +19,7 @@ import { AggroState, AGGRO_LEVELS, SEARCH_TURNS_HUNTING_GRACE } from '../../comp
 import { Vitality } from '../../components/Vitality.js';
 import { Collider } from '../../components/Collider.js';
 import { clearAll as clearTileMap, setTile } from './tileMap.js';
+import { restoreFloodedTerrain } from '../../utils/floodTerrain.js';
 import { isWalkable } from './tileMap.js';
 import { clearExplored, saveExplored, restoreExplored } from './exploredMap.js';
 import { exploredFloorRepository } from './floorMemory.js';
@@ -371,7 +372,11 @@ export async function transitionToDepth(world, newDepth, destinationPos, opts = 
     if (!ds.destroyedTilesByRegion || typeof ds.destroyedTilesByRegion !== "object") ds.destroyedTilesByRegion = {};
     if (!ds.wetTilesByRegion || typeof ds.wetTilesByRegion !== "object") ds.wetTilesByRegion = {};
     ds.destroyedTilesByRegion[currentRegionKey] = { ...(ds.destroyedTiles || {}) };
-    ds.wetTilesByRegion[currentRegionKey] = { ...(ds.wetTiles || {}) };
+    ds.floodedTilesByRegion ??= {};
+    ds.floodedTilesByRegion[currentRegionKey] = { ...(ds.floodedTiles || {}) };
+    ds.wetTilesByRegion[currentRegionKey] = Object.fromEntries(
+      Object.entries(ds.wetTiles || {}).filter(([, rec]) => rec.expiresAtStep >= world.step),
+    );
     // Capture ALL non-permanent alive entities so that chest inventory items
     // (no Position, not in floorEntityIds) and runtime-spawned monsters are
     // included in the snapshot.
@@ -472,12 +477,15 @@ export async function transitionToDepth(world, newDepth, destinationPos, opts = 
       ? [destinationRegionKey]
       : generatedRegions.map((region) => region.regionKey || floorRegionKey(newDepth, region.anchorX, region.anchorY, region.templateId));
     const destroyedTiles = {};
+    const floodedTiles = {};
     const wetTiles = {};
     for (const key of regionKeys) {
       Object.assign(destroyedTiles, (ds.destroyedTilesByRegion && ds.destroyedTilesByRegion[key]) || {});
+      Object.assign(floodedTiles, ds.floodedTilesByRegion?.[key] || {});
       Object.assign(wetTiles, (ds.wetTilesByRegion && ds.wetTilesByRegion[key]) || {});
     }
     ds.destroyedTiles = destroyedTiles;
+    ds.floodedTiles = floodedTiles;
     ds.wetTiles = wetTiles;
   }
 
@@ -490,6 +498,8 @@ export async function transitionToDepth(world, newDepth, destinationPos, opts = 
       }
     }
   }
+
+  restoreFloodedTerrain(world);
 
   const cachedFloor = _floorEntityCache.get(restoredPlaneKey) ?? _loadPersistedFloor(targetPlaneSeed, restoredPlaneKey);
   const normalizedSnapshot = normalizeInventorySnapshot(cachedFloor?.snapshot);

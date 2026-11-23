@@ -22,6 +22,7 @@ import "../src/content/interactables/index.js";
 import { installContent } from "../src/content/install.js";
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
 import { floodSystem } from "../src/rules/systems/floodSystem.js";
+import { actorWetness } from "../src/rules/utils/actorWetness.js";
 import {
   addToInventory,
   inventoryItems,
@@ -244,6 +245,7 @@ Deno.test("fountain: gush spends its volume over turns and preserves stairs", ()
   setTile(7, 5, TILE_STAIR_DOWN);
 
   assertEquals(drinkOnce(world, actor, fountain)?.tilesFlooded, 1);
+  assertEquals(actorWetness(world, actor), 0.5);
   assertEquals(getTile(6, 5), TILE_SHALLOW_WATER);
   assertEquals(getTile(6, 4), TILE_BEACH);
   world.setScheduler(floodSystem);

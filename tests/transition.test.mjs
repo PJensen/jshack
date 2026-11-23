@@ -14,7 +14,9 @@ import { transitionToDepth, clearFloorCache } from '../src/rules/environment/dun
 import { initDungeon, generateFloor } from '../src/rules/environment/dungeon/index.js';
 import { loadedChunkCount, clearAll, getTile, isWalkable, forEachLoadedTile } from '../src/rules/environment/dungeon/tileMap.js';
 import { dungeonConfig } from '../src/rules/environment/dungeon/dungeonConfig.js';
-import { TILE_STAIR_UP } from '../src/rules/environment/dungeon/constants.js';
+import { TILE_FLOOR, TILE_SHALLOW_WATER, TILE_STAIR_UP } from '../src/rules/environment/dungeon/constants.js';
+import { startFlood, floodSystem } from "../src/rules/systems/floodSystem.js";
+import { FloodState } from "../src/rules/components/FloodState.js";
 import { spawnPlasmaCloud } from "../src/rules/utils/spawnPlasmaCloud.js";
 import { markExplored, isExplored, clearExplored } from "../src/rules/environment/dungeon/exploredMap.js";
 import { exploredFloorRepository } from "../src/rules/environment/dungeon/floorMemory.js";
@@ -49,6 +51,36 @@ function makeEnemyAt(world, x, y, alertLevel = AGGRO_LEVELS.hunting) {
   });
   return id;
 }
+
+Deno.test("floor return restores flooded terrain and resumes the saved flood", async () => {
+  clearAll();
+  clearFloorCache();
+  try {
+    const world = new World({ seed: 42 });
+    const spawn = await initDungeon(world, { startDepth: 1 });
+    makePlayerAt(world, spawn.x, spawn.y);
+    let source;
+    forEachLoadedTile((x, y, tile) => {
+      if (!source && tile === TILE_FLOOR && getTile(x, y - 1) === TILE_FLOOR) source = { x, y };
+    });
+    assert(source);
+    const id = world.create();
+    world.add(id, Position, source);
+    startFlood(world, id, { volume: 2, spreadPerTurn: 1 });
+
+    await transitionToDepth(world, 2, { x: 0, y: 0 });
+    await transitionToDepth(world, 1, source);
+    assert(getTile(source.x, source.y) === TILE_SHALLOW_WATER);
+    assert([...world.query(FloodState)].length === 1);
+    world.setScheduler(floodSystem);
+    world.tick(1);
+    assert(getTile(source.x, source.y - 1) === TILE_SHALLOW_WATER);
+    assert([...world.query(FloodState)].length === 0);
+  } finally {
+    clearAll();
+    clearFloorCache();
+  }
+});
 
 Deno.test("transitionToDepth clears and regenerates floor", async () => {
   clearAll();

@@ -54,6 +54,7 @@ import { EffectInstance } from "../components/EffectInstance.js";
 import { childrenWith } from "../utils/topology.js";
 import { scatterBreadcrumbs } from "../utils/breadcrumbs.js";
 import { startFlood } from "../systems/floodSystem.js";
+import { wetActor } from "../utils/actorWetness.js";
 
 /**
  * @param {any} world
@@ -113,6 +114,9 @@ export function applyMutation(world, op, resolvers = {}) {
       if (op.receipt) op.receipt.tilesFlooded = tilesFlooded;
       break;
     }
+    case "wetActor":
+      wetActor(world, op.entityId, op.amount);
+      break;
     case "recordFact": {
       const id = world.create();
       world.add(id, op.Component, {
@@ -732,12 +736,13 @@ export function applyMutation(world, op, resolvers = {}) {
  * @typedef {{ type: 'setPosition', entityId: number, x: number, y: number }} SetPositionOp
  * @typedef {{ type: 'setTiles', changes: Array<{x:number,y:number,tile:number}> }} SetTilesOp
  * @typedef {{ type: 'startFlood', entityId: number, params?: {volume?:number,spreadPerTurn?:number}, receipt?: {tilesFlooded:number} }} StartFloodOp
+ * @typedef {{ type: 'wetActor', entityId: number, amount: number }} WetActorOp
  * @typedef {{ type: 'recordFact', Component: any, data: Record<string, unknown>, receipt?: Record<string, unknown> }} RecordFactOp
  * @typedef {{ type: 'waterExposure', entityId: number, actorId: number, sourceId: number, waterType: string, receipt?: Record<string, unknown> }} WaterExposureOp
  * @typedef {{ type: 'spawnGold', x: number, y: number, count: number, receipt?: Record<string, unknown> }} SpawnGoldOp
  * @typedef {{ type: 'materializeDrop', drop: any, x: number, y: number, receipt?: Record<string, unknown> }} MaterializeDropOp
  * @typedef {{ type: 'materializeDropToInventory', drop: any, ownerId: number, x: number, y: number, capacity?: number, receipt?: Record<string, unknown> }} MaterializeDropToInventoryOp
- * @typedef {DamageOp | HealOp | PushEffectOp | UpsertTimedEffectOp | AppendDamageChannelsOp | PatchItemInfoOp | AttachEnchantmentOp | SetBeatitudeOp | RemoveTimedEffectsByKeyOp | SetMaterialOp | SpawnItemOp | SpawnMonsterOp | LearnSpellOp | RecordShopDebtOp | RecordShopClaimOp | ConsumeOp | DropFromInventoryOp | NutritionOp | AddCorpseAdaptationOp | RevealLoadedMapOp | SpawnHazardOp | MaterializeSpawnOp | DestroyOp | SetItemCooldownOp | ScatterBreadcrumbsOp | PatchComponentOp | RemoveComponentOp | EnsureInventoryOp | SetPositionOp | SetTilesOp | StartFloodOp | RecordFactOp | WaterExposureOp | SpawnGoldOp | MaterializeDropOp | MaterializeDropToInventoryOp} MutationOp
+ * @typedef {DamageOp | HealOp | PushEffectOp | UpsertTimedEffectOp | AppendDamageChannelsOp | PatchItemInfoOp | AttachEnchantmentOp | SetBeatitudeOp | RemoveTimedEffectsByKeyOp | SetMaterialOp | SpawnItemOp | SpawnMonsterOp | LearnSpellOp | RecordShopDebtOp | RecordShopClaimOp | ConsumeOp | DropFromInventoryOp | NutritionOp | AddCorpseAdaptationOp | RevealLoadedMapOp | SpawnHazardOp | MaterializeSpawnOp | DestroyOp | SetItemCooldownOp | ScatterBreadcrumbsOp | PatchComponentOp | RemoveComponentOp | EnsureInventoryOp | SetPositionOp | SetTilesOp | StartFloodOp | WetActorOp | RecordFactOp | WaterExposureOp | SpawnGoldOp | MaterializeDropOp | MaterializeDropToInventoryOp} MutationOp
  */
 
 export class ActionTransaction {

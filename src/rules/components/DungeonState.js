@@ -18,6 +18,8 @@ export const DungeonState = defineComponent('DungeonState', {
   downStairPositions: [], // world {x,y} of each down-stair on the current floor
   destroyedTiles: {}, // "x,y" -> { x, y, originalTile, currentTile, destroyedAtTurn, burnedKind, cause, sourceId, sourceKind, roofTurnsLeft }
   destroyedTilesByRegion: {},
+  floodedTiles: {},
+  floodedTilesByRegion: {},
   wetTiles: {},       // "x,y" -> { expiresAtStep } — temporary wet floor state for elemental chaining
   wetTilesByRegion: {},
 });

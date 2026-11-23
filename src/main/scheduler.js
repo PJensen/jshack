@@ -99,6 +99,7 @@ import { townfolkAmbientDialogueSystem } from "../rules/systems/townfolkAmbientD
 import { entrancePressureSystem } from "../rules/systems/entrancePressureSystem.js";
 import { districtConditionSystem } from "../rules/systems/districtConditionSystem.js";
 import { installTileStepEffectListener } from "../rules/systems/tileStepEffectSystem.js";
+import { actorWetnessExtension } from "../rules/utils/actorWetness.js";
 import { installPolymorphListener } from "../rules/systems/polymorphSystem.js";
 import { installCurseHooks } from "../rules/systems/curseHooks.js";
 import { channelingSystem } from "../rules/systems/channelingSystem.js";
@@ -196,6 +197,7 @@ export function configureWorld(world) {
   installTileStepEffectListener(world);
   // Trap plates trigger from arrival movement events, then resolve in trapSystem.
   world.install(trapStepListenerExtension);
+  world.install(actorWetnessExtension);
   world.install(trapDodgePromptExtension);
   // Material reactions consume semantic reaction events (water splash/dip, etc.).
   world.install(materialReactionListenersExtension);

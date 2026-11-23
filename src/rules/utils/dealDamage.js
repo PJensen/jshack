@@ -10,7 +10,8 @@ import { Material } from "../components/Material.js";
 import { ItemInfo } from "../components/ItemInfo.js";
 import { ActiveEffects } from "../components/ActiveEffects.js";
 import { isEntityInvulnerable } from "./effectGuards.js";
-import { MATERIAL_CATALOG } from "../data/materials.js";
+import { getMaterialIntrinsic } from "../data/materials.js";
+import { MaterialState } from "../components/MaterialState.js";
 import { ELECTRIC_DAMAGE_TUNING } from "../data/electricDamageTuning.js";
 import { createStatusEvent } from "../../shared/events/statusEvent.js";
 import { resolveCanonicalStats } from "./canonicalStats.js";
@@ -29,6 +30,8 @@ import { tryHandlePlayerPseudoDeath } from "./deathModes.js";
 import { recordDamageApplied } from "./damageApplied.js";
 import { recordDeathApplied } from "./deathApplied.js";
 import { applyHealing } from "./applyHealing.js";
+import { pct } from "./rng.js";
+import { actorWetness } from "./actorWetness.js";
 
 function resolveEventWeaponFamily(world, weaponId) {
   if (!(weaponId > 0) || !world.isAlive(weaponId)) return "";
@@ -46,9 +49,29 @@ const CONDUCTIVITY_MULTIPLIER_MIN = Number(ELECTRIC_DAMAGE_TUNING.conductivityMu
 const CONDUCTIVITY_MULTIPLIER_MAX = Number(ELECTRIC_DAMAGE_TUNING.conductivityMultiplierMax);
 const SLOT_WEIGHT_TABLE = Object.entries(ELECTRIC_DAMAGE_TUNING.slotWeights || {});
 
-const MATERIAL_CONDUCTIVITY = new Map(
-  MATERIAL_CATALOG.map((row) => [String(row?.id || ""), Number(row?.Material?.conductivity ?? BASE_BODY_CONDUCTIVITY)]),
-);
+function conductedDamage(world, target, type, rawAmount) {
+  if (type !== "electric" && type !== "lightning" && type !== "plasma") return rawAmount;
+  const wetness = actorWetness(world, target);
+  if (!(wetness > 0)) return rawAmount;
+
+  const boots = world.get(target, Equipment)?.feet;
+  let groundContact = 1;
+  if (boots && world.isAlive(boots)) {
+    if (world.get(boots, ItemInfo)?.affixes?.includes("insulated1")) return rawAmount;
+    const material = getMaterialIntrinsic(world.get(boots, Material)?.kind);
+    if (material) {
+      const bootWetness = Math.max(wetness, world.get(boots, MaterialState)?.wetness || 0);
+      const dryContact = clamp(material.conductivity / BASE_BODY_CONDUCTIVITY, 0, 1);
+      groundContact = dryContact + (1 - dryContact) * bootWetness * material.wetAbsorbency;
+    }
+  }
+  if (!(groundContact > 0)) return rawAmount;
+
+  const luck = Number(resolveCanonicalStats(world, target)?.luck || 0) + statusStrength(world, target, "lucky");
+  if (luck > 0 && pct(world.rand, luck)) return rawAmount;
+  // Wetness improves the path to ground. Damage still scales with the source.
+  return Math.floor(rawAmount * (1 + wetness * groundContact * CONDUCTIVITY_SCALE));
+}
 
 // ── Electric resistance helpers (moved from typedDamage.js) ─────────
 
@@ -79,9 +102,7 @@ export function equippedConductivityMultiplier(world, targetId) {
     const mat = world.get(itemId, Material);
     const kind = String(mat?.kind || "");
     if (!kind) continue;
-    const conductivity = MATERIAL_CONDUCTIVITY.has(kind)
-      ? Number(MATERIAL_CONDUCTIVITY.get(kind))
-      : BASE_BODY_CONDUCTIVITY;
+    const conductivity = Number(getMaterialIntrinsic(kind)?.conductivity ?? BASE_BODY_CONDUCTIVITY);
     if (!Number.isFinite(conductivity)) continue;
     weighted += conductivity * weight;
     totalWeight += weight;
@@ -335,9 +356,10 @@ export function dealDamage(world, spec) {
   }
 
   // Step 3: Resistance resolution
+  const conductedAmount = conductedDamage(world, target, type, rawAmount);
   let finalAmount = spec.bypassResist
-    ? rawAmount
-    : resolveResistance(world, target, rawAmount, type, armorPenetration);
+    ? conductedAmount
+    : resolveResistance(world, target, conductedAmount, type, armorPenetration);
 
   // Mark of Death amplification: +35% damage to marked targets
   const markStrength = statusStrength(world, target, "marked") + effectStrength(world, target, "mark_of_death");

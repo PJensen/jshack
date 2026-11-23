@@ -12,7 +12,8 @@ import { Position } from "../src/rules/components/Position.js";
 import { Trap } from "../src/rules/components/Trap.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { trapStepListenerExtension, trapSystem } from "../src/rules/systems/trapSystem.js";
-import { floodSystem } from "../src/rules/systems/floodSystem.js";
+import { floodSystem, startFlood } from "../src/rules/systems/floodSystem.js";
+import { actorWetness, actorWetnessExtension } from "../src/rules/utils/actorWetness.js";
 import { clearAll, getTile, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import { CHUNK_SIZE, TILE_DOOR, TILE_FLOOR, TILE_MARSH, TILE_PIT, TILE_SHALLOW_WATER } from "../src/rules/environment/dungeon/constants.js";
 import "../src/rules/scripts/traps.js";
@@ -64,8 +65,57 @@ Deno.test("spawntrap water floods marsh ground while preserving doors and pits",
     assertEquals(getTile(8, 7), TILE_SHALLOW_WATER);
     assertEquals(getTile(9, 8), TILE_DOOR);
     assertEquals(getTile(7, 8), TILE_PIT);
+    world.set(player, Position, { x: 8, y: 10 });
+    assertEquals(actorWetness(world, player), 0.75, "the ceiling trap leaves carried wetness");
     assertStringIncludes(spawnTrap("water 16 16"), "Spawned water trap");
     assertEquals(getTile(16, 16), TILE_MARSH);
+  } finally {
+    clearAll();
+  }
+});
+
+Deno.test("another gush crosses existing shallow water and adds volume while active", () => {
+  setupFloor();
+  try {
+    const world = new World({ seed: 42 });
+    const source = world.create();
+    world.add(source, Position, { x: 8, y: 8 });
+    for (const [x, y] of [[8, 8], [8, 7], [9, 8], [8, 9], [7, 8]]) {
+      setTile(x, y, TILE_SHALLOW_WATER);
+    }
+    assertEquals(startFlood(world, source, { volume: 1, spreadPerTurn: 1 }), 0);
+    world.setScheduler(floodSystem);
+    world.tick(1);
+    assertEquals(world.get(source, FloodState).remainingVolume, 1);
+    assertEquals(startFlood(world, source, { volume: 1 }), 0);
+    world.tick(1);
+    assertEquals(getTile(8, 6), TILE_SHALLOW_WATER);
+    assertEquals(world.get(source, FloodState).remainingVolume, 1);
+    world.tick(1);
+    assertEquals(getTile(9, 7), TILE_SHALLOW_WATER);
+    assert(!world.has(source, FloodState));
+  } finally {
+    clearAll();
+  }
+});
+
+Deno.test("wading leaves wetness on an actor which dries over subsequent turns", () => {
+  setupFloor();
+  try {
+    const world = new World({ seed: 42 });
+    world.install(actorWetnessExtension);
+    const actor = world.create();
+    const from = { x: 8, y: 8 };
+    const to = { x: 8, y: 9 };
+    setTile(from.x, from.y, TILE_SHALLOW_WATER);
+    world.add(actor, Position, to);
+    world.add(actor, Vitality, { hp: 10, maxHp: 10 });
+    world.emit("moved", { id: actor, from, to });
+    assertEquals(actorWetness(world, actor), 1);
+    world.step += 2;
+    assertEquals(actorWetness(world, actor), 0.5);
+    world.step += 2;
+    assertEquals(actorWetness(world, actor), 0);
   } finally {
     clearAll();
   }

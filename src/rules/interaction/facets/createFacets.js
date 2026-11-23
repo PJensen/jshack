@@ -18,6 +18,7 @@ import { isIdentified } from "../../data/identification.js";
 import { inventoryContains } from "../../utils/inventoryFacade.js";
 import { inventoryItems } from "../../utils/inventoryFacade.js";
 import { findNearestValidTileAround } from "../../utils/queries.js";
+import { actorWetness, isActorWet } from "../../utils/actorWetness.js";
 import { forEachLoadedTile, getTile, isWalkable } from "../../environment/dungeon/tileMap.js";
 
 /**
@@ -141,6 +142,12 @@ export function createFacets(init) {
     },
     has(entityId, Comp) {
       return world.has(entityId | 0, Comp);
+    },
+    isActorWet(entityId) {
+      return isActorWet(world, entityId | 0);
+    },
+    actorWetness(entityId) {
+      return actorWetness(world, entityId | 0);
     },
     worldStep() {
       return world.step | 0;
@@ -449,6 +456,9 @@ export function createFacets(init) {
         receipt,
       });
       return receipt;
+    },
+    wetActor(entityId, amount) {
+      return tx.queueMutation({ type: "wetActor", entityId: entityId | 0, amount });
     },
     waterExposure(entityId, options = {}) {
       const receipt = {};

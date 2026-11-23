@@ -6,6 +6,16 @@ import { ActiveEffects } from '../src/rules/components/ActiveEffects.js';
 import { StatusEffectNode } from '../src/rules/components/StatusEffectNode.js';
 import { applyStatusEffect } from '../src/rules/utils/effects.js';
 import { Resistances } from '../src/rules/components/Resistences.js';
+import { Position } from '../src/rules/components/Position.js';
+import { DungeonState } from '../src/rules/components/DungeonState.js';
+import { markWet } from '../src/rules/utils/wetTileMap.js';
+import { Equipment } from '../src/rules/components/Equipment.js';
+import { Flying } from '../src/rules/components/Flying.js';
+import { ItemInfo } from '../src/rules/components/ItemInfo.js';
+import { Material } from '../src/rules/components/Material.js';
+import { CHUNK_SIZE, TILE_FLOOR, TILE_SHALLOW_WATER } from '../src/rules/environment/dungeon/constants.js';
+import { clearAll, loadChunk, setTile } from '../src/rules/environment/dungeon/tileMap.js';
+import { getAffix } from '../src/rules/data/affixes.js';
 import { dealDamage, resolveResistance } from '../src/rules/utils/dealDamage.js';
 
 function makeTarget(world, opts = {}) {
@@ -13,6 +23,60 @@ function makeTarget(world, opts = {}) {
   world.add(id, Vitality, { maxHp: opts.maxHp ?? 20, hp: opts.hp ?? 20 });
   return id;
 }
+
+Deno.test("dealDamage: water conducts strong shocks unless Luck or insulated footwear protects the target", () => {
+  clearAll();
+  loadChunk(0, 0, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+  setTile(5, 5, TILE_SHALLOW_WATER);
+  try {
+    function hit({ x = 5, roll = 0.9, flying = false, material, affixes = [], luck = 0, ohms = 1200, type = "electric", stepsAfterWet, amount = 6, hp = 40 } = {}) {
+      const world = new World({ seed: 1 });
+      world.rand = () => roll;
+      const id = makeTarget(world, { hp, maxHp: hp });
+      world.add(id, Position, { x, y: 5 });
+      if (stepsAfterWet != null) {
+        world.add(world.create(), DungeonState, { wetTiles: {} });
+        markWet(world, x, 5, 1);
+        world.step += stepsAfterWet;
+      }
+      world.add(id, Resistances, { electric: { ohms } });
+      if (flying) world.add(id, Flying);
+      if (luck) world.add(id, ActiveEffects, { effects: [{ key: "lucky", turnsLeft: 5, potency: luck }] });
+      if (material || affixes.length) {
+        const boots = world.create();
+        world.add(boots, ItemInfo, { slot: "feet", affixes });
+        if (material) world.add(boots, Material, { kind: material });
+        world.add(id, Equipment, { feet: boots });
+      }
+      return dealDamage(world, { target: id, amount, type });
+    }
+
+    const drenched = hit().amount;
+    const damp = hit({ x: 4, stepsAfterWet: 0 }).amount;
+    assert(drenched > damp && damp > 5);
+    assertEquals(hit({ amount: 1 }).killed, false);
+    assertEquals(hit({ hp: 80 }).amount, drenched);
+    assertEquals(hit({ amount: 18 }).killed, true);
+    assertEquals(hit({ type: "lightning" }).amount, drenched);
+    assertEquals(hit({ type: "plasma" }).amount, drenched);
+    assert(hit({ material: "steel" }).amount > hit({ material: "leather" }).amount);
+    assert(hit({ material: "leather" }).amount > hit({ material: "rubber" }).amount);
+    assertEquals(hit({ type: "fire" }).amount, 6);
+    assertEquals(hit({ x: 4 }).amount, 5);
+    assertEquals(hit({ x: 4, stepsAfterWet: 2 }).amount, 5);
+    assertEquals(hit({ x: 4, stepsAfterWet: 0, flying: true }).amount, 5);
+    assertEquals(hit({ flying: true }).amount, 5);
+    assertEquals(hit({ roll: 0 }).amount, drenched);
+    assertEquals(hit({ roll: 0.06, luck: 5 }).amount, drenched);
+    assertEquals(hit({ roll: 0.04, luck: 5 }).amount, 5);
+    assert(hit({ material: "rubber" }).amount < 6);
+    assert(hit({ affixes: ["insulated1"] }).amount < 6);
+    assertEquals(hit({ ohms: Infinity }).amount, 0);
+    assert(getAffix("insulated1").slots.includes("feet"));
+  } finally {
+    clearAll();
+  }
+});
 
 // ── Basic pipeline ───────────────────────────────────────────────────
 

@@ -2,11 +2,67 @@ import "./helpers/installContentCatalog.mjs";
 import { assert, assertEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { DungeonState } from "../src/rules/components/DungeonState.js";
+import { Flying } from "../src/rules/components/Flying.js";
 import { HazardArea } from "../src/rules/components/HazardArea.js";
 import { Inventory } from "../src/rules/components/Inventory.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { Position } from "../src/rules/components/Position.js";
 import { executeInteraction } from "../src/rules/interaction/runtime/actionRuntime.js";
+import { Vitality } from "../src/rules/components/Vitality.js";
+import { markWet } from "../src/rules/utils/wetTileMap.js";
+import { ScriptCtx } from "../src/content/scriptCtx.js";
+import { createWorldFacade } from "../src/content/worldFacade.js";
+
+Deno.test("action handlers and script hooks share actor wetness", () => {
+  const world = new World({ seed: 5011 });
+  const dungeon = world.create();
+  world.add(dungeon, DungeonState, { wetTiles: {} });
+  const actor = world.create();
+  world.add(actor, Position, { x: -31, y: -32 });
+  world.add(actor, Vitality, { hp: 10, maxHp: 10 });
+  const script = new ScriptCtx(createWorldFacade(world, actor, actor), {});
+
+  function check(expected) {
+    const result = executeInteraction(world, {
+      verb: "wetness-test",
+      actor,
+      primary: actor,
+      pipeline(ctx) {
+        assertEquals(ctx.query.isActorWet(actor), expected > 0);
+        assertEquals(ctx.query.actorWetness(actor), expected);
+        assertEquals(new ScriptCtx(ctx, {}).actorWetness(), expected);
+      },
+    });
+    assertEquals(result.ok, true);
+    assertEquals(script.isActorWet(), expected > 0);
+    assertEquals(script.actorWetness(), expected);
+  }
+
+  check(0);
+  markWet(world, -31, -32, 1);
+  check(0.35);
+  world.step += 2;
+  check(0);
+  assertEquals(world.get(dungeon, DungeonState).wetTiles["-31,-32"].expiresAtStep, 1);
+
+  const result = executeInteraction(world, {
+    verb: "splash-test",
+    actor,
+    primary: actor,
+    pipeline(ctx) {
+      ctx.mutate.wetActor(actor, 1);
+      assertEquals(ctx.query.actorWetness(actor), 0, "wetness is applied on commit");
+    },
+  });
+  assertEquals(result.ok, true);
+  world.add(actor, Flying);
+  check(1);
+  world.step += 2;
+  check(0.5);
+  world.step += 2;
+  check(0);
+});
 
 Deno.test("ctx.helpers queue deterministic spawn/effect ops and commit together", () => {
   const world = new World({ seed: 5011 });

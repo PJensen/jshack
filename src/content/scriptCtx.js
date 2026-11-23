@@ -162,6 +162,16 @@ export class ScriptCtx {
     return this._ctx.helpers.hasStatus(entity, statusKey);
   }
 
+  /** Check whether an actor is wet from ground contact or carried water. */
+  isActorWet(entity = this.user) {
+    return this._ctx.query.isActorWet(entity);
+  }
+
+  /** Read wetness between dry (0) and drenched (1). */
+  actorWetness(entity = this.user) {
+    return this._ctx.query.actorWetness(entity);
+  }
+
   /**
    * Check if an entity has an active effect.
    * @param {number} entity

@@ -6,7 +6,7 @@ import { createPlayer } from "../src/rules/archetypes/Player.js";
 import { createItemById } from "../src/rules/utils/itemFactory.js";
 import { addToInventory, findInventoryRoot, inventoryItems } from "../src/rules/utils/inventoryFacade.js";
 import { serializeWorld } from "../src/lib/ecs-js/serialization.js";
-import { getSavegameRegistryNames } from "../src/main/wiring/savegameSerializationRegistry.js";
+import { getSavegameRegistryNames, serializeSavegameWorld } from "../src/main/wiring/savegameSerializationRegistry.js";
 import { Player } from "../src/rules/components/Player.js";
 import { Position } from "../src/rules/components/Position.js";
 import { DungeonState } from "../src/rules/components/DungeonState.js";
@@ -15,6 +15,11 @@ import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
 import { ItemInfo } from "../src/rules/components/ItemInfo.js";
 import { DropIntent } from "../src/rules/components/Intents/DropIntent.js";
 import { playerEntity } from "../src/rules/utils/queries.js";
+import { actorWetness, wetActor } from "../src/rules/utils/actorWetness.js";
+import { FloodState } from "../src/rules/components/FloodState.js";
+import { startFlood } from "../src/rules/systems/floodSystem.js";
+import { CHUNK_SIZE, TILE_FLOOR, TILE_SHALLOW_WATER } from "../src/rules/environment/dungeon/constants.js";
+import { clearAll, getTile, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import {
   SAVEGAME_KEY,
   hasSavegame,
@@ -56,6 +61,30 @@ function makeSave() {
     app: { activeSpellId: "spell:fireball" },
   };
 }
+
+Deno.test("fresh save load restores flood terrain, its remaining volume, and carried wetness", () => {
+  clearAll();
+  loadChunk(0, 0, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+  try {
+    const world = new World({ seed: 42 });
+    world.add(world.create(), DungeonState, { floodedTiles: {} });
+    const player = createPlayer(world, { x: 4, y: 4 });
+    const source = world.create();
+    world.add(source, Position, { x: 5, y: 4 });
+    wetActor(world, player, 0.5);
+    startFlood(world, source, { volume: 2 });
+    const save = { v: 1, world: serializeSavegameWorld(world) };
+    setTile(5, 4, TILE_FLOOR);
+
+    const restored = new World({ seed: 42 });
+    restoreSnapshotFromSavegame(restored, save);
+    assertEquals(getTile(5, 4), TILE_SHALLOW_WATER);
+    assertEquals(restored.get(source, FloodState).remainingVolume, 1);
+    assertEquals(actorWetness(restored, player), 0.5);
+  } finally {
+    clearAll();
+  }
+});
 
 Deno.test("savegame storage helpers round-trip payload", () => {
   const store = memoryStorage();

@@ -3,6 +3,7 @@ import { buildSavegameSerializationRegistry } from "./savegameSerializationRegis
 import { normalizeEffectSnapshot } from "../../rules/utils/effectInstances.js";
 import { clearSpatialIndex } from "../../rules/utils/spatialIndex.js";
 import { invalidateTileQueryCache } from "../../rules/utils/tileQueryCache.js";
+import { restoreFloodedTerrain } from "../../rules/utils/floodTerrain.js";
 import { normalizeInventorySnapshot } from "../../rules/utils/inventorySnapshotMigration.js";
 import { ensureCalendarState } from "../../rules/utils/calendarState.js";
 export { SAVEGAME_KEY } from "../../shared/savegameKeys.js";
@@ -128,6 +129,7 @@ export function restoreSnapshotFromSavegame(world, save) {
 
   applySnapshot(world, normalizedSave.world, reg, { mode: "replace" });
   if (Number.isInteger(normalizedSave.world.meta?.step)) world.step = normalizedSave.world.meta.step;
+  restoreFloodedTerrain(world);
   ensureCalendarState(world);
   clearSpatialIndex(world);
   invalidateTileQueryCache(world);

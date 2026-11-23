@@ -57,8 +57,9 @@ import { hasEquippedProcPackageInSlot } from "../utils/spellProcGear.js";
 import { resolveCombatSnapshot } from "../utils/resolveCombatSnapshot.js";
 import { CreatureType, CREATURE_TYPES } from "../components/CreatureType.js";
 import { getTile } from "../environment/dungeon/tileMap.js";
-import { TILE_WATER, TILE_SHALLOW_WATER, TILE_WATER_DEEP } from "../environment/dungeon/constants.js";
-import { isWetAt } from "../utils/wetTileMap.js";
+import { isWaterAt } from "../utils/wetTileMap.js";
+import { isActorWet } from "../utils/actorWetness.js";
+import { Flying } from "../components/Flying.js";
 import { WeatherState } from "../components/WeatherState.js";
 import {
   calculateBlindedPhysicalDamage,
@@ -485,9 +486,7 @@ REGISTRY['lightning'] = function lightningScript(world, actor, spell, intent) {
   const isRaining = ws && (ws.current === 'rain' || ws.current === 'heavy_rain');
 
   // ── Lightning in water: caster takes backlash ────────────────────
-  const WATER_TILES_LIGHTNING = new Set([7, 15, 17]); // TILE_WATER, TILE_WATER_DEEP, TILE_SHALLOW_WATER
-  const casterTile = getTile(apos.x | 0, apos.y | 0);
-  if (WATER_TILES_LIGHTNING.has(casterTile) && chain.length > 0) {
+  if (!world.has(actor, Flying) && isWaterAt(apos.x, apos.y) && chain.length > 0) {
     const backlashDmg = Math.max(1, Math.round(7 * 0.5));
     dealDamage(world, buildSpellDamageSpec(world, actor, actor, {
       spell,
@@ -513,7 +512,7 @@ REGISTRY['lightning'] = function lightningScript(world, actor, spell, intent) {
     if (!vit || (vit.hp | 0) <= 0) continue;
     if (actorFaction === 'player' && !isTileVisible(p.x | 0, p.y | 0)) continue;
     if (d2(apos.x, apos.y, p.x, p.y) > WET_ARC_RADIUS * WET_ARC_RADIUS) continue;
-    if (!isWetAt(world, p.x | 0, p.y | 0)) continue;
+    if (!isActorWet(world, id)) continue;
     // Find nearest arc node with LOS
     let srcNode = null; let srcD2 = Infinity;
     for (const node of arcNodes) {

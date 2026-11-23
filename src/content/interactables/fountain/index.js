@@ -268,6 +268,7 @@ const drinkTable = chanceTable("fountain.drink", [
         params: { volume: 21, spreadPerTurn: 3 },
         receipt,
       });
+      ctx.mutate.wetActor(ctx.actor, 0.5);
       ctx.io.emitAfter(() => new FountainDrinkResolved({
         actor: ctx.actor, targetId: ctx.target, effect: "gush", tilesFlooded: receipt.tilesFlooded,
       }));
