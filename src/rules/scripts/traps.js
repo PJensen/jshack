@@ -21,6 +21,7 @@ import { clamp01Or, clampInt } from "../utils/numberCoerce.js";
 import { computeImpactVectorXY, computeProjectileDelay } from "../utils/projectileKinematics.js";
 import { getTile } from "../environment/dungeon/tileMap.js";
 import { TILE_WALL } from "../environment/dungeon/constants.js";
+import { startFlood } from "../systems/floodSystem.js";
 
 const ARROW_TRAP_PROJECTILE_SPEED = 22;
 const ARROW_TRAP_PROJECTILE_MIN_DURATION = 0.06;
@@ -214,6 +215,15 @@ registerScript("trap_pit", {
       x: trapPos.x | 0,
       y: trapPos.y | 0,
     });
+  },
+});
+
+// Water trap: opens the ceiling and starts a finite, turn-by-turn shallow flood.
+registerScript("trap_water", {
+  [ScriptVerb.TrapTrigger]: (world, ctx) => {
+    const trapId = Number(ctx?.trapId || 0) | 0;
+    if (!(trapId > 0) || !world.isAlive(trapId)) return;
+    startFlood(world, trapId, ctx?.params || {});
   },
 });
 

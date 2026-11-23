@@ -31,6 +31,7 @@ import { getParent } from "../../lib/ecs-js/hierarchy.js";
 import { setTile, getTile } from "../../rules/environment/dungeon/tileMap.js";
 import { dealDamage } from "../../rules/utils/dealDamage.js";
 import { RiftCloseRequested } from "../../events/RiftCloseRequested.js";
+import { materializeSpawn } from "../../rules/environment/dungeon/populate.js";
 import {
   TILE_FLOOR,
   TILE_WALL,
@@ -402,6 +403,23 @@ export function registerBuiltinCommands(console, { world, messageLog, lightingEn
     const result = spawnDebugMonsterNearPlayer(world, monsterId);
     if (!result.ok) return result.error;
     return `Spawned ${result.name} at (${result.x}, ${result.y})`;
+  });
+
+  // ---- spawntrap <type> [x y] ----
+  console.registerCommand('spawntrap', 'spawntrap <type> [x y] — place an armed trap', (argsStr) => {
+    const parts = String(argsStr || '').split(/\s+/).filter(Boolean);
+    const type = String(parts[0] || '').toLowerCase();
+    const allowed = new Set(['spike', 'snake', 'shock', 'pit', 'siphon', 'rust', 'swarm', 'arrow', 'water']);
+    if (!allowed.has(type)) return `Usage: spawntrap <${Array.from(allowed).join('|')}> [x y]`;
+    const target = resolveTileTarget(['trap', ...parts.slice(1)]);
+    if (!target) return 'No player/position found.';
+    const id = materializeSpawn(world, {
+      x: target.x,
+      y: target.y,
+      kind: 'trap',
+      params: { type },
+    });
+    return `Spawned ${type} trap #${id} at (${target.x}, ${target.y})`;
   });
 
   // ---- create rift [levels] ----

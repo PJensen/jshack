@@ -1,0 +1,63 @@
+import { assert, assertEquals } from "jsr:@std/assert";
+import { World } from "../src/lib/ecs-js/index.js";
+import { FloodState } from "../src/rules/components/FloodState.js";
+import { Player } from "../src/rules/components/Player.js";
+import { Position } from "../src/rules/components/Position.js";
+import { Trap } from "../src/rules/components/Trap.js";
+import { Vitality } from "../src/rules/components/Vitality.js";
+import { trapStepListenerExtension, trapSystem } from "../src/rules/systems/trapSystem.js";
+import { floodSystem } from "../src/rules/systems/floodSystem.js";
+import { clearAll, getTile, loadChunk } from "../src/rules/environment/dungeon/tileMap.js";
+import { CHUNK_SIZE, TILE_FLOOR, TILE_SHALLOW_WATER } from "../src/rules/environment/dungeon/constants.js";
+import "../src/rules/scripts/traps.js";
+
+function setupFloor() {
+  clearAll();
+  loadChunk(0, 0, new Uint8Array(CHUNK_SIZE * CHUNK_SIZE).fill(TILE_FLOOR));
+}
+
+Deno.test("water trap opens a shallow flood and spreads it over turns", () => {
+  setupFloor();
+  try {
+    const world = new World({ seed: 42 });
+    const player = world.create();
+    world.add(player, Player);
+    world.add(player, Position, { x: 8, y: 8 });
+    world.add(player, Vitality, { maxHp: 100, hp: 100 });
+
+    const trap = world.create();
+    world.add(trap, Position, { x: 8, y: 8 });
+    world.add(trap, Trap, {
+      type: "water",
+      armed: true,
+      revealed: false,
+      script: "trap_water",
+      params: { volume: 5, spreadPerTurn: 2 },
+      difficulty: 21,
+    });
+
+    world.install(trapStepListenerExtension);
+    world.emit("moved", { id: player, from: { x: 8, y: 9 }, to: { x: 8, y: 8 } });
+    trapSystem(world);
+
+    assertEquals(getTile(8, 8), TILE_SHALLOW_WATER);
+    assert(world.has(trap, FloodState), "trigger should create active flood state");
+
+    floodSystem(world);
+    assertEquals(getTile(8, 7), TILE_FLOOR, "spread should wait until the next turn");
+
+    world.step++;
+    floodSystem(world);
+    assertEquals(getTile(8, 7), TILE_SHALLOW_WATER);
+    assertEquals(getTile(9, 8), TILE_SHALLOW_WATER);
+    assertEquals(getTile(8, 9), TILE_FLOOR);
+
+    world.step++;
+    floodSystem(world);
+    assertEquals(getTile(8, 9), TILE_SHALLOW_WATER);
+    assertEquals(getTile(7, 8), TILE_SHALLOW_WATER);
+    assert(!world.has(trap, FloodState), "flood should expire after its volume is placed");
+  } finally {
+    clearAll();
+  }
+});

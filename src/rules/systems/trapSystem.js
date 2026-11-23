@@ -76,6 +76,7 @@ function fallbackScriptForTrap(type) {
     rust: "trap_rust",
     swarm: "trap_swarm",
     arrow: "trap_arrow",
+    water: "trap_water",
   };
   return fallbackScripts[type] || "";
 }

@@ -123,3 +123,18 @@ export const ArrowTrap = defineArchetype(
     })],
     [NamedIdentity, () => ({ name: "Arrow Trap", identity: "trap_arrow" })],
 );
+
+// Water trap — opens the ceiling and spreads shallow water over several turns.
+export const WaterTrap = defineArchetype(
+    "WaterTrap",
+    [Position, (p) => ({ x: p.x ?? 0, y: p.y ?? 0 })],
+    [Trap, (p) => ({
+        type: "water",
+        script: "trap_water",
+        params: p.trapParams ?? { volume: 18, spreadPerTurn: 3 },
+        revealed: false,
+        armed: true,
+        difficulty: p.difficulty ?? 14,
+    })],
+    [NamedIdentity, () => ({ name: "Water Trap", identity: "trap_water" })],
+);

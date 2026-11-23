@@ -8,7 +8,7 @@ import { Beatitude } from "../../../rules/components/Beatitude.js";
 import { DungeonState } from "../../../rules/components/DungeonState.js";
 import { LightEmitter } from "../../../rules/components/LightEmitter.js";
 import { NamedIdentity } from "../../../rules/components/NamedIdentity.js";
-import { TILE_SHALLOW_WATER } from "../../../rules/environment/dungeon/constants.js";
+import { TILE_COBBLESTONE, TILE_FLOOR, TILE_GRASS } from "../../../rules/environment/dungeon/constants.js";
 import { resolveLootTable } from "../../../rules/data/lootResolver.js";
 import { inventoryItems } from "../../../rules/utils/inventoryFacade.js";
 import { defineVerbRule } from "../../../rules/kernel/verbRule.js";
@@ -262,21 +262,17 @@ const drinkTable = chanceTable("fountain.drink", [
     weight: 4,
     when: (ctx) => !!ctx.query.get(ctx.target, Position),
     apply(ctx) {
-      const pos = ctx.query.get(ctx.target, Position);
-      const changes = [];
-      for (let dy = -2; dy <= 2; dy++) {
-        for (let dx = -2; dx <= 2; dx++) {
-          if ((dx * dx) + (dy * dy) > 5) continue;
-          const x = (pos.x | 0) + dx;
-          const y = (pos.y | 0) + dy;
-          if (ctx.query.tile(x, y) === TILE_SHALLOW_WATER || !ctx.query.isWalkable(x, y)) continue;
-          changes.push({ x, y, tile: TILE_SHALLOW_WATER });
-        }
-      }
-      ctx.mutate.setTiles(changes);
-      return finish(ctx, "gush", new FountainDrinkResolved({
-        actor: ctx.actor, targetId: ctx.target, effect: "gush", tilesFlooded: changes.length,
+      const receipt = { tilesFlooded: 0 };
+      ctx.mutate.queue({
+        type: "startFlood",
+        entityId: ctx.target,
+        params: { volume: 21, spreadPerTurn: 3, floodableTiles: [TILE_FLOOR, TILE_COBBLESTONE, TILE_GRASS] },
+        receipt,
+      });
+      ctx.io.emitAfter(() => new FountainDrinkResolved({
+        actor: ctx.actor, targetId: ctx.target, effect: "gush", tilesFlooded: receipt.tilesFlooded,
       }));
+      return finish(ctx, "gush", null);
     },
   },
   {

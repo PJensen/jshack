@@ -25,7 +25,7 @@ import { buildCatalogItem } from '../../data/itemCatalogLoader.js';
 import { getCatalogItem, listCatalogItems } from '../../data/itemCatalog.js';
 import { pickMonster, pickSentinelMonster, pickItem, pickTrap, pickSpawner, pickSpecificMonster, pickSpecificSpawner, pickEncounterGroup } from './tables.js';
 import { Chest } from '../../archetypes/Chest.js';
-import { SpikeTrap, SnakeTrap, ShockTrap, PitTrap, SiphonTrap, RustTrap, SwarmTrap, ArrowTrap } from '../../archetypes/Traps.js';
+import { SpikeTrap, SnakeTrap, ShockTrap, PitTrap, SiphonTrap, RustTrap, SwarmTrap, ArrowTrap, WaterTrap } from '../../archetypes/Traps.js';
 import { Spawner } from '../../archetypes/Spawner.js';
 import { Tombstone, generateEpitaph } from '../../archetypes/Tombstone.js';
 import {
@@ -2483,6 +2483,8 @@ export function materializeSpawn(world, spawn) {
                   ? SwarmTrap
                   : p.type === "arrow"
                     ? ArrowTrap
+                    : p.type === "water"
+                      ? WaterTrap
                   : SpikeTrap;
       return createFrom(world, arch, {
         x: spawn.x, y: spawn.y,

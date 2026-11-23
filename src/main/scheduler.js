@@ -110,6 +110,7 @@ import { installGenocideListener } from "../rules/systems/genocideSystem.js";
 import { installTamingListener } from "../rules/systems/tamingSystem.js";
 import { workstationStateSystem } from "../rules/systems/workstationStateSystem.js";
 import { hydraulicsSystem } from "../rules/systems/hydraulicsSystem.js";
+import { floodSystem } from "../rules/systems/floodSystem.js";
 import { defineInventoryVirtuals, installVirtuals } from "../rules/utils/inventoryVirtuals.js";
 import { defineDerivedStatVirtuals } from "../rules/utils/derivedStats.js";
 import { definePassiveBonusVirtuals } from "../rules/utils/passiveBonuses.js";
@@ -337,6 +338,7 @@ export function configureWorld(world) {
   registerSystem(districtConditionSystem, 'effects');
   registerSystem(workstationStateSystem, 'effects');
   registerSystem(hydraulicsSystem, 'effects');
+  registerSystem(floodSystem, 'effects', { after: [hydraulicsSystem] });
   registerSystem(treasureGuardianSystem, 'effects');
   // Spawners tick in the effects phase
   registerSystem(monsterSpawnerSystem, 'effects', { after: [treasureGuardianSystem] });

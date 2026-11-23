@@ -21,16 +21,20 @@ import { Teleported } from "../src/events/Teleported.js";
 import "../src/content/interactables/index.js";
 import { installContent } from "../src/content/install.js";
 import { interactionSystem } from "../src/rules/systems/interactionSystem.js";
+import { floodSystem } from "../src/rules/systems/floodSystem.js";
 import {
   addToInventory,
   inventoryItems,
 } from "../src/rules/utils/inventoryFacade.js";
 import { resolveItemDisplayName } from "../src/main/wiring/itemName.js";
-import { clearAll, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
+import { clearAll, getTile, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import {
   CHUNK_SIZE,
+  TILE_COBBLESTONE,
   TILE_FLOOR,
+  TILE_GRASS,
   TILE_SHALLOW_WATER,
+  TILE_STAIR_DOWN,
 } from "../src/rules/environment/dungeon/constants.js";
 
 installContent();
@@ -231,14 +235,33 @@ Deno.test("fountain: teleport outcome moves the player", () => {
   }
 });
 
-Deno.test("fountain: gush outcome preserves fountain and creates water tiles", () => {
+Deno.test("fountain: gush spends its volume over turns and preserves stairs", () => {
   const hit = findSeedForEffect("gush");
   assert(hit, "should find a seed that produces gush");
-  assert(hit.ev.tilesFlooded > 0, "should have flooded some tiles");
-  assert(
-    hit.world.isAlive(hit.fountain),
-    "fountain entity should survive after gush",
-  );
+  const { world, actor, fountain } = makeWorld(hit.seed);
+  setTile(6, 5, TILE_COBBLESTONE);
+  setTile(6, 4, TILE_GRASS);
+  setTile(7, 5, TILE_STAIR_DOWN);
+
+  assertEquals(drinkOnce(world, actor, fountain)?.tilesFlooded, 1);
+  assertEquals(getTile(6, 5), TILE_SHALLOW_WATER);
+  assertEquals(getTile(6, 4), TILE_GRASS);
+  world.setScheduler(floodSystem);
+  world.tick(1);
+  assertEquals(getTile(6, 4), TILE_SHALLOW_WATER);
+  assertEquals(getTile(6, 3), TILE_FLOOR);
+  for (let i = 0; i < 10; i++) world.tick(1);
+
+  let tilesFlooded = 0;
+  for (let y = 0; y < CHUNK_SIZE; y++) {
+    for (let x = 0; x < CHUNK_SIZE; x++) {
+      if (getTile(x, y) === TILE_SHALLOW_WATER) tilesFlooded++;
+    }
+  }
+  assertEquals(tilesFlooded, 21);
+  assertEquals(getTile(6, 2), TILE_SHALLOW_WATER, "water can spread past the old two-tile reach");
+  assertEquals(getTile(7, 5), TILE_STAIR_DOWN);
+  assert(world.isAlive(fountain));
 });
 
 Deno.test("fountain: wish outcome spawns a loot item", () => {
