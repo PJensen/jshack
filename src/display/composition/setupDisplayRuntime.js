@@ -25,6 +25,7 @@ import { installEventUiWiring } from "../ui/wiring/eventUiWiring.js";
 import { createDeathVfxController } from "../fx/deathVfxController.js";
 import { createTeleportFxController } from "../fx/teleportFxController.js";
 import { createPuffFxExtension } from "../fx/puffFx.js";
+import { createWaterTrapFxExtension } from "../fx/waterTrapFx.js";
 import { installAudioWiring } from "../audio/audioWiring.js";
 import { createFountainAmbientController } from "../audio/fountainAmbientController.js";
 import { createLocalEmitterAmbientController } from "../audio/localEmitterAmbientController.js";
@@ -167,6 +168,7 @@ export function setupDisplayRuntime({
   const deathVfx = createDeathVfxController();
   const teleportFx = createTeleportFxController({ world, cam, isPlayer });
   world.install(createPuffFxExtension({ fx }));
+  world.install(createWaterTrapFxExtension({ fx, isVisibleAt }));
 
   // ── Melee camera shake — scales with damage ───────────────────────
   world.on('damaged', ({ cause, amount, critical }) => {

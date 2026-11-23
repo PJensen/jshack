@@ -1,6 +1,9 @@
 import { assert, assertEquals, assertStringIncludes } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
 import { buildWorldView } from "../src/bridge/schema/worldView.js";
+import { createWaterTrapFxExtension } from "../src/display/fx/waterTrapFx.js";
+import { ParticlePool } from "../src/display/passes/vfx/particles/particlePool.js";
+import { FountainDrinkResolved } from "../src/events/FountainDrinkResolved.js";
 import { configureWorld } from "../src/main/scheduler.js";
 import { registerBuiltinCommands } from "../src/main/debug/consoleCommands.js";
 import { FloodState } from "../src/rules/components/FloodState.js";
@@ -27,6 +30,10 @@ Deno.test("spawntrap water floods marsh ground while preserving doors and pits",
   try {
     const world = new World({ seed: 42 });
     configureWorld(world);
+    const pool = new ParticlePool();
+    const fxOptions = { fx: { pool }, isVisibleAt: (x, y) => x === 8 && y === 8 };
+    world.install(createWaterTrapFxExtension(fxOptions));
+    world.install(createWaterTrapFxExtension(fxOptions));
     const player = world.create();
     world.add(player, Player);
     world.add(player, Position, { x: 8, y: 8 });
@@ -37,7 +44,13 @@ Deno.test("spawntrap water floods marsh ground while preserving doors and pits",
     }, { world, messageLog: { log() {} } });
 
     const spawnTrap = commands.get("spawntrap");
+    world.emit(new FountainDrinkResolved({ targetId: player, effect: "gush" }));
+    assertEquals(pool.count, 0, "fountain spillage should not create ceiling-trap particles");
     assertStringIncludes(spawnTrap("water"), "Triggered water trap");
+    assertEquals(pool.count, 44, "trap should emit one falling-water and splash burst");
+    assert(pool.y[0] < 8.5 && pool.vy[0] > 0, "falling drops should move toward the trap tile");
+    pool.step(1);
+    assertEquals(pool.count, 0, "the burst should expire");
     assertEquals(getTile(8, 8), TILE_SHALLOW_WATER);
     assertEquals(getTile(8, 7), TILE_MARSH);
     const [[trapId, trap]] = [...world.query(Trap)];

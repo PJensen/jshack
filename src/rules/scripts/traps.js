@@ -22,6 +22,7 @@ import { computeImpactVectorXY, computeProjectileDelay } from "../utils/projecti
 import { getTile } from "../environment/dungeon/tileMap.js";
 import { TILE_WALL } from "../environment/dungeon/constants.js";
 import { startFlood } from "../systems/floodSystem.js";
+import { WaterTrapOpened } from "../../events/WaterTrapOpened.js";
 
 const ARROW_TRAP_PROJECTILE_SPEED = 22;
 const ARROW_TRAP_PROJECTILE_MIN_DURATION = 0.06;
@@ -223,7 +224,10 @@ registerScript("trap_water", {
   [ScriptVerb.TrapTrigger]: (world, ctx) => {
     const trapId = Number(ctx?.trapId || 0) | 0;
     if (!(trapId > 0) || !world.isAlive(trapId)) return;
+    const at = world.get(trapId, Position);
+    if (!at) return;
     startFlood(world, trapId, ctx?.params || {});
+    world.emit(new WaterTrapOpened({ trapId, at }));
   },
 });
 

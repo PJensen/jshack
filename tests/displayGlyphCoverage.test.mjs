@@ -11,6 +11,7 @@ import { buildWorldView } from "../src/bridge/schema/worldView.js";
 
 Deno.test("palette includes shock trap and special weapon glyph keys", () => {
   const palette = buildPalette();
+  assertEquals(palette.trap_water?.glyph, "^");
   for (const key of [
     "trap_shock",
     "trap_pit",
