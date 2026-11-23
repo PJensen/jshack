@@ -1,0 +1,29 @@
+Q: can we make a water trap where the ceiling above you opens up and dumps a volumne of water that floods the floor (with shallow walkable water) over a series of turns?
+
+---
+
+explain how an if the water spreads over several turns please.
+
+---
+
+fantastic, is there a settile command we can use to make this happen?
+
+---
+
+I want to test the trap itelf, it sounds like you're saynig I cannot force a trap to exist in a location.
+
+---
+
+where is it -- I see no water trap in the code base yes. approving the buildout.
+
+---
+
+examine fountain overflow please - check to see if we can use flood system there as well.
+
+---
+
+approved, and yes, I would use the existing sound as well.
+
+---
+
+I would no cap the spread artificially, the volumn determines the spread.
