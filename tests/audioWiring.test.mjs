@@ -119,6 +119,7 @@ Deno.test("audio wiring maps new authored event sounds", () => {
   assert(DEATH_SOUND_BY_IDENTITY.skeleton_sharpshooter === "creature:skeleton:died");
   assert(TRAP_SOUND_BY_TYPE.snake === "trap:snake");
   assert(TRAP_SOUND_BY_TYPE.spike === "trap:spike");
+  assert(TRAP_SOUND_BY_TYPE.water === "water:magic");
   assert(URN_BROKEN_SOUND_ID === "urn:broken");
   assert(WEAPON_RACK_DROPPED_SOUND_ID === "rack:weapon:dropped");
   assert(SEARCH_PING_SOUND_ID === "action:search_ping");

@@ -18,6 +18,7 @@ Deno.test("palette includes shock trap and special weapon glyph keys", () => {
     "trap_rust",
     "trap_swarm",
     "trap_arrow",
+    "trap_water",
     "dragon_whelp",
     "ember_knife",
     "flametongue",

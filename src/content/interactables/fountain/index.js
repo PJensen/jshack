@@ -8,7 +8,6 @@ import { Beatitude } from "../../../rules/components/Beatitude.js";
 import { DungeonState } from "../../../rules/components/DungeonState.js";
 import { LightEmitter } from "../../../rules/components/LightEmitter.js";
 import { NamedIdentity } from "../../../rules/components/NamedIdentity.js";
-import { TILE_COBBLESTONE, TILE_FLOOR, TILE_GRASS } from "../../../rules/environment/dungeon/constants.js";
 import { resolveLootTable } from "../../../rules/data/lootResolver.js";
 import { inventoryItems } from "../../../rules/utils/inventoryFacade.js";
 import { defineVerbRule } from "../../../rules/kernel/verbRule.js";
@@ -266,7 +265,7 @@ const drinkTable = chanceTable("fountain.drink", [
       ctx.mutate.queue({
         type: "startFlood",
         entityId: ctx.target,
-        params: { volume: 21, spreadPerTurn: 3, floodableTiles: [TILE_FLOOR, TILE_COBBLESTONE, TILE_GRASS] },
+        params: { volume: 21, spreadPerTurn: 3 },
         receipt,
       });
       ctx.io.emitAfter(() => new FountainDrinkResolved({

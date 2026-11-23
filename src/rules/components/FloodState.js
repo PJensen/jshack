@@ -6,7 +6,6 @@ export const FloodState = defineComponent(
     remainingVolume: 0,
     spreadPerTurn: 1,
     nextStep: 0,
-    floodableTiles: null,
     frontier: null,
     floodedTiles: null,
   },

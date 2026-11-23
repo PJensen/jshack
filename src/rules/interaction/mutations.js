@@ -731,7 +731,7 @@ export function applyMutation(world, op, resolvers = {}) {
  * @typedef {{ type: 'ensureInventory', entityId: number, capacity: number }} EnsureInventoryOp
  * @typedef {{ type: 'setPosition', entityId: number, x: number, y: number }} SetPositionOp
  * @typedef {{ type: 'setTiles', changes: Array<{x:number,y:number,tile:number}> }} SetTilesOp
- * @typedef {{ type: 'startFlood', entityId: number, params?: {volume?:number,spreadPerTurn?:number,floodableTiles?:number[]}, receipt?: {tilesFlooded:number} }} StartFloodOp
+ * @typedef {{ type: 'startFlood', entityId: number, params?: {volume?:number,spreadPerTurn?:number}, receipt?: {tilesFlooded:number} }} StartFloodOp
  * @typedef {{ type: 'recordFact', Component: any, data: Record<string, unknown>, receipt?: Record<string, unknown> }} RecordFactOp
  * @typedef {{ type: 'waterExposure', entityId: number, actorId: number, sourceId: number, waterType: string, receipt?: Record<string, unknown> }} WaterExposureOp
  * @typedef {{ type: 'spawnGold', x: number, y: number, count: number, receipt?: Record<string, unknown> }} SpawnGoldOp

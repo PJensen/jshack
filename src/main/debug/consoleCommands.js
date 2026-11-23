@@ -32,6 +32,9 @@ import { setTile, getTile } from "../../rules/environment/dungeon/tileMap.js";
 import { dealDamage } from "../../rules/utils/dealDamage.js";
 import { RiftCloseRequested } from "../../events/RiftCloseRequested.js";
 import { materializeSpawn } from "../../rules/environment/dungeon/populate.js";
+import { Trap } from "../../rules/components/Trap.js";
+import { resolveTrapHit } from "../../rules/systems/trapSystem.js";
+import { canStartFloodAt } from "../../rules/systems/floodSystem.js";
 import {
   TILE_FLOOR,
   TILE_WALL,
@@ -406,19 +409,28 @@ export function registerBuiltinCommands(console, { world, messageLog, lightingEn
   });
 
   // ---- spawntrap <type> [x y] ----
-  console.registerCommand('spawntrap', 'spawntrap <type> [x y] — place an armed trap', (argsStr) => {
+  console.registerCommand('spawntrap', 'spawntrap <type> [x y] — place a trap; water without coordinates triggers immediately', (argsStr) => {
     const parts = String(argsStr || '').split(/\s+/).filter(Boolean);
     const type = String(parts[0] || '').toLowerCase();
     const allowed = new Set(['spike', 'snake', 'shock', 'pit', 'siphon', 'rust', 'swarm', 'arrow', 'water']);
-    if (!allowed.has(type)) return `Usage: spawntrap <${Array.from(allowed).join('|')}> [x y]`;
+    if (!allowed.has(type) || (parts.length !== 1 && parts.length !== 3)) {
+      return `Usage: spawntrap <${Array.from(allowed).join('|')}> [x y]`;
+    }
     const target = resolveTileTarget(['trap', ...parts.slice(1)]);
     if (!target) return 'No player/position found.';
+    if (type === 'water' && !canStartFloodAt(target.x, target.y)) {
+      return 'Water traps need walkable ground without stairs, doors, or terrain hazards.';
+    }
     const id = materializeSpawn(world, {
       x: target.x,
       y: target.y,
       kind: 'trap',
       params: { type },
     });
+    if (type === 'water' && parts.length === 1) {
+      resolveTrapHit(world, id, world.get(id, Trap), playerEntity(world).id);
+      return `Triggered water trap #${id} at (${target.x}, ${target.y}). Advance turns to watch it spread.`;
+    }
     return `Spawned ${type} trap #${id} at (${target.x}, ${target.y})`;
   });
 

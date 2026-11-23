@@ -99,7 +99,7 @@ function ensureTrapIdentity(world, trapId, t) {
   try { world.add(trapId, NamedIdentity, { name, identity }); } catch {}
 }
 
-function resolveTrapHit(world, trapId, t, victimId) {
+export function resolveTrapHit(world, trapId, t, victimId) {
   ensureTrapIdentity(world, trapId, t);
   world.emit("trap:triggered", { trapId, victimId, type: t.type });
 

@@ -543,6 +543,7 @@ export const URN_BROKEN_SOUND_ID = "urn:broken";
 export const TRAP_SOUND_BY_TYPE = Object.freeze({
   snake: "trap:snake",
   spike: "trap:spike",
+  water: "water:magic",
 });
 export const AUDIO_ACTIVATION_ROUTES = [
   ...SPELL_CAST_SOUND_EVENTS.map((event) => ({

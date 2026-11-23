@@ -30,9 +30,9 @@ import { resolveItemDisplayName } from "../src/main/wiring/itemName.js";
 import { clearAll, getTile, loadChunk, setTile } from "../src/rules/environment/dungeon/tileMap.js";
 import {
   CHUNK_SIZE,
+  TILE_BEACH,
   TILE_COBBLESTONE,
   TILE_FLOOR,
-  TILE_GRASS,
   TILE_SHALLOW_WATER,
   TILE_STAIR_DOWN,
 } from "../src/rules/environment/dungeon/constants.js";
@@ -240,12 +240,12 @@ Deno.test("fountain: gush spends its volume over turns and preserves stairs", ()
   assert(hit, "should find a seed that produces gush");
   const { world, actor, fountain } = makeWorld(hit.seed);
   setTile(6, 5, TILE_COBBLESTONE);
-  setTile(6, 4, TILE_GRASS);
+  setTile(6, 4, TILE_BEACH);
   setTile(7, 5, TILE_STAIR_DOWN);
 
   assertEquals(drinkOnce(world, actor, fountain)?.tilesFlooded, 1);
   assertEquals(getTile(6, 5), TILE_SHALLOW_WATER);
-  assertEquals(getTile(6, 4), TILE_GRASS);
+  assertEquals(getTile(6, 4), TILE_BEACH);
   world.setScheduler(floodSystem);
   world.tick(1);
   assertEquals(getTile(6, 4), TILE_SHALLOW_WATER);

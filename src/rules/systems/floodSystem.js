@@ -1,7 +1,10 @@
 import { FloodState } from "../components/FloodState.js";
 import { Position } from "../components/Position.js";
-import { TILE_FLOOR, TILE_SHALLOW_WATER } from "../environment/dungeon/constants.js";
-import { getTile, setTile } from "../environment/dungeon/tileMap.js";
+import {
+  TILE_DOOR, TILE_ICE, TILE_LAVA, TILE_PIT, TILE_SHALLOW_WATER,
+  TILE_STAIR_DOWN, TILE_STAIR_UP,
+} from "../environment/dungeon/constants.js";
+import { getTile, isWalkable, setTile } from "../environment/dungeon/tileMap.js";
 
 const CARDINALS = Object.freeze([
   Object.freeze({ dx: 0, dy: -1 }),
@@ -9,6 +12,15 @@ const CARDINALS = Object.freeze([
   Object.freeze({ dx: 0, dy: 1 }),
   Object.freeze({ dx: -1, dy: 0 }),
 ]);
+
+// These tiles carry terrain mechanics that a water tile would erase.
+const PROTECTED_TILES = new Set([
+  TILE_DOOR, TILE_ICE, TILE_LAVA, TILE_PIT, TILE_STAIR_DOWN, TILE_STAIR_UP,
+]);
+
+export function canStartFloodAt(x, y) {
+  return isWalkable(x, y) && !PROTECTED_TILES.has(getTile(x, y));
+}
 
 function tileKey(x, y) {
   return `${x | 0},${y | 0}`;
@@ -32,7 +44,7 @@ export function floodSystem(world) {
         const x = (tile.x | 0) + dir.dx;
         const y = (tile.y | 0) + dir.dy;
         const key = tileKey(x, y);
-        if (flooded.has(key) || !state.floodableTiles.includes(getTile(x, y))) continue;
+        if (flooded.has(key) || !canStartFloodAt(x, y) || getTile(x, y) === TILE_SHALLOW_WATER) continue;
         if (!setTile(x, y, TILE_SHALLOW_WATER)) continue;
         flooded.add(key);
         newlyWet.push({ x, y });
@@ -67,18 +79,17 @@ export function startFlood(world, sourceId, params = {}) {
   if (!pos || world.has(sourceId, FloodState)) return 0;
   const volume = Math.max(1, Number(params.volume ?? 18) | 0);
   const spreadPerTurn = Math.max(1, Number(params.spreadPerTurn ?? 3) | 0);
-  const floodableTiles = params.floodableTiles ?? [TILE_FLOOR];
   const x = pos.x | 0;
   const y = pos.y | 0;
+  if (!canStartFloodAt(x, y)) return 0;
   const floodedTiles = [];
-  if (floodableTiles.includes(getTile(x, y)) && setTile(x, y, TILE_SHALLOW_WATER)) {
+  if (getTile(x, y) !== TILE_SHALLOW_WATER && setTile(x, y, TILE_SHALLOW_WATER)) {
     floodedTiles.push({ x, y });
   }
   world.add(sourceId, FloodState, {
     remainingVolume: Math.max(0, volume - floodedTiles.length),
     spreadPerTurn,
     nextStep: world.step + 1,
-    floodableTiles,
     frontier: [{ x, y }],
     floodedTiles,
   });
