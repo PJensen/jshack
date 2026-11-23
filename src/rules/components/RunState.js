@@ -13,6 +13,12 @@ export const RunState = defineComponent("RunState", {
   difficulty: "normal",
   deathMode: DEATH_MODES.dropBackpack,
   resurrectionCount: 0,
+  kills: 0,
+  spellsCast: 0,
+  prayers: 0,
+  thefts: 0,
+  petsLost: 0,
+  corpsesDesecrated: 0,
 }, {
   validate(rec) {
     if (!rec || typeof rec !== "object") throw new Error("RunState record required");
@@ -22,6 +28,9 @@ export const RunState = defineComponent("RunState", {
       throw new Error(`RunState.deathMode must be one of: ${Array.from(DEATH_MODE_SET).join(", ")}`);
     }
     rec.resurrectionCount = Math.max(0, Number(rec.resurrectionCount || 0) | 0);
+    for (const key of ["kills", "spellsCast", "prayers", "thefts", "petsLost", "corpsesDesecrated"]) {
+      rec[key] = Math.max(0, Number(rec[key] || 0) | 0);
+    }
     return true;
   },
 });

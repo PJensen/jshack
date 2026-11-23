@@ -13,6 +13,8 @@ import { inventoryItems } from "../../rules/utils/inventoryFacade.js";
 import { TURNS_PER_DAY } from "../../rules/data/calendar.js";
 import { getClass } from "../../rules/data/classes.js";
 import { getDeity } from "../../rules/data/deities.js";
+import { RunState } from "../../rules/components/RunState.js";
+import { deriveRunHonors } from "../../rules/data/runHonors.js";
 
 const INSTALLED_KEY = Symbol.for("jshack:main:deathShareWiring:installed");
 const EVENT_TARGET = /** @type {EventTarget} */ (globalThis);
@@ -77,7 +79,21 @@ function gatherDeathStats(world, playerId) {
     ? ae.effects.filter(e => e && e.key && e.key !== 'stat_envelope').map(e => e.key)
     : [];
 
-  return { gold, weaponName, spellCount, traitList, statusList, deityId, deityName, className, playerName, turns, days };
+  let chronicle = null;
+  for (const [, run] of world.query(RunState)) {
+    chronicle = {
+      kills: Number(run.kills || 0) | 0,
+      spellsCast: Number(run.spellsCast || 0) | 0,
+      prayers: Number(run.prayers || 0) | 0,
+      thefts: Number(run.thefts || 0) | 0,
+      petsLost: Number(run.petsLost || 0) | 0,
+      corpsesDesecrated: Number(run.corpsesDesecrated || 0) | 0,
+    };
+    chronicle.honors = deriveRunHonors(chronicle).map((honor) => ({ id: honor.id, label: honor.label, description: honor.description }));
+    break;
+  }
+
+  return { gold, weaponName, spellCount, traitList, statusList, deityId, deityName, className, playerName, turns, days, chronicle };
 }
 
 /**
@@ -85,7 +101,7 @@ function gatherDeathStats(world, playerId) {
  * @param {object} info
  * @returns {string}
  */
-export function makeDeathShareLink({ depth, score, seed, killerName, cause, gold, turns, weaponName, spellCount, deityName, className, playerName, statusList, traitList }) {
+export function makeDeathShareLink({ depth, score, seed, killerName, cause, gold, turns, weaponName, spellCount, deityName, className, playerName, statusList, traitList, chronicle, shareFields = {} }) {
   const GAME_URL = "https://pjensen.github.io/JSHack/";
   const seedHex = seed ? seed.toString(16).toUpperCase() : "???";
 
@@ -110,11 +126,13 @@ export function makeDeathShareLink({ depth, score, seed, killerName, cause, gold
 
   // Flavor details, greedily appended line by line (most interesting first)
   const flavor = [];
-  if (traitList && traitList.length > 0) flavor.push(traitList.join(", "));
-  if (weaponName) flavor.push(`Wielding: ${weaponName}`);
-  if (deityName) flavor.push(`Follower of ${deityName}`);
-  if (spellCount > 0) flavor.push(`${spellCount} spell${spellCount === 1 ? "" : "s"} learned`);
-  if (statusList && statusList.length > 0) flavor.push(`Status: ${statusList.join(", ")}`);
+  if (shareFields.honors !== false && chronicle?.honors?.length) flavor.push(`Honors: ${chronicle.honors.map((honor) => honor.label).join(", ")}`);
+  if (shareFields.traits !== false && traitList && traitList.length > 0) flavor.push(traitList.join(", "));
+  if (shareFields.gear !== false && weaponName) flavor.push(`Wielding: ${weaponName}`);
+  if (shareFields.deity !== false && deityName) flavor.push(`Follower of ${deityName}`);
+  if (shareFields.spells !== false && spellCount > 0) flavor.push(`${spellCount} spell${spellCount === 1 ? "" : "s"} learned`);
+  if (shareFields.status !== false && statusList && statusList.length > 0) flavor.push(`Status: ${statusList.join(", ")}`);
+  if (shareFields.chronicle !== false && chronicle) flavor.push(`${chronicle.kills} kills | ${chronicle.prayers} prayers | ${chronicle.petsLost} pets lost`);
 
   for (const f of flavor) {
     const next = body + `\n${f}`;
@@ -173,6 +191,7 @@ export function installDeathShareWiring({ world }) {
       versionNumber,
       ...stats,
     };
+    _pendingDeathDetail.shareData = { depth, score: scoreVal, seed, killerName, cause, ...stats };
 
     postDeathTombstone({ ..._pendingDeathDetail, timestamp: Date.now() }).catch(() => {});
   });

@@ -144,6 +144,7 @@ import { treasureGuardianListenerExtension, treasureGuardianSystem } from "../ru
 import { experimentalAIExtension } from "./resources/AI.js";
 import { encounterListenerExtension, encounterSystem } from "../rules/systems/encounterSystem.js";
 import { targetLockSystem } from "../rules/systems/targetLockSystem.js";
+import { installRunChronicle, runChronicleSystem } from "../rules/systems/runChronicleSystem.js";
 
 /**
  * @param {World} world
@@ -216,6 +217,7 @@ export function configureWorld(world) {
   // Centipede body segments cascade position when the head moves.
   installCentipedeBodyCascade(world);
   installEnchantingOpenRequestListener(world);
+  installRunChronicle(world);
 
   // Phase: ai (intent producers — added intents are visible to later phases
   // in the same tick because ecs-js add() is intratick-immediate)
@@ -347,6 +349,7 @@ export function configureWorld(world) {
   // Deity mood ticks in the effects phase (after combat results are emitted)
   registerSystem(deitySystem, 'effects');
   registerSystem(scoreSystem, 'effects', { after: [deitySystem] });
+  registerSystem(runChronicleSystem, 'effects', { after: [scoreSystem] });
   registerSystem(monsterDeathHookSystem, 'effects', { after: [scoreSystem] });
   registerSystem(ratInfestationDeathSystem, 'effects', { after: [monsterDeathHookSystem] });
   registerSystem(runContractDeathSystem, 'effects', { after: [ratInfestationDeathSystem] });

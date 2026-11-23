@@ -2,6 +2,7 @@
 // Shared utilities, panel management, tooltips, and standalone UI widgets.
 
 import { getHighscoreVersionLabel, getHighscores } from '../../cloud/tombstones/client.js';
+import { makeDeathShareLink } from '../../cloud/wiring/deathShareWiring.js';
 import { GAME_ICON_FONT_FAMILY, GAME_LOG_FONT_FAMILY, GAME_TEXT_FONT_FAMILY } from '../fonts.js';
 import { CHARACTER_MENU_TAB_GLYPHS } from './iconGlyphs.js';
 import { HUD_MARGIN, HUD_PANEL_STYLE } from './hudTheme.js';
@@ -1834,6 +1835,32 @@ export function renderDeathScreen(panel, detail) {
     box.appendChild(traitBox);
   }
 
+  const chronicle = detail?.chronicle;
+  if (chronicle) {
+    const chronicleBox = document.createElement('div');
+    Object.assign(chronicleBox.style, {
+      margin: '4px 0 14px', padding: '10px', textAlign: 'left',
+      border: '1px solid #3b3150', borderRadius: '6px', background: '#11101c',
+      fontSize: '12px', lineHeight: '1.7',
+    });
+    const heading = document.createElement('div');
+    heading.textContent = 'Run Chronicle';
+    Object.assign(heading.style, { color: '#d7b8ff', fontWeight: 'bold', marginBottom: '4px' });
+    chronicleBox.appendChild(heading);
+    if (chronicle.honors?.length) {
+      const honors = document.createElement('div');
+      honors.textContent = `Honors: ${chronicle.honors.map((honor) => honor.label).join(' · ')}`;
+      honors.style.color = '#9ff0b0';
+      chronicleBox.appendChild(honors);
+    }
+    const lines = [
+      ['Kills', chronicle.kills], ['Spells cast', chronicle.spellsCast], ['Prayers', chronicle.prayers],
+      ['Shop escapes', chronicle.thefts], ['Pets lost', chronicle.petsLost], ['Pet corpses desecrated', chronicle.corpsesDesecrated],
+    ];
+    for (const [label, value] of lines) chronicleBox.appendChild(_deathStatLine(label, value));
+    box.appendChild(chronicleBox);
+  }
+
   // Seed + Version
   const version = String((/** @type {any} */ (globalThis)).VERSION || '').trim();
   const metaText = version ? `Seed: ${seedHex}  |  v${version}` : `Seed: ${seedHex}`;
@@ -1905,6 +1932,42 @@ export function renderDeathScreen(panel, detail) {
 
   // Share button
   if (detail?.shareUrl) {
+    const shareFields = {
+      honors: true, traits: true, gear: true, deity: true, spells: true, status: true, chronicle: true,
+    };
+    const shareBox = document.createElement('div');
+    Object.assign(shareBox.style, {
+      margin: '4px auto 10px', padding: '10px', textAlign: 'left',
+      border: '1px solid #28384d', borderRadius: '6px', background: '#0e1420',
+      fontSize: '12px', maxWidth: '360px',
+    });
+    const shareTitle = document.createElement('div');
+    shareTitle.textContent = 'Share details';
+    shareTitle.style.color = '#9ecbff';
+    shareTitle.style.fontWeight = 'bold';
+    shareTitle.style.marginBottom = '6px';
+    shareBox.appendChild(shareTitle);
+    const shareOptions = [
+      ['honors', 'Honors'], ['traits', 'Traits'], ['gear', 'Weapon'], ['deity', 'Deity'],
+      ['spells', 'Spells'], ['status', 'Status effects'], ['chronicle', 'Run chronicle'],
+    ];
+    const shareGrid = document.createElement('div');
+    Object.assign(shareGrid.style, { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '4px 8px' });
+    const updateShare = () => {
+      shareBtn.href = makeDeathShareLink({ ...detail.shareData, shareFields });
+    };
+    for (const [key, label] of shareOptions) {
+      const row = document.createElement('label');
+      Object.assign(row.style, { display: 'flex', gap: '5px', alignItems: 'center', cursor: 'pointer' });
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = true;
+      input.addEventListener('change', () => { shareFields[key] = input.checked; updateShare(); });
+      row.append(input, document.createTextNode(label));
+      shareGrid.appendChild(row);
+    }
+    shareBox.appendChild(shareGrid);
+    box.appendChild(shareBox);
     const shareBtn = document.createElement('a');
     shareBtn.href = detail.shareUrl;
     shareBtn.target = '_blank';
