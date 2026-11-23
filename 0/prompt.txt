@@ -1,0 +1,19 @@
+settile --- water_trap?
+
+---
+
+watertrap does nothing at all, has no glyph, spreads no water.
+
+I only used `spawntrap water`
+
+---
+
+I would allow floods everywhere regardless -- unless you can stipulate a reason why overworld shold not allow flooding.
+
+---
+
+give water trap a glyph please, ^ (blue) -- give some particles and VFX when it's triggered
+
+---
+
+I would be careful "falling" could imply trap, while fountain is spillage
