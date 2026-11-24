@@ -9,7 +9,11 @@ import { runSpellScript } from "../src/rules/scripts/spells.js";
 import { Position } from "../src/rules/components/Position.js";
 import { Brain } from "../src/rules/components/Brain.js";
 import { ActiveEffects } from "../src/rules/components/ActiveEffects.js";
+import { AuraField } from "../src/rules/components/AuraField.js";
+import { Duration } from "../src/rules/components/Duration.js";
+import { StatusEffectNode } from "../src/rules/components/StatusEffectNode.js";
 import { Faction } from "../src/rules/components/Faction.js";
+import { Player } from "../src/rules/components/Player.js";
 import { Vitality } from "../src/rules/components/Vitality.js";
 import { Stamina } from "../src/rules/components/Stamina.js";
 import { NamedIdentity } from "../src/rules/components/NamedIdentity.js";
@@ -29,6 +33,9 @@ import { resolveCombatSnapshot } from "../src/rules/utils/resolveCombatSnapshot.
 import { statusStrength } from "../src/rules/utils/statusFacade.js";
 import { RendCast } from "../src/events/RendCast.js";
 import { ChargeCast } from "../src/events/ChargeCast.js";
+import { descendantsWith } from "../src/rules/utils/topology.js";
+import { snapshotStatusState } from "../src/rules/utils/statusFacade.js";
+import { buildWorldView } from "../src/bridge/schema/worldView.js";
 
 function makeWorld(seed = 0xBEEF) {
   clearAll();
@@ -71,6 +78,13 @@ function effectKeys(world, id) {
   const ae = world.get(id, ActiveEffects);
   const list = Array.isArray(ae?.effects) ? ae.effects : [];
   return list.map((e) => String(e?.key || ""));
+}
+
+function divineShieldNode(world, id) {
+  for (const [nodeId, node] of descendantsWith(world, id, StatusEffectNode)) {
+    if (node?.key === "divine_shield") return { nodeId, node, duration: world.get(nodeId, Duration) };
+  }
+  return null;
 }
 
 // ─── War Cry ────────────────────────────────────────────────────────────────
@@ -278,18 +292,20 @@ Deno.test("purify with no negative effects removes nothing", () => {
 Deno.test("divine_shield applies one authored breakable ward", () => {
   const world = makeWorld();
   const caster = makeCaster(world, 5, 5);
+  world.add(caster, Player);
 
   runSpellScript(world, caster, SPELL_DEFS.divine_shield, {});
 
-  const keys = effectKeys(world, caster);
-  assert(keys.includes('divine_shield'), 'should apply divine_shield');
-  assertEquals(keys.length, 1, 'divine_shield should not fan out into status rows');
-
-  const ae = world.get(caster, ActiveEffects);
-  const ward = ae.effects.find((e) => e?.key === 'divine_shield');
-  assertEquals(ward.turnsLeft, 20);
-  assertEquals(ward.potency, 3, 'divine_shield ward should retain its hardening potency');
-  assertEquals(ward.meta.guardStacks, 2, 'divine_shield should start with two guard stacks');
+  const aura = [...world.query(AuraField)];
+  assertEquals(aura.length, 1, 'divine_shield should create one self aura field');
+  assertEquals(aura[0][1].radius, 0);
+  const ward = divineShieldNode(world, caster);
+  assert(ward, 'should apply divine_shield as a topology status');
+  assertEquals(ward.duration.turnsLeft, 20);
+  assertEquals(ward.node.potency, 3, 'divine_shield ward should retain its hardening potency');
+  assertEquals(ward.node.meta.guardStacks, 2, 'divine_shield should start with two guard stacks');
+  assertEquals(snapshotStatusState(world, caster).auraSources, [{ sourceId: caster, sourceKey: 'divine_shield', strength: 3 }]);
+  assertEquals(buildWorldView(world).entities.find((entity) => entity.id === caster)?.auraGlows, [{ key: 'divine_shield', strength: 3 }]);
 });
 
 Deno.test("divine_shield reads guard mechanics from the spell definition", () => {
@@ -305,12 +321,12 @@ Deno.test("divine_shield reads guard mechanics from the spell definition", () =>
     },
   }, {});
 
-  const ward = world.get(caster, ActiveEffects).effects.find((e) => e?.key === "divine_shield");
-  assertEquals(ward.turnsLeft, 9);
-  assertEquals(ward.potency, 6);
-  assertEquals(ward.meta.guardStacks, 4);
-  assertEquals(ward.meta.maxGuardStacks, 4);
-  assertEquals(ward.meta.blessed, false);
+  const ward = divineShieldNode(world, caster);
+  assertEquals(ward.duration.turnsLeft, 9);
+  assertEquals(ward.node.potency, 6);
+  assertEquals(ward.node.meta.guardStacks, 4);
+  assertEquals(ward.node.meta.maxGuardStacks, 4);
+  assertEquals(ward.node.meta.blessed, false);
 });
 
 Deno.test("divine_shield guard is breakable without creating shield status rows", () => {
@@ -322,14 +338,14 @@ Deno.test("divine_shield guard is breakable without creating shield status rows"
 
   const before = world.get(caster, Vitality).hp;
   dealDamage(world, { target: caster, source: attacker, amount: 10, type: 'physical', cause: 'test' });
-  const ward = world.get(caster, ActiveEffects).effects.find((e) => e?.key === 'divine_shield');
+  const ward = divineShieldNode(world, caster);
   assertEquals(world.get(caster, Vitality).hp, before - 8, 'front hit should be mitigated by the ward');
-  assertEquals(ward.meta.guardStacks, 1);
+  assertEquals(ward.node.meta.guardStacks, 1);
 
   dealDamage(world, { target: caster, source: attacker, amount: 10, type: 'physical', cause: 'test' });
-  assertEquals(ward.meta.guardStacks, 0);
-  assertEquals(ward.meta.guardBrokenTurns, 4);
-  assertEquals(effectKeys(world, caster).filter((key) => key === 'divine_shield').length, 1);
+  assertEquals(ward.node.meta.guardStacks, 0);
+  assertEquals(ward.node.meta.guardBrokenTurns, 4);
+  assertEquals(snapshotStatusState(world, caster).auraSources.length, 1);
 });
 
 Deno.test("iron_flesh owns its defense, drag, and recoil identity", () => {

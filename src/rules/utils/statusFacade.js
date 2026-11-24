@@ -144,6 +144,7 @@ function readTopologyEffect(world, nodeId, effectNode, fallbackKey = "") {
     onsetLeft: Number(duration.onsetLeft || 0) | 0,
     potency: effectNode?.potency,
     stacks: effectNode?.stacks,
+    meta: effectNode?.meta,
   };
 }
 

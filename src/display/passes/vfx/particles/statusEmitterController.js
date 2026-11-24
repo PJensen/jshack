@@ -88,6 +88,7 @@ export function createStatusEmitterController({ world, fx }) {
     dread: { rate: 0, angle: Math.PI / 2, spread: Math.PI * 2, speed: 0.20, speedJitter: 0.10, ax: 0, ay: 0.12, life: 1.2, lifeJitter: 0.4, size: 0.13, sizeEnd: 0.025, color: "#c08cff", alpha0: 0.50, alpha1: 0.0 },
     void: { rate: 0, angle: 0, spread: Math.PI * 2, speed: 0.26, speedJitter: 0.14, ax: 0, ay: 0, life: 1.1, lifeJitter: 0.35, size: 0.11, sizeEnd: 0.02, color: "#78b8ff", alpha0: 0.54, alpha1: 0.0 },
     blood: { rate: 0, angle: -Math.PI / 2, spread: Math.PI / 2, speed: 0.35, speedJitter: 0.18, ax: 0, ay: -0.20, life: 0.85, lifeJitter: 0.25, size: 0.12, sizeEnd: 0.025, color: "#ff6f78", alpha0: 0.58, alpha1: 0.0 },
+    divine_shield: { rate: 0, angle: -Math.PI / 2, spread: Math.PI * 2, speed: 0.22, speedJitter: 0.10, ax: 0, ay: -0.10, life: 1.1, lifeJitter: 0.35, size: 0.13, sizeEnd: 0.025, color: "#fff0a8", alpha0: 0.68, alpha1: 0.0 },
   };
   const AURA_GLOW_STYLE = {
     pack: { color: [156, 255, 104], pattern: "biolum", radius: 0.66, lightRadius: 1.2 },
@@ -96,6 +97,7 @@ export function createStatusEmitterController({ world, fx }) {
     dread: { color: [192, 140, 255], pattern: "occult", radius: 0.72, lightRadius: 1.2 },
     void: { color: [120, 184, 255], pattern: "void", radius: 0.74, lightRadius: 1.2 },
     blood: { color: [255, 111, 120], pattern: "heartbeat", radius: 0.72, lightRadius: 1.2 },
+    divine_shield: { color: [255, 240, 168], pattern: "holy", radius: 0.76, lightRadius: 1.3 },
   };
   /** @type {Record<string, {tracker: Set<number>, prefix: string, cfg: Record<string, any>}>} */
   const KIND_EMITTER_CFG = {

@@ -1268,6 +1268,12 @@ export const SPELL_DEFS = {
     cooldown: 16,
     script: 'divine_shield',
     targeting: 'self',
+    radius: 0,
+    auraTurns: 20,
+    auraEffect: 'divine_shield',
+    auraEffectTurns: 20,
+    auraTarget: 'allied',
+    auraVisual: 'divine_shield',
     activeEffect: {
       duration: 20,
       potency: 3,

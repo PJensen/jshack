@@ -10,4 +10,5 @@ export const StatusEffectNode = defineComponent("StatusEffectNode", {
   key: "",
   stacks: 1,
   potency: 1,
+  meta: null,
 });

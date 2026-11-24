@@ -9,6 +9,7 @@ export const AuraField = defineComponent(
     effectTurns: 2,
     potency: 1,
     targetRelation: "allied",
+    stackMode: "stack",
     woundedOnly: false,
     turnsLeft: 1,
     radius: 1,
@@ -22,6 +23,7 @@ export const AuraField = defineComponent(
       rec.effectTurns = Number.isFinite(rec.effectTurns) ? Math.max(1, rec.effectTurns | 0) : 2;
       rec.potency = Number.isFinite(rec.potency) ? Math.max(1, rec.potency) : 1;
       rec.targetRelation = String(rec.targetRelation || "allied").toLowerCase();
+      rec.stackMode = String(rec.stackMode || "stack").toLowerCase();
       rec.woundedOnly = rec.woundedOnly === true;
       rec.turnsLeft = Number.isFinite(rec.turnsLeft) ? Math.max(1, rec.turnsLeft | 0) : 1;
       rec.radius = Number.isFinite(rec.radius) ? Math.max(0, rec.radius | 0) : 1;

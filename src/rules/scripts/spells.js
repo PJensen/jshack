@@ -4583,18 +4583,34 @@ REGISTRY['purify'] = function purifyScript(world, actor, _spell, _intent) {
 REGISTRY['divine_shield'] = function divineShieldScript(world, actor, spell, _intent) {
   const pos = /** @type any */ (world.get(actor, Position));
   if (!pos) return;
-  const ae = ensureActiveEffectList(world, actor);
-  if (!ae) return;
 
   const active = spell?.activeEffect || {};
   const DURATION = Math.max(1, Number(active.duration || 20) | 0);
-  upsertTimedEffect(ae.effects, {
-    key: spell?.id || 'divine_shield',
+  const sourceKey = spell?.id || 'divine_shield';
+  const radius = Math.max(0, Number(spell?.radius ?? 0) | 0);
+  spawnAuraField(world, {
+    x: pos.x | 0,
+    y: pos.y | 0,
     turnsLeft: DURATION,
-    potency: Number(active.potency ?? 1),
-    stacks: Number(active.stacks ?? 1),
+    radius,
     sourceId: actor,
-    meta: { ...(active.mechanics || {}) },
+    sourceKey,
+    effectKey: spell?.auraEffect || sourceKey,
+    effectTurns: DURATION,
+    potency: Number(active.potency ?? 1),
+    targetRelation: spell?.auraTarget || 'allied',
+    stackMode: 'refresh',
+  });
+  applyAuraFieldPulse(world, actor, pos, {
+    radius,
+    effectKey: spell?.auraEffect || sourceKey,
+    effectTurns: DURATION,
+    potency: Number(active.potency ?? 1),
+    targetRelation: spell?.auraTarget || 'allied',
+    sourceKind: 'aura',
+    sourceKey,
+    effectMeta: { ...(active.mechanics || {}) },
+    stackMode: 'refresh',
   });
 
   world.emit('spell:divine_shield', { actor, at: { x: pos.x, y: pos.y }, duration: DURATION });

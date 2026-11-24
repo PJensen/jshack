@@ -93,9 +93,18 @@ export function applyStatusEffect(world, actorId, effect) {
     key,
     potency: Math.max(Number(existingStatus?.potency || 0), potency),
     stacks: existingStatus
-      ? Math.max(1, Number(existingStatus.stacks || 0) | 0) + stacks
+      ? effect?.replaceStacks === true
+        ? Math.max(1, Number(existingStatus.stacks || 0) | 0)
+        : Math.max(1, Number(existingStatus.stacks || 0) | 0) + stacks
       : stacks,
   };
+  if (effect?.meta && typeof effect.meta === "object") {
+    nextStatus.meta = existingStatus?.meta && typeof existingStatus.meta === "object"
+      ? { ...existingStatus.meta, ...effect.meta }
+      : { ...effect.meta };
+  } else if (existingStatus?.meta && typeof existingStatus.meta === "object") {
+    nextStatus.meta = existingStatus.meta;
+  }
   if (existingStatus) world.set(nodeId, StatusEffectNode, nextStatus);
   else world.add(nodeId, StatusEffectNode, nextStatus);
 

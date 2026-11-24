@@ -10,7 +10,7 @@ import { forEachInRadius, updateSpatialIndex } from "./spatialIndex.js";
  * @param {import('../../lib/ecs-js/index.js').World} world
  * @param {number} sourceId
  * @param {{ x:number, y:number }} center
- * @param {{ radius?:number, effectKey:string, effectTurns?:number, potency?:number, targetRelation?:string, woundedOnly?:boolean, sourceKind?:string, sourceKey?:string }} options
+ * @param {{ radius?:number, effectKey:string, effectTurns?:number, potency?:number, targetRelation?:string, woundedOnly?:boolean, sourceKind?:string, sourceKey?:string, effectMeta?:Record<string, unknown>, stackMode?:string }} options
  * @returns {number[]}
  */
 export function applyAuraFieldPulse(world, sourceId, center, options) {
@@ -47,6 +47,8 @@ export function applyAuraFieldPulse(world, sourceId, center, options) {
       sourceId,
       sourceKind: options?.sourceKind || "aura",
       sourceKey: options?.sourceKey || effectKey,
+      meta: options?.effectMeta,
+      replaceStacks: String(options?.stackMode || "stack").toLowerCase() === "refresh",
     });
     affectedIds.push(id | 0);
   });

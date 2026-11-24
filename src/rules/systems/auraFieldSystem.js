@@ -29,6 +29,7 @@ export function auraFieldSystem(world) {
       woundedOnly: field.woundedOnly,
       sourceKind: "aura",
       sourceKey: field.sourceKey || field.effectKey,
+      stackMode: field.stackMode,
     });
     const procResults = evaluateAuraProcNodes(world, fieldId);
     for (let i = 0; i < procResults.length; i++) {

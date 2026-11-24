@@ -6,6 +6,9 @@ import { NamedIdentity } from "../components/NamedIdentity.js";
 import { Stamina } from "../components/Stamina.js";
 import { STAMINA_REGEN_COOLDOWN } from "../data/regenConstants.js";
 import { toInt } from "./numberCoerce.js";
+import { Duration } from "../components/Duration.js";
+import { StatusEffectNode } from "../components/StatusEffectNode.js";
+import { descendantsWith } from "./topology.js";
 
 export const SHIELD_GUARD_KEY = "shield_guard";
 export const SHIELD_BROKEN_KEY = "shield_broken";
@@ -84,6 +87,19 @@ function findActiveBreakableGuard(effects) {
   return null;
 }
 
+function findTopologyDivineShield(world, entityId) {
+  for (const [nodeId, node] of descendantsWith(world, entityId, StatusEffectNode)) {
+    if (String(node?.key || "") !== DIVINE_SHIELD_KEY) continue;
+    const duration = world.get(nodeId, Duration);
+    if (!isActiveTimedEffect({ turnsLeft: duration?.turnsLeft, onsetLeft: duration?.onsetLeft })) continue;
+    if (!node?.meta || node.meta.maxGuardStacks == null) continue;
+    if (toInt(node.meta.guardBrokenTurns, 0) > 0) continue;
+    if (toInt(node.meta.guardStacks, 0) <= 0) continue;
+    return { ...node, turnsLeft: duration.turnsLeft };
+  }
+  return null;
+}
+
 /**
  * @param {Array<any>} effects
  * @param {string} key
@@ -148,7 +164,9 @@ export function consumeShieldGuardStack(world, entityId, context = {}) {
   if (!(id > 0) || !world?.isAlive?.(id)) return { guarded: false, stacks: 0, broken: false };
   const ae = ensureShieldGuardState(world, id);
   if (!ae) return { guarded: false, stacks: 0, broken: false };
-  const guard = findEffect(ae.effects, SHIELD_GUARD_KEY) || findActiveBreakableGuard(ae.effects);
+  const guard = findEffect(ae.effects, SHIELD_GUARD_KEY)
+    || findActiveBreakableGuard(ae.effects)
+    || findTopologyDivineShield(world, id);
   if (!guard) return { guarded: false, stacks: 0, broken: false };
 
   const divine = guard.meta && guard.meta.maxGuardStacks != null;

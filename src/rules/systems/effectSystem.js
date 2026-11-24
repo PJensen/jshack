@@ -490,6 +490,17 @@ function tickTopologyStatusDurations(world) {
         if (!world.has(nodeId, StatusEffectNode) && !world.has(nodeId, TimedEffectNode)) continue;
         if (!duration) continue;
 
+        const statusNode = world.get(nodeId, StatusEffectNode);
+        if (statusNode?.key === "divine_shield" && statusNode.meta && typeof statusNode.meta === "object") {
+            const brokenTurns = Math.max(0, Number(statusNode.meta.guardBrokenTurns || 0) | 0);
+            if (brokenTurns > 0) {
+                statusNode.meta.guardBrokenTurns = brokenTurns - 1;
+                if (statusNode.meta.guardBrokenTurns === 0 && Number(statusNode.meta.guardStacks || 0) <= 0) {
+                    statusNode.meta.guardStacks = Math.max(1, Number(statusNode.meta.maxGuardStacks || 2));
+                }
+            }
+        }
+
         const onsetLeft = Number(duration.onsetLeft || 0) | 0;
         if (duration.turnsLeft === Infinity) continue;
         const turnsLeft = Number(duration.turnsLeft || 0) | 0;
