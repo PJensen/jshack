@@ -505,11 +505,6 @@ export default {
   ],
   "spawns": [
     {
-      "dx": -2,
-      "dy": -1,
-      "kind": "lantern_post"
-    },
-    {
       "dx": -12,
       "dy": 1,
       "kind": "anvil"
@@ -533,11 +528,6 @@ export default {
       "dx": -3,
       "dy": 1,
       "kind": "flower_daisy"
-    },
-    {
-      "dx": -2,
-      "dy": 1,
-      "kind": "lantern_post"
     },
     {
       "dx": -6,

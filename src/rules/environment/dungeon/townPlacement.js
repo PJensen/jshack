@@ -763,14 +763,39 @@ function routePath(chunks, bounds, from, to, protectedTiles) {
 
 function addCivicFixtures(chunks, center, buildings) {
   const cottage = buildings.find((b) => b.key === "cottage");
-  const tavern = buildings.find((b) => b.key === "tavern");
   const signPos = cottage ? { x: cottage.door.x - 1, y: cottage.door.y + 1 } : { x: center.x - 1, y: center.y + 1 };
   addChunkSpawn(chunks, signPos.x, signPos.y, "home_sign");
   const chestPos = cottage?.waypoints.vendor_work || cottage?.spawns.home_bed || null;
   if (chestPos) addChunkSpawn(chunks, chestPos.x + 1, chestPos.y, "home_chest");
   addChunkSpawn(chunks, center.x - 2, center.y, "message_board");
   addChunkSpawn(chunks, center.x, center.y - 2, "mailbox");
-  if (tavern) addChunkSpawn(chunks, tavern.door.x, tavern.door.y + 2, "lantern_post");
+}
+
+function addWalkwayLanterns(chunks, center, bounds, protectedTiles) {
+  const occupied = new Set();
+  for (const chunk of chunks.values()) {
+    for (const spawn of chunk.spawns) occupied.add(xyKey(spawn.x, spawn.y));
+  }
+
+  const candidates = [];
+  const radius = 40;
+  for (let y = Math.max(bounds.minY, center.y - radius); y <= Math.min(bounds.maxY, center.y + radius); y++) {
+    for (let x = Math.max(bounds.minX, center.x - radius); x <= Math.min(bounds.maxX, center.x + radius); x++) {
+      const key = xyKey(x, y);
+      if (occupied.has(key) || protectedTiles.has(key) || !NATURAL_BUILDABLE.has(getWorldTile(chunks, x, y))) continue;
+      if (![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => getWorldTile(chunks, x + dx, y + dy) === TILE_COBBLESTONE)) continue;
+      candidates.push({ x, y, distance: Math.abs(x - center.x) + Math.abs(y - center.y) });
+    }
+  }
+  candidates.sort((a, b) => a.distance - b.distance || a.y - b.y || a.x - b.x);
+
+  const placed = [];
+  for (const candidate of candidates) {
+    if (placed.some((other) => Math.abs(candidate.x - other.x) + Math.abs(candidate.y - other.y) < 8)) continue;
+    addChunkSpawn(chunks, candidate.x, candidate.y, "lantern_post");
+    placed.push(candidate);
+    if (placed.length === 2) break;
+  }
 }
 
 function addBuildingResourceSpawns(chunks, building, buildingPlan, bounds) {
@@ -941,6 +966,8 @@ export async function applyTownPlacement(chunks, bounds, seed, tick = null) {
     const consumer = buildings.find((entry) => entry.key === def.supplies);
     if (consumer) routePath(chunks, bounds, building.door, consumer.door, protectedTiles);
   }
+
+  addWalkwayLanterns(chunks, plan.center, bounds, protectedTiles);
 
   if (_tick) await _tick(`Sowing resource spawns around the town`);
   addResourceSpawns(chunks, plan.center, bounds);

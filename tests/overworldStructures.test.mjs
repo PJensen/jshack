@@ -218,6 +218,17 @@ Deno.test("overworld procedurally stamps the required town economy", async () =>
   assert(countKind(chunks, "townfolk") >= 8, "buildings should open town professions");
 });
 
+Deno.test("town lantern posts sit beside cobblestone walkways", async () => {
+  const { chunks } = await generateOverworldChunks(SEED);
+  const walkwayLanterns = spawnsOfKind(chunks, "lantern_post").filter((lantern) =>
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) =>
+      getWorldTile(chunks, lantern.x + dx, lantern.y + dy) === TILE_COBBLESTONE
+    )
+  );
+
+  assert(walkwayLanterns.length >= 2, "town should have lanterns beside its walkways");
+});
+
 Deno.test("scheduled townfolk receive roofed home bed coordinates", async () => {
   const { chunks } = await generateOverworldChunks(SEED);
   const townfolk = spawnsOfKind(chunks, "townfolk");
