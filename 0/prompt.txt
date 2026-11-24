@@ -1,0 +1,19 @@
+have a look at nethack -- see if there is anything cool we can bring over as a possible successor to nethack -- mostly curious what or if anything can or should be brought over
+
+---
+
+you read nothing about jshack
+
+---
+
+propose one change please
+
+---
+
+do it, maybe the end-game screen can be much more deep, and much more intesting -- while still restraining ourselves while sharing the run -- in fact, maybe sharing can be [x] checkboxes -- that allow you to tune the socials share :-)
+
+---
+
+I dont like the idea of vows on creating character, I do like the idea of tracking the outcome though and preseting it at the end.
+
+can you show me what shareDeath and death screens look like?
