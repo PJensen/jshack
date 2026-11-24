@@ -1,0 +1,29 @@
+rats are attacking their nest.
+
+---
+
+I was not wearing ring of conflict
+
+---
+
+seems like a hack to me
+
+---
+
+right -- I would approve that
+
+---
+
+commit and push when ready please
+
+---
+
+STOP -- I hate it -- you added a CombatTarget component this late into development?! I cannot accept that without seriously good cause.
+
+---
+
+stash -- lets re-do our fix with a better approach please
+
+---
+
+wow; much better, see? commit and push.
