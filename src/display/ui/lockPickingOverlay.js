@@ -611,6 +611,15 @@ export function renderLockPicking(panel, options = {}) {
     window.dispatchEvent(new CustomEvent("ui:lockPickingFinished", { detail: result }));
   }
 
+  function onKeyDown(e) {
+    if (panel.style.display === "none") return;
+    if (e.key !== "Escape" && e.keyCode !== 27) return;
+    finish(false, "cancelled");
+    panel.style.display = "none";
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+
   function onBackdropPointerDown(e) {
     if (e.target === panel) finish(false, "cancelled");
   }
@@ -676,6 +685,7 @@ export function renderLockPicking(panel, options = {}) {
   function cleanup() {
     if (raf) cancelAnimationFrame(raf);
     panel.removeEventListener("pointerdown", onBackdropPointerDown);
+    window.removeEventListener("keydown", onKeyDown, true);
     window.removeEventListener("resize", onResize);
   }
   panel._lockPickingCleanup = cleanup;
@@ -685,6 +695,7 @@ export function renderLockPicking(panel, options = {}) {
   }
 
   fitCanvas(canvas, ctx);
+  window.addEventListener("keydown", onKeyDown, true);
   window.addEventListener("resize", onResize);
   updateHud(game, els);
   drawLock(game, canvas, ctx);

@@ -539,6 +539,15 @@ function createSleepPopup({ maxTurns = TURNS_PER_DAY, initialTurns = TURNS_PER_D
   root.append(label, slider, track, actions);
   document.body.appendChild(root);
 
+  const onKeyDown = (event) => {
+    if (event.key !== "Escape" && event.keyCode !== 27) return;
+    if (!root.isConnected) return;
+    if (typeof onCancel === "function") onCancel();
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  window.addEventListener("keydown", onKeyDown, true);
+
   function selectedTurns() {
     return Math.max(1, Math.min(safeMax, Number(slider.value || safeInitial) | 0));
   }
@@ -570,6 +579,7 @@ function createSleepPopup({ maxTurns = TURNS_PER_DAY, initialTurns = TURNS_PER_D
       bar.style.width = `${Math.round((safeDone / safeTotal) * 100)}%`;
     },
     close() {
+      window.removeEventListener("keydown", onKeyDown, true);
       root.remove();
     },
   };
