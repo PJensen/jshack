@@ -38,6 +38,7 @@ Deno.test("runtime topology components are exported and store flat facts", () =>
     key: "poison",
     stacks: 2,
     potency: 3,
+    meta: null,
   });
   assertEquals(world.get(node, TimedEffectNode), { key: "poison" });
   assertEquals(world.get(node, Duration), {

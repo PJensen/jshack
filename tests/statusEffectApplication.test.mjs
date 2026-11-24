@@ -36,6 +36,7 @@ Deno.test("applyStatusEffect creates a topology-only status node", () => {
     key: "hangover",
     potency: 2,
     stacks: 3,
+    meta: null,
   });
   assertEquals(world.get(node, TimedEffectNode), { key: "hangover" });
   assertEquals(world.get(node, Duration), {
