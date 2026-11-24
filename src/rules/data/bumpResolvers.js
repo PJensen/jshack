@@ -106,6 +106,9 @@ const hostileMelee = {
     if (!isWalkable(ctx.nx, ctx.ny)) return false;
     const actorFac = world.get(actor, Faction);
     const targetFac = world.get(ctx.target, Faction);
+    // NPC movement only initiates combat against faction members. Players
+    // can still bump-attack destructible objects that have no faction.
+    if (!targetFac && !world.has(actor, Player)) return false;
     // Shopkeepers / neutrals with Interactable are handled by npc-interact
     if (targetFac && (targetFac.key === "shopkeeper" || targetFac.key === "neutral" || targetFac.key === "townfolk")
         && world.has(ctx.target, Interactable)) return false;

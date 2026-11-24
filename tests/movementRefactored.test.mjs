@@ -1,5 +1,8 @@
 import { assert, assertEquals, assertNotEquals } from "jsr:@std/assert";
 import { World } from "../src/lib/ecs-js/index.js";
+import { createFrom } from "../src/lib/ecs-js/archetype.js";
+import { Spawner } from "../src/rules/archetypes/Spawner.js";
+import { spawnMonsterEntity } from "../src/rules/utils/spawnMonsterEntity.js";
 import { Position } from "../src/rules/components/Position.js";
 import { MoveIntent } from "../src/rules/components/Intents/MoveIntent.js";
 import { Facing } from "../src/rules/components/Facing.js";
@@ -317,6 +320,34 @@ Deno.test("movementSystem: bump into hostile triggers bump:attack", () => {
     assert(bumpAttack, "bump into hostile should trigger bump:attack");
     const pos = world.get(attacker, Position);
     assertEquals(pos.x, 3, "attacker should not move into enemy tile");
+  } finally { clearAll(); }
+});
+
+Deno.test("movementSystem: a rat cannot bump-attack a nest, but the player can", () => {
+  loadFloorChunk();
+  try {
+    const world = new World({ seed: 42 });
+    const nest = createFrom(world, Spawner, {
+      x: 4, y: 3, name: "Rat Nest", spawnParams: { identity: "rat" },
+    });
+    const rat = spawnMonsterEntity(world, { x: 3, y: 3, identity: "rat" });
+    const player = world.create();
+    world.add(player, Player);
+    world.add(player, Faction, { key: "player" });
+    world.add(player, Position, { x: 5, y: 3 });
+    world.add(player, Vitality, { hp: 10, maxHp: 10 });
+
+    const attacks = [];
+    world.on("bump:attack", (event) => attacks.push(event));
+
+    world.add(rat, MoveIntent, { dx: 1, dy: 0 });
+    movementSystem(world);
+    assertEquals(attacks, []);
+    assertEquals(world.get(rat, Position), { x: 3, y: 3 });
+
+    world.add(player, MoveIntent, { dx: -1, dy: 0 });
+    movementSystem(world);
+    assertEquals(attacks, [{ attacker: player, target: nest }]);
   } finally { clearAll(); }
 });
 
