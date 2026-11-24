@@ -1,0 +1,19 @@
+dropped potion light is still offset half tile in two dimensions
+
+---
+
+we're flailing on this -- look at the history of the situation please
+
+---
+
+I think we should fix this permanently, remember that on a kill items go through a loot explosion, but can otherwise remain on the tile that the creatured died on.
+
+propose a plan, or, I'll test the adjustment -- you see my point righy?
+
+---
+
+approved -- FYI: it's in the same spot
+
+---
+
+You really have no idea what you are doing do you? That potion light is still a half tile off in two directions

@@ -3,9 +3,15 @@
   "checkpoint_id": "01M870KQ4K268RYQCQ0G13VYP2",
   "strategy": "manual-commit",
   "branch": "master",
-  "checkpoints_count": 5,
+  "checkpoints_count": 10,
   "files_touched": [
-    "src/main.js"
+    "VERSION",
+    "src/display/fx/groundItemPresentation.js",
+    "src/display/lighting/engine.js",
+    "src/display/lighting/sources/index.js",
+    "src/main.js",
+    "tests/lightingFog.test.mjs",
+    "tests/worldViewLightEmitters.test.mjs"
   ],
   "sessions": [
     {
@@ -14,17 +20,32 @@
       "compact_transcript": "/0/transcript.jsonl",
       "content_hash": "/0/content_hash.txt",
       "prompt": "/0/prompt.txt"
+    },
+    {
+      "metadata": "/1/metadata.json",
+      "transcript": "/1/full.jsonl",
+      "compact_transcript": "/1/transcript.jsonl",
+      "content_hash": "/1/content_hash.txt",
+      "prompt": "/1/prompt.txt"
     }
   ],
+  "token_usage": {
+    "input_tokens": 362123,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 5882240,
+    "output_tokens": 19234,
+    "api_call_count": 63,
+    "subagent_tokens_complete": true
+  },
   "redaction": {
-    "replacements": 3,
+    "replacements": 1153,
     "layers": {
       "betterleaks": 0,
       "connection_string": 0,
       "credential_key": 0,
       "credential_value": 0,
       "credentialed_uri": 0,
-      "entropy": 4,
+      "entropy": 1154,
       "key_context": 0,
       "provider_token": 0,
       "shell_stdin": 0
