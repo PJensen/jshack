@@ -198,6 +198,7 @@ import { installScrollWandWiring } from "./main/wiring/scrollWandWiring.js";
 import { createContentAbilityController } from "./main/targeting/itemAbilityController.js";
 import { installPetWiring } from "./main/wiring/petWiring.js";
 import { createDeathLootArcFx } from "./display/fx/deathLootArcFx.js";
+import { groundItemPresentationPosition } from "./display/fx/groundItemPresentation.js";
 import { createBubbleDialogController } from "./display/ui/bubbleDialog.js";
 import { createSpeechBubbleLayer } from "./display/ui/speechBubbleLayer.js";
 import { createTransitionController } from "./main/wiring/transitionWiring.js";
@@ -3528,7 +3529,6 @@ if (!_savegameLoaded && !_tutorialDisabledThisSession) {
 
 // ── Size-class display scale map ────────────────────────────────────
 const SIZE_CLASS_SCALE = { XS: 0.55, S: 0.72, M: 0.88, L: 1.0, XL: 1.12 };
-const _itemZeroOff = { dx: 0, dy: 0 };
 
 // Wire transient lighting effects (gaze beams, chest blooms, etc.)
 installLightEventListeners(world, getPosition);
@@ -5298,10 +5298,7 @@ function render(worldView) {
     if (layer === 250) {
       if (throwFx.isItemHidden(e.id) || delayedDeathFx.isItemHidden(e.id)) continue;
       const arcPos = deathLootArcPos(e.id);
-      const vOff = e.visualOff || _itemZeroOff;
-      const itemRender = arcPos
-        ? { ...e, pos: { x: arcPos.x, y: arcPos.y } }
-        : (vOff.dx || vOff.dy) ? { ...e, pos: { x: e.pos.x + vOff.dx, y: e.pos.y + vOff.dy } } : e;
+      const itemRender = { ...e, pos: groundItemPresentationPosition(e, arcPos) };
       const itemKind = resolveRenderableKind(glyphAtlas, itemRender);
       const paletteBase = (glyphAtlas.get(itemKind) || glyphAtlas.get('default') || {}).baseScale || 1;
       const finalItemScale = (e.itemScale || 1) * paletteBase;
@@ -5928,7 +5925,12 @@ function render(worldView) {
   // of the darkness, while tiles + entities are properly darkened.
   _rpStage("lighting");
   if (PERF.quality !== 'low') {
-    const _lights = collectLightSources(worldView, { quality: PERF.quality, fxTime: _fxTime, dt: _dtSec });
+    const _lights = collectLightSources(worldView, {
+      quality: PERF.quality,
+      fxTime: _fxTime,
+      dt: _dtSec,
+      getGroundItemPosition: (entity) => groundItemPresentationPosition(entity, deathLootArcPos(entity.id)),
+    });
     collectFxLights(_lights, { boltFx, spellAreaFx, projectileFx, cloudFx, surfaceAreaFx, statusEmitterFx, spiritWispFx, sparksFx });
     const _ambient = computeAmbient(worldView);
     const _roofMask = worldView.isOverworld ? isRoofed : null;

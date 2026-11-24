@@ -177,8 +177,8 @@ export function resolveShelteredExteriorDarkening(input) {
 
 /**
  * @typedef {{
- *   x: number,           // tile-space X (fractional OK)
- *   y: number,           // tile-space Y
+ *   x: number,           // lightmap tile-space X (world glyph X + 0.5)
+ *   y: number,           // lightmap tile-space Y (world glyph Y + 0.5)
  *   radius: number,      // falloff radius in tiles
  *   color?: [number, number, number],  // RGB 0-255, default warm orange
  *   flicker?: number,    // 0-1 intensity multiplier (applied by caller)

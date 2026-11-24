@@ -5,7 +5,10 @@ import {
   resolveMaterialLightingResponse,
   resolveShelteredExteriorDarkening,
 } from "../src/display/lighting/engine.js";
-import { computeAmbient } from "../src/display/lighting/sources/index.js";
+import { collectLightSources, computeAmbient } from "../src/display/lighting/sources/index.js";
+import { createDeathLootArcFx } from "../src/display/fx/deathLootArcFx.js";
+import { groundItemPresentationPosition } from "../src/display/fx/groundItemPresentation.js";
+import { drawKindScaled } from "../src/display/passes/glyphs/atlas.js";
 import { getMaterialIntrinsic } from "../src/rules/data/materials.js";
 
 function sum(rgb) {
@@ -139,6 +142,84 @@ Deno.test("lighting keeps shelter and floor relief changes local to the frames t
     assert(render()[1].some((value, i) => value !== flat[1][i]));
     engine.clearFloorRelief();
     assertEquals(render(), flat);
+  } finally {
+    if (previousDocument === undefined) delete globalThis.document;
+    else globalThis.document = previousDocument;
+  }
+});
+
+Deno.test("rendered potion light tracks the glyph before, during, and after a loot arc", () => {
+  const previousDocument = globalThis.document;
+  let pixels;
+  globalThis.document = {
+    createElement: () => ({
+      getContext: () => ({
+        createImageData: (w, h) => ({ data: new Uint8ClampedArray(w * h * 4) }),
+        putImageData: ({ data }) => { pixels = data; },
+      }),
+    }),
+  };
+  try {
+    let time = 0;
+    const arc = createDeathLootArcFx({
+      world: { step: 42 },
+      getItemInfo: () => ({ weight: 1 }),
+      getFxTime: () => time,
+      isWalkable: () => true,
+    });
+    const potion = {
+      id: 23,
+      kind: "potion_mana",
+      layer: 250,
+      pos: { x: -1, y: 1 },
+      visualOff: { dx: 0.12, dy: -0.08 },
+      tags: ["potion_glow"],
+    };
+    const view = { turn: 42, player: null, entities: [potion] };
+    const atlas = new Map([[potion.kind, { canvas: {} }]]);
+    const engine = createLightingEngine();
+    const getGroundItemPosition = (entity) => groundItemPresentationPosition(entity, arc.getPosition(entity.id));
+
+    function checkFrame(phase) {
+      let glyph;
+      const anchor = getGroundItemPosition(potion);
+      drawKindScaled(atlas, {
+        drawImage(_canvas, x, y, w, h) { glyph = { x: x + w / 2, y: y + h / 2 }; },
+      }, potion.kind, anchor.x, anchor.y);
+
+      let light;
+      const lights = collectLightSources(view, { fxTime: time, getGroundItemPosition });
+      engine.render({
+        save() {},
+        restore() {},
+        drawImage(_canvas, _sx, _sy, sw, sh, dx, dy, dw, dh) {
+          // For the last blit (colored light), locate the strongest texel and
+          // use the actual destination rectangle to recover its world position.
+          let peak = 0;
+          for (let i = 1; i < sw * sh; i++) {
+            if (pixels[i * 4 + 3] > pixels[peak * 4 + 3]) peak = i;
+          }
+          assert(pixels[peak * 4 + 3] > 0);
+          light = {
+            x: dx + (peak % sw + 0.5) * dw / sw,
+            y: dy + (Math.floor(peak / sw) + 0.5) * dh / sh,
+          };
+        },
+      }, lights, () => false, -4, -4, 4, 4, null, 210);
+      assert(Math.abs(light.x - glyph.x) <= 1 / 8, `${phase}: light x=${light.x}, glyph x=${glyph.x}`);
+      assert(Math.abs(light.y - glyph.y) <= 1 / 8, `${phase}: light y=${light.y}, glyph y=${glyph.y}`);
+    }
+
+    checkFrame("settled without an arc");
+    const duration = arc.schedule(potion.id, potion.pos, potion.pos, 0, { dx: 1, dy: 0, force: 1, cause: "melee" });
+    assert(duration > 0);
+    time = duration / 3;
+    assert(arc.getPosition(potion.id)?.airborne);
+    checkFrame("airborne");
+    time = duration + 0.1;
+    assertEquals(arc.getPosition(potion.id)?.airborne, false);
+    checkFrame("landed at the visual rest position");
+    assertEquals(potion.pos, { x: -1, y: 1 });
   } finally {
     if (previousDocument === undefined) delete globalThis.document;
     else globalThis.document = previousDocument;

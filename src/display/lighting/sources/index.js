@@ -6,6 +6,7 @@
 
 import { basePalette } from '../../palette/base.js';
 import { evaluatePattern, registerPattern } from './temporalPatterns.js';
+import { groundItemPresentationPosition } from '../../fx/groundItemPresentation.js';
 
 // Mirror of rules/data/calendar.TURNS_PER_DAY — display layer cannot import
 // rules directly.  The bridge (worldView) normalises time into turnInDay so
@@ -282,6 +283,9 @@ export function collectLightSources(view, opts = {}) {
   const base  = q === 'low' ? 6 : (q === 'high' ? 10 : 8);
   const t     = opts.fxTime || 0;
   const dt    = opts.dt || 0.016;   // frame delta (seconds)
+  const getGroundItemPosition = typeof opts.getGroundItemPosition === 'function'
+    ? opts.getGroundItemPosition
+    : null;
   /** @type {LightDef[]} */
   const out   = [];
   const playerId = Number(view.player?.id || 0) | 0;
@@ -372,10 +376,14 @@ export function collectLightSources(view, opts = {}) {
       if (tags && (tags.includes('memory_fixed') || tags.includes('memory_recent')
                 || tags.includes('memory_esp') || tags.includes('memory_thermal'))) continue;
       const layer = Number.isFinite(e.layer) ? (e.layer | 0) : 300;
-      // Ground-item glyphs are centered on their raw world position; actors
-      // and room entities use the lighting grid's half-tile center convention.
-      const itemOffset = layer === 250 ? 0 : 0.5;
-      const ex = e.pos.x + itemOffset, ey = e.pos.y + itemOffset;
+      // Ground items may be visually offset from their rules tile.
+      const itemPos = layer === 250
+        ? (getGroundItemPosition?.(e) || groundItemPresentationPosition(e))
+        : null;
+      // The lightmap blits from (tile origin - 0.5), while glyphs use
+      // integer tile centers. Convert the presentation anchor on both axes.
+      const ex = (itemPos?.x ?? e.pos.x) + 0.5;
+      const ey = (itemPos?.y ?? e.pos.y) + 0.5;
       const kind = (typeof e.kind === 'string') ? e.kind.toLowerCase() : '';
 
       if (explicitLightEntityIds.has(Number(e.id || 0) | 0)) {
@@ -492,14 +500,9 @@ export function collectLightSources(view, opts = {}) {
       // Potion glow — bioluminescent shimmer
       if (tags.includes('potion_glow')) {
         const col = paletteGlow(kind) || paletteGlow('potion') || [120, 220, 200];
-        // Potion glyphs render at their world position (including item visual
-        // offsets), so keep the point light anchored to that same position.
-        const visualOff = e.visualOff || null;
-        const potionX = e.pos.x + itemOffset + Number(visualOff?.dx || 0);
-        const potionY = e.pos.y + itemOffset + Number(visualOff?.dy || 0);
         // Potions are small items: keep their light tightly concentrated
         // inside one tile instead of washing out the surrounding floor.
-        emitPatterned(out, 'biolum', t, e.id, potionX, potionY, 0.75, col, 2);
+        emitPatterned(out, 'biolum', t, e.id, ex, ey, 0.75, col, 2);
       }
       // Gold glow — gentle pulse
       if (tags.includes('gold_glow')) {

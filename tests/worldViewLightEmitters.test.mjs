@@ -5,6 +5,7 @@ import { collectLightSources } from "../src/display/lighting/sources/index.js";
 import { getPatternNames } from "../src/display/lighting/sources/temporalPatterns.js";
 import { Position } from "../src/rules/components/Position.js";
 import { LightEmitter } from "../src/rules/components/LightEmitter.js";
+import { groundItemPresentationPosition } from "../src/display/fx/groundItemPresentation.js";
 
 Deno.test("WorldView projects scalar light emitters", () => {
   const world = new World({ seed: 0x11947 });
@@ -122,8 +123,57 @@ Deno.test("ground-item lights share the item glyph anchor", () => {
 
   const itemLight = lights[0];
   const actorLight = lights[1];
-  assertEquals([itemLight?.x, itemLight?.y], [8, 3]);
+  assertEquals([itemLight?.x, itemLight?.y], [8.5, 3.5]);
   assertEquals([actorLight?.x, actorLight?.y], [8.5, 3.5]);
+});
+
+Deno.test("potion lights stay anchored to the dropped glyph on both axes", () => {
+  const lights = collectLightSources({
+    turn: 1,
+    player: null,
+    entities: [{
+      id: 23,
+      kind: "potion_health",
+      layer: 250,
+      pos: { x: 8, y: 3 },
+      visualOff: { dx: 0.12, dy: -0.08 },
+      tags: ["potion_glow"],
+    }],
+  }, { fxTime: 1, dt: 0.016 });
+
+  const potionLight = lights[0];
+  assertEquals([potionLight?.x, potionLight?.y], [8.62, 3.42]);
+});
+
+Deno.test("ground-item presentation anchor follows the loot arc, then settles with visual offset", () => {
+  const entity = {
+    pos: { x: 8, y: 3 },
+    visualOff: { dx: 0.12, dy: -0.08 },
+  };
+
+  assertEquals(groundItemPresentationPosition(entity, { x: 8.75, y: 2.25 }), { x: 8.75, y: 2.25 });
+  assertEquals(groundItemPresentationPosition(entity), { x: 8.12, y: 2.92 });
+});
+
+Deno.test("potion light accepts the same transient loot position as its glyph", () => {
+  const lights = collectLightSources({
+    turn: 1,
+    player: null,
+    entities: [{
+      id: 24,
+      kind: "potion_health",
+      layer: 250,
+      pos: { x: 8, y: 3 },
+      visualOff: { dx: 0.12, dy: -0.08 },
+      tags: ["potion_glow"],
+    }],
+  }, {
+    fxTime: 1,
+    dt: 0.016,
+    getGroundItemPosition: () => ({ x: 8.75, y: 2.25 }),
+  });
+
+  assertEquals([lights[0]?.x, lights[0]?.y], [9.25, 2.75]);
 });
 
 Deno.test("portal temporal patterns are available for authored portal lighting", () => {

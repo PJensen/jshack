@@ -41,6 +41,12 @@ for a larger environmental impression instead of making the local halo huge.
 
 ## Verification
 
+For ground-item light alignment, share the glyph's presentation position
+(including loot-arc and rest positions). Convert that position to lightmap
+coordinates by adding 0.5 on each axis: the engine draws the lightmap starting
+half a tile before the integer tile origin. Verify the output texel position
+against the glyph with the loot-arc regression in `tests/lightingFog.test.mjs`.
+
 For turn-based ground hazards, project the live hazard through `WorldView` and
 derive the persistent decal, light, and particle emission from that projection.
 `tests/spellAreaLighting.test.mjs` covers
