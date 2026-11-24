@@ -1,0 +1,54 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M871J9T10F4Y0AW6T0MNR2JH",
+  "session_id": "01a20e13-c68e-7d82-94a2-f7375f3fef44",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-24T15:07:40.099368939Z",
+  "branch": "master",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "VERSION",
+    "src/display/passes/vfx/particles/statusEmitterController.js",
+    "src/rules/components/AuraField.js",
+    "src/rules/components/StatusEffectNode.js",
+    "src/rules/data/spells.js",
+    "src/rules/scripts/spells.js",
+    "src/rules/systems/auraFieldSystem.js",
+    "src/rules/systems/effectSystem.js",
+    "src/rules/utils/auraFields.js",
+    "src/rules/utils/effects.js",
+    "src/rules/utils/shieldGuard.js",
+    "src/rules/utils/statusFacade.js",
+    "tests/classAbilities.test.mjs"
+  ],
+  "agent": "Codex",
+  "model": "gpt-5.6-luna",
+  "turn_id": "2c5cf65f10dd",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 118696,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2624896,
+    "output_tokens": 14210,
+    "api_call_count": 38,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 0,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 0,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 1
+  }
+}
